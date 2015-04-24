@@ -256,6 +256,7 @@ class SibasDB extends MySQLi
 				sef.id_ef = "'.base64_decode($idef).'"
 					and sef.activado = true
 					and sh.producto != "H"
+					and sh.activado = true
 			order by sh.producto asc
 			;';
 		

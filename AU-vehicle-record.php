@@ -1,4 +1,5 @@
 <?php
+
 require('sibas-db.class.php');
 require('session.class.php');
 
@@ -152,24 +153,26 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 							$arrAU[2] = 'No se pudo registrar el Vehículo';
 						}
 					} elseif ($token) {
-                        if ($cp === false) {
-                            $sql = 'update s_au_cot_detalle
-                            set id_tipo_vh = "' . $dv_type_vehicle . '",
-                                plaza = "' . $dv_plaza . '",
-                                id_marca = "' . $dv_make . '",
-                                id_modelo = "' . $dv_model . '",
-                                anio = "' . $dv_year . '",
-                                placa = "' . $dv_plate . '",
-                                uso = "' . $dv_use . '",
-                                traccion = "' . $dv_traction . '",
-                                km = "' . $dv_zero_km . '",
-                                modalidad = ' . $dv_modality . ',
-                                valor_asegurado = "' . $dv_value_insured . '",
-                                facultativo = "' . (int)$_FAC . '",
-                                motivo_facultativo = "' . $reason . '"
-                            where id_vehiculo = "' . $idVh . '" ;';
-                        }
-						
+                        $sql = 'update s_au_cot_cabecera as sdc
+                        	inner join
+						s_au_cot_detalle as sdd ON (sdd.id_cotizacion = sdc.id_cotizacion)
+                        set sdd.id_tipo_vh = "' . $dv_type_vehicle . '",
+                            sdd.plaza = "' . $dv_plaza . '",
+                            sdd.id_marca = "' . $dv_make . '",
+                            sdd.id_modelo = "' . $dv_model . '",
+                            sdd.anio = "' . $dv_year . '",
+                            sdd.placa = "' . $dv_plate . '",
+                            sdd.uso = "' . $dv_use . '",
+                            sdd.traccion = "' . $dv_traction . '",
+                            sdd.km = "' . $dv_zero_km . '",
+                            sdd.modalidad = ' . $dv_modality . ',
+                            sdd.valor_asegurado = "' . $dv_value_insured . '",
+                            sdd.facultativo = "' . (int)$_FAC . '",
+                            sdd.motivo_facultativo = "' . $reason . '"
+                        where sdc.id_cotizacion = "' . $idc . '"
+                        	and sdd.id_vehiculo = "' . $idVh . '" 
+                        ;';
+
 						if($link->query($sql) === TRUE){
 							$arrAU[0] = 1;
 							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
