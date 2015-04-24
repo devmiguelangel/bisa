@@ -16,7 +16,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=trem_tasas&var=trem&list_compania=v');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -183,108 +184,116 @@ if($tipo_sesion=='ROOT'){
 							sh.id_ef = ef.id_ef and sh.producto='TRM')
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
-$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-$num_regi_ef = $resef->num_rows;
-if($num_regi_ef>0){
-/*echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir registro">
-				   <img src="images/add_new.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';*/
-	 
-	 while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		 
-		$select="select
-				   sef.id_ef_cia,
-				   sef.id_ef,
-				   sef.id_compania,
-				   sc.nombre as compania,
-				   sc.logo
-				from
-				  s_ef_compania sef
-				  inner join s_compania as sc on (sc.id_compania=sef.id_compania)
-				where
-				  sef.id_ef='".$regief['id_ef']."' and sef.activado=1 and sc.activado=1 and sef.producto='TRM';";
-		$res = $conexion->query($select,MYSQLI_STORE_RESULT);		  
-		echo'
-			<div class="da-panel collapsible" style="width:700px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Administrar Tasas 
-					</span>
+  if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		$num_regi_ef = $resef->num_rows;
+		if($num_regi_ef>0){
+		/*echo'<div class="da-panel collapsible">
+				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+						<li style="margin-right:6px;">
+						   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir registro">
+						   <img src="images/add_new.png" width="32" height="32"></a>
+						</li>
+					</ul>
 				</div>
-				<div class="da-panel-content">
-					<table class="da-table">
-						<thead>
-							<tr>
-								<th style="text-align:center;"><b>Compañia de Seguro</b></th>
-								<th style="text-align:center;"><b>Logo</b></th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>';
-						  $num = $res->num_rows;
-						  if($num>0){
-							    $c=1;
-								while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-									echo'<tr>
-											<td>'.$regi['compania'].'</td>
-											<td style="text-align:center;">';
-											   if($regi['logo']!=''){
-												   if(file_exists('../images/'.$regi['logo'])){  
-													   $imagen = getimagesize('../images/'.$regi['logo']); 
-													   $ancho = $imagen[0];   
-													   $alto = $imagen[1]; 
-													  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
-												   }else{
-													  echo'no existe el archivo fisico';   
-												   }
-											   }else{
-												  echo'no existe el nombre del archivo en la base de datos';   
-											   }
-									   echo'</td>
-											<td class="da-icon-column">
-											   <ul class="action_user">';
-											   
-												   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
-												   echo'<li style="margin-right:5px;"><a href="?l=trem_tasas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'" class="add_mod da-tooltip-s" title="Editar Tasas"></a></li>';
-												   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
-											   
-											 												 
-										  echo'</ul>	
-											</td>
-										</tr>';
-										$c++;
-								}
-								$res->free();			
-						  }else{
-							 echo'<tr><td colspan="7">
-									  <div class="da-message warning">
-										 No existe registros alguno, razones alguna:
-										 <ul>
-											<li>Verifique que la Compañia de Seguros este activada</li>
-											<li>Verifique que la Compañia asignada a la Entidad Financiera este activada</li>
-											<li>Verifique que el producto exista en la Compañia asignada a la Entidad Financiera</li>
-										  </ul>
-									  </div>
-								  </td></tr>';
-						  }
-				   echo'</tbody>
-					</table>
-				</div>
-			</div>';
-	 }
-	 $resef->free();
- }else{
-	echo'<div class="da-message info">
-			 No existe registros alguno o la entidad Financiera no esta activada
-		</div>'; 
- }
+			 </div>';*/
+			 
+			 while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		 
+				$select="select
+						   sef.id_ef_cia,
+						   sef.id_ef,
+						   sef.id_compania,
+						   sc.nombre as compania,
+						   sc.logo
+						from
+						  s_ef_compania sef
+						  inner join s_compania as sc on (sc.id_compania=sef.id_compania)
+						where
+						  sef.id_ef='".$regief['id_ef']."' and sef.activado=1 and sc.activado=1 and sef.producto='TRM';";
+				$res = $conexion->query($select,MYSQLI_STORE_RESULT);		  
+				echo'
+					<div class="da-panel collapsible" style="width:700px;">
+						<div class="da-panel-header">
+							<span class="da-panel-title">
+								<img src="images/icons/black/16/list.png" alt="" />
+								<b>'.$regief['nombre'].'</b> - <span lang="es">Administrar tasas</span> 
+							</span>
+						</div>
+						<div class="da-panel-content">
+							<table class="da-table">
+								<thead>
+									<tr>
+										<th style="text-align:center;"><b><span lang="es">Compañía de Seguros</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Imagen</span></b></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>';
+								  $num = $res->num_rows;
+								  if($num>0){
+										$c=1;
+										while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+											echo'<tr>
+													<td>'.$regi['compania'].'</td>
+													<td style="text-align:center;">';
+													   if($regi['logo']!=''){
+														   if(file_exists('../images/'.$regi['logo'])){  
+															   $imagen = getimagesize('../images/'.$regi['logo']); 
+															   $ancho = $imagen[0];   
+															   $alto = $imagen[1]; 
+															  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
+														   }else{
+															  echo'<span lang="es">no existe el archivo físico</span>';   
+														   }
+													   }else{
+														  echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
+													   }
+											   echo'</td>
+													<td class="da-icon-column">
+													   <ul class="action_user">';
+													   
+														   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
+														   echo'<li style="margin-right:5px;"><a href="?l=trem_tasas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'" class="add_mod da-tooltip-s" title="<span lang=\'es\'>Editar Tasas</span>"></a></li>';
+														   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
+													   
+																									 
+												  echo'</ul>	
+													</td>
+												</tr>';
+												$c++;
+										}
+										$res->free();			
+								  }else{
+									 echo'<tr><td colspan="7">
+											  <div class="da-message warning">
+												 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+												 <ul>
+													<li lang="es">La Compañía de Seguros no esta activada</li>
+													<li lang="es">La Compañía asignada a la Entidad Financiera no esta activada</li>
+													<li lang="es">El producto no existe en la Compañía asignada a la Entidad Financiera</li>
+												  </ul>
+											  </div>
+										  </td></tr>';
+								  }
+						   echo'</tbody>
+							</table>
+						</div>
+					</div>';
+			 }
+			 $resef->free();
+		 }else{
+			echo'<div class="da-message warning">
+					   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					   <ul>
+						  <li lang="es">La Entidad Financiera no tiene asignado el producto Todo Riesgo Equipo Movil</li>
+						  <li lang="es">La Entidad Financiera no esta activado</li>
+						  <li lang="es">La Entidad Financiera no esta creada</li>
+						</ul>
+				   </div>';  
+		 }
+  }else{
+	  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error."</div>";
+  }
 }
 
 
@@ -320,7 +329,7 @@ function listar_tasas_editar($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			    header('Location: index.php?l=trem_tasas&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
 			} else{
-			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
+			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": " .$conexion->error;
 			    header('Location: index.php?l=trem_tasas&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
 				exit;
 			} 
@@ -484,85 +493,88 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 					s_tasa_trm
 				where
 					id_ef_cia = '".$id_ef_cia."';";		  
-	$resu = $conexion->query($selectTs,MYSQLI_STORE_RESULT);			  		  
-echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-					 <a href="?l=trem_tasas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
-					 <img src="images/retornar.png" width="32" height="32"></a>
-				</li>
-				<li style="margin-right:6px;">
-				   <a href="?l=trem_tasas&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'" class="da-tooltip-s" title="Añadir nuevas tasas">
-				   <img src="images/add_new.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';
-echo'
-<div class="da-panel collapsible" style="width:700px;">
-	<div class="da-panel-header">
-		<span class="da-panel-title">
-			<img src="images/icons/black/16/list.png" alt="" />
-		    <b>'.$entidad.' - '.$compania.'</b> - Editar Tasas
-		</span>
-	</div>
-	<div class="da-panel-content">';
-	 $num = $resu->num_rows;
-	 if($num>0){
-	  echo'<form class="da-form" name="frmTasas" id="frmTasas" action="" method="post">
-	     		<div class="da-form-row" style="padding:0px;">
-				  <div class="da-form-item large" style="margin:0px;">
-					<table class="da-table">
-						<thead>
-							<tr>
-							  <th style="width:25px;"><b>N&deg;</b></th>
-							  <th><b>Tasa</b></th>
-							  <th style="text-align:center"><b>Año</b></th>
-							  <th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>';
-								$i=1;
-								while($regi = $resu->fetch_array(MYSQLI_ASSOC)){
-									if(isset($_POST["txtTasa".$i])) $txtTasa = $_POST["txtTasa".$i]; else $txtTasa = $regi['tasa'];																		
-									echo'<tr>
-											<td>'.$i.'</td>
-											<td><input type="text" name="txtTasa'.$i.'" id="'.$i.'txtTasa" value="'.$txtTasa.'" class="required" style="width:100px;"/><span class="errorMessage" id="errortasa'.$i.'"></span>
-											</td>
-																						
-											<td style="text-align:center">'.$regi['anio'].'
-											<input type="hidden" name="id_tasa'.$i.'" id="id_tasa'.$i.'" value="'.$regi['id_tasa'].'"/>
-											<input type="hidden" name="id_ef_cia'.$i.'" id="id_ef_cia'.$i.'" value="'.$regi['id_ef_cia'].'"/>
-											</td>
-											<td class="da-icon-column">
-											   <ul class="action_user">
-											     <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_ef_cia'].'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>
-											   </ul>
-											</td>
-										</tr>';
-										$i++;
-								}			
-						  
-						  
-				   echo'</tbody>
-					</table>
-				  </div>	
-		        </div>
-			    <div class="da-button-row">
-				   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta"/>
-				   <input type="hidden" name="accionGuardar" value="checkdatos"/>
-				   <input type="hidden" name="cant_tasas" value="'.$num.'" id="cant_tasas"/>
-				   <input type="hidden" id="var" value="'.$_GET['var'].'"/>
-			    </div>	
-	       </form>';
-     }else{
-		 echo'<div class="da-message info">
-				  No existe registros alguno, ingrese nuevos registros
-			  </div>';
-	 }		   	
-echo'</div>
-</div>';
+	if($resu = $conexion->query($selectTs,MYSQLI_STORE_RESULT)){			  		  
+			echo'<div class="da-panel collapsible">
+					<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+						<ul class="action_user">
+							<li style="margin-right:6px;">
+								 <a href="?l=trem_tasas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+								 <img src="images/retornar.png" width="32" height="32"></a>
+							</li>
+							<li style="margin-right:6px;">
+							   <a href="?l=trem_tasas&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Añadir nuevas tasas</span>">
+							   <img src="images/add_new.png" width="32" height="32"></a>
+							</li>
+						</ul>
+					</div>
+				 </div>';
+			echo'
+			<div class="da-panel collapsible" style="width:700px;">
+				<div class="da-panel-header">
+					<span class="da-panel-title">
+						<img src="images/icons/black/16/list.png" alt="" />
+						<b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Editar Tasas</span>
+					</span>
+				</div>
+				<div class="da-panel-content">';
+				 $num = $resu->num_rows;
+				 if($num>0){
+				  echo'<form class="da-form" name="frmTasas" id="frmTasas" action="" method="post">
+							<div class="da-form-row" style="padding:0px;">
+							  <div class="da-form-item large" style="margin:0px;">
+								<table class="da-table">
+									<thead>
+										<tr>
+										  <th style="width:25px;"><b>N&deg;</b></th>
+										  <th><b><span lang="es">Tasa</span></b></th>
+										  <th style="text-align:center"><b><span lang="es">Año</span ></b></th>
+										  <th>&nbsp;</th>
+										</tr>
+									</thead>
+									<tbody>';
+											$i=1;
+											while($regi = $resu->fetch_array(MYSQLI_ASSOC)){
+												if(isset($_POST["txtTasa".$i])) $txtTasa = $_POST["txtTasa".$i]; else $txtTasa = $regi['tasa'];																		
+												echo'<tr>
+														<td>'.$i.'</td>
+														<td><input type="text" name="txtTasa'.$i.'" id="'.$i.'txtTasa" value="'.$txtTasa.'" class="required" style="width:100px;"/><span class="errorMessage" id="errortasa'.$i.'"></span>
+														</td>
+																									
+														<td style="text-align:center">'.$regi['anio'].'
+														<input type="hidden" name="id_tasa'.$i.'" id="id_tasa'.$i.'" value="'.$regi['id_tasa'].'"/>
+														<input type="hidden" name="id_ef_cia'.$i.'" id="id_ef_cia'.$i.'" value="'.$regi['id_ef_cia'].'"/>
+														</td>
+														<td class="da-icon-column">
+														   <ul class="action_user">
+															 <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_ef_cia'].'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>
+														   </ul>
+														</td>
+													</tr>';
+													$i++;
+											}			
+									  
+									  
+							   echo'</tbody>
+								</table>
+							  </div>	
+							</div>
+							<div class="da-button-row">
+							   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta" lang="es"/>
+							   <input type="hidden" name="accionGuardar" value="checkdatos"/>
+							   <input type="hidden" name="cant_tasas" value="'.$num.'" id="cant_tasas"/>
+							   <input type="hidden" id="var" value="'.$_GET['var'].'"/>
+							</div>	
+					   </form>';
+				 }else{
+					 echo'<div class="da-message info" lang="es">
+							  No existe ningun dato, ingrese nuevos registros
+						  </div>';
+				 }		   	
+			echo'</div>
+			</div>';
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error."</div>";
+	}
 }
 
 //FUNCION QUE PERMITE VISUALIZAR EL FORMULARIO NUEVAS TASAS
@@ -596,7 +608,7 @@ function agregar_tasas_nuevas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 			    header('Location: index.php?l=trem_tasas&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
 			} else {
-				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
+				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": " .$conexion->error;
 			    header('Location: index.php?l=trem_tasas&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 				exit;
 			}	
@@ -630,7 +642,7 @@ $(document).ready(function() {
 			}else{
 			   sum++;
 			   $('#errortasa').show('slow');
-			   $('#errortasa').html('ingrese la tasa');  
+			   $('#errortasa').html('campo requerido');  
 			}
 			/*if(tasaincrac!=''){
 				if(tasaincrac.match(/^[0-9\.]+$/)){
@@ -685,7 +697,7 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=trem_tasas&var='.$_GET['var'].'&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="da-tooltip-s" title="Volver">
+					 <a href="?l=trem_tasas&var='.$_GET['var'].'&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -704,7 +716,7 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-		    <b>'.$entidad.' - '.$compania.'</b> - Agregar nueva tasa
+		    <b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Agregar nueva tasa</span>
 		</span>
 	</div>
 	<div class="da-panel-content">';
@@ -715,7 +727,7 @@ echo'
 					<table class="da-table">
 						<thead>
 							<tr>
-								<th><b>Tasa</b></th>
+								<th><b><span lang="es">Tasa</span></b></th>
 							</tr>
 						</thead>
 						<tbody>';
@@ -723,7 +735,7 @@ echo'
 						echo'<tr>
 								<td>
 								 <input type="text" name="txtTasa" id="txtTasa" value="" class="required" style="width:125px;"/>
-								 <span class="errorMessage" id="errortasa"></span>
+								 <span class="errorMessage" id="errortasa" lang="es"></span>
 								</td>
 								
 							 </tr>';
@@ -734,7 +746,7 @@ echo'
 		        </div>
 			    <div class="da-button-row">
 				   
-				   <input type="submit" value="Guardar" class="da-button green" name="btnSaveTasas" id="btnSaveTasas"/>
+				   <input type="submit" value="Guardar" class="da-button green" name="btnSaveTasas" id="btnSaveTasas" lang="es"/>
 				   <input type="hidden" name="accionGuardar" value="checkdatos"/>
 				   <input type="hidden" name="id_ef_cia" id="id_ef_cia" value="'.$id_ef_cia.'"/>
 				   <input type="hidden" name="num_regi" id="num_regi" value="'.$regi['num_regi'].'"/>

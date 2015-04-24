@@ -1,7 +1,7 @@
 <?php
-  include('config.class.php');
-  $base_datos = new DB_bisa();
-  $conexion = $base_datos->connectDB();
+  require_once('config.class.php');
+  $conexion = new SibasDB();
+  
   $select="select
 			  id_eu,
 			  usuario,
@@ -23,8 +23,8 @@
 			where
 				usuario = '".$_POST['usuario']."'
 					and id_ef = '".$_POST['id_ef']."');";*/		   
-  $rs=mysql_query($select,$conexion);
-  $num=mysql_num_rows($rs);
+  $rs = $conexion->query($select,MYSQLI_STORE_RESULT);
+  $num = $rs->num_rows;
   if($num>0){
      $valor=2;
 	 $return=$valor.'|'.$_POST['usuario'];

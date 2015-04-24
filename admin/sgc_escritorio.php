@@ -97,7 +97,7 @@ function mostrar_pagina_escritorio($id_usuario_sesion, $tipo_sesion, $usuario_se
                     
                     	<div class="grid_3">
                         	<div class="da-panel-widget">
-                                <h1>Bienvenido al Sistema de Gestion de Contenidos</h1>
+                                <h1 lang="es">Bienvenido al Sistema de Gestion de Contenidos</h1>
                                 <div id="da-ex-gchart-line" style="height:225px;"></div>
                             </div>
                         </div>

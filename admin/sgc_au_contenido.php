@@ -17,7 +17,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=au_contenido&var=au');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -266,87 +267,104 @@ function mostrar_lista_contenido_automotores($id_usuario_sesion, $tipo_sesion, $
 							  sh.id_ef = ef.id_ef and sh.producto='AU')
 							and ef.id_ef = '".$id_ef_sesion."';";
 	}
-	$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-	echo'<div class="da-panel collapsible">
-			  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-				  <ul class="action_user">
-					  <li style="margin-right:6px;">
-						 <a href="?l=au_contenido&crear_contenido=v&var='.$_GET['var'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir nuevo registro">
-						 <img src="images/add_new.png" width="32" height="32"></a>
-					  </li>
-				  </ul>
-			  </div>
-		   </div>';		  
-	while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
-		$selectCont="select
-					  id_home,
-					  producto,
-					  producto_nombre,
-					  html,
-					  imagen,
-					  id_ef
-					from
-					  s_sgc_home
-					where
-					  id_ef='".$regief['id_ef']."' and producto='AU';";
-		$res = $conexion->query($selectCont,MYSQLI_STORE_RESULT);			   
-		echo'
-		<div class="da-panel collapsible">
-			<div class="da-panel-header">
-				<span class="da-panel-title">
-					<img src="images/icons/black/16/list.png" alt="" />
-					<b>Entidad Financiera: '.$regief['nombre'].'</b> - Contenido Automotores
-				</span>
-			</div>
-			<div class="da-panel-content">
-				<table class="da-table">
-					<thead>
-						<tr>
-						   <th><b>Contenido</b></th>
-						   <th style="width:200px; text-align:center"><b>Imagen</b></th>
-						   <th style="width:100px;"><b>Producto</b></th>
-						   <th></th>
-						</tr>
-					</thead>
-					<tbody>';
-					  $num = $res->num_rows;
-					  if($num>0){
-							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-								echo'<tr>
-										<td>'.substr_replace($regi['html'], '...',600).'</td>
-										<td style="text-align:center;">';
-										  if($regi['imagen']!=''){
-											   if(file_exists('../images/'.$regi['imagen'])){  
-												  echo'<img src="../images/'.$regi['imagen'].'"/>';
-											   }else{
-												  echo'no existe el archivo fisico';   
-											   }
-										   }else{
-											  echo'no existe el nombre del archivo en la base de datos';   
-										   }
-								   echo'</td>
-										<td>'.$regi['producto_nombre'].'</td>
-										<td class="da-icon-column">
-										   <ul class="action_user">
-											  <li style="margin-right:5px;"><a href="?l=au_contenido&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="Editar"></a></li>';
-									  echo'</ul>	
-										</td>
-									</tr>';
-							}
-							$res->free();			
-					  }else{
-						 echo'<tr><td colspan="4">
-								  <div class="da-message info">
-									   No existe registros alguno, ingrese nuevos registros
-								  </div>
-							  </td></tr>';
-					  }
-			   echo'</tbody>
-				</table>
-			</div>
-		</div>';
+	if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		 if($resef->num_rows>0){
+			  /*echo'<div class="da-panel collapsible">
+						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+							<ul class="action_user">
+								<li style="margin-right:6px;">
+								   <a href="?l=au_contenido&crear_contenido=v&var='.$_GET['var'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir nuevo registro">
+								   <img src="images/add_new.png" width="32" height="32"></a>
+								</li>
+							</ul>
+						</div>
+					 </div>';*/		  
+			  while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
+				  $selectCont="select
+								id_home,
+								producto,
+								producto_nombre,
+								html,
+								imagen,
+								id_ef
+							  from
+								s_sgc_home
+							  where
+								id_ef='".$regief['id_ef']."' and producto='AU';";
+				  if($res = $conexion->query($selectCont,MYSQLI_STORE_RESULT)){			   
+						  echo'
+						  <div class="da-panel collapsible">
+							  <div class="da-panel-header">
+								  <span class="da-panel-title">
+									  <img src="images/icons/black/16/list.png" alt="" />
+									  <b>'.$regief['nombre'].'</b> - <span lang="es">Contenido Automotores</span>
+								  </span>
+							  </div>
+							  <div class="da-panel-content">
+								  <table class="da-table">
+									  <thead>
+										  <tr>
+											 <th><b><span lang="es">Contenido</span></b></th>
+											 <th style="width:200px; text-align:center"><b><span lang="es">Imagen</span></b></th>
+											 <th style="width:100px;"><b><span lang="es">Producto</span></b></th>
+											 <th></th>
+										  </tr>
+									  </thead>
+									  <tbody>';
+										$num = $res->num_rows;
+										if($num>0){
+											  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+												  echo'<tr>
+														  <td>'.substr_replace($regi['html'], '...',600).'</td>
+														  <td style="text-align:center;">';
+															if($regi['imagen']!=''){
+																 if(file_exists('../images/'.$regi['imagen'])){  
+																	echo'<img src="../images/'.$regi['imagen'].'"/>';
+																 }else{
+																	echo'<span lang="es">no existe el archivo físico</span>';   
+																 }
+															 }else{
+																echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
+															 }
+													 echo'</td>
+														  <td>'.$regi['producto_nombre'].'</td>
+														  <td class="da-icon-column">
+															 <ul class="action_user">
+																<li style="margin-right:5px;"><a href="?l=au_contenido&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+														echo'</ul>	
+														  </td>
+													  </tr>';
+											  }
+											  $res->free();			
+										}else{
+										   echo'<tr><td colspan="4">
+													<div class="da-message info">
+														 No existe registros alguno, ingrese nuevos registros
+													</div>
+												</td></tr>';
+										}
+								 echo'</tbody>
+								  </table>
+							  </div>
+						  </div>';
+				  }else{
+					  echo'<div class="da-message error">error en la consulta'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>'; 
+				  }
+			  }
+			  $resef->free();
+		 }else{
+			 echo'<div class="da-message warning">
+					   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					   <ul>
+						  <li lang="es">La Entidad Financiera no tiene asignado el producto Automotores</li>
+						  <li lang="es">La Entidad Financiera no esta activado</li>
+						  <li lang="es">La Entidad Financiera no esta creada</li>
+						</ul>
+				   </div>'; 
+		 }
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: ".$conexion->errno.": ".$conexion->error."</div>";
 	}
-	$resef->free();
 }
 
 //FUNCION QUE NOS PERMITE ACTUALIZAQR UNA IMAGEN
@@ -386,11 +404,22 @@ function editar_contenido_automotores($id_usuario_sesion, $tipo_sesion, $usuario
 			mostrar_editar_contenido_automotores($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $id_ef_sesion, $conexion, $errArr);
 		} else {
 			   //SEGURIDAD
-			   $especiales = array("\r\n", "\n", "\r", "\t");
-			   $reemplazos = array("", "", "", "");
-			   $tituloIni = str_replace($especiales, $reemplazos, $_POST['contenido']);
-			   $contenido = $conexion->real_escape_string(stripslashes($tituloIni));
-			  			  
+			   $contenido = $conexion->real_escape_string($_POST['contenido']);
+			   $patrones = array('@<script[^>]*?>.*?</script>@si',  	// Strip out javascript
+						'@<colgroup[^>]*?>.*?</colgroup>@si',			// Strip out HTML tags
+						'@<style[^>]*?>.*?</style>@siU',				// Strip style tags properly
+						'@<style[^>]*>.*</style>@siU',					// Strip style
+						'@<![\s\S]*?--[ \t\n\r]*>@siU',					// Strip multi-line comments including CDATA,
+						'@width:[^>].*;@siU',							// Strip width
+						'@width="[^>].*"@siU',							// Strip width style
+						'@height="[^>].*"@siU',							// Strip height
+						'@class="[^>].*"@siU',							// Strip class
+						'@border="[^>].*"@siU',							// Strip border
+						'@font-family:[^>].*;@siU'						// Strip fonts
+				);
+				
+				$sus = array('','','','','','width: 500px;','width="500"','','','','font-family: Helvetica, sans-serif, Arial;');
+				$content_txt = preg_replace($patrones,$sus,$contenido);			  
 			   $update = "UPDATE s_sgc_home SET"; 
 			   if($imagenServidor!=''){
 			      if(file_exists('../images/'.$_POST['auximage']))
@@ -400,7 +429,7 @@ function editar_contenido_automotores($id_usuario_sesion, $tipo_sesion, $usuario
 			   }else{
 			      $update.=" imagen='".$_POST['auximage']."', ";
 			   }
-			   $update.="html='".$contenido."' WHERE id_home = '".$idhome."' and id_ef ='".$id_ef."' LIMIT 1;";
+			   $update.="html='".$content_txt."' WHERE id_home = '".$idhome."' and id_ef ='".$id_ef."' LIMIT 1;";
 	          
 			
 
@@ -422,7 +451,7 @@ function editar_contenido_automotores($id_usuario_sesion, $tipo_sesion, $usuario
 			   header('Location: index.php?l=au_contenido&var='.$_GET['var'].'&op=1&msg='.$mensaje);
 			   exit;
 			} else{
-			   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
+			   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ". $conexion->error;
 			   header('Location: index.php?l=au_contenido&var='.$_GET['var'].'&op=2&msg='.$mensaje);
 			   exit;
 			}  
@@ -496,7 +525,7 @@ tinymce.init({
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-				   <a href="?l=au_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+				   <a href="?l=au_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 				   <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -507,14 +536,14 @@ tinymce.init({
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt=""/>
-					  Actualizar Contenido Desgravamen
+					  <span lang="es">Actualizar Contenido Automotores</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 					  					  
 					  <div class="da-form-row">
-							 <label style="text-align:right;"><b>Entidad Financiera</b></label>
+							 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 							 <div class="da-form-item small">
 								 '.$regImg['nombre'].'
 							 </div>	 
@@ -524,17 +553,17 @@ tinymce.init({
 							  if(file_exists('../images/'.$regImg['imagen'])){
 								  echo'<img src="../images/'.$regImg['imagen'].'"/>';
 							  }else{
-								  echo'No existe el archivo fisico';  
+								  echo'<span lang="es">No existe el archivo físico</span>';  
 							  }
 						  }else{
-							 echo'No existe el nombre en la DB'; 
+							 echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>'; 
 						  }
 				 echo'</div>
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Archivo</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 						  
 						  <div class="da-form-item large">
-							  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 100px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+							  <span lang="es">El tamaño máximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 100px., el formato del archivo a subir debe ser [jpg]</span>. 
 							  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 							  <span class="errorMessage">'.$errArr['imagen'].'</span>
 							  <span><b>Archivo actual:</b> '.$regImg['imagen'].'</span>
@@ -543,15 +572,15 @@ tinymce.init({
 					  </div>
 					
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Texto</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Texto</span></b></label>
 						  <div class="da-form-item large">
 							<textarea name="contenido" id="descripcion">'.$contenido.'</textarea>
-							<span class="errorMessage">'.$errArr['errorcontenido'].'</span>
+							<span class="errorMessage" lang="es">'.$errArr['errorcontenido'].'</span>
 						  </div>
 					  </div>
 					  
 					  <div class="da-button-row">  
-						  <input type="submit" value="Guardar" class="da-button green"/>
+						  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 						  <input type="hidden" name="accionGuardar" value="ok"/> 
 					  </div>
 				  </form>
@@ -720,7 +749,7 @@ tinymce.init({
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-				   <a href="?l=au_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+				   <a href="?l=au_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 				   <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 			</ul>

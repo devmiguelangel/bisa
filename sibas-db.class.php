@@ -19,10 +19,11 @@ class SibasDB extends MySQLi
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),
 		$status = array(
-					0 => 'SOL|Soltero(a)', 
-					1 => 'CAS|Casado(a)', 
-					2 => 'VIU|Viudo(a)',
-					3 => 'DIV|Divorciado(a)'), 
+					0 => 'SO|Soltero(a)', 
+					1 => 'CA|Casado(a)', 
+					2 => 'VI|Viudo(a)',
+					3 => 'DI|Divorciado(a)',
+					4 => 'UL|Union Libre'), 
 		$typeDoc = array(
 					0 => 'CI|Carnet de Identidad', 
 					1 => 'RUN|RUN', 
@@ -41,12 +42,14 @@ class SibasDB extends MySQLi
 					0 => 'PU|Primera/Única', 
 					1 => 'AD|Adicional', 
 					2 => 'LC|Línea de Crédito'),
-		$category = array(
-					0 => 'OTH|Otros', 
-					1 => 'RAC|Rent a Car'),
 		$use = array(
-					0 => 'PB|Público', 
-					1 => 'PR|Particular'),
+					0 => 'PR|Particular'),
+		$plaza = array(
+			'LP' => 'La Paz',
+			'SC' => 'Santa Cruz',
+			'CB' => 'Cochabamba',
+			'RP' => 'Resto del País'
+		),
 		$traction = array(
 					0 => '4X2|4x2', 
 					1 => '4X4|4x4', 
@@ -1293,19 +1296,19 @@ class SibasDB extends MySQLi
 	public function get_max_amount_optional($idef, $product = 'AU')
 	{
 		$this->sql = 'select 
-				sh.max_detalle as max_item,
-				sh.monto_facultativo as max_monto,
-				sh.anio as max_anio
-			from
-				s_sgc_home as sh
-					inner join
-				s_entidad_financiera as sef ON (sef.id_ef = sh.id_ef)
-			where
-				sh.producto = "'.$product.'"
-					and sef.id_ef = "'.base64_decode($idef).'"
-					and sef.activado = true
-			;';
-		//echo $this->sql;
+			sh.max_detalle as max_item,
+			sh.monto_facultativo as max_monto,
+			sh.anio as max_anio
+		from
+			s_sgc_home as sh
+				inner join
+			s_entidad_financiera as sef ON (sef.id_ef = sh.id_ef)
+		where
+			sh.producto = "'.$product.'"
+				and sef.id_ef = "'.base64_decode($idef).'"
+				and sef.activado = true
+		;';
+		
 		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))) {
 			if($this->rs->num_rows === 1) {
 				return $this->rs->fetch_array(MYSQLI_ASSOC);

@@ -16,7 +16,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=archivos&var=f');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -238,81 +239,91 @@ if($tipo_sesion=='ROOT'){
 						  sh.id_ef = ef.id_ef)
 						and ef.id_ef = '".$id_ef_sesion."';";
 }
- $resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-	  
-  while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
-	$selectFor="select
-				  sf.id_formulario,
-				  sf.id_home,
-				  sf.archivo,
-				  sf.titulo,
-				  sh.producto,
-				  sh.producto_nombre
-				from
-				  s_sgc_formulario as sf
-				  inner join s_sgc_home as sh on (sh.id_home=sf.id_home)
-				where
-				  id_ef='".$regief['id_ef']."' and producto !='H'; ";
-	//echo $selectFor; 			
-	$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);			
-	echo'
-	<div class="da-panel collapsible">
-		<div class="da-panel-header">
-			<span class="da-panel-title">
-				<img src="images/icons/black/16/list.png" alt="" />
-				<b>'.$regief['nombre'].'</b> - Listado Formularios
-			</span>
-		</div>
-		<div class="da-panel-content">
-			<table class="da-table">
-				<thead>
-					<tr>
-						<th>Titulo</th>
-						<th style="width:200px;">Producto</th>
-						<th style="width:100px; text-align:center">Archivo</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>';
-				  $num = $res->num_rows;
-				  if($num>0){
-						while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-							echo'<tr>
-									<td>'.$regi['titulo'].'</td>
-									<td>'.$regi['producto_nombre'].'</td>
-									<td style="text-align:center;">';
-									   if($regi['archivo']!=''){
-										   if(file_exists('../file_form/'.$regi['archivo'])){  
-											  echo'<img src="images/pdf.jpg" width="25" height="32"/>';
+  $resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
+  if($resef->num_rows>0){	  
+	  while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
+		$selectFor="select
+					  sf.id_formulario,
+					  sf.id_home,
+					  sf.archivo,
+					  sf.titulo,
+					  sh.producto,
+					  sh.producto_nombre
+					from
+					  s_sgc_formulario as sf
+					  inner join s_sgc_home as sh on (sh.id_home=sf.id_home)
+					where
+					  id_ef='".$regief['id_ef']."' and producto !='H'; ";
+		//echo $selectFor; 			
+		$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);			
+		echo'
+		<div class="da-panel collapsible">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/list.png" alt="" />
+					<b>'.$regief['nombre'].'</b> - <span lang="es">Listado Formularios</span>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<table class="da-table">
+					<thead>
+						<tr>
+							<th><span lang="es">Titulo</span></th>
+							<th style="width:200px;"><span lang="es">Producto</span></th>
+							<th style="width:100px; text-align:center"><span lang="es">Archivo</span></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>';
+					  $num = $res->num_rows;
+					  if($num>0){
+							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+								echo'<tr>
+										<td>'.$regi['titulo'].'</td>
+										<td>'.$regi['producto_nombre'].'</td>
+										<td style="text-align:center;">';
+										   if($regi['archivo']!=''){
+											   if(file_exists('../file_form/'.$regi['archivo'])){  
+												  echo'<img src="images/pdf.jpg" width="25" height="32"/>';
+											   }else{
+												  echo'<span lang="es">no existe el archivo físico</span>';   
+											   }
 										   }else{
-											  echo'no existe el archivo fisico';   
+											  echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
 										   }
-									   }else{
-										  echo'no existe el nombre del archivo en la base de datos';   
-									   }
-							   echo'</td>
-									<td class="da-icon-column">
-									   <ul class="action_user">
-										  <li><a href="?l=archivos&idformulario='.base64_encode($regi['id_formulario']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>
-										  <li><a href="#" id="'.$regi['id_formulario'].'|'.$regi['id_home'].'|'.$regi['archivo'].'|'.$regief['id_ef'].'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>
-									   </ul>	
-									</td>
-								</tr>';
-						}
-						$res->free();			
-				  }else{
-					 echo'<tr><td colspan="7">
-							  <div class="da-message info">
-								   No existe registros alguno, ingrese nuevos registros
-							  </div>
-						  </td></tr>';
-				  }
-		   echo'</tbody>
-			</table>
-		</div>
-	</div>';
+								   echo'</td>
+										<td class="da-icon-column">
+										   <ul class="action_user">
+											  <li><a href="?l=archivos&idformulario='.base64_encode($regi['id_formulario']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>
+											  <li><a href="#" id="'.$regi['id_formulario'].'|'.$regi['id_home'].'|'.$regi['archivo'].'|'.$regief['id_ef'].'" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>"></a></li>
+										   </ul>	
+										</td>
+									</tr>';
+							}
+							$res->free();			
+					  }else{
+						 echo'<tr><td colspan="7">
+								  <div class="da-message info" lang="es">
+									   No existe ningun dato, ingrese nuevos registros
+								  </div>
+							  </td></tr>';
+					  }
+			   echo'</tbody>
+				</table>
+			</div>
+		</div>';
+	  }
+	  $resef->free();
+  }else{
+	  echo'<div class="da-message warning">
+			   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+			   <ul>
+				  <li lang="es">La Entidad Financiera no tiene asignado un producto</li>
+				  <li lang="es">La Entidad Financiera no esta activado</li>
+				  <li lang="es">La Entidad Financiera no esta creada</li>
+				</ul>
+		   </div>';
   }
-  $resef->free();
 }
 
 //FUNCION QUE PERMITE VISUALIZAR EL FORMULARIO NUEVO USUARIO
@@ -510,73 +521,84 @@ function mostrar_crear_formulario($id_usuario_sesion, $tipo_sesion, $usuario_ses
 						  and ef.id_ef='".$id_ef_sesion."';";		
     }
 	$res1 = $conexion->query($select1,MYSQLI_STORE_RESULT);	
-  echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-			  <li style="margin-right:6px;">
-				 <a href="?l=archivos&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
-				 <img src="images/retornar.png" width="32" height="32"></a>
-			  </li>
-			</ul>
-		  </div>
-	  </div>';
-  echo'<div class="da-panel" style="width:650px;">
-		<div class="da-panel-header">
-			<span class="da-panel-title">
-				<img src="images/icons/black/16/pencil.png" alt="" />
-				Nuevo Archivo
-			</span>
-		</div>
-		<div class="da-panel-content">
-			<form class="da-form" name="frmArchivo" id="frmArchivo" action="" method="post" enctype="multipart/form-data">
-				<div class="da-form-row">
-					 <label style="text-align:right;"><b>Entidad Financiera</b></label>
-					 <div class="da-form-item small">
-						 <select id="idefin" name="idefin" class="required">';
-							echo'<option value="">seleccione...</option>';
-							while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
-								if($idefin==$regi1['id_ef']){ 
-								 echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
-								}else{
-									echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
-								}
-							}
-							$res1->free();
-					echo'</select>
-						 <span class="errorMessage" id="errorentidad"></span>
-				     </div>	 
+	if($res1->num_rows>0){
+		  echo'<div class="da-panel collapsible">
+				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+					  <li style="margin-right:6px;">
+						 <a href="?l=archivos&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+						 <img src="images/retornar.png" width="32" height="32"></a>
+					  </li>
+					</ul>
+				  </div>
+			  </div>';
+		  echo'<div class="da-panel" style="width:650px;">
+				<div class="da-panel-header">
+					<span class="da-panel-title">
+						<img src="images/icons/black/16/pencil.png" alt="" />
+						<span lang="es">Nuevo Archivo</span>
+					</span>
 				</div>
-				<div class="da-form-row" style="display: none;" id="content-entidadf">
-					<label style="text-align:right;"><b>Producto</b></label>
-					<div class="da-form-item small">
-					  <span id="entidad-loading" class="loading-entf"></span>
-					</div>
+				<div class="da-panel-content">
+					<form class="da-form" name="frmArchivo" id="frmArchivo" action="" method="post" enctype="multipart/form-data">
+						<div class="da-form-row">
+							 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+							 <div class="da-form-item small">
+								 <select id="idefin" name="idefin" class="required">';
+									echo'<option value="" lang="es">seleccione...</option>';
+									while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
+										if($idefin==$regi1['id_ef']){ 
+										 echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
+										}else{
+											echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
+										}
+									}
+									$res1->free();
+							echo'</select>
+								 <span class="errorMessage" id="errorentidad" lang="es"></span>
+							 </div>	 
+						</div>
+						<div class="da-form-row" style="display: none;" id="content-entidadf">
+							<label style="text-align:right;"><b><span lang="es">Producto</span></b></label>
+							<div class="da-form-item small">
+							  <span id="entidad-loading" class="loading-entf"></span>
+							</div>
+						</div>
+						<div class="da-form-row">
+							<label style="text-align:right;"><b><span lang="es">Titulo</span></b></label>
+							<div class="da-form-item large">
+								<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomoplete="off"/>
+								<span class="errorMessage" id="errortitulo" lang="es"></span>
+							</div>
+						</div>
+						<div class="da-form-row">
+							<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
+							<div class="da-form-item large">
+								<span lang="es">El tamaño máximo del archivo es de 2Mb, el formato del archivo a subir debe ser [PDF]</span> .
+								<input type="file" id="txtArchivo" name="txtArchivo"/>
+								<span class="errorMessage" lang="es">'.$errArr['errorarchivo'].'</span>
+							</div>
+						</div>
+																		
+						<div class="da-button-row">
+							
+							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
+							<input type="hidden" name="accionGuardar" value="checkdatos"/>
+							<input type="hidden" id="var" value="'.$_GET['var'].'"/>
+						</div>
+					</form>
 				</div>
-				<div class="da-form-row">
-					<label style="text-align:right;"><b>Titulo</b></label>
-					<div class="da-form-item large">
-						<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomoplete="off"/>
-						<span class="errorMessage" id="errortitulo"></span>
-					</div>
-				</div>
-				<div class="da-form-row">
-					<label style="text-align:right;"><b>Archivo</b></label>
-					<div class="da-form-item large">
-					    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb, el formato del archivo a subir debe ser [PDF].</span> 
-						<input type="file" id="txtArchivo" name="txtArchivo"/>
-						<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
-					</div>
-				</div>
-																
-				<div class="da-button-row">
-					
-					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
-					<input type="hidden" name="accionGuardar" value="checkdatos"/>
-					<input type="hidden" id="var" value="'.$_GET['var'].'"/>
-				</div>
-			</form>
-		</div>
-	</div>';
+			</div>';
+	}else{
+		echo'<div class="da-message info">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado un producto</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				 </div>';
+    }
 }
 
 //FUNCION PARA EDITAR UN USUARIO
@@ -786,7 +808,7 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 					<ul class="action_user">
 					  <li style="margin-right:6px;">
-						 <a href="?l=archivos&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+						 <a href="?l=archivos&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 						 <img src="images/retornar.png" width="32" height="32"></a>
 					  </li>
 					</ul>
@@ -796,16 +818,16 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				<div class="da-panel-header">
 					<span class="da-panel-title">
 						<img src="images/icons/black/16/pencil.png" alt="" />
-						Nuevo Archivo
+						<span lang="es">Editar Archivo</span>
 					</span>
 				</div>
 				<div class="da-panel-content">
 					<form class="da-form" name="frmArchivoEditar" id="frmArchivoEditar" action="" method="post" enctype="multipart/form-data">
 						<div class="da-form-row">
-							 <label style="text-align:right;"><b>Entidad Financiera</b></label>
+							 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 							 <div class="da-form-item small">
 								 <select id="idefin" name="idefin" class="required">';
-									echo'<option value="">seleccione...</option>';
+									echo'<option value="" lang="es">seleccione...</option>';
 									while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
 										if($id_ef==$regi1['id_ef']){ 
 										 echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
@@ -815,11 +837,11 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 									}
 									$res1->free();
 							echo'</select>
-								 <span class="errorMessage" id="errorentidad"></span>
+								 <span class="errorMessage" id="errorentidad" lang="es"></span>
 							 </div>	 
 						</div>
 						<div class="da-form-row" id="content-entidadf">
-							<label style="text-align:right;"><b>Producto</b></label>
+							<label style="text-align:right;"><b><span lang="es">Producto</span></b></label>
 							<div class="da-form-item small">
 							  <span id="entidad-loading" class="loading-entf">';
 							       $select="select
@@ -833,7 +855,7 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 											  id_ef='".$id_ef."' and producto!='H';";
 									$sql = $conexion->query($select,MYSQLI_STORE_RESULT);
 									echo'<select name="idhome" id="idhome" class="required" style="width:170px;">';
-												echo'<option value="">Seleccionar...</option>';
+												echo'<option value="" lang="es">seleccione...</option>';
 												while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
 													if($fila['id_home']==$regief['id_home']){  
 													  echo'<option value="'.$regief['id_home'].'" selected>'.$regief['producto_nombre'].'</option>';  
@@ -843,30 +865,30 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 												}
 												$sql->free();
 									echo'</select>
-										 <span class="errorMessage" id="errorproducto"></span>';
+										 <span class="errorMessage" id="errorproducto" lang="es"></span>';
 						 echo'</span>
 							</div>
 						</div>
 						<div class="da-form-row">
-							<label style="text-align:right;"><b>Titulo</b></label>
+							<label style="text-align:right;"><b><span lang="es">Titulo</span></b></label>
 							<div class="da-form-item large">
 								<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomoplete="off"/>
-								<span class="errorMessage" id="errortitulo"></span>
+								<span class="errorMessage" id="errortitulo" lang="es"></span>
 							</div>
 						</div>
 						<div class="da-form-row">
-							<label style="text-align:right;"><b>Archivo</b></label>
+							<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 							<div class="da-form-item large">
-							    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb, el formato del archivo a subir debe ser [PDF].</span> 
+							    <span lang="es">El tamaño máximo del archivo es de 2Mb, el formato del archivo a subir debe ser [PDF].</span> 
 								<input type="file" id="txtArchivo" name="txtArchivo"/>
 								<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
-								<span>Archivo actual: '.$archivo.'</span>
+								<span><span lang="es">Archivo actual:</span> '.$archivo.'</span>
 							</div>
 						</div>
 																		
 						<div class="da-button-row">
-							<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
+							<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar" lang="es"/>
+							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
 							<input type="hidden" name="accionGuardar" value="checkdatos"/>
 							<input type="hidden" name="archivoAux" value="'.$archivo.'"/>
 							<input type="hidden" id="var" value="'.$_GET['var'].'"/>

@@ -80,9 +80,18 @@
 		 echo 2;
 	  }	
   }elseif($_POST['opcion']=='adicionacuest'){
+	  $select="select
+				  count(id_cm) as num_reg
+				from
+				  s_cm_cert_cues
+				where
+				  id_cm=".$_POST['idcm'].";";
+	  $sql = $conexion->query($select, MYSQLI_STORE_RESULT);
+	  $reg = $sql->fetch_array(MYSQLI_ASSOC);			  
+	  $order = $reg['num_reg']+1;
 	  //METEMOS LOS DATOS A LA BASE DE DATOS
-	  $insert = "insert into s_cm_cert_cues(id_cc, id_cm, id_cuestionario) "
-	            ."values(NULL, ".$_POST['idcm'].", ".$_POST['idcuestionario'].")";
+	  $insert = "insert into s_cm_cert_cues(id_cc, id_cm, id_cuestionario, orden) "
+	            ."values(NULL, ".$_POST['idcm'].", ".$_POST['idcuestionario'].", ".$order.")";
 	  
 	  
 	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
@@ -92,11 +101,19 @@
 		 echo 2;
 	  }		
   }elseif($_POST['opcion']=='adicionapregcuest'){
+	  //VERIFICAMOS CANTIDAD DE REGISTROS
+	  $select="select
+				  count(id_cc) as num_reg
+				from
+				  s_cm_grupo
+				where
+				  id_cc=".$_POST['idcc'].";";
+	  $sql = $conexion->query($select, MYSQLI_STORE_RESULT);
+	  $reg = $sql->fetch_array(MYSQLI_ASSOC);
+	  $order = $reg['num_reg']+1;			  
 	  //METEMOS LOS DATOS A LA BASE DE DATOS
-	  $insert = "insert into s_cm_grupo(id_grupo, id_cc, id_pregunta) "
-	            ."values(NULL, ".$_POST['idcc'].", ".$_POST['idpregunta'].")";
-	  
-	  
+	  $insert = "insert into s_cm_grupo(id_grupo, id_cc, id_pregunta, orden) "
+	            ."values(NULL, ".$_POST['idcc'].", ".$_POST['idpregunta'].", ".$order.")";
 	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
 	  if($conexion->query($insert)===TRUE){				
 		 echo 1;
@@ -608,7 +625,7 @@
 				 FROM
 					s_pregunta
 				 WHERE
-					id_ef_cia='".$_POST['id_ef_cia']."' and producto='DE'	   
+					id_ef_cia='".$_POST['id_ef_cia']."' and producto='".base64_decode($_POST['producto'])."'	   
 				 ORDER BY
 					orden ASC";
 	  $resOrden = $conexion->query($sql_orden,MYSQLI_STORE_RESULT);
@@ -618,7 +635,7 @@
 						  
 	  //METEMOS LOS DATOS A LA BASE DE DATOS
 	  $insert ="INSERT INTO s_pregunta(id_pregunta, pregunta, orden, respuesta, producto, id_ef_cia) "
-			  ."VALUES(NULL, '".$txtpregunta."', ".$orden.", ".$_POST['respuesta'].", 'DE', '".$_POST['id_ef_cia']."')";
+			  ."VALUES(NULL, '".$txtpregunta."', ".$orden.", ".$_POST['respuesta'].", '".base64_decode($_POST['producto'])."', '".$_POST['id_ef_cia']."')";
 	  
 	  
 	  //VERIFICAMOS SI HUBO ERROR EN EL INGRESO DEL REGISTRO
@@ -628,7 +645,7 @@
 		  echo 2;
 	  }
   }elseif($_POST['opcion']=='edita_pregunta'){
-	  $update = "update s_pregunta set pregunta='".$_POST['pregunta']."', respuesta=".$_POST['respuesta']." where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."' and producto='DE';"; 
+	  $update = "update s_pregunta set pregunta='".$_POST['pregunta']."', respuesta=".$_POST['respuesta']." where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."' and producto='".base64_decode($_POST['producto'])."';"; 
 	  
 	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
 	  if($conexion->query($update)===TRUE){				
@@ -638,11 +655,11 @@
 	  }
   }elseif($_POST['opcion']=='active_pregunta'){
 	  if($_POST['text']=='activar'){
-		  $update = "update s_pregunta set activado=1 where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."' and producto='DE';"; 
+		  $update = "update s_pregunta set activado=1 where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."'"; 
 		  
 		   
 	  }elseif($_POST['text']=='desactivar'){
-		  $update = "update s_pregunta set activado=0 where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."' and producto='DE';"; 
+		  $update = "update s_pregunta set activado=0 where id_pregunta=".$_POST['id_pregunta']." and id_ef_cia='".$_POST['id_ef_cia']."'"; 
 		  
 	  }	
 	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
@@ -683,7 +700,7 @@
 		   echo 2;
 		}
   }elseif($_POST['opcion']=='crea_prodextra'){
-	  $select="select
+	  /*$select="select
 				  sdpe.rango
 				from
 				 s_de_producto_extra as sdpe
@@ -693,10 +710,10 @@
 				order by sdpe.id_pr_extra desc
                 limit 1;";
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
-	  /*
-	  if($res->num_rows>0){
-		  $regi = $res->fetch_array(MYSQLI_ASSOC);			  
-		  $jsonData = $regi['rango'];
+	  $row_cnt = $res->num_rows;
+	  if($row_cnt>0){
+		  $regi=$res->fetch_array(MYSQLI_ASSOC);			  
+		  $jsonData=$regi['rango'];
 		  $phpArray = json_decode($jsonData, true);
 		  if($_POST['rango_min_bs']>$phpArray[1] && $phpArray[1]<$_POST['rango_max_bs']){  
 			//GUARDAMOS LOS RANGOS
@@ -732,10 +749,8 @@
 	  //}
 	  
   }elseif($_POST['opcion']=='edita_prodextra'){
-	   
-	  //GUARDAMOS LOS RANGOS
-	  //CREAMOS UN VECTOR PARA GUARDAR LOS RANGOS
-	  $myarray = array(1 => $_POST['rango_min_bs'], 2 => $_POST['rango_max_bs'], 3 => $_POST['rango_min_usd'], 4 => $_POST['rango_max_usd']);
+	  
+	   $myarray = array(1 => $_POST['rango_min_bs'], 2 => $_POST['rango_max_bs'], 3 => $_POST['rango_min_usd'], 4 => $_POST['rango_max_usd']);
 	  $myJson = $conexion->real_escape_string(json_encode($myarray));
 	  $update = "update s_de_producto_extra set rango='".$myJson."', pr_hospitalario=".$_POST['hospitalario'].", pr_vida=".$_POST['vida'].", pr_cesante=".$_POST['cesantia'].", pr_prima=".$_POST['prima']." where id_pr_extra='".$_POST['id_pr_extra']."' and id_ef_cia='".$_POST['id_ef_cia']."';";
 	   if($conexion->query($update)===TRUE){
@@ -743,7 +758,7 @@
 	   }else{
 		  echo 2; 
 	   }
-		    
+	   
   }elseif($_POST['opcion']=='elimina_prodextra'){
 	   $delete = "delete from s_de_producto_extra where id_pr_extra='".$_POST['id_pr_extra']."' and id_ef_cia='".$_POST['id_ef_cia']."' limit 1;";
 	   if($conexion->query($delete)===TRUE){
@@ -851,6 +866,115 @@
 	  } else {
 		 echo 2;
 	  }	 
+  }elseif($_POST['opcion']=='enabled_disabled_cia'){
+	  if($_POST['text']=='activar'){
+		  $update = "update s_compania set activado=1 where id_compania='".base64_decode($_POST['id_compania'])."';"; 
+		  
+		   
+	  }elseif($_POST['text']=='desactivar'){
+		  $update = "update s_compania set activado=0 where id_compania='".base64_decode($_POST['id_compania'])."';"; 
+		 
+	  }	
+	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
+	  if($conexion->query($update) === TRUE){				
+		 echo 1;
+	  } else {
+		 echo 2;
+	  }	  
+  }elseif($_POST['opcion'] == 'enabled_disabled_cm'){
+	  if($_POST['text']=='activar'){
+		  $update="update s_cm_cert_cues set activado=1 where id_cc=".base64_decode($_POST['id_cc'])." and id_cm=".base64_decode($_POST['id_cm'])." and id_cuestionario=".base64_decode($_POST['id_cuestionario']).";";
+	  }elseif($_POST['text'] == 'desactivar'){
+		  $update="update s_cm_cert_cues set activado=0 where id_cc=".base64_decode($_POST['id_cc'])." and id_cm=".base64_decode($_POST['id_cm'])." and id_cuestionario=".base64_decode($_POST['id_cuestionario']).";";
+	  }
+	  //VERIFICAMOS SI HUBO ERROR EN LA ACTUALIZACION
+	  if($conexion->query($update) === TRUE){
+		  echo 1;
+	  }else{
+		  echo 2;
+	  }
+  }elseif($_POST['opcion']=='ordenar_filas_cm') {
+	 $orders = explode('&', $_POST['orders']);
+	 $array = array();
+	 $flag = FALSE;
+	
+	 foreach($orders as $item) {
+		$item = explode('=', $item);
+		$array[] = $item[1];
+	 }
+	 
+	 foreach($array as $key => $value) {
+		 $key = $key + 1;
+		 $vecarr = explode('|',$value);
+		 $update = "UPDATE s_cm_cert_cues SET orden = ".$key." WHERE id_cc = ".$vecarr[0]." and id_cm = ".$vecarr[1]." and id_cuestionario = ".$vecarr[2].";";
+		 if($conexion->query($update) === TRUE){
+			$flag = TRUE; 
+		 }else{
+		    $flag = FALSE;	 
+		 }
+		 //echo "Clave: $key; Valor: $value\n"; 
+	 }
+	 if($flag === TRUE){
+		 echo 1;
+	 }else{
+		 echo 2;
+	 }
+  }elseif($_POST['opcion'] == 'enabled_disabled_ap'){
+	  if($_POST['text'] == 'activar'){
+		  $update="update s_cm_grupo set activado=1 where id_grupo=".base64_decode($_POST['id_grupo'])." and id_cc=".base64_decode($_POST['id_cc'])." and id_pregunta=".base64_decode($_POST['id_pregunta']).";";
+	  }elseif($_POST['text'] == 'desactivar'){
+		  $update="update s_cm_grupo set activado=0 where id_grupo=".base64_decode($_POST['id_grupo'])." and id_cc=".base64_decode($_POST['id_cc'])." and id_pregunta=".base64_decode($_POST['id_pregunta']).";";
+	  }
+	  //VERIFICAMOS SI HUBO ERROR EN LA ACTUALIZACION
+	  if($conexion->query($update) === TRUE){
+		  echo 1;
+	  }else{
+		  echo 2;
+	  }
+  }elseif($_POST['opcion']=='ordenar_filas_ap') {
+	 $orders = explode('&', $_POST['orders']);
+	 $array = array();
+	 $flag = FALSE;
+	
+	 foreach($orders as $item) {
+		$item = explode('=', $item);
+		$array[] = $item[1];
+	 }
+	 
+	 foreach($array as $key => $value) {
+		 $key = $key + 1;
+		 $vecarr = explode('|',$value);
+		 $update = "UPDATE s_cm_grupo SET orden = ".$key." WHERE id_grupo = ".$vecarr[0]." and id_cc = ".$vecarr[1]." and id_pregunta = ".$vecarr[2].";";
+		 if($conexion->query($update) === TRUE){
+			$flag = TRUE; 
+		 }else{
+		    $flag = FALSE;	 
+		 }
+		 //echo "Clave: $key; Valor: $value\n"; 
+	 }
+	 if($flag === TRUE){
+		 echo 1;
+	 }else{
+		 echo 2;
+	 }
+  }elseif($_POST['opcion']=='quest_amount'){
+	  $query = "select
+	         data
+			from
+			  s_sgc_home
+			where
+			 id_ef='".$_POST['id_ef']."' and producto='".base64_decode($_POST['producto'])."';";	 
+		//echo $query;
+		$result = $conexion->query($query,MYSQLI_STORE_RESULT);
+		$row = $result->fetch_array(MYSQLI_ASSOC);
+		$jsondata = $row['data'];
+		$datavg = json_decode($jsondata, true);
+		if($_POST['opmod']==1){
+			$data_amount = $datavg['modality'][$_POST['opmod']]['amount'].'|'.$datavg['modality'][2]['amount'];
+		}elseif($_POST['opmod']==2){
+			$data_amount = $datavg['modality'][$_POST['opmod']]['amount'].'|'.$datavg['modality'][1]['amount'];
+		}
+		echo $data_amount; 
   }
   
   

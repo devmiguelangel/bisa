@@ -40,7 +40,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=th_marcatarjeta&var=th&list_compania=v');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -217,15 +218,15 @@ if($num_regi_ef>0){
 				<div class="da-panel-header">
 					<span class="da-panel-title">
 						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Administrar marca tarjeta 
+						<b>'.$regief['nombre'].'</b> - <span lang="es">Administrar marca tarjeta</span> 
 					</span>
 				</div>
 				<div class="da-panel-content">
 					<table class="da-table">
 						<thead>
 							<tr>
-							  <th style="text-align:center;"><b>Compañia de Seguro</b></th>
-							  <th style="text-align:center;"><b>Logo</b></th>
+							  <th style="text-align:center;"><b><span lang="es">Compañía de Seguros</span></b></th>
+							  <th style="text-align:center;"><b><span lang="es">Imagen</span></b></th>
 							  <th></th>
 							</tr>
 						</thead>
@@ -254,7 +255,7 @@ if($num_regi_ef>0){
 											   <ul class="action_user">';
 											   
 												   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
-												   echo'<li style="margin-right:5px;"><a href="?l=th_marcatarjeta&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarmarcatarjeta=v&var='.$_GET['var'].'" class="admi-prodextra da-tooltip-s" title="Administrar marca tarjeta"></a></li>';
+												   echo'<li style="margin-right:5px;"><a href="?l=th_marcatarjeta&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarmarcatarjeta=v&var='.$_GET['var'].'" class="admi-prodextra da-tooltip-s" title="<span lang=\'es\'>Administrar marca tarjeta</span>"></a></li>';
 												   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
 											   
 											 												 
@@ -267,11 +268,11 @@ if($num_regi_ef>0){
 						  }else{
 							 echo'<tr><td colspan="7">
 									  <div class="da-message warning">
-										 No existe registros alguno, razones alguna:
+										 <span lang="es">No existe registros alguno, razones alguna</span>:
 										 <ul>
-											<li>Verifique que la Compañia de Seguros este activada</li>
-											<li>Verifique que la Compañia asignada a la Entidad Financiera este activada</li>
-											<li>Verifique que el producto exista en la Compañia asignada a la Entidad Financiera</li>
+											<li lang="es">Verifique que la Compañía de Seguros este activada</li>
+											<li lang="es">Verifique que la Compañía asignada a la Entidad Financiera este activada</li>
+											<li lang="es">Verifique que el producto exista en la Compañía asignada a la Entidad Financiera</li>
 										  </ul>
 									  </div>
 								  </td></tr>';
@@ -283,9 +284,14 @@ if($num_regi_ef>0){
 	 }
 	 $resef->free();
  }else{
-	echo'<div class="da-message info">
-			 No existe registros alguno o la entidad Financiera no esta activada
-		</div>'; 
+	echo'<div class="da-message warning">
+			   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+			   <ul>
+				  <li lang="es">La Entidad Financiera no tiene asignado el producto Tarjetahabiente</li>
+				  <li lang="es">La Entidad Financiera no esta activado</li>
+				  <li lang="es">La Entidad Financiera no esta creada</li>
+				</ul>
+		   </div>'; 
  }
 }
 
@@ -412,11 +418,11 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=th_marcatarjeta&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
+					 <a href="?l=th_marcatarjeta&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_marcatarjeta&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s marcatarjeta fancybox.ajax" title="Añadir marca tarjeta">
+				   <a href="adicionar_registro.php?opcion=crear_marcatarjeta&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s marcatarjeta fancybox.ajax" title="<span lang=\'es\'>Añadir marca tarjeta</span>">
 				   <img src="images/add_new.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -427,15 +433,15 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-			<b>'.$entidad.'</b><div style="margin-left:25px;"><b>'.$compania.'</b> - Listado Marca de Tarjetas</div>
+			<b>'.$entidad.'</b><div style="margin-left:25px;"><b>'.$compania.'</b> - <span lang="es">Listado Marca de Tarjetas</span></div>
 		</span>
 	</div>
 	<div class="da-panel-content">
 		<table class="da-table">
 			<thead>
 				<tr>
-					<th style="text-align:center;"><b>Marca de la Tarjeta</b></th>
-					<th style="text-align:center;"><b>Estado</b></th>
+					<th style="text-align:center;"><b><span lang="es">Marca de la Tarjeta</span></b></th>
+					<th style="text-align:center;"><b><span lang="es">Estado</span></b></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -453,7 +459,7 @@ echo'
 							     }
 						echo' id="delete-'.$c.'">
 						       	<td style="text-align:center;">'.$regi['marca'].'</td>
-								<td style="text-align:center;">'.$regi['activado_text'].'</td>
+								<td style="text-align:center;" lang="es">'.$regi['activado_text'].'</td>
 								<td class="da-icon-column">
 								  <ul class="action_user">';
 									  if((boolean)$regi['activado']===false){
@@ -480,8 +486,8 @@ echo'
 					$res->free();			
 			  }else{
 			     echo'<tr><td colspan="7">
-				          <div class="da-message info">
-                               No existe registros alguno, ingrese nuevos registros
+				          <div class="da-message info" lang="es">
+                               No existe ningun dato, ingrese nuevos registros
                           </div>
 				      </td></tr>';
 			  }

@@ -303,7 +303,7 @@ function mostrar_lista_imagenes($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 									<div class="da-panel-header">
 										<span class="da-panel-title">
 											<img src="images/icons/color/layout.png" alt="" />
-											<b>'.$regief['nombre'].'</b> - Listado de Imagenes
+											<b>'.$regief['nombre'].'</b> - <span lang="es">Listado de Imagenes</span>
 										</span>
 									</div>
 									<div class="da-panel-content with-padding">';
@@ -330,29 +330,30 @@ function mostrar_lista_imagenes($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 											</div>';
 									}else{
 									  echo'<div class="da-message info">
-											   No existe registros alguno, ingrese nuevos registros
+											   <span lang="es">No existe registros alguno, ingrese nuevos registros</span>
 										   </div>';
 									}
 							   echo'</div>
 								 </div>';
 					}else{
 						echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-							  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+							  <span lang='es'>Error en la consulta: ".$conexion->errno .": ".$conexion->error
 							."</div>";
 					}
 				}
 				$resef->free();
 			}else{
 				echo'<div class="da-message warning">
+						<span lang="es">No existe ningun registro, probablemente se debe a</span>:
 						<ul>
-						  <li>No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
-						  <li>Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
+						  <li lang="es">No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
+						  <li lang="es">Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
 						</ul>
 					 </div>';
 			}
 	}else{
 		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-	      Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+	      <span lang='es'><span lang='es'>Error en la consulta</span>: ".$conexion->errno." : ".$conexion->error
 		."</div>";
 	}
 }
@@ -494,14 +495,14 @@ tinymce.init({
 					  <div class="da-panel-header">
 						  <span class="da-panel-title">
 							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Actualizar imagen
+							  <span lang="es">Actualizar imagen</span>
 						  </span>
 					  </div>
 					  <div class="da-panel-content">
 						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 							  
 							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+								   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 								   <div class="da-form-item small">
 									   '.$regImg['nombre'].'
 								   </div>	 
@@ -510,23 +511,23 @@ tinymce.init({
 								  if(file_exists('../images/'.$regImg['imagen'])){
 									   echo'<img src="../images/'.$regImg['imagen'].'" width="375" height="150"/>';
 								  }else{
-									  echo'El archivo fisico no existe';
+									   echo'El archivo fisico no existe';
 								  }
 						 echo'</div>
 							  <div class="da-form-row">
-								  <label  style="text-align:right;"><b>Archivo</b></label>
+								  <label  style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 								  
 								  <div class="da-form-item large">
-									  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 5Mb. Se recomienda que la imagen tenga un ancho de 1000px por un alto de 400px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+									  <span lang="es">El tama&ntilde;o máximo del archivo es de 5Mb. Se recomienda que la imagen tenga un ancho de 1000px por un alto de 400px., el formato del archivo a subir debe ser [jpg].</span> 
 									  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 									  <span class="errorMessage">'.$errArr['imagen'].'</span>
-									  <span><b>Archivo actual:</b> '.$regImg['imagen'].'</span>
+									  <span><b><span lang="es">Archivo actual:</span></b> '.$regImg['imagen'].'</span>
 									   <input type="hidden" name="auximage" value="'.$regImg['imagen'].'"/>
 								  </div>
 							  </div>
 							
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Texto</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Texto</span></b></label>
 								  <div class="da-form-item large">
 									<textarea name="descripcion" id="descripcion">'.$regImg['descripcion'].'</textarea>
 								  </div>
@@ -534,7 +535,7 @@ tinymce.init({
 							  
 							  <div class="da-button-row">
 								  <input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar"/>  
-								  <input type="submit" value="Guardar" class="da-button green"/>
+								  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 								  <input type="hidden" name="accionGuardar" value="ok"/> 
 							  </div>
 						  </form>
@@ -543,7 +544,7 @@ tinymce.init({
 			  </div>';
   }else{
 	  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		  <span lang='es'>Error en la consulta:</span> ".$conexion->errno.": ".$conexion->error
 		."</div>";
   }
 }
@@ -700,64 +701,69 @@ tinymce.init({
 						and ef.id_ef = '".$id_ef_sesion."';";	 						
   }
   if($res1 = $conexion->query($select1,MYSQLI_STORE_RESULT)){
-		 $num = $res1->num_rows;		   			   			  
-		  echo'<div class="grid_5">
-				  <div class="da-panel">
-					  <div class="da-panel-header">
-						  <span class="da-panel-title">
-							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Agregar imagen
-						  </span>
-					  </div>
-					  <div class="da-panel-content">
-						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
-							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Entidad Financiera</b></label>
-								   <div class="da-form-item small">';
-								   if($num>0){
-									  echo'<select id="idefin" name="idefin" style="width:200px;">';
-											  echo'<option value="">seleccione...</option>';
-											  while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
-												  if($idefin==$regi1['id_ef']){ 
-													  echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
-												  }else{
-													  echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
+		 if($res1->num_rows>0){		   			   			  
+			  echo'<div class="grid_5">
+					  <div class="da-panel">
+						  <div class="da-panel-header">
+							  <span class="da-panel-title">
+								  <img src="images/icons/black/16/pencil.png" alt=""/>
+								  <span lang="es">Agregar imagen</span>
+							  </span>
+						  </div>
+						  <div class="da-panel-content">
+							  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
+								  <div class="da-form-row">
+									   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+									   <div class="da-form-item small">';
+									   
+										  echo'<select id="idefin" name="idefin" style="width:200px;">';
+												  echo'<option value="" lang="es">seleccione...</option>';
+												  while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
+													  if($idefin==$regi1['id_ef']){ 
+														  echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
+													  }else{
+														  echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
+													  }
 												  }
-											  }
-											  $res1->free();
-									  echo'</select>
-										   <span class="errorMessage" id="errorentidad">'.$errArr['errorentidad'].'</span>';
-								   }else{
-									  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-											 No se encontro datos, porfavor verifique si hay registros 
-										   </div>"; 
-								   }
-							  echo'</div>	 
-							  </div>	
-							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Archivo</b></label>
-								  <div class="da-form-item large">
-									  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 5Mb. Se recomienda que la imagen tenga un ancho de 1000px por un alto de 400px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
-									  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
-									  <span class="errorMessage">'.$errArr['imagen'].'</span>
+												  $res1->free();
+										  echo'</select>
+											   <span class="errorMessage" id="errorentidad" lang="es">'.$errArr['errorentidad'].'</span>';
+									   
+								  echo'</div>	 
+								  </div>	
+								  <div class="da-form-row">
+									  <label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
+									  <div class="da-form-item large">
+										  <span lang="es">El tamaño máximo del archivo es de 5Mb. Se recomienda que la imagen tenga un ancho de 1000px por un alto de 400px., el formato del archivo a subir debe ser [jpg].</span> 
+										  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
+										  <span class="errorMessage" lang="es">'.$errArr['imagen'].'</span>
+									  </div>
 								  </div>
-							  </div>
-							
-							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Texto</b></label>
-								  <div class="da-form-item large">
-									<textarea name="descripcion" id="descripcion">'.$descripcion.'</textarea>
+								
+								  <div class="da-form-row">
+									  <label style="text-align:right;"><b><span lang="es">Texto</span></b></label>
+									  <div class="da-form-item large">
+										<textarea name="descripcion" id="descripcion">'.$descripcion.'</textarea>
+									  </div>
 								  </div>
-							  </div>
-							  
-							  <div class="da-button-row">  
-								  <input type="submit" value="Guardar" class="da-button green"/>
-								  <input type="hidden" name="accionGuardar" value="ok"/> 
-							  </div>
-						  </form>
+								  
+								  <div class="da-button-row">  
+									  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
+									  <input type="hidden" name="accionGuardar" value="ok"/> 
+								  </div>
+							  </form>
+						  </div>
 					  </div>
-				  </div>
-			  </div>';
+				  </div>';
+		 }else{
+			echo'<div class="da-message warning">
+					<span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					<ul>
+					  <li lang="es">No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
+					  <li lang="es">Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
+					</ul>
+				 </div>'; 
+		 }		  
   }else{
 	 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
 		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error

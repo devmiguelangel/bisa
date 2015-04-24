@@ -1,7 +1,7 @@
 <?php
   require_once('config.class.php');
   $conexion = new SibasDB();
-  
+
   if($_POST['opcion']=='buscar_agencia'){
 	  $select="select
 				id_agencia,
@@ -11,24 +11,28 @@
 				s_agencia
 			  where
 				id_depto=".$_POST['id_departamento']." and id_ef='".$_POST['identidadf']."'
-			  order by 
+			  order by
 				id_agencia asc;";
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
 	  $num_regi = $res->num_rows;
 	  if($_POST['required']=='f'){
-		  if($num_regi>0){$var='';}else{$var='<option value="">Ninguno</option>';}
+		  if($_POST['tipousuario']!='REP'){
+				if($num_regi>0){$var='<option value="" lang="es">Ninguno</option>';}else{$var='<option value="" lang="es">Ninguno</option>';}
+		  }else{
+			    if($num_regi>0){$var='<option value="" lang="es">Todos</option>';}else{$var='<option value="" lang="es">Todos</option>';}
+		  }
 		  echo'<select name="id_agencia" id="id_agencia" style="width:200px; font-size:12px;">';
 				  echo $var;
 				  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
 					 echo'<option value="'.$regi['id_agencia'].'">'.$regi['agencia'].'</option>';
 				  }
-		  echo'</select>';  	  
+		  echo'</select>';
 	  }elseif($_POST['required']=='v'){
-		  if($num_regi>0){  
+		  if($num_regi>0){
 			  ?>
 			  <script type="text/javascript">
 				 $(document).ready(function(){
-					$("#btnUsuario").removeAttr("disabled");						
+					$("#btnUsuario").removeAttr("disabled");
 				 });
 			  </script>
 			 <?php
@@ -37,16 +41,16 @@
 					  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
 						 echo'<option value="'.$regi['id_agencia'].'">'.$regi['agencia'].'</option>';
 					  }
-			  echo'</select>'; 
+			  echo'</select>';
 		  }else{
 			   ?>
                  <script type="text/javascript">
 				   $(document).ready(function(){
-					  $("#btnUsuario").attr("disabled", true);						
+					  $("#btnUsuario").attr("disabled", true);
 				   });
 				</script>
                <?php
-			   if($_POST['tipo_sesion']=='ROOT'){ 
+			   if($_POST['tipo_sesion']=='ROOT'){
 			  echo'<span style="color:#d64d24;">Se evidencio que existe un implante para esta Entidad Financiera, el departamento elegido no tiene agencias por favor ingrese nuevas agencias</span><br/>
 			  <a href="?l=agencia&var=age">Agregar agencias</a>';
 			   }else{
@@ -65,7 +69,7 @@
 			  <a href="?l=agencia&var=age">Agregar agencias</a>';
 					}else{
 						echo'<span style="color:#d64d24;">Se evidencio que existe uno o mas implantes para esta Entidad Financiera, el departamento elegido no tiene agencias.</span> <br/><b>Nota:</b> Consulte con su administrador';
-					}			   
+					}
 			   }
 		  }
 	  }
@@ -78,7 +82,7 @@
 				s_agencia
 			  where
 				id_depto=".$_POST['id_departamento']." and id_ef='".$_POST['identidadf']."'
-			  order by 
+			  order by
 				id_agencia asc;";
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
 	  $numreg = $res->num_rows;
@@ -86,7 +90,7 @@
 	 		 ?>
 			 <script type="text/javascript">
 				 $(document).ready(function(){
-					$("#btnUsuario").removeAttr("disabled");						
+					$("#btnUsuario").removeAttr("disabled");
 				 });
 			  </script>
 			 <?php
@@ -101,7 +105,7 @@
 		?>
           <script type="text/javascript">
              $(document).ready(function(){
-				$("#btnUsuario").attr("disabled", true);						
+				$("#btnUsuario").attr("disabled", true);
 			 });
           </script>
         <?php
@@ -109,6 +113,10 @@
   }elseif($_POST['opcion']=='buscar_entidad'){
   ?>
     <script type="text/javascript">
+		var lang = new Lang("es");
+		lang.dynamic("en", "js/langpack/en.json");
+	</script>
+	<script type="text/javascript">
        $(document).ready(function() {
            $('#idmultiple').change(function(){
 			  var id_entidad=$(this).prop('value');
@@ -143,12 +151,12 @@
 									$("#btnUsuario").attr("disabled", true);
 									//e.stopPropagation();
 								}
-							   
+
 						 }
 					});
 			  }
 		   });
-		   
+
 		   //VERIFICAMOS SELECT IDENTIDAD
 		   $('#identidadf').change(function(){
 			   var id_ef=$(this).prop('value');
@@ -167,7 +175,7 @@
 					  $("#regional").removeAttr("disabled");
 					  var identidadf=$('#identidadf option:selected').prop('value');
 					  $('#content-regional').fadeIn('slow');
-					  visualizar_regional(identidadf); 	
+					  visualizar_regional(identidadf);
 					}
 					if(usuario!=''){
 						 var dataString = 'usuario='+ usuario +'&id_ef='+ id_ef +'&tipousuario='+ tipousuario;
@@ -194,7 +202,7 @@
 										  $("#btnUsuario").attr("disabled", true);
 										  //e.stopPropagation();
 									  }
-									 
+
 							   }
 						  });
 				    }else{
@@ -219,13 +227,13 @@
 											 }else if(value=='AU'){
 												$('#AUT').fadeIn('slow');
 											 }else if(value=='TRD'){
-												$('#TRD').fadeIn('slow'); 
+												$('#TRD').fadeIn('slow');
 											 }else if(value=='TRM'){
-												$('#TREM').fadeIn('slow');  
+												$('#TREM').fadeIn('slow');
 											 }else if(value=='TH'){
-												$('#TH').fadeIn('slow'); 
+												$('#TH').fadeIn('slow');
 											 }
-										});    
+										});
 								   }
 							 });
 						}
@@ -233,15 +241,15 @@
 			   }else{
 				    $("#txtIdusuario").attr("disabled", true);
 					$('#content-agency').fadeOut('slow');
-					$('#departamento option[value=""]').prop('selected',true); 
+					$('#departamento option[value=""]').prop('selected',true);
 					if(tipousuario!='IMP'){
-					    $("#departamento").attr("disabled", true); 
+					    $("#departamento").attr("disabled", true);
 					}else{
 						$("#regional").attr("disabled", true);
 				    }
-			   }   
+			   }
 		   });
-		   
+
 		   //VISUALIZAR REGIONAL
 		   function visualizar_regional(identidadf){
 			   var dataString = 'identidadf='+identidadf+'&opcion=buscar_regional';
@@ -255,15 +263,15 @@
 					 success: function(datareturn) {
 						  //alert(datareturn);
 						  $('#response-regional').html(datareturn);
-							
+
 					 }
-			   });   
+			   });
 		   }
-		   
+
        });
     </script>
-  <?php		  
-		  
+  <?php
+
 		  $selectEF="select
 						id_ef,
 						nombre,
@@ -276,40 +284,59 @@
 		  $resef = $conexion->query($selectEF,MYSQLI_STORE_RESULT);
 		  if($_POST['tipousuario']!='FAC'){
 			  echo'<select name="identidadf" id="identidadf" class="requerid" style="width:200px;">';
-					echo'<option value="">Seleccionar...</option>';
+					echo'<option value="" lang="es">seleccione...</option>';
 					while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['id_ef'].'">'.$regief['nombre'].'</option>';  
+						  echo'<option value="'.$regief['id_ef'].'">'.$regief['nombre'].'</option>';
 					}
 			  echo'</select>';
 		  }else{
 			  echo'<select name="idmultiple[]" id="idmultiple" class="requerid" style="width:200px;" size="5" multiple="multiple">';
 					while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['id_ef'].'">'.$regief['nombre'].'</option>';  
+						  echo'<option value="'.$regief['id_ef'].'">'.$regief['nombre'].'</option>';
 					}
 			  echo'</select>';
 		  }
-		  echo'<span class="errorMessage" id="erroref"></span>';
-		  
+		  echo'<span class="errorMessage" id="erroref" lang="es"></span>';
+
   }elseif($_POST['opcion']=='buscar_producto'){
 	    $select="select
 				  id_home,
 				  id_ef,
 				  producto,
-				  producto_nombre	
+				  producto_nombre
 				from
 				  s_sgc_home
 				where
 				  id_ef='".$_POST['idefin']."' and producto!='H';";
 		$sql = $conexion->query($select,MYSQLI_STORE_RESULT);
 		echo'<select name="idhome" id="idhome" class="required" style="width:170px;">';
-					echo'<option value="">Seleccionar...</option>';
+					echo'<option value="" lang="es">seleccione...</option>';
 					while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['id_home'].'">'.$regief['producto_nombre'].'</option>';  
+						  echo'<option value="'.$regief['id_home'].'">'.$regief['producto_nombre'].'</option>';
 					}
 		echo'</select>
-		     <span class="errorMessage" id="errorproducto"></span>';
-				  
+		     <div class="errorMessage" id="errorproducto" lang="es" style="text-align:left;"></div>';
+
   }elseif($_POST['opcion']=='buscar_producto_ocupacion'){
+	  ?>
+        <script type="text/javascript">
+          $(document).ready(function() {
+			    var produce = $('#produce').prop('value');
+				if(produce!=''){
+					$('#producto option').not(':selected').attr('disabled', false);
+					$("#producto option").each(function(index) {
+						//alert(this.text + ' ' + this.value);
+						var option = $(this).prop('value');
+						if(option===produce){
+						   //alert(option);
+						   $(this).prop('selected',true);
+						}
+					});
+					$('#producto option').not(':selected').attr('disabled', true);
+				}
+          });
+        </script>
+      <?php
 	    $select="select
 				  id_home,
 				  id_ef,
@@ -323,32 +350,40 @@
 		echo'<select name="producto" id="producto" class="required requerid" style="width:170px;">';
 					echo'<option value="">Seleccionar...</option>';
 					while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';  
+						  echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
 					}
 		echo'</select>
-		     <span class="errorMessage" id="errorproducto"></span>';
-	  
+		     <span class="errorMessage" id="errorproducto" lang="es"></span>
+			 <input type="hidden" id="produce" value="'.$_POST['producto'].'"/>';
+
   }elseif($_POST['opcion']=='buscar_producto_correo'){
-	    $select="select
+  ?>
+      <script type="text/javascript">
+		var lang = new Lang("es");
+		lang.dynamic("en", "js/langpack/en.json");
+	  </script>
+  <?php
+		$select="select
 				  id_home,
 				  id_ef,
 				  producto,
-				  producto_nombre	
+				  producto_nombre
 				from
 				  s_sgc_home
 				where
 				  id_ef='".$_POST['idefin']."' and producto!='H';";
 		$sql = $conexion->query($select, MYSQLI_STORE_RESULT);
 		echo'<select name="producto" id="producto" class="required" style="width:230px;">';
-					echo'<option value="">Seleccionar...</option>';
+					echo'<option value="" lang="es">seleccione...</option>';
 					while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>'; 
-						  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';  
+						  echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
+						  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
 					}
 					echo'<option value="CO">Contactos</option>';
+					echo'<option value="RC">Siniestro</option>';
 		echo'</select>
-		     <span class="errorMessage" id="errorproducto"></span>';
-	  
+		     <span class="errorMessage" id="errorproducto" lang="es" style="display:none;">seleccione producto</span>';
+
   }elseif($_POST['opcion']=='buscar_regional'){
   ?>
     <script type="text/javascript">
@@ -371,17 +406,17 @@
 						 success: function(datareturn) {
 							  //alert(datareturn);
 							 $('#content-agency').fadeIn('slow');
-							 $('#response-loading').html(datareturn);			
+							 $('#response-loading').html(datareturn);
 						 }
-				    });   
+				    });
 			   });
        });
-	</script>    
-  <?php	  
+	</script>
+  <?php
 	      /*$selectReg="select
 					   id_depto,
 					   departamento,
-					   codigo 
+					   codigo
 					from
 					  s_departamento
 					where
@@ -390,13 +425,13 @@
 		  echo'<select name="regional" id="regional" class="requerid" style="width:200px;">';
 				echo'<option value="">Seleccionar...</option>';
 				while($filareg=mysql_fetch_array($rsreg)){
-				   echo'<option value="'.$filareg['id_depto'].'">'.$filareg['departamento'].'</option>';    
+				   echo'<option value="'.$filareg['id_depto'].'">'.$filareg['departamento'].'</option>';
 				}
 		  echo'</select>';*/
 	 $selectReg="select
 				   id_depto,
 				   departamento,
-				   codigo 
+				   codigo
 				from
 				  s_departamento
 				where
@@ -405,9 +440,9 @@
 	  echo'<select name="regional" id="regional" class="requerid" style="width:200px;">';
 			echo'<option value="">Seleccionar...</option>';
 			while($filareg = $rsreg->fetch_array(MYSQLI_ASSOC)){
-			   echo'<option value="'.$filareg['id_depto'].'|'.$_POST['identidadf'].'">'.$filareg['departamento'].'</option>';    
+			   echo'<option value="'.$filareg['id_depto'].'|'.$_POST['identidadf'].'">'.$filareg['departamento'].'</option>';
 			}
-	  echo'</select>';  
+	  echo'</select>';
 	   echo'<span class="errorMessage" id="errorregional"></span>';
   }elseif($_POST['opcion']=='buscar_ef_home'){
 	  $busca="select
@@ -416,13 +451,13 @@
 				  s_sgc_home
 				where
 				  id_ef='".$_POST['id_ef']."' and implante=1;";
-	  $res = $conexion->query($busca,MYSQLI_STORE_RESULT);			  
+	  $res = $conexion->query($busca,MYSQLI_STORE_RESULT);
 	  $regi = $res->fetch_array(MYSQLI_ASSOC);
 	  if($regi['num']>0){
 		  echo 1;
 	  }else{
 		  echo 0;
-	  }			  
+	  }
   }elseif($_POST['opcion']=='busca_implante'){
 	  $select="select
 				 id_home,
@@ -434,7 +469,7 @@
 				id_ef='".$_POST['id_ef']."' and implante=1;";
 	  $res = $conexion->query($select, MYSQLI_STORE_RESULT);
 	  $regi = $res->fetch_array(MYSQLI_ASSOC);
-	  echo $regi['num_implante'];			
+	  echo $regi['num_implante'];
   }elseif($_POST['opcion']=='busca_producto_entidad'){
 	  $i=0; $vec=array();
 	  $select="select
@@ -450,15 +485,15 @@
 		  $vec[$i]=$regi['producto'];
 		  $i++;
 	  }
-	  echo json_encode($vec);			  
+	  echo json_encode($vec);
   }elseif($_POST['opcion']=='busca_formapago'){
 	  $select="select
 				  count(id_forma_pago) as num_reg
 				from
 				  s_forma_pago
 				where
-				  codigo='".$_POST['forma_pago_code']."' 
-				      and id_ef='".$_POST['id_ef']."' 
+				  codigo='".$_POST['forma_pago_code']."'
+				      and id_ef='".$_POST['id_ef']."'
 					  and producto='".$_POST['producto']."';";
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
 	  $regi = $res->fetch_array(MYSQLI_ASSOC);
@@ -466,7 +501,7 @@
 		  echo 1;
 	  }else{
 		  echo 0;
-	  }				  
+	  }
   }elseif($_POST['opcion']=='buscar_asigancion'){
 	  $select="  select
 		  count(id_ef_cia) as num
@@ -475,17 +510,17 @@
 		where
 		  id_ef='".$_POST['idefin']."' and producto='DE' and activado=1;";
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
-	  $reg = $res->fetch_array(MYSQLI_ASSOC);	  
+	  $reg = $res->fetch_array(MYSQLI_ASSOC);
 	  if($reg['num']>0){
-		 echo 1;  
+		 echo 1;
 	  }else{
-		 echo 0; 
-	  }	  
+		 echo 0;
+	  }
   }elseif($_POST['opcion']=='busca_productos_mod'){
   ?>
     <script type="text/javascript">
        $(document).ready(function() {
-          //VERIFICAMOS SI EXISTE ALGUNA MODALIDAD ACTIVADA 
+          //VERIFICAMOS SI EXISTE ALGUNA MODALIDAD ACTIVADA
 		  //EN ALGUN PRODUCTO DE LA ENTIDAD FINANCIERA
 		  $('#productoMod').change(function(){
 			  var data = $(this).prop('value');
@@ -499,17 +534,17 @@
 					 //alert(data);
 					 if(data==2){
 					    $('#errorproductomod').html('El producto de la Entidad Financiera no tiene activado la modalidad, porfavor active la modalidad para reaizar un nuevo registro');
-					    $("#frmAdiModalidad :submit").attr("disabled", true); 
+					    $("#frmAdiModalidad :submit").attr("disabled", true);
 					 }else if(data==1){
 						$('#errorproductomod').hide('slow');
-						$("#frmAdiModalidad :submit").removeAttr("disabled"); 
+						$("#frmAdiModalidad :submit").removeAttr("disabled");
 					 }
 				  }
-			  );				  
+			  );
 		  });
        });
     </script>
-  <?php	    
+  <?php
 		$select="select
 				  id_home,
 				  id_ef,
@@ -523,11 +558,11 @@
 		echo'<select name="productoMod" id="productoMod" class="required requerid" style="width:170px;">';
 					echo'<option value="">Seleccionar...</option>';
 					while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
-						  echo'<option value="'.$regief['producto'].'|'.base64_encode($regief['id_ef']).'">'.$regief['producto_nombre'].'</option>';  
+						  echo'<option value="'.$regief['producto'].'|'.base64_encode($regief['id_ef']).'">'.$regief['producto_nombre'].'</option>';
 					}
 		echo'</select>
 		     <span class="errorMessage" id="errorproductomod"></span>';
-	  
+
   }elseif($_POST['opcion']=='busca_mod_active'){
 	  $select = "select
 				  count(id_home) as num_regi
@@ -541,8 +576,7 @@
 		  echo 1;
 	  }else{
 		  echo 2;
-	  }			  
+	  }
   }
-  
 
 ?>

@@ -200,108 +200,118 @@ if($tipo_sesion=='ROOT'){
 							sh.id_ef = ef.id_ef and sh.producto='DE')
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
-$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-$num_regi_ef = $resef->num_rows;
-if($num_regi_ef>0){
-/*echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir registro">
-				   <img src="images/add_new.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';*/
-	 
-	 while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		 
-		$select="select
-				   sef.id_ef_cia,
-				   sef.id_ef,
-				   sef.id_compania,
-				   sc.nombre as compania,
-				   sc.logo
-				from
-				  s_ef_compania sef
-				  inner join s_compania as sc on (sc.id_compania=sef.id_compania)
-				where
-				  sef.id_ef='".$regief['id_ef']."' and sef.activado=1 and sc.activado=1 and sef.producto='DE';";
-		$res = $conexion->query($select,MYSQLI_STORE_RESULT);		  
-		echo'
-			<div class="da-panel collapsible" style="width:700px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Administrar producto extra 
-					</span>
+   if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		$num_regi_ef = $resef->num_rows;
+		if($num_regi_ef>0){
+		/*echo'<div class="da-panel collapsible">
+				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+						<li style="margin-right:6px;">
+						   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir registro">
+						   <img src="images/add_new.png" width="32" height="32"></a>
+						</li>
+					</ul>
 				</div>
-				<div class="da-panel-content">
-					<table class="da-table">
-						<thead>
-							<tr>
-							  <th style="text-align:center;"><b>Compañia de Seguro</b></th>
-							  <th style="text-align:center;"><b>Logo</b></th>
-							  <th></th>
-							</tr>
-						</thead>
-						<tbody>';
-						  $num = $res->num_rows;
-						  if($num>0){
-							    $c=1;
-								while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-									echo'<tr>
-											<td>'.$regi['compania'].'</td>
-											<td style="text-align:center;">';
-											   if($regi['logo']!=''){
-												   if(file_exists('../images/'.$regi['logo'])){  
-													   $imagen = getimagesize('../images/'.$regi['logo']); 
-													   $ancho = $imagen[0];   
-													   $alto = $imagen[1]; 
-													  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
-												   }else{
-													  echo'no existe el archivo fisico';   
-												   }
-											   }else{
-												  echo'no existe el nombre del archivo en la base de datos';   
-											   }
-									   echo'</td>
-											<td class="da-icon-column">
-											   <ul class="action_user">';
-											   
-												   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
-												   echo'<li style="margin-right:5px;"><a href="?l=des_producto_extra&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarproductoextra=v&var='.$_GET['var'].'" class="admi-prodextra da-tooltip-s" title="Administrar producto extra"></a></li>';
-												   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
-											   
-											 												 
-										  echo'</ul>	
-											</td>
-										</tr>';
-										$c++;
-								}
-								$res->free();			
-						  }else{
-							 echo'<tr><td colspan="7">
-									  <div class="da-message warning">
-										 No existe registros alguno, razones alguna:
-										 <ul>
-											<li>Verifique que la Compañia de Seguros este activada</li>
-											<li>Verifique que la Compañia asignada a la Entidad Financiera este activada</li>
-											<li>Verifique que el producto exista en la Compañia asignada a la Entidad Financiera</li>
-										  </ul>
-									  </div>
-								  </td></tr>';
-						  }
-				   echo'</tbody>
-					</table>
-				</div>
-			</div>';
-	 }
-	 $resef->free();
- }else{
-	echo'<div class="da-message info">
-			 No existe registros alguno o la entidad Financiera no esta activada
-		</div>'; 
- }
+			 </div>';*/
+			 
+			 while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		 
+				$select="select
+						   sef.id_ef_cia,
+						   sef.id_ef,
+						   sef.id_compania,
+						   sc.nombre as compania,
+						   sc.logo
+						from
+						  s_ef_compania sef
+						  inner join s_compania as sc on (sc.id_compania=sef.id_compania)
+						where
+						  sef.id_ef='".$regief['id_ef']."' and sef.activado=1 and sc.activado=1 and sef.producto='DE';";
+				$res = $conexion->query($select,MYSQLI_STORE_RESULT);		  
+				echo'
+					<div class="da-panel collapsible" style="width:700px;">
+						<div class="da-panel-header">
+							<span class="da-panel-title">
+								<img src="images/icons/black/16/list.png" alt="" />
+								<b>'.$regief['nombre'].'</b> - <span lang="es">Administrar producto extra</span> 
+							</span>
+						</div>
+						<div class="da-panel-content">
+							<table class="da-table">
+								<thead>
+									<tr>
+									  <th style="text-align:center;"><b><span lang="es">Compañia de Seguros</span></b></th>
+									  <th style="text-align:center;"><b><span lang="es">Imagen</span></b></th>
+									  <th></th>
+									</tr>
+								</thead>
+								<tbody>';
+								  $num = $res->num_rows;
+								  if($num>0){
+										$c=1;
+										while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+											echo'<tr>
+													<td>'.$regi['compania'].'</td>
+													<td style="text-align:center;">';
+													   if($regi['logo']!=''){
+														   if(file_exists('../images/'.$regi['logo'])){  
+															   $imagen = getimagesize('../images/'.$regi['logo']); 
+															   $ancho = $imagen[0];   
+															   $alto = $imagen[1]; 
+															  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
+														   }else{
+															  echo'no existe el archivo fisico';   
+														   }
+													   }else{
+														  echo'no existe el nombre del archivo en la base de datos';   
+													   }
+											   echo'</td>
+													<td class="da-icon-column">
+													   <ul class="action_user">';
+													   
+														   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
+														   echo'<li style="margin-right:5px;"><a href="?l=des_producto_extra&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarproductoextra=v&var='.$_GET['var'].'" class="admi-prodextra da-tooltip-s" title="Administrar producto extra"></a></li>';
+														   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
+													   
+																									 
+												  echo'</ul>	
+													</td>
+												</tr>';
+												$c++;
+										}
+										$res->free();			
+								  }else{
+									 echo'<tr><td colspan="7">
+											  <div class="da-message warning">
+												 No existe registros alguno, razones alguna:
+												 <ul>
+													<li>Verifique que la Compañia de Seguros este activada</li>
+													<li>Verifique que la Compañia asignada a la Entidad Financiera este activada</li>
+													<li>Verifique que el producto exista en la Compañia asignada a la Entidad Financiera</li>
+												  </ul>
+											  </div>
+										  </td></tr>';
+								  }
+						   echo'</tbody>
+							</table>
+						</div>
+					</div>';
+			 }
+			 $resef->free();
+		 }else{
+			echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Desgravamen</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				</div>';
+		 }
+   }else{
+	   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: ".$conexion->errno .": ".$conexion->error
+		   ."</div>";
+   }
 }
 
 
@@ -386,91 +396,96 @@ $selectFor="select
 			 inner join s_ef_compania as efcia on (efcia.id_ef_cia=sdpe.id_ef_cia)
 			where
 			  sdpe.id_ef_cia='".$id_ef_cia."' and efcia.producto='DE';";
-$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);		  
-echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-					 <a href="?l=des_producto_extra&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
-					 <img src="images/retornar.png" width="32" height="32"></a>
-				</li>
-				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_prodextra&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s pregunta fancybox.ajax" title="Añadir producto extra">
-				   <img src="images/add_new.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';
-echo'
-<div class="da-panel collapsible" style="width:850px;">
-	<div class="da-panel-header">
-		<span class="da-panel-title">
-			<img src="images/icons/black/16/list.png" alt="" />
-			<b>'.$entidad.'</b><br/><div style="margin-left:25px;"><b>'.$compania.'</b> - Listado Producto Extra</div>
-		</span>
-	</div>
-	<div class="da-panel-content">
-		<table class="da-table">
-			<thead>
-				<tr>
-					<th style="text-align:center;"><b>Rango (Bs)</b></th>
-					<th style="text-align:center;"><b>Rango (USD)</b></th>
-					<th style="text-align:center;"><b>Hospitalario (USD)</b></th>
-					<th style="text-align:center;"><b>Vida (USD)</b></th>
-					<th style="text-align:center;"><b>Cesantia (USD)</b></th>
-					<th style="text-align:center;"><b>Total Prima (USD)</b></th>
-					<th>&nbsp;</th>
-				</tr>
-			</thead>
-			<tbody>';
-			  $num = $res->num_rows;
-			  if($num>0){
-				    $c=0;
-					while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-						$c++;
-						$jsonData=$regi['rango'];
-			            $phpArray = json_decode($jsonData, true);
-						echo'<tr id="del-'.$c.'">
-						       	<td style="text-align:center;">'.$phpArray[1].' - '.$phpArray[2].'</td>
-								<td style="text-align:center;">'.$phpArray[3].' - '.$phpArray[4].'</td>
-								<td style="text-align:center;">'.$regi['pr_hospitalario'].'</td>
-								<td style="text-align:center;">'.$regi['pr_vida'].'</td>
-								<td style="text-align:center;">'.$regi['pr_cesante'].'</td>
-								<td style="text-align:center;">'.$regi['pr_prima'].'</td>
-								<td class="da-icon-column">
-								  <ul class="action_user">
-									  <li style="margin-right:5px;">
-									    <a href="adicionar_registro.php?opcion=edita_prodextra&id_pr_extra='.base64_encode($regi['id_pr_extra']).'&editar=v&var='.$_GET['var'].'&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_ef='.$_GET['id_ef'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="edit da-tooltip-s pregunta fancybox.ajax" title="Editar"></a>
-									  </li>';
-									$busca="select
-											  count(id_cotizacion) as row_cta
-											from
-											  s_de_cot_cabecera
-											where  
-											  id_pr_extra='".$regi['id_pr_extra']."';";
-								   $resb = $conexion->query($busca,MYSQLI_STORE_RESULT);
-								   $regib = $resb->fetch_array(MYSQLI_ASSOC);
-								   if($regib['row_cta']==0){			    
-								  echo'<li><a href="#" id="'.$regi['id_ef_cia'].'|'.$regi['id_pr_extra'].'|'.$c.'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>';  	  
-								   }else{
-									echo'<li style="margin-left:10px;">&nbsp;</li>';   
-								   }
-							  echo'</ul>
-								</td>
-							</tr>';
-					}
-					$res->free();			
-			  }else{
-			     echo'<tr><td colspan="7">
-				          <div class="da-message info">
-                               No existe registros alguno, ingrese nuevos registros
-                          </div>
-				      </td></tr>';
-			  }
-	   echo'</tbody>
-		</table>
-	</div>
-</div>';
+  if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){		  
+		echo'<div class="da-panel collapsible">
+				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+						<li style="margin-right:6px;">
+							 <a href="?l=des_producto_extra&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
+							 <img src="images/retornar.png" width="32" height="32"></a>
+						</li>
+						<li style="margin-right:6px;">
+						   <a href="adicionar_registro.php?opcion=crear_prodextra&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s pregunta fancybox.ajax" title="Añadir producto extra">
+						   <img src="images/add_new.png" width="32" height="32"></a>
+						</li>
+					</ul>
+				</div>
+			 </div>';
+		echo'
+		<div class="da-panel collapsible" style="width:850px;">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/list.png" alt="" />
+					<b>'.$entidad.'</b><br/><div style="margin-left:25px;"><b>'.$compania.'</b> - <span lang="es">Listado Producto Extra</span></div>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<table class="da-table">
+					<thead>
+						<tr>
+							<th style="text-align:center;"><b><span lang="es">Rango (Bs)</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Rango (USD)</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Hospitalario (USD)</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Vida (USD)</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Cesantía (USD)</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Total Prima (USD)</span></b></th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>';
+					  $num = $res->num_rows;
+					  if($num>0){
+							$c=0;
+							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+								$c++;
+								$jsonData=$regi['rango'];
+								$phpArray = json_decode($jsonData, true);
+								echo'<tr id="del-'.$c.'">
+										<td style="text-align:center;">'.$phpArray[1].' - '.$phpArray[2].'</td>
+										<td style="text-align:center;">'.$phpArray[3].' - '.$phpArray[4].'</td>
+										<td style="text-align:center;">'.$regi['pr_hospitalario'].'</td>
+										<td style="text-align:center;">'.$regi['pr_vida'].'</td>
+										<td style="text-align:center;">'.$regi['pr_cesante'].'</td>
+										<td style="text-align:center;">'.$regi['pr_prima'].'</td>
+										<td class="da-icon-column">
+										  <ul class="action_user">
+											  <li style="margin-right:5px;">
+												<a href="adicionar_registro.php?opcion=edita_prodextra&id_pr_extra='.base64_encode($regi['id_pr_extra']).'&editar=v&var='.$_GET['var'].'&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_ef='.$_GET['id_ef'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="edit da-tooltip-s pregunta fancybox.ajax" title="Editar"></a>
+											  </li>';
+											$busca="select
+													  count(id_cotizacion) as row_cta
+													from
+													  s_de_cot_cabecera
+													where  
+													  id_pr_extra='".$regi['id_pr_extra']."';";
+										   $resb = $conexion->query($busca,MYSQLI_STORE_RESULT);
+										   $regib = $resb->fetch_array(MYSQLI_ASSOC);
+										   if($regib['row_cta']==0){			    
+										  echo'<li><a href="#" id="'.$regi['id_ef_cia'].'|'.$regi['id_pr_extra'].'|'.$c.'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>';  	  
+										   }else{
+											echo'<li style="margin-left:10px;">&nbsp;</li>';   
+										   }
+									  echo'</ul>
+										</td>
+									</tr>';
+							}
+							$res->free();			
+					  }else{
+						 echo'<tr><td colspan="7">
+								  <div class="da-message info">
+									   No existe registros alguno, ingrese nuevos registros
+								  </div>
+							  </td></tr>';
+					  }
+			   echo'</tbody>
+				</table>
+			</div>
+		</div>';
+  }else{
+	 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		."</div>"; 
+  }
 }
 
 

@@ -29,12 +29,6 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 		}
 		
 		$idef = $link->real_escape_string(trim(base64_decode($_POST['idef'])));
-
-        if (isset($_POST['cp'])) {
-            if (md5(1) === $_POST['cp']) {
-                $cp = true;
-            }
-        }
 		
 		$idVh = 0;
 		$flag = FALSE;
@@ -62,48 +56,43 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 
         $dv_year_other = 0;
 
-        if ($cp === false) {
-            $dv_type_vehicle = $link->real_escape_string(trim(base64_decode($_POST['dv-type-vehicle'])));
-            $dv_make = $link->real_escape_string(trim(base64_decode($_POST['dv-make'])));
-            $dv_model = $link->real_escape_string(trim($_POST['dv-model']));
-            if($dv_model === 'OTHER'){
-                $dv_model_other = $link->real_escape_string(trim($_POST['dv-model-other']));
-                if(($dv_model =
-                        $link->set_model(base64_encode($dv_make), $dv_model_other)) !== false) {
-                    $dv_model = base64_decode($dv_model);
-                } else {
-                    $swMo = true;
-                }
-            }else {
+        $dv_type_vehicle = $link->real_escape_string(trim(base64_decode($_POST['dv-type-vehicle'])));
+        $dv_make = $link->real_escape_string(trim(base64_decode($_POST['dv-make'])));
+        $dv_model = $link->real_escape_string(trim($_POST['dv-model']));
+        if($dv_model === 'OTHER'){
+            $dv_model_other = $link->real_escape_string(trim($_POST['dv-model-other']));
+            if(($dv_model =
+                    $link->set_model(base64_encode($dv_make), $dv_model_other)) !== false) {
                 $dv_model = base64_decode($dv_model);
-            }
-
-            $dv_year = $link->real_escape_string(trim($_POST['dv-year']));
-            if($dv_year === 'YEAR') {
-                $dv_year = $link->real_escape_string(trim($_POST['dv-year-other']));
-                $dv_year_other = $dv_year;
-                $_FAC = TRUE;
-                $reason .= '| El Vehículo tiene una antiguedad mayor a '.$max_anio.' años';
             } else {
-                $dv_year = base64_decode($dv_year);
+                $swMo = true;
             }
-            $dv_plate = $link->real_escape_string(trim($_POST['dv-plate']));
-            $dv_use = $link->real_escape_string(trim(base64_decode($_POST['dv-use'])));
-            $dv_traction = $link->real_escape_string(trim(base64_decode($_POST['dv-traction'])));
-            $dv_zero_km = $link->real_escape_string(trim(base64_decode($_POST['dv-zero-km'])));
-        } else {
+        }else {
+            $dv_model = base64_decode($dv_model);
         }
 
-        $dv_category = $link->real_escape_string(trim(base64_decode($_POST['dv-category'])));
+        $dv_year = $link->real_escape_string(trim($_POST['dv-year']));
+        if($dv_year === 'YEAR') {
+            $dv_year = $link->real_escape_string(trim($_POST['dv-year-other']));
+            $dv_year_other = $dv_year;
+            $_FAC = TRUE;
+            $reason .= '| El Vehículo tiene una antiguedad mayor a '.$max_anio.' años';
+        } else {
+            $dv_year = base64_decode($dv_year);
+        }
+        $dv_plate = $link->real_escape_string(trim($_POST['dv-plate']));
+        $dv_use = $link->real_escape_string(trim(base64_decode($_POST['dv-use'])));
+        $dv_traction = $link->real_escape_string(trim(base64_decode($_POST['dv-traction'])));
+        $dv_zero_km = $link->real_escape_string(trim(base64_decode($_POST['dv-zero-km'])));
+
+        $dv_plaza = $link->real_escape_string(trim($_POST['dv-plaza']));
 		$dv_modality = 'null';
-		if (isset($_POST['dv-modality'])) {
-			$dv_modality = '"'.$link->real_escape_string(trim(base64_decode($_POST['dv-modality']))).'"';
-		}
 		$dv_value_insured = $link->real_escape_string(trim($_POST['dv-value-insured']));
 		
 		if($dv_value_insured > $max_amount){
 			$_FAC = TRUE;
-			$reason .= '| El valor asegurado del Vehículo excede el máximo valor permitido. Valor permitido: '.number_format($max_amount, 2, '.', ',').' USD';
+			$reason .= '| El valor asegurado del Vehículo excede el máximo valor 
+				permitido. Valor permitido: ' . number_format($max_amount, 2, '.', ',') . ' USD';
 		}
 		
 		$max_value = $link->get_cumulus($dv_value_insured, 'USD', base64_encode($idef), 'AU');
@@ -112,7 +101,7 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 		$page = $link->real_escape_string(trim($_POST['page']));
 		$pr = $link->real_escape_string(trim($_POST['pr']));
 		
-		if($swMo === FALSE){
+		if($swMo === false){
 			if($dv_year_other < $year_min){
 				if($max_value === 1){
 					$sql = '';
@@ -122,90 +111,77 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 						$record = $link->getRegistrationNumber($_SESSION['idEF'], 'AU', 0);
 						
 						$sql = 'insert into s_au_cot_cabecera 
-						(`id_cotizacion`, `no_cotizacion`, `id_ef`, 
-						`certificado_provisional`, `fecha_creacion`, `id_usuario`)
+						(id_cotizacion, no_cotizacion, id_ef, 
+							certificado_provisional, fecha_creacion, id_usuario)
 						values
-						("'.$idc.'", '.$record.', "'.base64_decode($_SESSION['idEF']).'", 
-						false, curdate(), "'.base64_decode($_SESSION['idUser']).'") ;';
+						("' . $idc . '", "' . $record . '", 
+							"' . base64_decode($_SESSION['idEF']) . '", 
+							false, curdate(), "' . base64_decode($_SESSION['idUser']) . '")
+						;';
 						
-						if ($link->query($sql) === true) {
+						if ($link->query($sql)) {
 							$token = true;
 						}
 					} else {
 						$token = true;
 					}
 					
-					if($flag === FALSE && $token === true){
+					if($flag === false && $token){
 						$idVh = uniqid('@S#2$2013',true);
 
-                        if ($cp === false) {
-                            $sql = 'insert into s_au_cot_detalle
-                            (`id_vehiculo`, `id_cotizacion`, `id_tipo_vh`,
-                            `categoria`, `id_marca`, `id_modelo`,
-                            `anio`, `placa`, `uso`, `traccion`,
-                            `km`, `modalidad`, `valor_asegurado`,
-                            `facultativo`, `motivo_facultativo`)
-                            values
-                            ("'.$idVh.'", "'.$idc.'", "'.$dv_type_vehicle.'",
-                            "'.$dv_category.'", "'.$dv_make.'", "'.$dv_model.'",
-                            '.$dv_year.', "'.$dv_plate.'", "'.$dv_use.'", "'.$dv_traction.'",
-                            "'.$dv_zero_km.'", '.$dv_modality.', '.$dv_value_insured.',
-                            '.(int)$_FAC.', "'.$reason.'") ;';
-                        } else {
-                            $sql = 'insert into s_au_cot_detalle
-                            (`id_vehiculo`, `id_cotizacion`,
-                            `categoria`, `modalidad`, `valor_asegurado`,
-                            `facultativo`, `motivo_facultativo`)
-                            values
-                            ("'.$idVh.'", "'.$idc.'", "'.$dv_category.'",
-                            '.$dv_modality.', '.$dv_value_insured.',
-                            '.(int)$_FAC.', "'.$reason.'") ;';
-                        }
+                        $sql = 'insert into s_au_cot_detalle
+                        (id_vehiculo, id_cotizacion, id_tipo_vh,
+	                        plaza, id_marca, id_modelo,
+	                        anio, placa, uso, traccion,
+	                        km, modalidad, valor_asegurado,
+	                        facultativo, motivo_facultativo)
+                        values
+                        ("' . $idVh . '", "' . $idc . '", "' . $dv_type_vehicle . '",
+	                        "' . $dv_plaza . '", "' . $dv_make . '", "' . $dv_model . '",
+	                        "' . $dv_year . '", "' . $dv_plate . '", "' . $dv_use . '", 
+	                        "' . $dv_traction . '", "' . $dv_zero_km . '", 
+	                        ' . $dv_modality . ', "' . $dv_value_insured . '",
+	                        "' . (int)$_FAC . '", "' . $reason . '") ;';
 						
-						if($link->query($sql) === true){
+						if($link->query($sql)){
 							$arrAU[0] = 1;
-							$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&idc='.base64_encode($idc);
+							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' 
+								. $page . '&pr=' . $pr . '&idc=' . base64_encode($idc);
 							$arrAU[2] = 'Vehículo registrado con Exito';
 						}else {
 							$arrAU[2] = 'No se pudo registrar el Vehículo';
 						}
-					} elseif ($token === true) {
+					} elseif ($token) {
                         if ($cp === false) {
                             $sql = 'update s_au_cot_detalle
-                            set `id_tipo_vh` = "'.$dv_type_vehicle.'",
-                                `categoria` = "'.$dv_category.'",
-                                `id_marca` = "'.$dv_make.'",
-                                `id_modelo` = "'.$dv_model.'",
-                                `anio` = '.$dv_year.',
-                                `placa` = "'.$dv_plate.'",
-                                `uso` = "'.$dv_use.'",
-                                `traccion` = "'.$dv_traction.'",
-                                `km` = "'.$dv_zero_km.'",
-                                `modalidad` = '.$dv_modality.',
-                                `valor_asegurado` = '.$dv_value_insured.',
-                                `facultativo` = '.(int)$_FAC.',
-                                `motivo_facultativo` = "'.$reason.'"
-                            where id_vehiculo = "'.$idVh.'" ;';
-                        } else {
-                            $sql = 'update s_au_cot_detalle
-                            set `categoria` = "'.$dv_category.'",
-                                `modalidad` = '.$dv_modality.',
-                                `valor_asegurado` = '.$dv_value_insured.',
-                                `facultativo` = '.(int)$_FAC.',
-                                `motivo_facultativo` = "'.$reason.'"
-                            where id_vehiculo = "'.$idVh.'" ;';
+                            set id_tipo_vh = "' . $dv_type_vehicle . '",
+                                plaza = "' . $dv_plaza . '",
+                                id_marca = "' . $dv_make . '",
+                                id_modelo = "' . $dv_model . '",
+                                anio = "' . $dv_year . '",
+                                placa = "' . $dv_plate . '",
+                                uso = "' . $dv_use . '",
+                                traccion = "' . $dv_traction . '",
+                                km = "' . $dv_zero_km . '",
+                                modalidad = ' . $dv_modality . ',
+                                valor_asegurado = "' . $dv_value_insured . '",
+                                facultativo = "' . (int)$_FAC . '",
+                                motivo_facultativo = "' . $reason . '"
+                            where id_vehiculo = "' . $idVh . '" ;';
                         }
 						
 						if($link->query($sql) === TRUE){
 							$arrAU[0] = 1;
-							$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&idc='.base64_encode($idc);
+							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
+								. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 							$arrAU[2] = 'Los Datos se actualizaron correctamente';
 						}else {
 							$arrAU[2] = 'No se pudo actualizar los datos';
 						}
 					}
 				}else {
-					$arrAU[2] = 'El Valor Asegurado no debe ser mayor a '.number_format($max_value, 2, '.', ',').' USD.';
+					$arrAU[2] = 'El Valor Asegurado no debe ser mayor a ' 
+						. number_format($max_value, 2, '.', ',') . ' USD.';
 				}
 			}else {
 				$arrAU[2] = 'El Año del Vehículo se encuentra en la lista';
@@ -217,8 +193,7 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 		$arrAU[2] = 'El Vehículo no puede ser registrado';
 	}
 	
-	echo json_encode($arrAU);
-}else {
-	echo json_encode($arrAU);
 }
+
+echo json_encode($arrAU);
 ?>

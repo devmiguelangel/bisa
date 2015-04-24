@@ -14,7 +14,6 @@ if(isset($_GET['l'])) {
 } else {
 	$lugar = '';
 }
-
 //HEADEAR
 if(empty($_SESSION['usuario_sesion'])){
     HeaderUsuario();
@@ -23,16 +22,20 @@ if(empty($_SESSION['usuario_sesion'])){
 }elseif($lugar=="slideshow"){
 	HeaderSlideshow();
 }elseif(($lugar=="usuarios") or ($lugar=="archivos") or ($lugar=="compania") or ($lugar=="des_preguntas")
-        or ($lugar=="des_producto") or ($lugar=="des_tasas")  or ($lugar=="des_datos") or ($lugar=="des_poliza")
-		or ($lugar=="ocupacion") or ($lugar=="correo") or $lugar=="contenidohome" or $lugar=="certmedico" 
-		or $lugar=="email" or $lugar=="des_contenido" or $lugar=="agencia" or $lugar=="usuarios_admin" 
-		or $lugar=="sucursal" or $lugar=="entidades" or $lugar=="adciaef" or $lugar=="cabecera" 
-		or $lugar=="sucursal" or $lugar=="au_tipovehiculo" or $lugar=="au_marca_modelo" or $lugar=="au_montos"
-		or $lugar=="au_tasas" or $lugar=="au_incremento" or $lugar=="au_contenido" or $lugar=="formapago"
-		or $lugar=="estados" or $lugar=="tr_montos" or $lugar=="tr_tasas" or $lugar=="tr_contenido" 
-		or $lugar=="trem_montos" or $lugar=="trem_tasas" or $lugar=="trem_contenido" or $lugar=="tipocambio"
-		or $lugar=="des_producto_extra" or $lugar=="th_marcatarjeta" or $lugar=="th_tipotarjeta"
-		or $lugar=="th_primastarjeta" or $lugar=="th_contenido" or $lugar=="th_montos" or $lugar=="modalidad"){
+     or ($lugar=="des_producto") or ($lugar=="des_tasas")  or ($lugar=="des_datos") or ($lugar=="des_poliza")
+	 or ($lugar=="des_ocupacion") or ($lugar=="au_ocupacion") or ($lugar=="trem_ocupacion") 
+	 or ($lugar=="tr_ocupacion") or ($lugar=="correo") or ($lugar=="contenidohome") or ($lugar=="certmedico") 
+	 or ($lugar=="des_estados") or ($lugar=="au_estados") or ($lugar=="tr_estados") or ($lugar=="trem_estados") 
+	 or ($lugar=="au_formapago") or ($lugar=="tr_formapago") or ($lugar=="trem_formapago")
+	 or ($lugar=="email") or ($lugar=="des_contenido") or ($lugar=="agencia") or ($lugar=="usuarios_admin") 
+	 or ($lugar=="sucursal") or ($lugar=="entidades") or ($lugar=="adciaef") or ($lugar=="cabecera") 
+	 or ($lugar=="sucursal") or ($lugar=="au_tipovehiculo") or ($lugar=="au_marca_modelo") or ($lugar=="au_montos")
+	 or ($lugar=="au_tasas") or ($lugar=="au_incremento") or ($lugar=="au_contenido") or ($lugar=="formapago")
+	 or ($lugar=="estados") or ($lugar=="tr_montos") or ($lugar=="tr_tasas") or ($lugar=="tr_contenido") 
+	 or ($lugar=="trem_montos") or ($lugar=="trem_tasas") or ($lugar=="trem_contenido") or ($lugar=="tipocambio")
+	 or ($lugar=="des_producto_extra") or ($lugar=="th_marcatarjeta") or ($lugar=="th_tipotarjeta")
+	 or ($lugar=="th_primastarjeta") or ($lugar=="th_contenido") or ($lugar=="th_montos") or ($lugar=="modalidad")
+	 or ($lugar=="vg_datos") or ($lugar=="vg_preguntas")){
     HeaderTablas();
 }
 echo'<body>';
@@ -82,9 +85,18 @@ switch($lugar) {
 		case "des_producto_extra": //ADMINISTRAR PRODUCTO EXTRA
 		    include 'sgc_des_producto_extra.php';
 			break;	
-		case "ocupacion":
-			include 'sgc_ocupacion.php'; //ADMINISTRACION OCUPACION
+		case "des_ocupacion":
+			include 'sgc_des_ocupacion.php'; //ADMINISTRACION OCUPACION DESGRAVAMEN
 			break;
+		case "des_estados":
+		    include 'sgc_des_estados.php'; //ADMINISTRACION ESTADOS DESGRAVAMEN
+			break;
+		case "vg_datos":
+		    include 'sgc_vg_datos.php'; //ADMINISTRACION DATOS VIDA GRUPO
+			break;
+		case "vg_preguntas":
+		    include 'sgc_vg_preguntas.php'; //ADMINISTRACION PREGUNTAS VIDA GRUPO
+			break;			
 		case "formapago":
 			include 'sgc_formapago.php'; //ADMINISTRACION FORMA DE PAGO
 			break;
@@ -127,6 +139,15 @@ switch($lugar) {
 		case "au_contenido":
 		    include 'sgc_au_contenido.php';//ADMINISTRAR CONTENIDO AUTOMOTORES
 			break;
+		case "au_ocupacion":
+		    include 'sgc_au_ocupacion.php';//ADMINISTRADOR OCUPACION AUTOMOTORES
+			break;
+		case "au_estados":
+		    include 'sgc_au_estados.php';//ADMINISTRADOR ESTADOS AUTOMOTORES
+			break;
+		case "au_formapago":
+		    include 'sgc_au_formapago.php';//ADMINISTRAR FORMA DE PAGO AUTOMOTORES
+			break;		 	
 		case "tr_montos":
 		    include 'sgc_tr_montos.php';//ADMINISTRAR CONTENIDO MONTOS
 			break;
@@ -136,6 +157,15 @@ switch($lugar) {
 		case "tr_tasas":
 		    include 'sgc_tr_tasas.php';//ADMINISTRAR TASAS TODO RIESGO DOMICILIARIO
 			break;
+		case "tr_ocupacion":
+		    include 'sgc_tr_ocupacion.php';//ADMINISTRAR OCUPACION TODO RIESGO DOMICILIARIO
+			break;	
+		case "tr_estados":
+		    include 'sgc_tr_estados.php';//ADMINISTRAR ESTADS TODO RIESGO DOMICILIARIO
+			break;
+		case "tr_formapago":
+		    include 'sgc_tr_formapago.php';//ADMINISTRAR FORMA DE PAGO TODO RIESGO DOMICILIARIO
+			break;		
 		case "trem_montos":
 		    include 'sgc_trem_montos.php';//ADMINISTRAR MONTOS TODORIESGO EQUIPO MOVIL
 			break;
@@ -145,6 +175,15 @@ switch($lugar) {
 		case "trem_contenido":
 		    include 'sgc_trem_contenido.php';//ADMINISTRAR CONTENIDO TODO RIESGO EQUIPO MOVIL
 			break;
+		case "trem_ocupacion":
+		    include 'sgc_trem_ocupacion.php';//ADMINISTRAR OCUPACION TODO RIESGO EQUIPO MOVIL
+			break;
+		case "trem_estados":
+		    include 'sgc_trem_estados.php';//ADMINISTRAR ESTADOS TODO RIESGO EQUIPO MOVIL
+			break;
+		case "trem_formapago":
+		    include 'sgc_trem_formapago.php';//ADMINISTRAR FORMA DE PAGO TODO RIESGO EQUIPO MOVIL
+			break;	 	 	
 		case "tipocambio":
 		    include 'sgc_tipocambio.php';//ADMINISTRAR TIPO DE CAMBIO MONEDA
 			break;
@@ -202,6 +241,14 @@ function HeaderUsuario(){
 				
 				<!-- Core JavaScript Files -->
 				<script type="text/javascript" src="js/core/dandelion.login.js"></script>
+				
+				<!-- Languaje -->
+				<script type="text/javascript" src="js/jquery-cookie.js" charset="utf-8"></script>
+				<script type="text/javascript" src="js/jquery-lang.js" charset="utf-8"></script>
+				<script type="text/javascript">
+					var lang = new Lang("es");
+					lang.dynamic("en", "js/langpack/en.json");
+				</script>
 				
 				<!-- Script que evita ir hacia atras -->
 				<script type="text/javascript">
@@ -285,6 +332,28 @@ function HeaderEscritorio(){
 			
 			<!-- Customizer JavaScript File (remove if not needed) -->
 			<script type="text/javascript" src="js/core/dandelion.customizer.js"></script>
+			
+			<!-- Languaje -->
+			<script type="text/javascript" src="js/jquery-cookie.js" charset="utf-8"></script>
+			<script type="text/javascript" src="js/jquery-lang.js" charset="utf-8"></script>
+			<script type="text/javascript">
+				var lang = new Lang("es");
+				lang.dynamic("en", "js/langpack/en.json");
+			</script>
+			
+			<script type="text/javascript">
+			  $(document).ready(function(){
+				  $("a[href].language").click(function(e){
+					  var languaje=$(this).prop("id");
+					  alert(languaje);
+					  if(languaje=="es"){
+						  
+					  }else if(languaje=="en"){
+						  
+					  }
+				  });  
+			  });
+			</script>
 			
 			<!-- Script que evita ir hacia atras -->
 			<script type="text/javascript">
@@ -374,6 +443,28 @@ function HeaderTablas(){
 				
 				<!-- Core JavaScript Files -->
 				<script type="text/javascript" src="js/core/dandelion.core.js"></script>
+				
+				<!-- Languaje JavaScript Files-->
+				<script type="text/javascript" src="js/jquery-cookie.js" charset="utf-8"></script>
+				<script type="text/javascript" src="js/jquery-lang.js" charset="utf-8"></script>
+				<script type="text/javascript">
+					var lang = new Lang("es");
+					lang.dynamic("en", "js/langpack/en.json");
+				</script>
+				
+				<script type="text/javascript">
+				  $(document).ready(function(){
+					  $("a[href].language").click(function(e){
+						  var languaje=$(this).prop("id");
+						  alert(languaje);
+						  if(languaje=="es"){
+							  
+						  }else if(languaje=="en"){
+							  
+						  }
+					  });  
+				  });
+				</script>
 				
 				<!-- Script que evita ir hacia atras -->
 				<script type="text/javascript">
@@ -466,6 +557,14 @@ function HeaderSlideshow(){
 				
 				<!-- Core JavaScript Files -->
                 <script type="text/javascript" src="js/core/dandelion.core.js"></script>
+				
+				<!-- Languaje -->
+				<script type="text/javascript" src="js/jquery-cookie.js" charset="utf-8"></script>
+				<script type="text/javascript" src="js/jquery-lang.js" charset="utf-8"></script>
+				<script type="text/javascript">
+					var lang = new Lang("es");
+					lang.dynamic("en", "js/langpack/en.json");
+				</script>
 			
 				<!-- Script que evita ir hacia atras -->
 				<script type="text/javascript">

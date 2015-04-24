@@ -17,7 +17,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=tipocambio&var=tcm');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -263,99 +264,117 @@ if($tipo_sesion=='ROOT'){
 							sh.id_ef = ef.id_ef)
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
-$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-$num_regi_ef = $resef->num_rows;
-echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-				   <a href="?l=tipocambio&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various fancybox.ajax" title="Añadir Registro">
-				   <img src="images/add_new.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';
-	while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	
-			$selectFor="select
-						  id_tc,
-						  id_ef,
-						  valor_dolar,
-						  valor_boliviano,
-						  fecha_registro,
-						  id_usuario,
-						  activado
-						from
-						  s_tipo_cambio
-						where
-						  id_ef='".$regief['id_ef']."';";
-			  
-			$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);	
-			echo'
-			<div class="da-panel collapsible" style="width:750px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Listado Tipo de Cambio Moneda
-					</span>
-				</div>
-				<div class="da-panel-content">
-					<table class="da-table">
-						<thead>
-							<tr>
-								<th><b>Valor USD.</b></th>
-								<th><b>Valor Bs.</b></th>
-								<th><b>Fecha Registro</b></th>
-								<th><b>Vigente.</b></th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>';
-						  $num = $res->num_rows;
-						  if($num>0){
-								while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-									echo'<tr id="del-'.$regi['id_tc'].'"';
-									       if($regi['activado']==1){
-											  echo'style="background:#FFCA71; color:#000;"'; 
-										   }else{
-											  echo'';	 
-										   }
-									echo'>
-											<td>'.$regi['valor_dolar'].'</td>
-											<td>'.$regi['valor_boliviano'].'</td>
-											<td>'.$regi['fecha_registro'].'</td>
-											<td style="text-align:center;">';
-											  if($regi['activado']==1){
-												 echo'<input type="radio" name="rd-'.$regi['id_tc'].'" class="moneda" value="'.$regi['id_tc'].'|'.$regi['id_ef'].'" checked/>';
-											  }else{
-												 echo'<input type="radio" name="rd-'.$regi['id_tc'].'" class="moneda" value="'.$regi['id_tc'].'|'.$regi['id_ef'].'"/>';  
-											  }
-									   echo'</td>
-											<td class="da-icon-column">
-											   <ul class="action_user">
-												  <li style="margin-right:5px;"><a href="?l=tipocambio&id_tc='.base64_encode($regi['id_tc']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
-												 if($regi['activado']==0){ 
-											 echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_tc'].'|'.$regief['id_ef'].'"></a></li>';
-												 }else{
-												   echo'<li style="margin-left:10px;">&nbsp;</li>';	 
-												 }
-										  echo'</ul>	
-											</td>
-										</tr>';
-								}
-								 $res->free();			
-						  }else{
-							 echo'<tr><td colspan="7">
-									  <div class="da-message info">
-										   No existe registros alguno, ingrese nuevos registros
-									  </div>
-								  </td></tr>';
-						  }
-				   echo'</tbody>
-					</table>
-				</div>
-			</div>';
-	}
-	$resef->free();
+   if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		if($resef->num_rows){
+				echo'<div class="da-panel collapsible">
+						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+							<ul class="action_user">
+								<li style="margin-right:6px;">
+								   <a href="?l=tipocambio&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir Registro</span>">
+								   <img src="images/add_new.png" width="32" height="32"></a>
+								</li>
+							</ul>
+						</div>
+					 </div>';
+					while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	
+							$selectFor="select
+										  id_tc,
+										  id_ef,
+										  valor_dolar,
+										  valor_boliviano,
+										  fecha_registro,
+										  id_usuario,
+										  activado
+										from
+										  s_tipo_cambio
+										where
+										  id_ef='".$regief['id_ef']."';";
+							  
+							if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){
+									echo'
+									<div class="da-panel collapsible" style="width:750px;">
+										<div class="da-panel-header">
+											<span class="da-panel-title">
+												<img src="images/icons/black/16/list.png" alt="" />
+												<b>'.$regief['nombre'].'</b> - <span lang="es">Listado Tipo de Cambio Moneda</span>
+											</span>
+										</div>
+										<div class="da-panel-content">
+											<table class="da-table">
+												<thead>
+													<tr>
+														<th><b><span lang="es">Valor USD.</span></b></th>
+														<th><b><span lang="es">Valor Bs.</span></b></th>
+														<th><b><span lang="es">Fecha Registro</span></b></th>
+														<th><b><span lang="es">Vigente</span></b></th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>';
+												  $num = $res->num_rows;
+												  if($num>0){
+														while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+															echo'<tr id="del-'.$regi['id_tc'].'"';
+																   if($regi['activado']==1){
+																	  echo'style="background:#FFCA71; color:#000;"'; 
+																   }else{
+																	  echo'';	 
+																   }
+															echo'>
+																	<td>'.$regi['valor_dolar'].'</td>
+																	<td>'.$regi['valor_boliviano'].'</td>
+																	<td>'.$regi['fecha_registro'].'</td>
+																	<td style="text-align:center;">';
+																	  if($regi['activado']==1){
+																		 echo'<input type="radio" name="rd-'.$regi['id_tc'].'" class="moneda" value="'.$regi['id_tc'].'|'.$regi['id_ef'].'" checked/>';
+																	  }else{
+																		 echo'<input type="radio" name="rd-'.$regi['id_tc'].'" class="moneda" value="'.$regi['id_tc'].'|'.$regi['id_ef'].'"/>';  
+																	  }
+															   echo'</td>
+																	<td class="da-icon-column">
+																	   <ul class="action_user">
+																		  <li style="margin-right:5px;"><a href="?l=tipocambio&id_tc='.base64_encode($regi['id_tc']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+																		 if($regi['activado']==0){ 
+																	 echo'<li><a href="#" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>" id="'.$regi['id_tc'].'|'.$regief['id_ef'].'"></a></li>';
+																		 }else{
+																		   echo'<li style="margin-left:10px;">&nbsp;</li>';	 
+																		 }
+																  echo'</ul>	
+																	</td>
+																</tr>';
+														}
+														 $res->free();			
+												  }else{
+													 echo'<tr><td colspan="7">
+															  <div class="da-message info">
+																   No existe registros alguno, ingrese nuevos registros
+															  </div>
+														  </td></tr>';
+												  }
+										   echo'</tbody>
+											</table>
+										</div>
+									</div>';
+							}else{
+							   echo'<div class="da-message error">error en la consulta'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>';	
+							}
+					}
+					$resef->free();
+		}else{
+			 echo'<div class="da-message warning">
+					   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					   <ul>
+						  <li lang="es">La Entidad Financiera no tiene asignado un producto</li>
+						  <li lang="es">La Entidad Financiera no esta activado</li>
+						  <li lang="es">La Entidad Financiera no esta creada</li>
+						</ul>
+				  </div>'; 
+		}
+   }else{
+	  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: ".$conexion->errno.": ".$conexion->error
+		   ."</div>"; 
+   }
 }
 
 //FUNCION QUE PERMITE VISUALIZAR EL FORMULARIO NUEVO USUARIO
@@ -485,62 +504,67 @@ function mostrar_crear_tipo_cambio($id_usuario_sesion, $tipo_sesion, $usuario_se
 							  sh.id_ef = ef.id_ef)
 						  and ef.id_ef='".$id_ef_sesion."';";		
     }
- $res1 = $conexion->query($select1,MYSQLI_STORE_RESULT);	 
- echo'<div class="da-panel collapsible">
-		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			<ul class="action_user">
-				<li style="margin-right:6px;">
-				   <a href="?l=tipocambio&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
-				   <img src="images/retornar.png" width="32" height="32"></a>
-				</li>
-			</ul>
-		</div>
-	 </div>';		
- echo'<div class="da-panel" style="width:600px;">
-		<div class="da-panel-header">
-			<span class="da-panel-title">
-				<img src="images/icons/black/16/pencil.png" alt="" />
-				Nuevo Registro Tipo de Cambio
-			</span>
-		</div>
-		<div class="da-panel-content">
-			<form class="da-form" name="frmTCAd" action="" method="post" id="frmTCAd">
-				<div class="da-form-row">
-					 <label style="text-align:right;"><b>Entidad Financiera</b></label>
-					 <div class="da-form-item small">
-						 <select id="idefin" name="idefin" class="required">';
-							echo'<option value="">seleccione...</option>';
-							while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
-								echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
-							}
-							$res1->free();
-					echo'</select>
-						 <span class="errorMessage" id="errorentidad"></span>
-				     </div>	 
+   if($res1 = $conexion->query($select1,MYSQLI_STORE_RESULT)){ 
+		 echo'<div class="da-panel collapsible">
+				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+						<li style="margin-right:6px;">
+						   <a href="?l=tipocambio&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+						   <img src="images/retornar.png" width="32" height="32"></a>
+						</li>
+					</ul>
 				</div>
-				<div class="da-form-row">
-					<label style="text-align:right;"><b>Valor USD.</b></label>
-					<div class="da-form-item small">
-					  <input class="textbox required" type="text" id="txtValorusd" name="txtValorusd" value="1" autocomplete="off" readonly/>
-					  <span class="errorMessage" id="errorvalorusd"></span>
-					</div>
+			 </div>';		
+		 echo'<div class="da-panel" style="width:600px;">
+				<div class="da-panel-header">
+					<span class="da-panel-title">
+						<img src="images/icons/black/16/pencil.png" alt="" />
+						<span lang="es">Nuevo Registro Tipo de Cambio</span>
+					</span>
 				</div>
-				<div class="da-form-row">
-					<label style="text-align:right;"><b>Valor Bs.</b></label>
-					<div class="da-form-item small">
-					  <input class="textbox required" type="text" id="txtValorbs" name="txtValorbs" value="" autocomplete="off"/>
-					  <span class="errorMessage" id="errorvalorbs"></span>
-					</div>
-				</div>								
-				<div class="da-button-row">
-				   <input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar"/>
-				   <input type="submit" value="Guardar" class="da-button green" name="btnGuardar" id="btnGuardar"/>
-							
-				   <input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
-			    </div>
-			</form>
-		</div>
-	</div>';
+				<div class="da-panel-content">
+					<form class="da-form" name="frmTCAd" action="" method="post" id="frmTCAd">
+						<div class="da-form-row">
+							 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+							 <div class="da-form-item small">
+								 <select id="idefin" name="idefin" class="required">';
+									echo'<option value="" lang="es">seleccione...</option>';
+									while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
+										echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
+									}
+									$res1->free();
+							echo'</select>
+								 <span class="errorMessage" id="errorentidad" lang="es"></span>
+							 </div>	 
+						</div>
+						<div class="da-form-row">
+							<label style="text-align:right;"><b><span lang="es">Valor USD.</span></b></label>
+							<div class="da-form-item small">
+							  <input class="textbox required" type="text" id="txtValorusd" name="txtValorusd" value="1" autocomplete="off" readonly/>
+							  <span class="errorMessage" id="errorvalorusd"></span>
+							</div>
+						</div>
+						<div class="da-form-row">
+							<label style="text-align:right;"><b><span lang="es">Valor Bs.</span></b></label>
+							<div class="da-form-item small">
+							  <input class="textbox required" type="text" id="txtValorbs" name="txtValorbs" value="" autocomplete="off"/>
+							  <span class="errorMessage" id="errorvalorbs" lang="es"></span>
+							</div>
+						</div>								
+						<div class="da-button-row">
+						   <input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar" lang="es"/>
+						   <input type="submit" value="Guardar" class="da-button green" name="btnGuardar" id="btnGuardar" lang="es"/>
+									
+						   <input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
+						</div>
+					</form>
+				</div>
+			</div>';
+   }else{
+	 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";  
+   }
 }
 
 //FUNCION PARA EDITAR UN USUARIO
@@ -655,110 +679,121 @@ function mostrar_editar_tipo_cambio($id_usuario_sesion, $tipo_sesion, $usuario_s
 				where
 				  id_ef='".$id_ef."' and id_tc=".$id_tc.";";
     			 
-	$rs = $conexion->query($select, MYSQLI_STORE_RESULT);
-	$num = $rs->num_rows;
-	
-	//SACAMOS LAS ENTIDADES EXISTENTES
-	if($tipo_sesion=='ROOT'){
-		  $selectEf="select 
-						ef.id_ef, ef.nombre, ef.logo, ef.activado
-					from
-						s_entidad_financiera as ef
-					where
-						ef.activado = 1
-							and exists( select 
-								sh.id_ef
+	if($rs = $conexion->query($select, MYSQLI_STORE_RESULT)){
+			$num = $rs->num_rows;
+			
+			//SACAMOS LAS ENTIDADES EXISTENTES
+			if($tipo_sesion=='ROOT'){
+				  $selectEf="select 
+								ef.id_ef, ef.nombre, ef.logo, ef.activado
 							from
-								s_sgc_home as sh
+								s_entidad_financiera as ef
 							where
-								sh.id_ef = ef.id_ef);";
+								ef.activado = 1
+									and exists( select 
+										sh.id_ef
+									from
+										s_sgc_home as sh
+									where
+										sh.id_ef = ef.id_ef);";
+			}else{
+				 $selectEf="select 
+								  ef.id_ef, ef.nombre, ef.logo, ef.activado
+							  from
+								  s_entidad_financiera as ef
+							  where
+								  ef.activado = 1 
+									and exists( select 
+										sh.id_ef
+									from
+										s_sgc_home as sh
+									where
+										sh.id_ef = ef.id_ef)
+									  and ef.id_ef = '".$id_ef_sesion."';";
+			}
+		
+			if($res1 = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+			  
+					//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
+					if($num>0) {
+					   echo'<div class="da-panel collapsible">
+							  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+								  <ul class="action_user">
+									  <li style="margin-right:6px;">
+										 <a href="?l=tipocambio&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+										 <img src="images/retornar.png" width="32" height="32"></a>
+									  </li>
+								  </ul>
+							  </div>
+						   </div>';
+					   $fila = $rs->fetch_array(MYSQLI_ASSOC);
+					   $rs->free();
+					   echo'<div class="da-panel" style="width:600px;">
+								  <div class="da-panel-header">
+									  <span class="da-panel-title">
+										  <img src="images/icons/black/16/pencil.png" alt="" />
+										  <span lang="es">Editar Tipo de Cambio</span>
+									  </span>
+								  </div>
+								  <div class="da-panel-content">
+									  <form class="da-form" name="frmTcEd" action="" method="post" id="frmTcEd">
+										  <div class="da-form-row">
+											 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+											 <div class="da-form-item large" style="text-align:left;">
+												 <select id="idefin" name="idefin" class="requerid" style="width:160px;">';
+													echo'<option value="" lang="es">seleccione...</option>';
+													while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
+													  if($regi1['id_ef']==$fila['id_ef']){
+														 echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
+													  }else{
+														 echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
+													  }
+													}
+													$res1->free();
+											echo'</select>
+												 <span class="errorMessage" id="errorentidad" lang="es"></span>
+											 </div>	   
+										  </div>
+										  <div class="da-form-row">
+											  <label style="text-align:right;"><b><span lang="es">Valor USD.</span></b></label>
+											  <div class="da-form-item small">
+												<input class="textbox required" type="text" id="txtValorusd" name="txtValorusd" value="'.$fila['valor_dolar'].'" autocomplete="off" readonly/>
+												<span class="errorMessage" id="errorvalorusd"></span>
+											  </div>
+										  </div>
+										  <div class="da-form-row">
+											  <label style="text-align:right;"><b><span lang="es">Valor Bs.</span></b></label>
+											  <div class="da-form-item small">
+												<input class="textbox required" type="text" id="txtValorbs" name="txtValorbs" value="'.$fila['valor_boliviano'].'" autocomplete="off"/>
+												<span class="errorMessage" id="errorvalorbs" lang="es"></span>
+											  </div>
+										  </div>		
+																			  
+										  <div class="da-button-row">
+											 <input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar" lang="es"/>
+											 <input type="submit" value="Guardar" class="da-button green" name="btnGuardar" id="btnGuardar" lang="es"/>
+													  
+											 <input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
+										  </div>
+									  </form>
+								  </div>
+							  </div>';
+					
+					} else {
+						//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
+						header('Location: index.php?l=tipocambio&var='.$_GET['var']);
+					}
+			}else{
+				 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		            ."</div>";
+			}
+					
 	}else{
-		 $selectEf="select 
-						  ef.id_ef, ef.nombre, ef.logo, ef.activado
-					  from
-						  s_entidad_financiera as ef
-					  where
-						  ef.activado = 1 
-							and exists( select 
-								sh.id_ef
-							from
-								s_sgc_home as sh
-							where
-								sh.id_ef = ef.id_ef)
-							  and ef.id_ef = '".$id_ef_sesion."';";
-	}
-
-	 $res1 = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-	  
-	//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
-	if($num>0) {
-       echo'<div class="da-panel collapsible">
-			  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-				  <ul class="action_user">
-					  <li style="margin-right:6px;">
-						 <a href="?l=tipocambio&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
-						 <img src="images/retornar.png" width="32" height="32"></a>
-					  </li>
-				  </ul>
-			  </div>
-		   </div>';
-	   $fila = $rs->fetch_array(MYSQLI_ASSOC);
-	   $rs->free();
-	   echo'<div class="da-panel" style="width:600px;">
-				  <div class="da-panel-header">
-					  <span class="da-panel-title">
-						  <img src="images/icons/black/16/pencil.png" alt="" />
-						  Editar Tipo de Cambio
-					  </span>
-				  </div>
-				  <div class="da-panel-content">
-					  <form class="da-form" name="frmTcEd" action="" method="post" id="frmTcEd">
-						  <div class="da-form-row">
-							 <label style="text-align:right;"><b>Entidad Financiera</b></label>
-							 <div class="da-form-item large" style="text-align:left;">
-								 <select id="idefin" name="idefin" class="requerid" style="width:160px;">';
-									echo'<option value="">seleccione...</option>';
-									while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
-									  if($regi1['id_ef']==$fila['id_ef']){
-										 echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
-									  }else{
-										 echo'<option value="'.$regi1['id_ef'].'">'.$regi1['nombre'].'</option>';  
-									  }
-									}
-									$res1->free();
-							echo'</select>
-								 <span class="errorMessage" id="errorentidad"></span>
-							 </div>	   
-						  </div>
-						  <div class="da-form-row">
-							  <label style="text-align:right;"><b>Valor USD.</b></label>
-							  <div class="da-form-item small">
-								<input class="textbox required" type="text" id="txtValorusd" name="txtValorusd" value="'.$fila['valor_dolar'].'" autocomplete="off" readonly/>
-								<span class="errorMessage" id="errorvalorusd"></span>
-							  </div>
-						  </div>
-						  <div class="da-form-row">
-							  <label style="text-align:right;"><b>Valor Bs.</b></label>
-							  <div class="da-form-item small">
-								<input class="textbox required" type="text" id="txtValorbs" name="txtValorbs" value="'.$fila['valor_boliviano'].'" autocomplete="off"/>
-								<span class="errorMessage" id="errorvalorbs"></span>
-							  </div>
-						  </div>		
-						  									  
-						  <div class="da-button-row">
-							 <input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar"/>
-							 <input type="submit" value="Guardar" class="da-button green" name="btnGuardar" id="btnGuardar"/>
-									  
-							 <input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
-						  </div>
-					  </form>
-				  </div>
-			  </div>';
-	
-	} else {
-		//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
-		header('Location: index.php?l=tipocambio&var='.$_GET['var']);
-	}
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";
+    }
 }
 
 

@@ -378,7 +378,7 @@ $(function(){
     $("#txtIdusuario").blur(function(e){
 			 //alert("This input field has lost its focus.");
 			 //alert('ingresa');
-			 var usuario = $("#txtIdusuario").val();
+			 var usuario = $("#txtIdusuario").prop('value');
 			 var variable = $('#txtTipousuario option:selected').prop('value');
 			 var vec = variable.split('|');
 			 var tipousuario = vec[1];

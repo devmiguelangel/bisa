@@ -265,7 +265,7 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir registro">
+				   <a href="adicionar_registro.php?opcion=crear_tipo_producto&tipo_sesion='.base64_encode($tipo_sesion).'&id_ef_sesion='.base64_encode($id_ef_sesion).'" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir Registro</span>">
 				   <img src="images/add_new.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -297,16 +297,16 @@ echo'<div class="da-panel collapsible">
 				<div class="da-panel-header">
 					<span class="da-panel-title">
 						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Lista Registros 
+						<b>'.$regief['nombre'].'</b> - <span lang="es">Lista Registros</span> 
 					</span>
 				</div>
 				<div class="da-panel-content">
 					<table class="da-table">
 						<thead>
 							<tr>
-								<th><b>Tipo</b></th>
-								<th style="text-align:center;"><b>Compañia de Seguro</b></th>
-								<th style="text-align:center;"><b>Estado</b></th>
+								<th><b><span lang="es">Tipo registro</span></b></th>
+								<th style="text-align:center;"><b><span lang="es">Compañía de Seguro</span></b></th>
+								<th style="text-align:center;"><b><span lang="es">Estado</span></b></th>
 								<th></th>
 							</tr>
 						</thead>
@@ -347,8 +347,8 @@ echo'<div class="da-panel collapsible">
 											<td class="da-icon-column">
 											   <ul class="action_user">';
 											   if($regi['activado']==1){
-												   echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'&tipo_producto='.base64_encode($regi['tipo_producto']).'" class="add_mod da-tooltip-s various" title="Agregar list. productos"></a></li>';
-												   echo'<li style="margin-right:5px;"><a href="?l=des_producto&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'&tipo_producto='.base64_encode($regi['tipo_producto']).'" class="edit da-tooltip-s" title="Editar Tasas"></a></li>';
+												   echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'&tipo_producto='.base64_encode($regi['tipo_producto']).'" class="add_mod da-tooltip-s various" title="<span lang=\'es\'>Agregar lista productos</span>"></a></li>';
+												   echo'<li style="margin-right:5px;"><a href="?l=des_producto&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'&tipo_producto='.base64_encode($regi['tipo_producto']).'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar Tasas Producto</span>"></a></li>';
 											   }else{
 												   echo'<li>&nbsp;</li>
 												        <li>&nbsp;</li>';
@@ -367,6 +367,7 @@ echo'<div class="da-panel collapsible">
 									  <div class="da-message warning">
 										 No existe registros alguno, razones alguna:
 										 <ul>
+											<li>No se encontraron registros</li>
 											<li>Verifique que la Compañia de Seguros este activada</li>
 											<li>Verifique que la Compañia asignada a la Entidad Financiera este activada</li>
 											<li>Verifique que el producto exista en la Compañia asignada a la Entidad Financiera</li>
@@ -381,9 +382,14 @@ echo'<div class="da-panel collapsible">
 	 }
 	 $resef->free();
  }else{
-	echo'<div class="da-message info">
-			 No existe registros alguno o la entidad Financiera no esta activada
-		</div>'; 
+	echo'<div class="da-message warning">
+			   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+			   <ul>
+				  <li lang="es">La Entidad Financiera no tiene asignado el producto Desgravamen</li>
+				  <li lang="es">La Entidad Financiera no esta activado</li>
+				  <li lang="es">La Entidad Financiera no esta creada</li>
+				</ul>
+		  </div>';  
  }
 }
 
@@ -468,12 +474,12 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=des_producto&var='.$_GET['var'].'&list_producto=v" class="da-tooltip-s" title="Volver">
+					 <a href="?l=des_producto&var='.$_GET['var'].'&list_producto=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				  </li>';
 				  if($tipo_producto=='PRODUCTO'){
 				 echo'<li style="margin-right:6px;">
-					   <a href="adicionar_registro.php?opcion=agregar_productos&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad_fin'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir producto">
+					   <a href="adicionar_registro.php?opcion=agregar_productos&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad_fin'].'" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir Producto</span>">
 					   <img src="images/add_new.png" width="32" height="32"></a>
 					</li>';
 				  }
@@ -485,14 +491,14 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-			<b>'.$nom_entidad.' - '.$nom_compania.'</b> - Listado de Productos
+			<b>'.$nom_entidad.' - '.$nom_compania.'</b> - <span lang="es">Listado de Productos</span>
 		</span>
 	</div>
 	<div class="da-panel-content">
 		<table class="da-table">
 			<thead>
 				<tr>
-					<th><b>PRODUCTOS</b></th>
+					<th><b><span lang="es">Productos</span></b></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -505,7 +511,7 @@ echo'
 								<td>'.$regi['nombre'].'</td>
 								<td class="da-icon-column">
 								   <ul class="action_user">
-									  <li style="margin-right:5px;"><a href="adicionar_registro.php?opcion=editar_productos&idprcia='.base64_encode($regi['id_prcia']).'&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad_fin'].'" class="edit da-tooltip-s various fancybox.ajax" title="Editar"></a></li>';
+									  <li style="margin-right:5px;"><a href="adicionar_registro.php?opcion=editar_productos&idprcia='.base64_encode($regi['id_prcia']).'&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad_fin'].'" class="edit da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Editar</span>"></a></li>';
 									  $selectBusca="select
 													  id_tasa,
 													  id_prcia
@@ -811,12 +817,12 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=des_producto&var='.$_GET['var'].'&list_producto=v" class="da-tooltip-s" title="Volver">
+					 <a href="?l=des_producto&var='.$_GET['var'].'&list_producto=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				</li>';
 				if($tipo_producto=='PRODUCTO'){
 			   echo'<li style="margin-right:6px;">
-					   <a href="?l=des_producto&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'&tipo_producto='.$_GET['tipo_producto'].'" class="da-tooltip-s" title="Añadir nuevas tasas">
+					   <a href="?l=des_producto&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'&tipo_producto='.$_GET['tipo_producto'].'" class="da-tooltip-s" title="<span lang=\'es\'>Añadir nuevas tasas</span>">
 					   <img src="images/add_new.png" width="32" height="32"></a>
 					</li>';
 				}
@@ -828,7 +834,7 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-		    <b>'.$entidad.' - '.$compania.'</b> - Editar Tasas
+		    <b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Editar Tasas</span>
 		</span>
 	</div>
 	<div class="da-panel-content">';
@@ -841,10 +847,10 @@ echo'
 						<thead>
 							<tr>
 								<th><b>No</b></th>
-								<th style="width:200px;"><b>Producto</b></th>
-								<th><b>Tasa Compañia</b></th>
-								<th><b>Tasa Banco</b></th>
-								<th><b>Tasa Final</b></th>
+								<th style="width:200px;"><b><span lang="es">Producto</span></b></th>
+								<th><b><span lang="es">Tasa Compañía</span></b></th>
+								<th><b><span lang="es">Tasa Banco</span></b></th>
+								<th><b><span lang="es">Tasa Final</span></b></th>
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
@@ -867,7 +873,7 @@ echo'
 											<input type="hidden" name="idprcia'.$i.'" id="idprcia'.$i.'" value="'.$regi['id_prcia'].'"/></td>
 											<td class="da-icon-column">
 											   <ul class="action_user">
-											     <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_prcia'].'|'.$id_ef_cia.'|'.$id_producto.'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>
+											     <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_prcia'].'|'.$id_ef_cia.'|'.$id_producto.'" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>"></a></li>
 											   </ul>
 											</td>
 										</tr>';
@@ -885,7 +891,7 @@ echo'
 		        </div>
 			    <div class="da-button-row">
 				   
-				   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta"/>
+				   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta" lang="es"/>
 				   <input type="hidden" name="accionGuardar" value="checkdatos"/>
 				   <input type="hidden" name="num_prod" value="'.$num.'" id="num_prod"/>
 				   <input type="hidden" id="var" value="'.$_GET['var'].'"/>
@@ -1093,7 +1099,7 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=des_producto&var='.$_GET['var'].'&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&tipo_producto='.$_GET['tipo_producto'].'" class="da-tooltip-s" title="Volver">
+					 <a href="?l=des_producto&var='.$_GET['var'].'&listartasas=v&id_ef_cia='.$_GET['id_ef_cia'].'&id_producto='.$_GET['id_producto'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&tipo_producto='.$_GET['tipo_producto'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -1105,7 +1111,7 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-		    <b>'.$entidad.' - '.$compania.'<b/> - Agregar nuevas tasas
+		    <b>'.$entidad.' - '.$compania.'<b/> - <span lang="es">Agregar nuevas tasas</span>
 		</span>
 	</div>
 	<div class="da-panel-content">';
@@ -1117,7 +1123,6 @@ echo'
 					<table class="da-table">
 						<thead>
 							<tr>
-								
 								<th style="width:200px;"><b>Producto</b></th>
 								<th><b>Tasa Compañia</b></th>
 								<th><b>Tasa Banco</b></th>
@@ -1165,7 +1170,7 @@ echo'
 	       </form>';
      }else{
 		 echo'<div class="da-message info">
-				  No existe registros alguno, para ingresar nuevas tasas añada un nuevo producto.
+				  <span lang="es">No existe registros alguno, para ingresar nuevas tasas añada un nuevo producto</span>.
 			  </div>';
 	 }		   	
 echo'</div>

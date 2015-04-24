@@ -8,52 +8,60 @@ function generar_id_codificado($prefijo){
 
 //FUNCION PARA MOSTRAR EL FORMULARIO DE USUARIO / CONTRASEÑA
 function mostrar_login_form($num) {
-    $error='';
 	$usuario='';
-    if($num==2){
-	  $error='Nombre de Usuario o Contrase&ntilde;a incorrectos.'; 
-	}
 
 	$especiales = array("<", ">");
 	$reemplazos = array("", "");
 	$usuario = str_replace($especiales, $reemplazos, $usuario);
     //echo $num_emision;
-   echo'<div id="da-login">
+?>	
+        <div id="da-login">
 			<div id="da-login-box-wrapper">
 				<div id="da-login-top-shadow">
 				</div>
 				<div id="da-login-box">
-					<div id="da-login-box-header">';
+					<div id="da-login-box-header">
+                    <?php
 					  if($num==1){
-						echo'<h1>Login</h1>';
+						echo'<h1 lang="es">Ingreso</h1>';
 					  }elseif($num==2){
-					     echo'<h2 style="font-size:12px; color:#d44d24; font-weight:bold;">'.$error.'</h2>';
-					  }	
-			   echo'</div>
+					     echo'<h2 lang="es" style="font-size:12px; color:#d44d24; font-weight:bold;">Datos incorrectos</h2>';
+					  }
+					 ?> 	
+			        </div>
 					<div id="da-login-box-content">
 						<form id="da-login-form" method="post" action="">
 							<div id="da-login-input-wrapper">
 								<div class="da-login-input">
-									<input type="text" name="username" id="da-login-username" placeholder="Username" autocomplete="off"/>
+									<input lang="es" type="text" name="username" id="da-login-username" placeholder="Usuario" autocomplete="off"/>
 								</div>
 								<div class="da-login-input">
-									<input type="password" name="password" id="da-login-password" placeholder="Password" />
+									<input lang="es" type="password" name="password" id="da-login-password" placeholder="Contrase&ntilde;a" />
 								</div>
 							</div>
 							<div id="da-login-button">
-								<input type="submit" value="Login" id="da-login-submit" />
+								<input lang="es" type="submit" value="Ingresar" id="da-login-submit" />
 							</div>
 						</form>
 					</div>
 					<div id="da-login-box-footer">
-						
 						<div id="da-login-tape"></div>
 					</div>
 				</div>
 				<div id="da-login-bottom-shadow">
 				</div>
 			</div>
-		</div>';
+			<!--<div style="padding-top:40px; padding-left:100px; padding-right:100px;">
+			 <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+			   <tr>
+			    <td style="width:8%;"><a href="#" onclick="window.lang.change('es'); return false;">Espa&ntilde;ol</a></td>
+			    <td style="width:8%;"><a href="#" onclick="window.lang.change('en'); return false;">English(US)</a></td>
+                <td style="width:84%;">&nbsp;</td>
+			   </tr>
+			 </table>
+			</div>-->
+		</div>
+<?php        
 }
 
 
@@ -317,14 +325,13 @@ function validarPdf($nombreCampo, $tamanoMax, $tamanoMaxStr, $folderDestino, $re
 				}
 			} else {
 				//TAMAÑO DE ARCHIVO ES MAS DEL LIMITE DADO
-				$resultado['mensaje'] = "El tama&ntilde;o del archivo es mayor al permitido.<br>"
-				."El tama&ntilde;o permitido es ".$tamanoMaxStr.".";
+				$resultado['mensaje'] = "El tama&ntilde;o del archivo es mayor al permitido, "
+				."el tama&ntilde;o permitido es ".$tamanoMaxStr.".";
 				$resultado['flag'] = false;
 			}
 		} else {
 			//EL ARCHIVO NO ES UNA IMAGEN
-			$resultado['mensaje'] = "El archivo no pudo ser copiado al Servidor.<br>"
-			."El archivo no tiene un formato permitido.&nbsp;".$fileType;
+			$resultado['mensaje'] = "El archivo no pudo ser copiado al servidor, el archivo no tiene un formato permitido. ".$fileType;
 			$resultado['flag'] = false;
 		}
 	} else {

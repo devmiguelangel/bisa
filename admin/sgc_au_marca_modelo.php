@@ -39,7 +39,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=au_marca_modelo&var=au&list_marca=v');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -255,92 +256,109 @@ if($tipo_sesion=='ROOT'){
 							sh.id_ef = ef.id_ef and sh.producto='AU')
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
-$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);		  
-echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			  <ul class="action_user">
-				  <li style="margin-right:6px;">
-					 <a href="adicionar_registro.php?opcion=crear_marca_auto&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir marca auto">
-					 <img src="images/add_new.png" width="32" height="32"></a>
-				  </li>
-			  </ul>
-		  </div>
-	  </div>';
- while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	  
-   $select="select
-			  id_marca,
-			  id_ef,
-			  marca,
-			  activado,
-			  case activado
-				when 1 then 'activo'
-				when 0 then 'inactivo'
-			  end as activado_text
-			from
-			  s_au_marca
-			where
-			  id_ef='".$regief['id_ef']."';";
-   $res = $conexion->query($select,MYSQLI_STORE_RESULT);
-   $num = $res->num_rows;
-   if($num>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}				  
-   echo'<div class="da-panel collapsible" style="width:600px;">
-			<div class="da-panel-header">
-				<span class="da-panel-title">
-					<img src="images/icons/black/16/list.png" alt="" />
-					<b>'.$regief['nombre'].'</b> - Listado marcas auto</b>
-				</span>
-			</div>
-			<div class="da-panel-content">
-				<table '.$id.' class="da-table">
-					<thead>
-						<tr>
-							<th><b>Marca de Auto</b></th>
-							<th><b>Estado</b></th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody>';
-					  
-					  if($num>0){
-							$c=0;
-							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-								$c++;
-								 echo'<tr ';
-										  if($regi['activado']==0){
-											  echo'style="background:#D44D24; color:#ffffff;"'; 
-										   }else{
-											  echo'';	 
-										   }
-								  echo'>
-										<td>'.$regi['marca'].'</td>
-										<td>'.$regi['activado_text'].'</td>
-										<td class="da-icon-column">
-										   <ul class="action_user">
-											  <li style="margin-right:5px;"><a href="adicionar_registro.php?id_marca='.base64_encode($regi['id_marca']).'&id_ef='.base64_encode($regief['id_ef']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'&opcion=editar_marca_auto" class="edit da-tooltip-s various fancybox.ajax" title="Editar"></a></li>';
-											  if($regi['activado']==0){
-												  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_marca'].'|'.$regief['id_ef'].'|activar" class="daralta da-tooltip-s accion_active_marca" title="Activar"></a></li>';
-											  }else{
-												  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_marca'].'|'.$regief['id_ef'].'|desactivar" class="darbaja da-tooltip-s accion_active_marca" title="Desactivar"></a></li>';  
-											  }
-											  echo'<li><a href="?l=au_marca_modelo&var='.$_GET['var'].'&list_modelo=v&id_ef='.base64_encode($regief['id_ef']).'&id_marca='.base64_encode($regi['id_marca']).'&marca='.base64_encode($regi['marca']).'&entidad='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Modelo Auto"></a></li>';
-									  echo'</ul>	
-										</td>
-									</tr>';
-							}
-							$res->free();			
-					  }else{
-						 echo'<tr><td colspan="7">
-								  <div class="da-message info">
-									   No existe registros alguno, ingrese nuevos registros
+   if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+	    if($resef->num_rows>0){
+			  echo'<div class="da-panel collapsible">
+						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+							<ul class="action_user">
+								<li style="margin-right:6px;">
+								   <a href="adicionar_registro.php?opcion=crear_marca_auto&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir marca auto</span>">
+								   <img src="images/add_new.png" width="32" height="32"></a>
+								</li>
+							</ul>
+						</div>
+					</div>';
+			   while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	  
+				 $select="select
+							id_marca,
+							id_ef,
+							marca,
+							activado,
+							case activado
+							  when 1 then 'activo'
+							  when 0 then 'inactivo'
+							end as activado_text
+						  from
+							s_au_marca
+						  where
+							id_ef='".$regief['id_ef']."';";
+				  if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){
+						 $num = $res->num_rows;
+						 if($num>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}				  
+						 echo'<div class="da-panel collapsible" style="width:600px;">
+								  <div class="da-panel-header">
+									  <span class="da-panel-title">
+										  <img src="images/icons/black/16/list.png" alt="" />
+										  <b>'.$regief['nombre'].'</b> - <span lang="es">Listado marcas auto</span></b>
+									  </span>
 								  </div>
-							  </td></tr>';
-					  }
-			   echo'</tbody>
-				</table>
-			</div>
-		</div>';  
- }
- $resef->free();
+								  <div class="da-panel-content">
+									  <table '.$id.' class="da-table">
+										  <thead>
+											  <tr>
+												  <th><b><span lang="es">Marca de Auto</span></b></th>
+												  <th><b><span lang="es">Estado</span></b></th>
+												  <th>&nbsp;</th>
+											  </tr>
+										  </thead>
+										  <tbody>';
+											
+											if($num>0){
+												  $c=0;
+												  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+													  $c++;
+													   echo'<tr ';
+																if($regi['activado']==0){
+																	echo'style="background:#D44D24; color:#ffffff;"'; 
+																 }else{
+																	echo'';	 
+																 }
+														echo'>
+															  <td>'.$regi['marca'].'</td>
+															  <td lang="es">'.$regi['activado_text'].'</td>
+															  <td class="da-icon-column">
+																 <ul class="action_user">
+																	<li style="margin-right:5px;"><a href="adicionar_registro.php?id_marca='.base64_encode($regi['id_marca']).'&id_ef='.base64_encode($regief['id_ef']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'&opcion=editar_marca_auto" class="edit da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Editar</span>"></a></li>';
+																	if($regi['activado']==0){
+																		echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_marca'].'|'.$regief['id_ef'].'|activar" class="daralta da-tooltip-s accion_active_marca" title="<span lang=\'es\'>Activar</span>"></a></li>';
+																	}else{
+																		echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_marca'].'|'.$regief['id_ef'].'|desactivar" class="darbaja da-tooltip-s accion_active_marca" title="<span lang=\'es\'>Desactivar</span>"></a></li>';  
+																	}
+																	echo'<li><a href="?l=au_marca_modelo&var='.$_GET['var'].'&list_modelo=v&id_ef='.base64_encode($regief['id_ef']).'&id_marca='.base64_encode($regi['id_marca']).'&marca='.base64_encode($regi['marca']).'&entidad='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="<span lang=\'es\'>Agregar Modelo Auto</span>"></a></li>';
+															echo'</ul>	
+															  </td>
+														  </tr>';
+												  }
+												  $res->free();			
+											}else{
+											   echo'<tr><td colspan="7">
+														<div class="da-message info" lang="es">
+															 No existe ningun dato, ingrese nuevos registros
+														</div>
+													</td></tr>';
+											}
+									 echo'</tbody>
+									  </table>
+								  </div>
+							  </div>';  
+				  }else{
+					  echo'<div class="da-message error">error en la consulta'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>'; 
+				  }
+			   }
+			   $resef->free();
+		}else{
+			 echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Automotores</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				 </div>'; 
+		}
+   }else{
+	   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: ".$conexion->errno.": ".$conexion->error."</div>";
+   }
 }
 
 //FUNCION LISTA LOS MODELOS DE AUTO DE MARCA
@@ -439,23 +457,7 @@ function mostrar_lista_modelo_auto($id_usuario_sesion, $tipo_sesion, $usuario_se
 	});
 </script>
 <?php
-$entidad=base64_decode($_GET['entidad']);
-echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			  <ul class="action_user">
-				  <li style="margin-right:6px;">
-					   <a href="?l=au_marca_modelo&var='.$_GET['var'].'&list_marca=v" class="da-tooltip-s" title="Volver">
-					   <img src="images/retornar.png" width="32" height="32"></a>
-				  </li>
-				  <li style="margin-right:6px;">
-					 <a href="adicionar_registro.php?opcion=crear_modelo_auto&id_marca='.$_GET['id_marca'].'&marca='.$_GET['marca'].'&entidad='.$_GET['entidad'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir modelo auto">
-					 <img src="images/add_new.png" width="32" height="32"></a>
-				  </li>
-			  </ul>
-		  </div>
-	  </div>';
- 	  
-   $select="select
+  $select="select
 			  id_modelo,
 			  id_marca,
 			  modelo,
@@ -468,67 +470,87 @@ echo'<div class="da-panel collapsible">
 			  s_au_modelo
 			where
 			  id_marca='".base64_decode($_GET['id_marca'])."';";
-   $res = $conexion->query($select,MYSQLI_STORE_RESULT);
-   $num = $res->num_rows;
-   if($num>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}			  
-   echo'<div class="da-panel collapsible" style="width:600px;">
-			<div class="da-panel-header">
-				<span class="da-panel-title">
-					<img src="images/icons/black/16/list.png" alt="" />
-					<b>Marca: '.base64_decode($_GET['marca']).'</b> - Listado modelos auto</b><br/>
-					<div style="margin-left:25px; font-weight: bold;">'.$entidad.'</div>
-				</span>
-			</div>
-			<div class="da-panel-content">
-				<table '.$id.' class="da-table">
-					<thead>
-						<tr>
-							<th><b>Modelo de Auto</b></th>
-							<th><b>Estado</b></th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody>';
-					  
-					  if($num>0){
-							$c=0;
-							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-								$c++;
-								 echo'<tr ';
-										  if($regi['activado']==0){
-											  echo'style="background:#D44D24; color:#ffffff;"'; 
-										   }else{
-											  echo'';	 
-										   }
-								  echo'>
-										<td>'.$regi['modelo'].'</td>
-										<td>'.$regi['activado_text'].'</td>
-										<td class="da-icon-column">
-										   <ul class="action_user">
-											  <li style="margin-right:5px;"><a href="adicionar_registro.php?id_modelo='.base64_encode($regi['id_modelo']).'&id_marca='.$_GET['id_marca'].'&marca='.$_GET['marca'].'&entidad='.$_GET['entidad'].'&opcion=editar_modelo_auto" class="edit da-tooltip-s various fancybox.ajax" title="Editar"></a></li>';
-											  if($regi['activado']==0){
-												  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'|activar" class="daralta da-tooltip-s accion_active_modelo" title="Activar"></a></li>';
-											  }else{
-												  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'|desactivar" class="darbaja da-tooltip-s accion_active_modelo" title="Desactivar"></a></li>';  
-											  }
-											  if($tipo_sesion=='ROOT'){
-												 echo'<li style="margin-right:5px;"><a href="#" class="eliminar_modelo da-tooltip-s" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'" title="Eliminar"></a></li>';
-											  }
-									  echo'</ul>	
-										</td>
-									</tr>';
-							}			
-					  }else{
-						 echo'<tr><td colspan="7">
-								  <div class="da-message info">
-									   No existe registros alguno, ingrese nuevos registros
-								  </div>
-							  </td></tr>';
-					  }
-			   echo'</tbody>
-				</table>
-			</div>
-		</div>';  
+   if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){
+		$entidad=base64_decode($_GET['entidad']);
+		echo'<div class="da-panel collapsible">
+				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					<ul class="action_user">
+						<li style="margin-right:6px;">
+							 <a href="?l=au_marca_modelo&var='.$_GET['var'].'&list_marca=v" class="da-tooltip-s" title="Volver">
+							 <img src="images/retornar.png" width="32" height="32"></a>
+						</li>
+						<li style="margin-right:6px;">
+						   <a href="adicionar_registro.php?opcion=crear_modelo_auto&id_marca='.$_GET['id_marca'].'&marca='.$_GET['marca'].'&entidad='.$_GET['entidad'].'" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir modelo auto</span>">
+						   <img src="images/add_new.png" width="32" height="32"></a>
+						</li>
+					</ul>
+				</div>
+			</div>';
+ 	  
+   
+		   $num = $res->num_rows;
+		   if($num>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}			  
+		   echo'<div class="da-panel collapsible" style="width:600px;">
+					<div class="da-panel-header">
+						<span class="da-panel-title">
+							<img src="images/icons/black/16/list.png" alt="" />
+							<b><span lang="es">Marca</span>: '.base64_decode($_GET['marca']).'</b> - <span lang="es">Listado modelos auto</span></b><br/>
+							<div style="margin-left:25px; font-weight: bold;">'.$entidad.'</div>
+						</span>
+					</div>
+					<div class="da-panel-content">
+						<table '.$id.' class="da-table">
+							<thead>
+								<tr>
+									<th><b><span lang="es">Modelo de Auto</span></b></th>
+									<th><b><span lang="es">Estado</span></b></th>
+									<th>&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody>';
+							  
+							  if($num>0){
+									$c=0;
+									while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+										$c++;
+										 echo'<tr ';
+												  if($regi['activado']==0){
+													  echo'style="background:#D44D24; color:#ffffff;"'; 
+												   }else{
+													  echo'';	 
+												   }
+										  echo'>
+												<td>'.$regi['modelo'].'</td>
+												<td lang="es">'.$regi['activado_text'].'</td>
+												<td class="da-icon-column">
+												   <ul class="action_user">
+													  <li style="margin-right:5px;"><a href="adicionar_registro.php?id_modelo='.base64_encode($regi['id_modelo']).'&id_marca='.$_GET['id_marca'].'&marca='.$_GET['marca'].'&entidad='.$_GET['entidad'].'&opcion=editar_modelo_auto" class="edit da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Editar</span>"></a></li>';
+													  if($regi['activado']==0){
+														  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'|activar" class="daralta da-tooltip-s accion_active_modelo" title="<span lang=\'es\'>Activar</span>"></a></li>';
+													  }else{
+														  echo'<li style="margin-right:5px;"><a href="#" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'|desactivar" class="darbaja da-tooltip-s accion_active_modelo" title="<span lang=\'es\'>Desactivar</span>"></a></li>';  
+													  }
+													  if($tipo_sesion=='ROOT'){
+														 echo'<li style="margin-right:5px;"><a href="#" class="eliminar_modelo da-tooltip-s" id="'.$regi['id_modelo'].'|'.base64_decode($_GET['id_marca']).'" title="<span lang=\'es\'>Eliminar</span>"></a></li>';
+													  }
+											  echo'</ul>	
+												</td>
+											</tr>';
+									}			
+							  }else{
+								 echo'<tr><td colspan="7">
+										  <div class="da-message info" lang="es">
+											   No existe ningun registro, razones alguna
+										  </div>
+									  </td></tr>';
+							  }
+					   echo'</tbody>
+						</table>
+					</div>
+				</div>';  
+   }else{
+	   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error."</div>";
+   }
 
 }
 

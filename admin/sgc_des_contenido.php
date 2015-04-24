@@ -266,86 +266,102 @@ function mostrar_lista_contenido_desgravamen($id_usuario_sesion, $tipo_sesion, $
 								sh.id_ef = ef.id_ef and sh.producto='DE')
 							  and ef.id_ef = '".$id_ef_sesion."';";
 	}
-	$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-	/*echo'<div class="da-panel collapsible">
-			  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-				  <ul class="action_user">
-					  <li style="margin-right:6px;">
-						 <a href="?l=des_contenido&crear_contenido=v&var='.$_GET['var'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir nuevo registro">
-						 <img src="images/add_new.png" width="32" height="32"></a>
-					  </li>
-				  </ul>
-			  </div>
-		   </div>';*/		  
-	while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
-		$selectCont="select
-					  id_home,
-					  producto_nombre,
-					  html,
-					  imagen,
-					  id_ef
-					from
-					  s_sgc_home
-					where
-					  id_ef='".$regief['id_ef']."' and producto='DE';";
-		$res = $conexion->query($selectCont,MYSQLI_STORE_RESULT);			   
-		echo'
-		<div class="da-panel collapsible">
-			<div class="da-panel-header">
-				<span class="da-panel-title">
-					<img src="images/icons/black/16/list.png" alt="" />
-					<b>'.$regief['nombre'].'</b> - Contenido Desgravamen
-				</span>
-			</div>
-			<div class="da-panel-content">
-				<table class="da-table">
-					<thead>
-						<tr>
-						   <th><b>Contenido</b></th>
-						   <th style="width:200px; text-align:center"><b>Imagen</b></th>
-						   <th style="width:100px;"><b>Producto</b></th>
-						   <th></th>
-						</tr>
-					</thead>
-					<tbody>';
-					  $num = $res->num_rows;
-					  if($num>0){
-							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-								echo'<tr>
-										<td>'.substr_replace($regi['html'], '...',600).'</td>
-										<td style="text-align:center;">';
-										  if($regi['imagen']!=''){
-											   if(file_exists('../images/'.$regi['imagen'])){  
-												  echo'<img src="../images/'.$regi['imagen'].'"/>';
-											   }else{
-												  echo'no existe el archivo fisico';   
-											   }
-										   }else{
-											  echo'no existe el nombre del archivo en la base de datos';   
-										   }
-								   echo'</td>
-										<td>'.$regi['producto_nombre'].'</td>
-										<td class="da-icon-column">
-										   <ul class="action_user">
-											  <li style="margin-right:5px;"><a href="?l=des_contenido&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="Editar"></a></li>';
-									  echo'</ul>	
-										</td>
-									</tr>';
-							}
-							$res->free();			
-					  }else{
-						 echo'<tr><td colspan="4">
-								  <div class="da-message info">
-									   No existe registros alguno, ingrese nuevos registros
-								  </div>
-							  </td></tr>';
-					  }
-			   echo'</tbody>
-				</table>
-			</div>
-		</div>';
+	if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		if($resef->num_rows>0){
+			/*echo'<div class="da-panel collapsible">
+					  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+						  <ul class="action_user">
+							  <li style="margin-right:6px;">
+								 <a href="?l=des_contenido&crear_contenido=v&var='.$_GET['var'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir nuevo registro">
+								 <img src="images/add_new.png" width="32" height="32"></a>
+							  </li>
+						  </ul>
+					  </div>
+				   </div>';*/		  
+			while($regief = $resef->fetch_array(MYSQLI_ASSOC)){
+				$selectCont="select
+							  id_home,
+							  producto_nombre,
+							  html,
+							  imagen,
+							  id_ef
+							from
+							  s_sgc_home
+							where
+							  id_ef='".$regief['id_ef']."' and producto='DE';";
+				$res = $conexion->query($selectCont,MYSQLI_STORE_RESULT);			   
+				echo'
+				<div class="da-panel collapsible">
+					<div class="da-panel-header">
+						<span class="da-panel-title">
+							<img src="images/icons/black/16/list.png" alt="" />
+							<b>'.$regief['nombre'].'</b> - <span lang="es">Contenido Desgravamen</span>
+						</span>
+					</div>
+					<div class="da-panel-content">
+						<table class="da-table">
+							<thead>
+								<tr>
+								   <th><b><span lang="es">Contenido</span></b></th>
+								   <th style="width:200px; text-align:center"><b><span lang="es">Imagen</span></b></th>
+								   <th style="width:100px;"><b><span lang="es">Producto</span></b></th>
+								   <th></th>
+								</tr>
+							</thead>
+							<tbody>';
+							  $num = $res->num_rows;
+							  if($num>0){
+									while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+										echo'<tr>
+												<td>'.substr_replace($regi['html'], '...',600).'</td>
+												<td style="text-align:center;">';
+												  if($regi['imagen']!=''){
+													   if(file_exists('../images/'.$regi['imagen'])){  
+														  echo'<img src="../images/'.$regi['imagen'].'"/>';
+													   }else{
+														  echo'no existe el archivo fisico';   
+													   }
+												   }else{
+													  echo'no existe el nombre del archivo en la base de datos';   
+												   }
+										   echo'</td>
+												<td>'.$regi['producto_nombre'].'</td>
+												<td class="da-icon-column">
+												   <ul class="action_user">
+													  <li style="margin-right:5px;"><a href="?l=des_contenido&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+											  echo'</ul>	
+												</td>
+											</tr>';
+									}
+									$res->free();			
+							  }else{
+								 echo'<tr><td colspan="4">
+										  <div class="da-message info">
+											   No existe registros alguno, ingrese nuevos registros
+										  </div>
+									  </td></tr>';
+							  }
+					   echo'</tbody>
+						</table>
+					</div>
+				</div>';
+			}
+			$resef->free();
+		}else{
+			echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Desgravamen</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				</div>'; 
+		}
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";
 	}
-	$resef->free();
 }
 
 //FUNCION QUE NOS PERMITE ACTUALIZAQR UNA IMAGEN
@@ -495,7 +511,7 @@ tinymce.init({
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-				   <a href="?l=des_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+				   <a href="?l=des_contenido&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 				   <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -506,14 +522,14 @@ tinymce.init({
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt=""/>
-					  Actualizar Contenido Desgravamen
+					  <span lang="es">Actualizar Contenido Desgravamen</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 					  					  
 					  <div class="da-form-row">
-							 <label style="text-align:right;"><b>Entidad Financiera</b></label>
+							 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 							 <div class="da-form-item small">
 								 '.$regImg['nombre'].'
 							 </div>	 
@@ -523,17 +539,17 @@ tinymce.init({
 							  if(file_exists('../images/'.$regImg['imagen'])){
 								  echo'<img src="../images/'.$regImg['imagen'].'"/>';
 							  }else{
-								  echo'No existe el archivo fisico';  
+								  echo'<span lang="es">No existe el archivo físico</span>';  
 							  }
 						  }else{
-							 echo'No existe el nombre en la DB'; 
+							 echo'No existe el nombre en la base de datos'; 
 						  }
 				 echo'</div>
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Archivo</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 						  
 						  <div class="da-form-item large">
-							  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 100px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+							  <span lang="es">El tamaño máximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 100px., el formato del archivo a subir debe ser [jpg]</span> 
 							  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 							  <span class="errorMessage">'.$errArr['imagen'].'</span>
 							  <span><b>Archivo actual:</b> '.$regImg['imagen'].'</span>
@@ -542,7 +558,7 @@ tinymce.init({
 					  </div>
 					
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Texto</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Contenido</span></b></label>
 						  <div class="da-form-item large">
 							<textarea name="contenido" id="descripcion">'.$contenido.'</textarea>
 							<span class="errorMessage">'.$errArr['errorcontenido'].'</span>
@@ -550,7 +566,7 @@ tinymce.init({
 					  </div>
 					  
 					  <div class="da-button-row">  
-						  <input type="submit" value="Guardar" class="da-button green"/>
+						  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 						  <input type="hidden" name="accionGuardar" value="ok"/> 
 					  </div>
 				  </form>

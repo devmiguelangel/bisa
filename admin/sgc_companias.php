@@ -16,7 +16,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=compania&var=cs');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -183,7 +184,41 @@ function mostrar_lista_companias($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 				}
 		   });
 		   e.preventDefault();
-	   }); 
+	   });
+	   
+	   $("a[href].accionef").click(function(e){
+		   var valor = $(this).attr('id');
+		   var vec = valor.split('|');
+		   var id_compania = vec[0];
+		   var text = vec[1]; 		  
+		   jConfirm("¿Esta seguro de "+text+" la Compañia?", ""+text+" registro", function(r) {
+				//alert(r);
+				if(r) {
+						var dataString ='id_compania='+id_compania+'&text='+text+'&opcion=enabled_disabled_cia';
+						$.ajax({
+							   async: true,
+							   cache: false,
+							   type: "POST",
+							   url: "accion_registro.php",
+							   data: dataString,
+							   success: function(datareturn) {
+									  //alert(datareturn);
+									  if(datareturn==1){
+										 location.reload(true);
+									  }else if(datareturn==2){
+										jAlert("El registro no se proceso correctamente intente nuevamente", "Mensaje");
+										 e.preventDefault();
+									  }
+									  
+							   }
+					    });
+					
+				} else {
+					//jAlert("No te gusta Actualidad jQuery", "Actualidad jQuery");
+				}
+		   });
+		   e.preventDefault();
+	   });  
 	});
 </script>
 <script type="text/javascript" src="plugins/ambience/jquery.ambiance.js"></script>
@@ -218,107 +253,120 @@ $selectFor="select
 			from
 			  s_compania
 			order by id_compania asc;";
-$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);		  
-echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			  <ul class="action_user">
-				  <li style="margin-right:6px;">
-					 <a href="?l=compania&crear=v&var='.$_GET['var'].'" class="da-tooltip-s" title="Agregar Cia. Seguros">
-					 <img src="images/add_new.png" width="32" height="32"></a>
-				  </li>
-			  </ul>
-		  </div>
-	  </div>';
-echo'
-<div class="da-panel collapsible" style="width:850px;">
-	<div class="da-panel-header">
-		<span class="da-panel-title">
-			<img src="images/icons/black/16/list.png" alt="" />
-			Compañías de Seguros
-		</span>
-	</div>
-	<div class="da-panel-content">
-		<table class="da-table">
-			<thead>
-				<tr>
-					<th>Compañía de Seguros</th>
-					<th style="width:100px;">Estado</th>
-					<th style="width:200px; text-align:center">Imagen</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>';
-			  $num = $res->num_rows;
-			  if($num>0){
-					while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-						echo'<tr ';
-						        if($regi['activado']=='deshabilitado'){
-									echo'style="background:#D44D24; color:#ffffff;"'; 
-								 }else{
-								    echo'';	 
-							     }
-						echo'>
-								<td>'.$regi['nombre'].'</td>
-								<td>'.$regi['activado'].'</td>
-								<td style="text-align:center;">';
-								   if($regi['logo']!=''){
-									   if(file_exists('../images/'.$regi['logo'])){
-										  $imagen = getimagesize('../images/'.$regi['logo']);    //Sacamos la información
-                                          $ancho = $imagen[0];              //Ancho
-                                          $alto = $imagen[1];   
-									      echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
-									   }else{
-										  echo'no existe el archivo fisico';   
-									   }
-								   }else{
-									  echo'no existe el nombre del archivo en la base de datos';   
-								   }
-						   echo'</td>
-								<td class="da-icon-column">
-								   <ul class="action_user">
-									  <li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
-									  if($regi['activado']=='deshabilitado'){
-										  echo'<li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
-									  }else{
-										  echo'<li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
-									  }
-									  $selectDelCia="select 
-															sc.id_compania, sc.nombre
-														from
-															s_compania as sc
-														where
-															sc.id_compania = '".$regi['id_compania']."'
-																and not exists( select 
-																	sdec.id_compania
+  if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){		  
+		echo'<div class="da-panel collapsible">
+				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					  <ul class="action_user">
+						  <li style="margin-right:6px;">
+							 <a href="?l=compania&crear=v&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Agregar Cia. Seguros</span>">
+							 <img src="images/add_new.png" width="32" height="32"></a>
+						  </li>
+					  </ul>
+				  </div>
+			  </div>';
+		echo'
+		<div class="da-panel collapsible" style="width:850px;">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/list.png" alt="" />
+					<span lang="es">Compañías de Seguros</span>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<table class="da-table">
+					<thead>
+						<tr>
+							<th lang="es" style="font-weight:bold;">Compañías de Seguros</th>
+							<th style="width:100px; font-weight:bold;" lang="es">Estado</th>
+							<th style="width:200px; text-align:center; font-weight:bold;" lang="es">Imagen</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>';
+					  $num = $res->num_rows;
+					  if($num>0){
+							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+								echo'<tr ';
+										if($regi['activado']=='deshabilitado'){
+											echo'style="background:#D44D24; color:#ffffff;"'; 
+										 }else{
+											echo'';	 
+										 }
+								echo'>
+										<td>'.$regi['nombre'].'</td>
+										<td lang="es">'.$regi['activado'].'</td>
+										<td style="text-align:center;">';
+										   if($regi['logo']!=''){
+											   if(file_exists('../images/'.$regi['logo'])){
+												  $imagen = getimagesize('../images/'.$regi['logo']);    //Sacamos la información
+												  $ancho = $imagen[0];              //Ancho
+												  $alto = $imagen[1];   
+												  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
+											   }else{
+												  echo'<span lang="es">no existe el archivo físico</span>';   
+											   }
+										   }else{
+											  echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
+										   }
+								   echo'</td>
+										<td class="da-icon-column">
+										   <ul class="action_user">
+											  <li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+											  if($regi['activado']=='deshabilitado'){
+												  echo'<li><a href="#" id="'.base64_encode($regi['id_compania']).'|activar" class="daralta da-tooltip-s accionef" title="<span lang=\'es\'>Activar</span>"></a></li>';
+											  }else{
+												  echo'<li><a href="#" id="'.base64_encode($regi['id_compania']).'|desactivar" class="darbaja da-tooltip-s accionef" title="<span lang=\'es\'>Desactivar"></a></li>';  
+											  }
+											  /*
+											  if($regi['activado']=='deshabilitado'){
+												  echo'<li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
+											  }else{
+												  echo'<li style="margin-right:5px;"><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
+											  }
+											  */
+											  $selectDelCia="select 
+																	sc.id_compania, sc.nombre
 																from
-																	s_de_em_cabecera as sdec
+																	s_compania as sc
 																where
-																	sdec.id_compania = sc.id_compania);";
-									  $resdel = $conexion->query($selectDelCia,MYSQLI_STORE_RESULT);
-									  $numdel = $resdel->num_rows;
-									  if($numdel!=0 and $tipo_sesion=='root'){
-										   echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_compania'].'|'.$regi['logo'].'"></a></li>';
-									  }else{
-										  echo'<li style="margin-left:12px;">&nbsp;</li>';
-									  }
-									  								
-									  
-							  echo'</ul>	
-								</td>
-							</tr>';
-					}
-					$res->free();			
-			  }else{
-			     echo'<tr><td colspan="7">
-				          <div class="da-message info">
-                               No existe registros alguno, ingrese nuevos registros
-                          </div>
-				      </td></tr>';
-			  }
-	   echo'</tbody>
-		</table>
-	</div>
-</div>';
+																	sc.id_compania = '".$regi['id_compania']."'
+																		and not exists( select 
+																			sdec.id_compania
+																		from
+																			s_de_em_cabecera as sdec
+																		where
+																			sdec.id_compania = sc.id_compania);";
+											  if($resdel = $conexion->query($selectDelCia,MYSQLI_STORE_RESULT)){
+												  $numdel = $resdel->num_rows;
+												  if($numdel!=0 and $tipo_sesion=='root'){
+													   echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_compania'].'|'.$regi['logo'].'"></a></li>';
+												  }else{
+													  echo'<li style="margin-left:12px;">&nbsp;</li>';
+												  }
+											  }else{
+												 echo'<div class="da-message error"><span lang="es">Error en la consulta</span>'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>';  
+											  }
+									  echo'</ul>	
+										</td>
+									</tr>';
+							}
+							$res->free();			
+					  }else{
+						 echo'<tr><td colspan="7">
+								  <div class="da-message info" lang="es">
+									   No existe registros alguno, ingrese nuevos registros
+								  </div>
+							  </td></tr>';
+					  }
+			   echo'</tbody>
+				</table>
+			</div>
+		</div>';
+  }else{
+	 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  <span lang='es'>Error en la consulta:</span> ".$conexion->errno.": ".$conexion->error
+		."</div>"; 
+  }
 }
 
 //FUNCION QUE PERMITE VISUALIZAR EL FORMULARIO NUEVO USUARIO
@@ -449,30 +497,30 @@ function mostrar_crear_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		<div class="da-panel-header">
 			<span class="da-panel-title">
 				<img src="images/icons/black/16/pencil.png" alt="" />
-				Nueva Compañía de Seguros
+				<span lang="es">Nueva Compañía de Seguros</span>
 			</span>
 		</div>
 		<div class="da-panel-content">
 			<form class="da-form" name="frmCreaCia" id="frmCreaCia" action="" method="post" enctype="multipart/form-data">
 				<div class="da-form-row">
-					<label style="text-align:right;"><b>Titulo Compañía de Seguros</b></label>
+					<label style="text-align:right;"><b><span lang="es">Titulo Compañía de Seguros</span></b></label>
 					<div class="da-form-item large">
 						<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomplete="off"/>
-						<span class="errorMessage" id="errortitulo"></span>
+						<span class="errorMessage" id="errortitulo" lang="es"></span>
 					</div>
 				</div>
 				<div class="da-form-row">
-					<label style="text-align:right;"><b>Archivo</b></label>
+					<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 					<div class="da-form-item large">
-					    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 500Kb. Se recomienda que la imagen tenga un ancho de 140px y un alto de 50px, el formato del archivo a subir debe ser [JPG]</span> 
+					    <span lang="es">El tamaño máximo del archivo es de 500Kb. Se recomienda que la imagen tenga un ancho de 140px y un alto de 50px, el formato del archivo a subir debe ser [JPG]</span> 
 						<input type="file" id="txtArchivo" name="txtArchivo"/>
 						<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
 					</div>
 				</div>
 																
 				<div class="da-button-row">
-					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
+					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar" lang="es"/>
+					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
 					<input type="hidden" name="accionGuardar" value="checkdatos"/>
 					<input type="hidden" id="var" value="'.$_GET['var'].'"/>
 				</div>
@@ -601,7 +649,7 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 		   });
 		   
 		   $('#btnCancelar').click(function(){   
-			   var variable=$('#btnCancelar').prop('value');
+			   var variable=$('#var').prop('value');
 			   $(location).prop('href','index.php?l=compania&var='+variable);
 		   });   
 	   });
@@ -621,73 +669,78 @@ function mostrar_editar_contenido($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				  id_compania='".$idcompania."' and activado=1
 				limit
 				  0,1;";
-	$rs = $conexion->query($select, MYSQLI_STORE_RESULT);
-	$num = $rs->num_rows;
-	
-	//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
-	if($num) {
-
-		$fila = $rs->fetch_array(MYSQLI_ASSOC);
-        $rs->free();
-		if(isset($_POST['txtTitulo'])) $titulo = $_POST['txtTitulo']; else $titulo = $fila['nombre'];
+	if($rs = $conexion->query($select, MYSQLI_STORE_RESULT)){
+			$num = $rs->num_rows;
+			
+			//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
+			if($num) {
 		
-		$archivo = $fila['logo'];	
-		  echo'<div class="da-panel" style="width:650px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/pencil.png" alt="" />
-						Editar Compañía de Seguros
-					</span>
-				</div>
-				<div class="da-panel-content">
-					<form class="da-form" name="frmEditcia" id="frmEditcia" action="" method="post" enctype="multipart/form-data">
-						<div class="da-form-row">
-						  <label style="text-align:right;"><b>Logo</b></label>';
-						  if($archivo!=''){
-						    if(file_exists('../images/'.$archivo)){
-							   $imagen = getimagesize('../images/'.$fila['logo']);   
-                               $ancho = $imagen[0];              
-                               $alto = $imagen[1];	
-							   echo'<img src="../images/'.$archivo.'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
-							}else{
-							   echo'No existe el archivo fisico';	
-							}
-						  }else{
-							echo'Campo vacio';  
-						  }
-				   echo'</div>
-						<div class="da-form-row">
-							<label style="text-align:right;"><b>Compañía de Seguros</b></label>
-							<div class="da-form-item large">
-								<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomplete="off"/>
-								<span class="errorMessage" id="errortitulo"></span>
-							</div>
+				$fila = $rs->fetch_array(MYSQLI_ASSOC);
+				$rs->free();
+				if(isset($_POST['txtTitulo'])) $titulo = $_POST['txtTitulo']; else $titulo = $fila['nombre'];
+				
+				$archivo = $fila['logo'];	
+				  echo'<div class="da-panel" style="width:650px;">
+						<div class="da-panel-header">
+							<span class="da-panel-title">
+								<img src="images/icons/black/16/pencil.png" alt="" />
+								<span lang="es">Editar Compañía de Seguros</span>
+							</span>
 						</div>
-						<div class="da-form-row">
-							<label style="text-align:right;"><b>Archivo</b></label>
-							<div class="da-form-item large">
-							    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 500Kb. Se recomienda que la imagen tenga un ancho de 140px y un alto de 50px, el formato del archivo a subir debe ser [JPG]</span>
-								<input type="file" id="txtArchivo" name="txtArchivo"/>
-								<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
-								<span><b>Archivo actual:</b> '.$archivo.'</span>
-							</div>
+						<div class="da-panel-content">
+							<form class="da-form" name="frmEditcia" id="frmEditcia" action="" method="post" enctype="multipart/form-data">
+								<div class="da-form-row">
+								  <label style="text-align:right;"><b>Imagen</b></label>';
+								  if($archivo!=''){
+									if(file_exists('../images/'.$archivo)){
+									   $imagen = getimagesize('../images/'.$fila['logo']);   
+									   $ancho = $imagen[0];              
+									   $alto = $imagen[1];	
+									   echo'<img src="../images/'.$archivo.'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
+									}else{
+									   echo'<span lang="es">No existe el archivo físico</span>';	
+									}
+								  }else{
+									echo'<span lang="es">campo vacio</span>';  
+								  }
+						   echo'</div>
+								<div class="da-form-row">
+									<label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span></b></label>
+									<div class="da-form-item large">
+										<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomplete="off"/>
+										<span class="errorMessage" id="errortitulo" lang="es"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
+									<div class="da-form-item large">
+										<span lang="es">El tamaño máximo del archivo es de 500Kb. Se recomienda que la imagen tenga un ancho de 140px y un alto de 50px, el formato del archivo a subir debe ser [JPG]</span>
+										<input type="file" id="txtArchivo" name="txtArchivo"/>
+										<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
+										<span><b><span lang="es">Archivo actual:</span></b> '.$archivo.'</span>
+									</div>
+								</div>
+																				
+								<div class="da-button-row">
+									<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar" lang="es"/>
+									<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
+									<input type="hidden" name="accionGuardar" value="checkdatos"/>
+									<input type="hidden" name="archivoAux" value="'.$archivo.'"/>
+									<input type="hidden" id="var" value="'.$_GET['var'].'"/>
+								</div>
+							</form>
 						</div>
-																		
-						<div class="da-button-row">
-							<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
-							<input type="hidden" name="accionGuardar" value="checkdatos"/>
-							<input type="hidden" name="archivoAux" value="'.$archivo.'"/>
-							<input type="hidden" id="var" value="'.$_GET['var'].'"/>
-						</div>
-					</form>
-				</div>
-			</div>';
-	
-	} else {
-		//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
-		header('Location: index.php?l=compania&var='.$_GET['var']);
-	}
+					</div>';
+			
+			} else {
+				//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
+				header('Location: index.php?l=compania&var='.$_GET['var']);
+			}
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";
+    }
 }
 
 //FUNCION QUE PERMITE DAR BAJA AL USUARIO
@@ -723,30 +776,34 @@ function desactivar_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 function mostrar_dar_baja_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
     $idcompania = base64_decode($_GET['idcompania']);
 	$selectCia="select nombre from s_compania where id_compania=".$idcompania.";";
-	$rescia = $conexion->query($selectCia, MYSQLI_STORE_RESULT);
-	$regCia = $rescia->fetch_array(MYSQLI_ASSOC);
-	$rescia->free();
-	echo'<div style="text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;">';
-	echo '<form name="frmDarbaja" action="" method="post" class="da-form">';
-	echo '<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" cols="2">';
-	echo '<tr><td align="center" width="100%" style="height:60px;">';
-	echo 'Al deshabilitar la compañia, '
-		.'se actualizara en la base de datos, est&aacute; seguro de deshabilitar la compañia <b>'.$regCia['nombre'].'</b> de forma permanente?';
-	echo '</td></tr>
-	      <tr> 
-	      <td align="center">
-	      <input class="da-button green" type="submit" name="btnBajaCompania" value="Desactivar"/>'
-		.'<input type="hidden" name="accionEliminar" value="checkdatos"/>
-		  <input class="da-button gray left" type="submit" name="btnCancelar" value="Cancelar"/>';
-	echo '</td></tr></table></form>';
-	echo'</div>';
+	if($rescia = $conexion->query($selectCia, MYSQLI_STORE_RESULT)){
+		$regCia = $rescia->fetch_array(MYSQLI_ASSOC);
+		$rescia->free();
+		echo'<div style="text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;">';
+		echo '<form name="frmDarbaja" action="" method="post" class="da-form">';
+		echo '<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" cols="2">';
+		echo '<tr><td align="center" width="100%" style="height:60px;">';
+		echo 'Al deshabilitar la compañia, '
+			.'se actualizara en la base de datos, est&aacute; seguro de deshabilitar la compañia <b>'.$regCia['nombre'].'</b> de forma permanente?';
+		echo '</td></tr>
+			  <tr> 
+			  <td align="center">
+			  <input class="da-button green" type="submit" name="btnBajaCompania" value="Desactivar"/>'
+			.'<input type="hidden" name="accionEliminar" value="checkdatos"/>
+			  <input class="da-button gray left" type="submit" name="btnCancelar" value="Cancelar"/>';
+		echo '</td></tr></table></form>';
+		echo'</div>';
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";
+	}
 }
 
 //FUNCION QUE PERMITE DAR ALTA UN REGISTRO
 function activar_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
    $idcompania = base64_decode($_GET['idcompania']);
 
-	
 	if(isset($_POST['btnAltaCompania'])) {
 		
 		$update ="UPDATE s_compania SET activado=1 "
@@ -775,22 +832,27 @@ function activar_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $co
 function mostrar_dar_alta_compania($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
     $idcompania = base64_decode($_GET['idcompania']);
 	$selectCia="select nombre from s_compania where id_compania=".$idcompania.";";
-	$rescia = $conexion->query($selectCia,MYSQLI_STORE_RESULT);
-	$regCia = $rescia->fetch_array(MYSQLI_ASSOC);
-	$rescia->free();
-	echo'<div style="text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;">';
-	echo '<form name="frmDarbaja" action="" method="post" class="da-form">';
-	echo '<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" cols="2">';
-	echo '<tr><td align="center" width="100%" style="height:60px;">';
-	echo 'Al habilitar la compañia, '
-		.'se actualizara en la base de datos, est&aacute; seguro de habilitar la compañia <b>'.$regCia['nombre'].'</b> de forma permanente?';
-	echo '</td></tr>
-	      <tr> 
-	      <td align="center">
-	      <input class="da-button green" type="submit" name="btnAltaCompania" value="Activar"/>'
-		.'<input type="hidden" name="accionEliminar" value="checkdatos"/>
-		  <input class="da-button gray left" type="submit" name="btnCancelar" value="Cancelar"/>';
-	echo '</td></tr></table></form>';
-	echo'</div>';
+	if($rescia = $conexion->query($selectCia,MYSQLI_STORE_RESULT)){
+			$regCia = $rescia->fetch_array(MYSQLI_ASSOC);
+			$rescia->free();
+			echo'<div style="text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;">';
+			echo '<form name="frmDarbaja" action="" method="post" class="da-form">';
+			echo '<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" cols="2">';
+			echo '<tr><td align="center" width="100%" style="height:60px;">';
+			echo 'Al habilitar la compañia, '
+				.'se actualizara en la base de datos, est&aacute; seguro de habilitar la compañia <b>'.$regCia['nombre'].'</b> de forma permanente?';
+			echo '</td></tr>
+				  <tr> 
+				  <td align="center">
+				  <input class="da-button green" type="submit" name="btnAltaCompania" value="Activar"/>'
+				.'<input type="hidden" name="accionEliminar" value="checkdatos"/>
+				  <input class="da-button gray left" type="submit" name="btnCancelar" value="Cancelar"/>';
+			echo '</td></tr></table></form>';
+			echo'</div>';
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		   ."</div>";
+	}
 }
 ?>

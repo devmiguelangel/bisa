@@ -20,6 +20,9 @@ $conexion = new SibasDB();
 	font-weight: bold;
 	color: #0075AA;
 }
+ .display{
+    display:none;	
+}
 </style>
 <script type="text/javascript">
    $(document).ready(function(){
@@ -35,7 +38,7 @@ $conexion = new SibasDB();
 			    }else{
 				   sum++; 
 				   $('#errortipocert').show('slow');
-				   $('#errortipocert').html('seleccione tipo certificado');  
+				   //$('#errortipocert').html('seleccione tipo certificado');  
 			    }
 				
 				if(titulo!=''){
@@ -43,7 +46,7 @@ $conexion = new SibasDB();
 			    }else{
 					sum++;
 					$('#errortitulo').show('slow');
-					$('#errortitulo').html('Ingrese el titulo');
+					//$('#errortitulo').html('Ingrese el titulo');
 				}	
 			});
 			if(sum==0){
@@ -99,7 +102,7 @@ $conexion = new SibasDB();
 			    }else{
 				   sum++; 
 				   $('#errortipocert').show('slow');
-				   $('#errortipocert').html('seleccione tipo certificado');  
+				   //$('#errortipocert').html('seleccione tipo certificado');  
 			    }
 								
 				if(titulo!=''){
@@ -107,7 +110,7 @@ $conexion = new SibasDB();
 			    }else{
 					sum++;
 					$('#errortitulo').show('slow');
-					$('#errortitulo').html('Ingrese el titulo');
+					//$('#errortitulo').html('Ingrese el titulo');
 			    }	
 			});
 			if(sum==0){
@@ -156,16 +159,19 @@ $conexion = new SibasDB();
 			$(this).find('.required').each(function(){
 			     if(titulo!=''){
 					 if(titulo.match(/^[a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ\s]+$/)){
-						 $('#errortitulo').hide('slow');
+						 $('#errortitulo_1').hide('slow');
+						 $('#errortitulo_2').hide('slow');
 					 }else{
 						 sum++;
-						 $('#errortitulo').show('slow');
-						 $('#errortitulo').html('ingrese solo caracteres');
+						 $('#errortitulo_1').hide('slow');
+						 $('#errortitulo_2').show('slow');
+						 //$('#errortitulo').html('ingrese solo caracteres');
 					 }
 				 }else{
 					 sum++;
-					 $('#errortitulo').show('slow');
-					 $('#errortitulo').html('ingrese titulo del cuestionario');
+					 $('#errortitulo_2').hide('slow');
+					 $('#errortitulo_1').show('slow');
+					 //$('#errortitulo').html('ingrese titulo del cuestionario');
 				 }	
 			});
 			if(sum==0){
@@ -215,16 +221,19 @@ $conexion = new SibasDB();
 			$(this).find('.required').each(function(){
 			     if(titulo!=''){
 					 if(titulo.match(/^[a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ\s]+$/)){
-						 $('#errortitulo').hide('slow');
+						 $('#errortitulo_a').hide('slow');
+						 $('#errortitulo_b').hide('slow');
 					 }else{
 						 sum++;
-						 $('#errortitulo').show('slow');
-						 $('#errortitulo').html('ingrese solo caracteres');
+						 $('#errortitulo_a').hide('slow');
+						 $('#errortitulo_b').show('slow');
+						 //$('#errortitulo').html('ingrese solo caracteres');
 					 }
 				 }else{
 					 sum++;
-					 $('#errortitulo').show('slow');
-					 $('#errortitulo').html('ingrese titulo del cuestionario');
+					 $('#errortitulo_b').hide('slow');
+					 $('#errortitulo_a').show('slow');
+					// $('#errortitulo').html('ingrese titulo del cuestionario');
 				 }	
 			});
 			if(sum==0){
@@ -240,22 +249,28 @@ $conexion = new SibasDB();
 					   url: "accion_registro.php",
 					   data: dataString,
 					   beforeSend: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								'height': '30px'
+							});
+							$("#response-loading_error").css({
 								'height': '30px'
 							});
 					   },
 					   complete: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								"background": "transparent"
+							});
+							$("#response-loading_error").css({
 								"background": "transparent"
 							});
 					   },
 					   success: function(datareturn) {
 							  //alert(datareturn);
 							  if(datareturn==1){
-								 $('#response-loading').html("Se agrego correctamente el registro");
+								 $('#response-loading').fadeIn('slow');
 								  window.setTimeout('location.reload()', 3000); 
 							  }else if(datareturn==2){
-								 $('#response-loading').html("Hubo un error al ingresar el dato, consulte con su administrador");
+								 $('#response-loading').fadeIn('slow');
 								 e.preventDefault();
 							  }
 							  
@@ -283,7 +298,7 @@ $conexion = new SibasDB();
 					 }else{
 						 sum++;
 						 $('#errorpregunta').show('slow');
-						 $('#errorpregunta').html('ingrese la pregunta');
+						 //$('#errorpregunta').html('ingrese la pregunta');
 					 }
 					 
 					 if(selectTipo!=''){
@@ -291,7 +306,7 @@ $conexion = new SibasDB();
 				     }else{
 						 sum++;
 						 $('#errortipopreg').show('slow');
-						 $('#errortipopreg').html('seleccione tipo pregunta');
+						 //$('#errortipopreg').html('seleccione tipo pregunta');
 				     }
 			});
 			if(sum==0){
@@ -307,22 +322,28 @@ $conexion = new SibasDB();
 					   url: "accion_registro.php",
 					   data: dataString,
 					   beforeSend: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								'height': '30px'
+							});
+							$("#response-loading_error").css({
 								'height': '30px'
 							});
 					   },
 					   complete: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								"background": "transparent"
+							});
+							$("#response-loading_error").css({
 								"background": "transparent"
 							});
 					   },
 					   success: function(datareturn) {
 							  //alert(datareturn);
 							  if(datareturn==1){
-								 $('#response-loading').html("Se agrego correctamente el registro");
+								 $('#response-loading_good').show("slow");
 								  window.setTimeout('location.reload()', 3000); 
 							  }else if(datareturn==2){
-								 $('#response-loading').html("Hubo un error al ingresar el dato, consulte con su administrador");
+								 $('#response-loading_error').show("slow");
 								 e.preventDefault();
 							  }
 							  
@@ -342,16 +363,19 @@ $conexion = new SibasDB();
 			$(this).find('.required').each(function(){
 					 if(pregunta!=''){
 						 if(pregunta.match(/^[0-9a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ\s\D\S]+$/)){
-							 $('#errorpregunta').hide('slow');
+							 $('#errorpregunta_a').hide('slow');
+							 $('#errorpregunta_b').hide('slow');
 						 }else{
 							 sum++;
-							 $('#errorpregunta').show('slow');
-							 $('#errorpregunta').html('ingrese solo caracteres');
+							 $('#errorpregunta_a').hide('slow');
+							 $('#errorpregunta_b').show('slow');
+							 //$('#errorpregunta').html('ingrese solo caracteres');
 						 }
 					 }else{
 						 sum++;
-						 $('#errorpregunta').show('slow');
-						 $('#errorpregunta').html('ingrese la pregunta');
+						 $('#errorpregunta_b').hide('slow');
+						 $('#errorpregunta_a').show('slow');
+						 //$('#errorpregunta').html('ingrese la pregunta');
 					 }
 					 
 					 if(selectTipo!=''){
@@ -359,7 +383,7 @@ $conexion = new SibasDB();
 				     }else{
 						 sum++;
 						 $('#errortipopreg').show('slow');
-						 $('#errortipopreg').html('seleccione tipo pregunta');
+						 //$('#errortipopreg').html('seleccione tipo pregunta');
 				     }
 			});
 			if(sum==0){
@@ -375,22 +399,28 @@ $conexion = new SibasDB();
 					   url: "accion_registro.php",
 					   data: dataString,
 					   beforeSend: function(){
-							$("#response-loading").css({
+							$("#response-loading_goog").css({
+								'height': '30px'
+							});
+							$("#response-loading_error").css({
 								'height': '30px'
 							});
 					   },
 					   complete: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								"background": "transparent"
+							});
+							$("#response-loading_error").css({
 								"background": "transparent"
 							});
 					   },
 					   success: function(datareturn) {
 							  //alert(datareturn);
 							  if(datareturn==1){
-								 $('#response-loading').html("Se edito correctamente el registro");
+								 $('#response-loading_good').show('slow');
 								  window.setTimeout('location.reload()', 3000); 
 							  }else if(datareturn==2){
-								 $('#response-loading').html("Hubo un error al ingresar el dato, consulte con su administrador");
+								 $('#response-loading_error').show('slow');
 								 e.preventDefault();
 							  }
 							  
@@ -412,7 +442,7 @@ $conexion = new SibasDB();
 				     }else{
 						 sum++;
 						 $('#errorcuest').show('slow');
-						 $('#errorcuest').html('seleccione tipo de cuestionario');
+						 //$('#errorcuest').html('seleccione tipo de cuestionario');
 				     }
 			});
 			if(sum==0){
@@ -465,7 +495,7 @@ $conexion = new SibasDB();
 				     }else{
 						 sum++;
 						 $('#erroraddpregcuest').show('slow');
-						 $('#erroraddpregcuest').html('seleccione pregunta');
+						 //$('#erroraddpregcuest').html('seleccione pregunta');
 				     }
 			});
 			if(sum==0){
@@ -481,22 +511,28 @@ $conexion = new SibasDB();
 					   url: "accion_registro.php",
 					   data: dataString,
 					   beforeSend: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								'height': '30px'
+							});
+							$("#response-loading_error").css({
 								'height': '30px'
 							});
 					   },
 					   complete: function(){
-							$("#response-loading").css({
+							$("#response-loading_good").css({
+								"background": "transparent"
+							});
+							$("#response-loading_error").css({
 								"background": "transparent"
 							});
 					   },
 					   success: function(datareturn) {
 							  //alert(datareturn);
 							  if(datareturn==1){
-								 $('#response-loading').html("Se adiciono correctamente el registro");
+								 $('#response-loading_good').show("slow");
 								  window.setTimeout('location.reload()', 3000); 
 							  }else if(datareturn==2){
-								 $('#response-loading').html("Hubo un error al ingresar el dato, consulte con su administrador");
+								 $('#response-loading_error').show("slow");
 								 e.preventDefault();
 							  }
 							  
@@ -513,6 +549,10 @@ $conexion = new SibasDB();
         });
    });
 </script>
+<script type="text/javascript">
+	var lang = new Lang("es");
+	lang.dynamic("en", "js/langpack/en.json");
+</script>
 <?php
     
    if($_GET['opcion']=='crear_cert'){//CREAR CERTIFICADOS MEDICOS
@@ -520,45 +560,45 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Crear Nuevo Certificado Médico
+					  <span lang="es">Crear Nuevo Certificado Médico</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formCreaCertificado" id="formCreaCertificado">						
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Entidad Financiera:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span>:</b></label>
 						  <div class="da-form-item large">
 						    '.base64_decode($_GET['entidad']).'
 						  </div>	 
 					  </div>
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Compañía de Seguros:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span>:</b></label>
 						  <div class="da-form-item large">
 						     '.base64_decode($_GET['compania']).'
 						  </div>	  
 					  </div>
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Tipo Certificado:</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Tipo Certificado</span>:</b></label>
 						  <div class="da-form-item large">
 							  <select id="tipocertificado" class="required">
-								 <option value="">Seleccione...</option>
+								 <option value="" lang="es">seleccione...</option>
 								 <option value="EDITOR">EDITOR</option>
-								 <option value="CUESTIONARIO">CUESTIONARIO</option>
+								 <option value="CUESTIONARIO" lang="es">CUESTIONARIO</option>
 							  </select>
-							  <span class="errorMessage" id="errortipocert"></span>
+							  <span class="errorMessage" id="errortipocert" lang="es" style="display:none;">seleccione tipo certificado</span>
 						  </div>	  
 					  </div>
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Titulo:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Titulo</span>:</b></label>
 						  <div class="da-form-item large">
 							  <textarea rows="auto" cols="auto" id="txtTitulo"></textarea>
-							  <span class="errorMessage" id="errortitulo"></span>
+							  <span class="errorMessage" id="errortitulo" lang="es" style="display:none;">Ingrese el titulo</span>
 						  </div>	  
 					  </div>    
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 						  <input type="hidden" id="id_ef_cia" value="'.base64_decode($_GET['id_ef_cia']).'"/>   
-						  <div id="response-loading" class="loading-fac"></div>
+						  <div id="response-loading" class="loading-fac" lang="es"></div>
 					  </div>
 				  </form>
 			  </div>
@@ -591,32 +631,32 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Editar Certificado Médico
+					  <span lang="es">Editar Certificado Médico</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formEditarCertificado" id="formEditarCertificado">						
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Entidad Financiera:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span>:</b></label>
 						  <div class="da-form-item large">
 						  	'.base64_decode($_GET['entidad']).' 
 						  </div>	
 					  </div>
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Compañía de Seguros:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span>:</b></label>
 						  <div class="da-form-item large">
 						  	'.base64_decode($_GET['compania']).' 
 						  </div>
 					  </div>
 					  <div class="da-form-row">
-						  <label style="text-align:right;"><b>Tipo Certificado:</b></label>
+						  <label style="text-align:right;"><b><span lang="es">Tipo Certificado</span>:</b></label>
 						  <div class="da-form-item large">
 							  <select id="tipocertificado" class="required">
 								  <option value=""';
 									if($regibusca['tipo']==""){
 									  echo"selected";
 									}
-								 echo'>Seleccione...</option>
+								 echo' lang="es">seleccione...</option>
 								  <option value="EDITOR"';
 									if($regibusca['tipo']=="EDITOR"){
 									  echo"selected";
@@ -628,18 +668,18 @@ $conexion = new SibasDB();
 									} 
 								 echo'>CUESTIONARIO</option>';
 						 echo'</select>
-							  <span class="errorMessage" id="errortipocert"></span>
+							  <span class="errorMessage" id="errortipocert" lang="es" style="display:none;">seleccione tipo certificado</span>
 						  </div>	  
 					  </div>
 					  <div class="da-form-row">
-					      <label style="text-align:right;"><b>Titulo:</b></label>
+					      <label style="text-align:right;"><b><span lang="es">Titulo</span>:</b></label>
 						  <div class="da-form-item large">
 							  <textarea rows="auto" cols="auto" id="txtTitulo">'.$regibusca['titulo'].'</textarea>
-							  <span class="errorMessage" id="errortitulo"></span>
+							  <span class="errorMessage" id="errortitulo" lang="es" style="display:none;">Ingrese el titulo</span>
 						  </div>	  
 					  </div>  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
 						  <div id="response-loading" class="loading-fac"></div>
 						  <input type="hidden" id="idcm" value="'.base64_decode($_GET['idcm']).'"/>
 						  <input type="hidden" id="id_ef_cia" value="'.base64_decode($_GET['id_ef_cia']).'"/>
@@ -652,22 +692,23 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Crear nuevo Cuestionario
+					  <span lang="es">Crear nuevo Cuestionario</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formCreaCuestionario" id="formCreaCuestionario">						
 					  <div class="da-form-row">
-						 <label style="width:190px;"><b>Titulo Cuestionario</b></label>
+						 <label style="width:190px;"><b><span lang="es">Titulo Cuestionario</span></b></label>
 						 
 						   <input class="textbox required" type="text" id="txtTitCuestionario" value="" autocomplete="off"/>
-						   <span class="errorMessage" id="errortitulo"></span>
+						   <span class="errorMessage" id="errortitulo_1" lang="es" style="display:none;">ingrese titulo del cuestionario</span>
+						   <span class="errorMessage" id="errortitulo_2" lang="es" style="display:none;">ingrese solo caracteres</span>
 						 
 					  </div>
 					  					  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
-						  <div id="response-loading" class="loading-fac"></div>
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
+						  <div id="response-loading" class="loading-fac" lang="es"></div>
 					  </div>
 				  </form>
 			  </div>
@@ -680,22 +721,23 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Editar Registro
+					  <span lang="es">Editar Registro</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formEditaCuestionario" id="formEditaCuestionario">						
 					  <div class="da-form-row">
-						 <label style="width:190px;"><b>Titulo Cuestionario</b></label>
+						 <label style="width:190px;"><b><span lang="es">Titulo Cuestionario</span></b></label>
 						 
 						   <input class="textbox required" type="text" id="txtTitCuestionario" value="'.$regiqu['titulo'].'" autocomplete="off"/>
-						   <span class="errorMessage" id="errortitulo"></span>
-						 
+						   <span class="errorMessage" id="errortitulo_a" lang="es" style="display:none;">ingrese titulo del cuestionario</span>
+						   <span class="errorMessage" id="errortitulo_b" lang="es" style="display:none;">ingrese solo caracteres</span>
 					  </div>
 					  					  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
-						  <div id="response-loading" class="loading-fac"></div>
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
+						  <div id="response-loading_good" class="loading-fac display" lang="es">Se edito correctamente los datos</div>
+						  <div id="response-loading_error" class="loading-fac display" lang="es">Se edito correctamente los datos</div>
 						  <input type="hidden" id="idcuestionario" value="'.$_GET['idcuestionario'].'"/>
 					  </div>
 				  </form>
@@ -706,30 +748,31 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Crear nueva Pregunta
+					  <span lang="es">Crear nueva Pregunta</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formCreaPregunta" id="formCreaPregunta">						
 					  <div class="da-form-row">
-						   <label style="width:190px;"><b>Titulo Pregunta</b></label>
+						   <label style="width:190px;"><b><span lang="es">Titulo Pregunta</span></b></label>
 						   <input class="textbox required" type="text" id="txtPregunta" value="" autocomplete="off"/>
-						   <span class="errorMessage" id="errorpregunta"></span>
+						   <span class="errorMessage" id="errorpregunta" lang="es" style="display:none;">ingrese la pregunta</span>
 					  </div>
 					  <div class="da-form-row">
-						   <label style="width:200px;"><b>Tipo pregunta:</b></label>
+						   <label style="width:200px;"><b><span lang="es">Tipo pregunta</span>:</b></label>
 							<select id="tipopregunta" class="required">
-							   <option value="">Seleccione...</option>
+							   <option value="" lang="es">seleccione...</option>
 							   <option value="cb">CHECKBOX</option>
 							   <option value="rd">RADIO</option>
 							   <option value="text">TEXTO</option>
 							   <option value="txtarea">AREA DE TEXTO</option>
 							</select>
-							<span class="errorMessage" id="errortipopreg"></span>  	
+							<span class="errorMessage" id="errortipopreg" lang="es" style="display:none;">seleccione tipo pregunta</span>  	
 					  </div>   					  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
-						  <div id="response-loading" class="loading-fac"></div>
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
+						  <div id="response-loading_good" class="loading-fac display" lang="es">Data was correctly record</div>
+						  <div id="response-loading_error" class="loading-fac display" lang="es">Hubo un error al ingresar el dato, consulte con su administrador</div>
 					  </div>
 				  </form>
 			  </div>
@@ -749,18 +792,19 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Editar Pregunta
+					  <span lang="es">Editar Pregunta</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formEditaPregunta" id="formEditaPregunta">						
 					  <div class="da-form-row">
-						   <label style="width:190px;"><b>Titulo Pregunta</b></label>
+						   <label style="width:190px;"><b><span lang="es">Titulo Pregunta</span></b></label>
 						   <input class="textbox required" type="text" id="txtPregunta" value="'.$regi['pregunta'].'" autocomplete="off"/>
-						   <span class="errorMessage" id="errorpregunta"></span>
+						   <span class="errorMessage" id="errorpregunta_a" lang="es" style="display:none;">ingrese la pregunta</span>
+						   <span class="errorMessage" id="errorpregunta_b" lang="es" style="display:none;">ingrese solo caracteres</span>
 					  </div>
 					  <div class="da-form-row">
-						   <label style="width:200px;"><b>Tipo pregunta:</b></label>
+						   <label style="width:200px;"><b><span lang="es">Tipo pregunta</span>:</b></label>
 							<select id="tipopregunta">
 								  <option value=""';
 									if($regi['tipo']==""){
@@ -788,11 +832,12 @@ $conexion = new SibasDB();
 									} 
 								 echo'>Area de Texto</option>';
 						echo'</select>
-							<span class="errorMessage" id="errortipopreg"></span>  	
+							<span class="errorMessage" id="errortipopreg" lang="es" style="display:none;">seleccione tipo pregunta</span>  	
 					  </div>   					  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
-						  <div id="response-loading" class="loading-fac"></div>
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
+						  <div id="response-loading_good" class="loading-fac display" lang="es">Se edito correctamente los datos</div>
+						  <div id="response-loading_error" class="loading-fac display" lang="es">Hubo un error al ingresar el dato, consulte con su administrador</div>
 						  <input type="hidden" id="idpregunta" value="'.$_GET['idpregunta'].'"/>
 					  </div>
 				  </form>
@@ -815,38 +860,38 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Agregar cuestionario a certificado
+					  <span lang="es">Agregar cuestionario a certificado</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formAddCuest" id="formAddCuest">						
 					  <div class="da-form-row">
-						   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+						   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['entidad']).'</div>	 	
 					  </div>
 					  <div class="da-form-row">
-						   <label  style="text-align:right;"><b>Compañía de Seguros</b></label>
+						   <label  style="text-align:right;"><b><span lang="es">Compañía de Seguros</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['compania']).'</div>	 	
 					  </div>
 					  <div class="da-form-row">
-						   <label  style="text-align:right;"><b>Tipo de certificado</b></label>
+						   <label  style="text-align:right;"><b><span lang="es">Tipo de certificado</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['tipocert']).'</div>
 					  </div> 
 					  <div class="da-form-row">
-						   <label  style="text-align:right;"><b>Cuestionario</b></label>
+						   <label  style="text-align:right;"><b><span lang="es">Cuestionario</span></b></label>
 						   <div class="da-form-item large">
 							   <select id="idcuestionario" class="required">';
-								 echo'<option value="">Seleccione...</option>';
+								 echo'<option value="" lang="es">seleccione...</option>';
 								 while($regi = $query->fetch_array(MYSQLI_ASSOC)){
 									echo'<option value="'.$regi['id_cuestionario'].'">'.$regi['titulo'].'</option>';  	
 								 }
 								 $query->free();	
 						   echo'</select>   
-							   <span class="errorMessage" id="errorcuest"></span>
+							   <span class="errorMessage" id="errorcuest" lang="es" style="display:none;">seleccione tipo de cuestionario</span>
 						   </div>	   
 					  </div>  					  
 					  <div class="da-button-row">
-					      <input type="submit" value="Guardar" class="da-button green"/>   
+					      <input type="submit" value="Guardar" class="da-button green" lang="es"/>   
 						  <div id="response-loading" class="loading-fac"></div>
 						  <input type="hidden" id="idcm" value="'.base64_decode($_GET['idcm']).'"/>
 					  </div>
@@ -872,43 +917,44 @@ $conexion = new SibasDB();
 			  <div class="da-panel-header">
 				  <span class="da-panel-title">
 					  <img src="images/icons/black/16/pencil.png" alt="" />
-					  Agregar pregunta a cuestionario
+					  <span lang="es">Agregar pregunta a cuestionario</span>
 				  </span>
 			  </div>
 			  <div class="da-panel-content">
 				  <form class="da-form" action="" method="POST" name="formAddPreguntaCuest" id="formAddPreguntaCuest">						
 					  <div class="da-form-row">
-						   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+						   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['entidad']).'</div>	 	
 					  </div>
 					  <div class="da-form-row">
-						   <label style="text-align:right;"><b>Compañía de Seguros</b></label>
+						   <label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['compania']).'</div>	 	
 					  </div>
 					  <div class="da-form-row">
-						   <label style="text-align:right;"><b>Titulo Cuestionario</b></label>
+						   <label style="text-align:right;"><b><span lang="es">Titulo Cuestionario</span></b></label>
 						   <div class="da-form-item large">'.base64_decode($_GET['cuestionario']).'</div>
 					  </div>
 					  <div class="da-form-row">
-						   <label style="text-align:right;"><b>Pregunta</b></label>
+						   <label style="text-align:right;"><b><span lang="es">Pregunta</span></b></label>
 						   <div class="da-form-item large">
 							   <select id="idpregunta" class="required">';
-								 echo'<option value="">Seleccione...</option>';
+								 echo'<option value="" lang="es">seleccione...</option>';
 								 while($regi = $query->fetch_array(MYSQLI_ASSOC)){
 									echo'<option value="'.$regi['id_pregunta'].'">'.$regi['pregunta'].'</option>';  	
 								 }
 								 $query->free();	
 						   echo'</select>   
-							   <span class="errorMessage" id="erroraddpregcuest"></span>
+							   <span class="errorMessage" id="erroraddpregcuest" lang="es" style="display:none;">seleccione pregunta</span>
 						    </div>   
 					  </div>   					  
 					  <div class="da-button-row">';
 					      if($num_reg>0){
-					        echo'<input type="submit" value="Guardar" class="da-button green"/>';
+					        echo'<input type="submit" value="Guardar" class="da-button green" lang="es"/>';
 						  }else{
-							echo'<input type="submit" value="Guardar" class="da-button green" disabled/>';  
+							echo'<input type="submit" value="Guardar" class="da-button green" disabled lang="es"/>';  
 						  }
-					 echo'<div id="response-loading" class="loading-fac"></div>
+					 echo'<div id="response-loading_good" class="loading-fac" lang="es" style="display:none;">Se registro correctamente el dato</div>
+					      <div id="response-loading_error" class="loading-fac" lang="es" style="display:none;">Hubo un error al ingresar el dato, consulte con su administrador</div>
 						  <input type="hidden" id="idcc" value="'.base64_decode($_GET['id_cc']).'"/>
 					  </div>
 				  </form>

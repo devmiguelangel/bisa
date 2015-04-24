@@ -272,7 +272,7 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						  inner join s_ef_usuario as efu on (efu.id_ef=ef.id_ef)
 						  inner join s_usuario as su on (su.id_usuario=efu.id_usuario)
 						  inner join s_usuario_tipo as ust on (ust.id_tipo=su.id_tipo)
-						  inner join s_departamento as dep on (dep.id_depto=su.id_depto)
+						  left join s_departamento as dep on (dep.id_depto=su.id_depto)
 						  left join s_agencia as ag on (ag.id_agencia=su.id_agencia)
 						where
 						  ef.id_ef='".$regief['id_ef']."' and (ust.codigo='LOG' or ust.codigo='REP') 
@@ -293,6 +293,7 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  </ul>
 		  </div>
 	  </div>';
+	  if($res->num_rows>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}	
 		echo'
 		<div class="da-panel collapsible">
 			<div class="da-panel-header">
@@ -302,7 +303,7 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				</span>
 			</div>
 			<div class="da-panel-content">
-				<table class="da-table">
+				<table class="da-table" '.$id.'>
 					<thead>
 						<tr>
 						    <th>Tipo usuario</th>
@@ -310,13 +311,13 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 							<th>Nombre</th>
 							<th>Email</th>
 							<th>Departamento</th>
+							<th>Agencia</th>
 							<th>Estado</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>';
-					  $num = $res->num_rows;
-					  if($num>0){
+					  if($res->num_rows>0){
 							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
 								echo'<tr ';
 										 if($regi['activado']=='inactivo'){
@@ -327,8 +328,29 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 								echo'>  <td>'.$regi['tipo'].'</td> 
 										<td>'.$regi['usuario'].'</td>
 										<td>'.$regi['nombre_usuario'].'</td>
-										<td>'.$regi['email'].'</td>
-										<td>'.$regi['departamento'].'</td>
+										<td>'.$regi['email'].'</td>';
+										echo'<td>';
+											if($regi['codigo']!='REP'){
+											  echo $regi['departamento'];
+											}else{
+												if(!empty($regi['departamento'])){ 
+												  echo $regi['departamento'];
+												}else {
+												  echo'Todos'; 
+												}
+											}
+								   echo'</td>';
+								   echo'<td>';
+										    if($regi['codigo']!='REP'){ 
+												echo $regi['agencia'];
+											}else{
+												if(!empty($regi['agencia'])){
+													echo $regi['agencia'];
+												}else{ 
+													echo 'Todos';
+												}
+											}
+								   echo'</td>	
 										<td>'.$regi['activado'].'</td>
 										<td class="da-icon-column">';
 										   echo'
@@ -416,7 +438,15 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			}else { 
 			   $nombre = '';
 			}
-			
+			if($vec2[1]=='REP'){
+			   if(!empty($_POST['departamento'])){
+					$depto_regional = $_POST['departamento'];
+				}else{
+					$depto_regional = 'null';
+				}	
+			}else{
+			   $depto_regional = $_POST['departamento'];
+			}
 			//VERIFICAMOS SI ID_AGENCIA NO ESTA VACIO 
 			if(!empty($_POST['id_agencia'])){
 				$id_agencia="'".$_POST['id_agencia']."'";
@@ -433,7 +463,7 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$encrip_pass=crypt_blowfish_bycarluys($_POST['txtPassword']);
 			 
 			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, id_agencia, fono_agencia, fecha_creacion) "
-			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$_POST['departamento'].", 1, ".$id_agencia.", '".$fono_agencia."', curdate())";
+			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, ".$id_agencia.", '".$fono_agencia."', curdate())";
 			//echo $insert;
 			if($conexion->query($insert)===TRUE){$response=TRUE;}else{$response=FALSE;}
 			
@@ -447,29 +477,11 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			
             //VERIFICAMOS SI HUBO ALGUN ERROR AL INGRESAR EN LA TABLA
 			if($response){
-				    //METEMOS LOS PERMISOS DEL USUARIO A LA TABLA TBLUSUARIOSPERMISOS
-					if($vec2[1]=='LOG') {
-						$insert = "INSERT INTO s_usuario_permiso(id_permiso, id_usuario, pagina) "
-						."VALUES(null, '".$id_unico."', '".$_POST['tipo-reporte']."')";
-						if($conexion->query($insert)===TRUE){$respuesta=TRUE;}else{$respuesta=FALSE;}
-					}elseif($vec2[1]=='REP'){
-						$insert = "INSERT INTO s_usuario_permiso(id_permiso, id_usuario, pagina) "
-						."VALUES(null, '".$id_unico."', 'RE')";
-						if($conexion->query($insert)===TRUE){$respuesta=TRUE;}else{$respuesta=FALSE;}
-					}
-					
-					
-					//VERIFICAMOS SI HUBO ALGUN ERROR AL INGRESAR EN LA TABLA
-					if($respuesta){
-						$mensaje="Se registro correctamente los datos del usuario ".$usuario;
-						header('Location: index.php?l=usuarios_admin&op=1&msg='.$mensaje);
-						//echo'<meta http-equiv="Refresh" content="0;url=index.php?l=usuarios&op=1&msg='.$mensaje.'">';
-					} else {
-						$mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno . ": " .$conexion->error;
-				        header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
-					}	
+				$mensaje="Se registro correctamente los datos del usuario ".$usuario;
+				header('Location: index.php?l=usuarios_admin&op=1&msg='.$mensaje);
+				//echo'<meta http-equiv="Refresh" content="0;url=index.php?l=usuarios&op=1&msg='.$mensaje.'">';
 		    } else {
-			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
+			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ". $conexion->error;
 				header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
 		    }	 
 			
@@ -512,11 +524,12 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			   
 			   var vec = variable.split('|');
 			   var tipousuario = vec[1];
-			   //alert(id_departamento);
+			   //alert(tipousuario)
 			   if(id_departamento!=''){
+				     				   
 				     if(tipousuario!='FAC'){
 						if(tipousuario!='LOG'){ 
-						   var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f';
+						   var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f&tipousuario='+tipousuario;
 						   $.ajax({
 								 async: true,
 								 cache: false,
@@ -539,7 +552,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 									  $('#response-loading').html(datareturn);
 										
 								 }
-						   });   
+						   });
 						}else{
 						   //VERIFICAMOS SI EXISTE ALGUN IMPLANTE ACTIVADO 
 						   //EN ALGUN PRODUCTO DE LA ENTIDAD FINANCIERA
@@ -577,11 +590,37 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 								   });   	 
 								 }else{
 								   //SI NO HAY IMPLANTES PUEDE O NO PUEDE HABER AGENCIAS
+								   var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f&tipousuario='+tipousuario;
+								   $.ajax({
+										 async: true,
+										 cache: false,
+										 type: "POST",
+										 url: "buscar_registro.php",
+										 data: dataString,
+										 beforeSend: function(){
+											  $("#response-loading").css({
+												  'height': '30px'
+											  });
+										 },
+										 complete: function(){
+											  $("#response-loading").css({
+												  "background": "transparent"
+											  });
+										 },
+										 success: function(datareturn) {
+											  //alert(datareturn);
+											  $('#content-agency').fadeIn('slow');
+											  $('#response-loading').html(datareturn);
+												
+										 }
+								   });   
 								 }	
 							  }
 						   );
 						}
 					 }
+					 //alert(tipousuario)
+					 
 			   }else{
 				  $('#content-agency').fadeOut('slow');
 			   }
@@ -593,16 +632,33 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			   var tipousuario = $(this).attr('value');
 			   if(tipousuario!=''){
 				   $("#departamento").removeAttr("disabled");
+				   $('#txtIdusuario').removeAttr('disabled');
+				   $('#btnUsuario').removeAttr('disabled');
 				   var vec=tipousuario.split('|');
-				   if(vec[1]=='LOG'){
-					   $('#departamento option[value=""]').prop('selected',true);
+				   if(vec[1]=='REP'){
 					   $('#content-agency').fadeOut('slow');
-					   $('#content-tipo-reporte').fadeIn('slow');
+					   $('#departamento option').each(function(index) {
+							//var option = $(this).text().toLowerCase();
+							var option = $(this).prop('value');
+							if (option == '') {
+								$(this).prop('selected', true).text('Todos');
+							}
+					   });
 				   }else{
-					   $('#content-tipo-reporte').fadeOut('slow');
+					   $('#departamento option').each(function(index) {
+							//var option = $(this).text().toLowerCase();
+							var option = $(this).prop('value');
+							if (option == '') {
+								$(this).prop('selected', true).text('Seleccione...');
+							}
+					   });
 				   }
 			   }else{
-				   $('#content-tipo-reporte').fadeOut('slow'); 
+				   $('#content-agency').fadeOut('slow');
+				   $('#departamento option[value=""]').prop('selected',true);
+				   $("#departamento").attr("disabled", true);
+				   $('#btnUsuario').attr('disabled', true);
+				   $('#txtIdusuario').attr('disabled', true);
 			   }
 			   e.preventDefault();
 		   });
@@ -651,9 +707,11 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				   if(departamento!=''){
 					   $('#errordepartamento').hide('slow');
 				   }else{
-					   sum++;
-					   $('#errordepartamento').show('slow');
-					   $('#errordepartamento').html('seleccione departamento');
+					   if(vec[1]!='REP'){
+						   sum++;
+						   $('#errordepartamento').show('slow');
+						   $('#errordepartamento').html('seleccione departamento');
+					   }
 				   }
 				   
 				   if(usuario!=''){
@@ -843,17 +901,6 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						echo'<span class="errorMessage" id="errortipousuario"></span>
 					</div>
 				</div>
-				<div class="da-form-row" style="display: none;" id="content-tipo-reporte">
-				  <label style="text-align:right;"><b>Tipo de reporte</b></label>
-				  <div class="da-form-item small">
-					   <select name="tipo-reporte" id="tipo-reporte" class="requerid">
-					      <option value="">Seleccione...</option>
-					      <option value="RE">Reportes</option>
-						  <option value="RU">Usuario Reportes</option> 
-					   </select>
-					   <span class="errorMessage" id="errortiporeport"></span>
-				  </div>	
-				</div>  
 				<div class="da-form-row">
 					<label style="text-align:right;"><b>Departamento</b></label>
 					<div class="da-form-item small">';
@@ -889,7 +936,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				<div class="da-form-row">
 					<label style="text-align:right;"><b>Usuario</b></label>
 					<div class="da-form-item large">
-						<input class="textbox requerid" type="text" name="txtIdusuario" id="txtIdusuario" style="width: 200px;" maxlength="10" value="'.$txtIdusuario.'" autocomplete="off"/>
+						<input class="textbox requerid" type="text" name="txtIdusuario" id="txtIdusuario" style="width: 200px;" maxlength="15" value="'.$txtIdusuario.'" autocomplete="off" disabled/>
 		                <span class="formNote" style="text-align:rigth; width:430px;">No use may&uacute;sculas ni espacios en blanco.</span>
 		                <div id="ver_msg"><div class="errorMessage" id="error_usuario"></div></div>
 					</div>
@@ -932,13 +979,13 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				<div class="da-form-row">
 					<label style="text-align:right;"><b>Correo electr&oacute;nico</b></label>
 					<div class="da-form-item large">
-						<input class="textbox requerid" type="text" name="txtEmail" id="txtEmail" style="width: 250px;" maxlength="50" value="'.$txtEmail.'"/>
+						<input class="textbox requerid" type="text" name="txtEmail" id="txtEmail" style="width: 250px;" maxlength="50" value="'.$txtEmail.'" autocomplete="off"/>
 						<span class="errorMessage" id="erroremail"></span>
 					</div>
 				</div>
 				<div class="da-button-row">
 					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
+					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" disabled/>
 					<input type="hidden" id="identidadf" value="'.$regi1['id_ef'].'"/>
 					<input type="hidden" id="tipo_sesion" value="'.$_SESSION['tipo_sesion'].'"/>
 					<input type="hidden" id="id_usuario_sesion" value="'.$_SESSION['id_usuario_sesion'].'"/>
@@ -979,12 +1026,22 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $id_e
 				
 				$vec2=explode('|',$_POST['txtTipousuario']);
 				$id_tipo = $conexion->real_escape_string($vec2[0]);
-				
+				$tipouser_text=$vec2[1];
 				
 				if(isset($_POST['txtNombre'])) $nombre = $conexion->real_escape_string($_POST['txtNombre']);
 				else $nombre = '';
 				if(isset($_POST['txtEmail'])) $email = $conexion->real_escape_string($_POST['txtEmail']);
 				else $email = '';
+				
+				if($tipouser_text!='REP'){
+					 $depto_regional = $_POST['departamento'];
+				}else{
+					if(!empty($_POST['departamento'])){
+						$depto_regional = $_POST['departamento'];
+					}else{
+						$depto_regional = 'null';
+					}
+				}
 				//VERIFICAMOS SI ID_AGENCIA NO ESTA VACIO 
 				if(!empty($_POST['id_agencia'])){
 					$id_agencia="'".$_POST['id_agencia']."'";
@@ -997,38 +1054,15 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $id_e
 				$update = "UPDATE s_usuario as su 
 				           inner join s_ef_usuario as efu on (efu.id_usuario=su.id_usuario)
 						   SET su.nombre='".$nombre."',";
-				$update .= " su.id_tipo=".$id_tipo.", su.id_depto=".$_POST['departamento'].", su.id_agencia=".$id_agencia.",";
+				$update .= " su.id_tipo=".$id_tipo.", su.id_depto=".$depto_regional.", su.id_agencia=".$id_agencia.",";
 				$update .= " su.email='".$email."', su.fono_agencia='".$fono_agencia."' "
 				."WHERE su.id_usuario='".$idusuario."' and efu.id_ef='".$_POST['id_ef']."';";
-				
+		
                  
 				//VERIFICAMOS SI HUBO ALGUN ERROR AL INGRESAR EN LA TABLA
 			    if($conexion->query($update)===TRUE){ 
-				 
-					$delete = "DELETE FROM s_usuario_permiso WHERE id_usuario='".$idusuario."'";
-					$conexion->query($delete);
-					
-					//METEMOS LOS PERMISOS DEL USUARIO A LA TABLA TBLUSUARIOSPERMISOS
-					if($vec2[1]=='LOG') {
-						$insert = "INSERT INTO s_usuario_permiso(id_permiso, id_usuario, pagina) "
-						."VALUES(null, '".$idusuario."', '".$_POST['tipo-reporte']."')";
-						if($conexion->query($insert)===TRUE){$respuesta=TRUE;}else{$respuesta=FALSE;}
-					}elseif($vec2[1]=='REP'){
-						$insert = "INSERT INTO s_usuario_permiso(id_permiso, id_usuario, pagina) "
-						."VALUES(null, '".$idusuario."', 'RE')";
-						if($conexion->query($insert)===TRUE){$respuesta=TRUE;}else{$respuesta=FALSE;}
-					}
-															
-					//MOSTRAMOS EL MENSAJE DE EDICION DE DATOS
-					if($respuesta){
-					   //REALIZAMOS EL CAMBIO DE CONTRASEÑA
-					   $mensaje='Se edito correctamente los datos del usuario '.$_POST['usuario'];
-					   header('Location: index.php?l=usuarios_admin&op=1&msg='.$mensaje);
-					} else{
-					   $mensaje="Hubo un error al actualizar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
-					   header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
-					} 
-						
+					$mensaje='Se edito correctamente los datos del usuario '.$_POST['usuario'];
+					header('Location: index.php?l=usuarios_admin&op=1&msg='.$mensaje);
 				}else{
 				    $mensaje="Hubo un error al actualizar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
 				    header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
@@ -1073,15 +1107,14 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			   var identidadf = $('#id_ef').prop('value');
 			   var variable = $('#txtTipousuario option:selected').prop('value');
 			   var tipo_sesion = $('#tipo_sesion').prop('value');
-			   var id_usuario_sesion = $('#id_usuario_sesion').prop('value');
-			   
+			   var id_usuario_sesion = $('#idusuariosesion').prop('value');
+			   //alert(id_departamento);
 			   var vec = variable.split('|');
 			   var tipousuario = vec[1];
-			   //alert(id_departamento);
 			   if(id_departamento!=''){
 				     if(tipousuario!='FAC'){
 						if(tipousuario!='LOG'){ 
-						   var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f';
+						   var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f&tipousuario='+tipousuario;
 						   $.ajax({
 								 async: true,
 								 cache: false,
@@ -1136,17 +1169,43 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 										 success: function(datareturn) {
 											  //alert(datareturn);
 											  $('#content-agency').fadeIn('slow');
-											  $('#response-loading').html(datareturn);	
+											  $('#response-loading').html(datareturn);
+												
 										 }
 								   });   	 
 								 }else{
-								   //SI NO HAY IMPLANTES PUEDE O NO PUEDE HABER AGENCIAS
+									 //SI NO HAY IMPLANTES PUEDE O NO PUEDE HABER AGENCIAS
+									 var dataString = 'id_departamento='+id_departamento+'&identidadf='+identidadf+'&opcion=buscar_agencia&required=f&tipousuario='+tipousuario;
+									 $.ajax({
+										   async: true,
+										   cache: false,
+										   type: "POST",
+										   url: "buscar_registro.php",
+										   data: dataString,
+										   beforeSend: function(){
+												$("#response-loading").css({
+													'height': '30px'
+												});
+										   },
+										   complete: function(){
+												$("#response-loading").css({
+													"background": "transparent"
+												});
+										   },
+										   success: function(datareturn) {
+												//alert(datareturn);
+												$('#content-agency').fadeIn('slow');
+												$('#response-loading').html(datareturn);
+												  
+										   }
+									 });   
 								 }	
 							  }
 						   );
 						}
 					 }
 			   }else{
+				  $('#id_agencia option[value=""]').prop('selected',true); 
 				  $('#content-agency').fadeOut('slow');
 			   }
 			   e.preventDefault();
@@ -1156,16 +1215,34 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		   $('#txtTipousuario').change(function(e){
 			   var tipousuario = $(this).attr('value');
 			   if(tipousuario!=''){
-				   $('#departamento option[value=""]').prop('selected',true);
-				   $('#content-agency').fadeOut('slow');
+				   $("#departamento").removeAttr("disabled");
+				   $('#txtIdusuario').removeAttr('disabled');
+				   $('#btnUsuario').removeAttr('disabled');
 				   var vec=tipousuario.split('|');
-				   if(vec[1]=='LOG'){
-					   $('#content-tipo-reporte').fadeIn('slow');
+				   if(vec[1]=='REP'){
+					   $('#content-agency').fadeOut('slow');
+					   $('#departamento option').each(function(index) {
+							//var option = $(this).text().toLowerCase();
+							var option = $(this).prop('value');
+							if (option == '') {
+								$(this).prop('selected', true).text('Todos');
+							}
+					   });
 				   }else{
-					   $('#content-tipo-reporte').fadeOut('slow');
+					   $('#departamento option').each(function(index) {
+							//var option = $(this).text().toLowerCase();
+							var option = $(this).prop('value');
+							if (option == '') {
+								$(this).prop('selected', true).text('Seleccione...');
+							}
+					   });
 				   }
 			   }else{
-				   $('#content-tipo-reporte').fadeOut('slow'); 
+				   $('#content-agency').fadeOut('slow');
+				   $('#departamento option[value=""]').prop('selected',true);
+				   $("#departamento").attr("disabled", true);
+				   $('#btnUsuario').attr('disabled', true);
+				   $('#txtIdusuario').attr('disabled', true);
 			   }
 			   e.preventDefault();
 		   });
@@ -1209,9 +1286,11 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				   if(departamento!=''){
 					   $('#errordepartamento').hide('slow');
 				   }else{
-					   sum++;
-					   $('#errordepartamento').show('slow');
-					   $('#errordepartamento').html('seleccione departamento');
+					   if(vec[1]!='REP'){
+						   sum++;
+						   $('#errordepartamento').show('slow');
+						   $('#errordepartamento').html('seleccione departamento');
+					   }
 				   }
 				   				   				  
 				   if(nombre!=''){
@@ -1374,37 +1453,7 @@ echo'<div class="da-panel" style="width:650px;">
 							
 							echo'<span class="errorMessage" id="errortipousuario"></span>
 						</div>
-					</div>';
-			          $style='';
-					  if($fila['codigo']=='LOG'){
-						  $style_tipo_rep = '';
-						  $style_agency = 'style="display: none;"';
-					  }elseif($fila['codigo']=='REP'){
-						  
-						  $style_tipo_rep = 'style="display: none;"';
-						  $style_agency = '';
-					  }
-			   
-			   echo'<div class="da-form-row" '.$style_tipo_rep.' id="content-tipo-reporte">
-					  <label style="text-align:right;"><b>Tipo de reporte</b></label>
-					  <div class="da-form-item small">
-						   <select name="tipo-reporte" id="tipo-reporte" class="requerid">
-							<option value=""';
-							 if($fila['pagina']=='') 
-								 echo 'selected'; 
-					  echo '>Seleccionar...</option>
-							<option value="RE"';
-							 if($fila['pagina']=='RE') 
-								 echo 'selected'; 
-					  echo '>Reportes</option>'
-						 .'<option value="RU"'; 
-							 if($fila['pagina']=='RU') 
-								 echo 'selected';
-					 echo '>Reportes usuario</option>
-						  </select>
-						   <span class="errorMessage" id="errortiporeport"></span>
-					  </div>	
-					</div>  
+					</div>
 					<div class="da-form-row">
 						<label style="text-align:right;"><b>Departamento</b></label>
 						<div class="da-form-item small">';
@@ -1418,7 +1467,10 @@ echo'<div class="da-panel" style="width:650px;">
 									  tipo_dp=1;";
 						$rsdep = $conexion->query($selectDep,MYSQLI_STORE_RESULT);
 						echo'<select name="departamento" id="departamento" class="requerid">';
-							  echo'<option value="">Seleccionar...</option>';
+						      if($fila['codigo']!='REP')
+							      echo'<option value="">Seleccionar...</option>';
+							    else
+							      echo'<option value="">Todos</option>';	  
 							  while($filadep = $rsdep->fetch_array(MYSQLI_ASSOC)){
 								 if($filadep['id_depto']==$departamento){
 									echo'<option value="'.$filadep['id_depto'].'" selected>'.$filadep['departamento'].'</option>';
@@ -1430,71 +1482,84 @@ echo'<div class="da-panel" style="width:650px;">
 						echo'</select>';
 					   echo'<span class="errorMessage" id="errordepartamento"></span>
 						</div>
-					</div>
-					<div class="da-form-row" '.$style_agency.' id="content-agency">
-					  <label style="text-align:right;"><b>Agencia</b></label>
-					  <div class="da-form-item small">
-						<span id="response-loading" class="loading-fac">';
-						   $selectAg="select
-									   id_agencia,
-									   codigo,
-									   agencia,
-									   id_depto,
-									   id_ef
-									  from
-									   s_agencia
-									  where
-										(id_depto=".$departamento." or id_depto is null) and id_ef='".$fila['id_ef']."'
-									  order by
-									    id_agencia asc;";
-						   //echo $selectAg;				
-						   if($resag = $conexion->query($selectAg,MYSQLI_STORE_RESULT)){
-								   $numag = $resag->num_rows;
-								  // echo $numag;
-								   if($numag>0){
-										echo'<select name="id_agencia" id="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
-												while($regiag = $resag->fetch_array(MYSQLI_ASSOC)){
-													if($regiag['id_agencia']==$id_agencia){
-													   echo'<option value="'.$regiag['id_agencia'].'" selected>'.$regiag['agencia'].'</option>';	
-													}else{
-													   echo'<option value="'.$regiag['id_agencia'].'">'.$regiag['agencia'].'</option>';
-													}
-												}
-												$resag->free();
-										echo'</select>';	
-								   }else{
-									    
-									   $select="select
-												  id_agencia,
-												  agencia
+					</div>';
+					   if(!empty($departamento)){
+						 echo'<div class="da-form-row" id="content-agency">
+								<label style="text-align:right;"><b>Agencia</b></label>
+								<div class="da-form-item small">
+								  <span id="response-loading" class="loading-fac">';
+									 $selectAg="select
+												 id_agencia,
+												 codigo,
+												 agencia,
+												 id_depto,
+												 id_ef
 												from
-												  s_agencia
+												 s_agencia
 												where
-												  id_agencia='';";
-									   if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){
-										       if($numag>0){$var='';}else{$var='<option value="">Ninguno</option>';}
-											   echo'<select name="id_agencia" id="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
-											           echo $var;
-													   while($regi = $res->fetch_array(MYSQLI_ASSOC)){  
-														  echo'<option value="'.$regi['id_agencia'].'">'.$regi['agencia'].'</option>';
-													   }
-													   $res->free();
-											   echo'</select>';
-									   }else{
-										   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-												  Error en la consulta: "."\n ".$conexion->errno .": ".$conexion->error
-											  ."</div>";
-									   }
-								   }			
-						   }else{
-							   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-									  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
-								  ."</div>";
-						   }
-				   echo'</span>
-					  </div>	
-					</div> 
-					<div class="da-form-row">
+												  (id_depto=".$departamento." or id_depto is null) and id_ef='".$fila['id_ef']."'
+												order by
+												  id_agencia asc;";
+									 //echo $selectAg;				
+									 if($resag = $conexion->query($selectAg,MYSQLI_STORE_RESULT)){
+											 $numag = $resag->num_rows;
+											 //echo $numag;
+											 if($numag>0){
+												  echo'<select name="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
+												         if($fila['codigo']!='REP')
+															  echo'<option value="">Seleccionar...</option>';
+															else
+															  echo'<option value="">Todos</option>';
+														  while($regiag = $resag->fetch_array(MYSQLI_ASSOC)){
+															  if($regiag['id_agencia']==$id_agencia){
+																 echo'<option value="'.$regiag['id_agencia'].'" selected>'.$regiag['agencia'].'</option>';	
+															  }else{
+																 echo'<option value="'.$regiag['id_agencia'].'">'.$regiag['agencia'].'</option>';
+															  }
+														  }
+														  $resag->free();
+												  echo'</select>';	
+											 }else{
+												  
+												 $select="select
+															id_agencia,
+															agencia
+														  from
+															s_agencia
+														  where
+															id_agencia='';";
+												 if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){
+														 if($numag>0){$var='';}else{$var='<option value="">Ninguno</option>';}
+														 echo'<select name="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
+																 echo $var;
+																 while($regi = $res->fetch_array(MYSQLI_ASSOC)){  
+																	echo'<option value="'.$regi['id_agencia'].'">'.$regi['agencia'].'</option>';
+																 }
+																 $res->free();
+														 echo'</select>';
+												 }else{
+													 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+															Error en la consulta: "."\n ".$conexion->errno .": ".$conexion->error
+														."</div>";
+												 }
+											 }			
+									 }else{
+										 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+												Error en la consulta: ".$conexion->errno.": ".$conexion->error
+											."</div>";
+									 }
+							 echo'</span>
+								</div>	
+							  </div>'; 
+	                   }else{
+						   echo'<div class="da-form-row" id="content-agency" style="display:none">';
+								 echo'<label style="text-align:right;"><b><span lang="es">Agencia</span></b></label>
+									  <div class="da-form-item small">
+										<span id="response-loading" class="loading-fac"></span>
+									  </div>	
+								 </div>'; 
+					   }
+			   echo'<div class="da-form-row">
 						<label style="text-align:right;"><b>Usuario</b></label>
 						<div class="da-form-item large">
 							<i>'.$fila['usuario'].'</i>

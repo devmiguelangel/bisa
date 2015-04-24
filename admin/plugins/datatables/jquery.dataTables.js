@@ -11944,4 +11944,39 @@ $(document).ready(function() {
 	   });
 	   e.preventDefault();
    });
+   
+   //ACTIVAR DESACTIVAR USUARIO
+   $("a[href].activar_user").click(function(e){
+		   var valor = $(this).attr('id');
+		   var vec = valor.split('|');
+		   var id_usuario = vec[0];
+		   var text = vec[1];
+		   jConfirm("Esta seguro de "+text+" al usuario?", ""+text+" usuario", function(r) {
+				//alert(r);
+				if(r) {
+						var dataString ='id_usuario='+id_usuario+'&text='+text+'&opcion=enabled_disabled_user';
+						$.ajax({
+							   async: true,
+							   cache: false,
+							   type: "POST",
+							   url: "accion_registro.php",
+							   data: dataString,
+							   success: function(datareturn) {
+									  //alert(datareturn);
+									  if(datareturn==1){
+										 location.reload(true);
+									  }else if(datareturn==2){
+										jAlert("El registro no se proceso correctamente intente nuevamente", "Mensaje");
+										 e.preventDefault();
+									  }
+
+							   }
+					    });
+
+				} else {
+					//jAlert("No te gusta Actualidad jQuery", "Actualidad jQuery");
+				}
+		   });
+		   e.preventDefault();
+   });
 });

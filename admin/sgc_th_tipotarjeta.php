@@ -16,7 +16,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=th_tipotarjeta&var=th&list_producto=v');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -212,7 +213,7 @@ echo'<div class="da-panel collapsible">
 		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			  <ul class="action_user">
 				  <li style="margin-right:6px;">
-					 <a href="adicionar_registro.php?opcion=crea_tipotarjeta" class="da-tooltip-s tipotarjeta fancybox.ajax" title="Agregar nuevo registro">
+					 <a href="adicionar_registro.php?opcion=crea_tipotarjeta" class="da-tooltip-s tipotarjeta fancybox.ajax" title="<span lang=\'es\'>Agregar nuevo registro</span>">
 					 <img src="images/add_new.png" width="32" height="32"></a>
 				  </li>
 			  </ul>
@@ -223,15 +224,15 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-			Lista Tipo de Tarjeta
+			<b><span lang="es">Lista Tipo de Tarjeta</span></b>
 		</span>
 	</div>
 	<div class="da-panel-content">
 		<table class="da-table">
 			<thead>
 				<tr>
-					<th>Tipo de Tarjeta</th>
-					<th>Codigo</th>
+					<th><span lang="es">Tipo de Tarjeta</span></th>
+					<th><span lang="es">Codigo</span></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -256,13 +257,13 @@ echo'
 									  if($resb = $conexion->query($busca,MYSQLI_STORE_RESULT)){
 										  $regib = $resb->fetch_array(MYSQLI_ASSOC);
 										  if($regib['row_cta']==0){
-											   echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_tarjeta'].'|'.$c.'"></a></li>';
+											   echo'<li><a href="#" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>" id="'.$regi['id_tarjeta'].'|'.$c.'"></a></li>';
 										  }else{
 											   echo'<li style="margin-left:12px;">&nbsp;</li>';
 										  }
 									  }else{
 										 //echo'; 
-										 echo'<div class="da-message error">error en la consulta'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>';
+										 echo'<div class="da-message error"><span lang="es">error en la consulta</span>'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>';
 									  }
 									  
 							  echo'</ul>	
@@ -272,8 +273,8 @@ echo'
 					$res->free();			
 			  }else{
 			     echo'<tr><td colspan="3">
-				          <div class="da-message info">
-                               No existe registros alguno, ingrese nuevos registros
+				          <div class="da-message info" lang="es">
+                               No existe ningun dato, ingrese nuevos registros
                           </div>
 				      </td></tr>';
 			  }

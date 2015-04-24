@@ -73,7 +73,7 @@ function header_toolbar_menu($id_usuario_sesion,$tipo_sesion,$usuario_sesion,$co
 		</div>
 		<div id="da-user-info">
 			'.$reg['nombre'].'
-			<span class="da-user-title">'.$reg['tipo'].'</span>
+			<span class="da-user-title" lang="es">'.$reg['tipo'].'</span>
 		</div>
 		<ul class="da-header-dropdown">
 			<li class="da-dropdown-caret">
@@ -81,13 +81,30 @@ function header_toolbar_menu($id_usuario_sesion,$tipo_sesion,$usuario_sesion,$co
 				<span class="caret-inner"></span>
 			</li>
 			<li class="da-dropdown-divider"></li>
-			<li><a href="?l=escritorio">Inicio</a></li>
+			<li lang="es"><a href="?l=escritorio">Inicio</a></li>
 			<li class="da-dropdown-divider"></li>
-			<li><a href="?l=usuarios&editar=v&idusuario='.base64_encode($reg['id_usuario']).'">Editar Datos</a></li>
-			<li><a href="?l=usuarios&cpass=v&idusuario='.base64_encode($reg['id_usuario']).'">Cambiar Password</a></li>
+			<li lang="es"><a href="?l=usuarios&editar=v&idusuario='.base64_encode($reg['id_usuario']).'">Editar Datos</a></li>
+			<li lang="es"><a href="?l=usuarios&cpass=v&idusuario='.base64_encode($reg['id_usuario']).'">Cambiar Contraseña</a></li>
 		</ul>
+	</div>';
+?>	<!--
+	<div id="da-user-profile">
+	   <div id="da-user-info">
+	     <span class="da-user-title" lang="es">Idioma</span>
+	   </div>
+	   <ul class="da-header-dropdown">
+		 <li class="da-dropdown-caret">
+			<span class="caret-outer"></span>
+			<span class="caret-inner"></span>
+		 </li>
+		 <li><a href="#" id="es" class="language" onclick="window.lang.change('es'); return false;">Español</a></li>
+		 <li class="da-dropdown-divider"></li>
+		 <li><a href="#" id="en" class="language" onclick="window.lang.change('en'); return false;">English(US)</a></li>
+	   </ul>	 
 	</div>
-    <div id="da-header-button-container">
+    -->
+<?php    
+echo'<div id="da-header-button-container">
 		<ul>
 		<!-- NOTIFICACIONES
 			<li class="da-header-button notif">
@@ -208,7 +225,7 @@ function header_toolbar_menu($id_usuario_sesion,$tipo_sesion,$usuario_sesion,$co
 			</li> -->
 			<li class="da-header-button logout">
 				<!--SALIR-->
-				<a href="sgc_logout.php" class="da-tooltip-n da-customizer-tooltip" title="Salir">Logout</a>
+				<a href="sgc_logout.php" class="da-tooltip-n da-customizer-tooltip" title="Salir" lang="es">Salir</a>
 			</li>
 		</ul>
 	</div>';                    
@@ -222,60 +239,62 @@ function header_bottom($ini,$crumbs,$cant){
 			<div id="da-breadcrumb">
 				<ul>';
 				    if($crumbs!=''){
-						echo'<li><a href="?l=escritorio"><img src="images/icons/black/16/home.png" alt="Home" />Inicio</a></li>';
+						echo'<li><a href="?l=escritorio" lang="es"><img src="images/icons/black/16/home.png" alt="Home" /> Inicio</a></li>';
 						if($crumbs=='s'){
-							echo'<li class="active"><span>Slideshow</span></li>';
+							echo'<li class="active"><span lang="es">Diapositiva</span></li>';
 						}elseif($crumbs=='c'){
-							echo'<li class="active"><span>Contenido</span></li>';
+							echo'<li class="active"><span lang="es">Contenido</span></li>';
 						}elseif($crumbs=='f'){
-							echo'<li class="active"><span>Formulario</span></li>';
+							echo'<li class="active"><span lang="es">Formulario</span></li>';
 						}elseif($crumbs=='cs'){
-							echo'<li class="active"><span>Compañía de Seguros</span></li>';
+							echo'<li class="active"><span lang="es">Compañía de Seguros</span></li>';
 						}elseif($crumbs=='de'){
-							echo'<li class="active"><span>Desgravamen</span></li>';
+							echo'<li class="active"><span lang="es">Desgravamen</span></li>';
 						}elseif($crumbs=='dt'){
-							echo'<li class="active"><span>Administracion Datos Desgravamen</span></li>';
+							echo'<li class="active"><span lang="es">Administración Datos Desgravamen</span></li>';
 						}elseif($crumbs=='pl'){
-							echo'<li class="active"><span>Administracion Polizas</span></li>';
+							echo'<li class="active"><span lang="es">Administración Pólizas</span></li>';
 						}elseif($crumbs=='oc'){
-							echo'<li class="active"><span>Administracion Ocupación</span></li>';
+							echo'<li class="active"><span lang="es">Administración Ocupación</span></li>';
 						}elseif($crumbs=='cert'){
-							echo'<li class="active"><span>Certificado Medico</span></li>';
+							echo'<li class="active"><span lang="es">Certificado Médico</span></li>';
 						}elseif($crumbs=='em'){
-							echo'<li class="active"><span>Administracion Correos</span></li>';
+							echo'<li class="active"><span lang="es">Administración Correos</span></li>';
 						}elseif($crumbs=='age'){
-							echo'<li class="active"><span>Agencias</span></li>';
+							echo'<li class="active"><span lang="es">Agencias</span></li>';
 						}elseif($crumbs=='suc'){
-							echo'<li class="active"><span>Sucursales</span></li>';
+							echo'<li class="active"><span lang="es">Sucursales</span></li>';
 						}elseif($crumbs=='enti'){
-							echo'<li class="active"><span>Entidades Financieras</span></li>';
+							echo'<li class="active"><span lang="es">Entidades Financieras</span></li>';
 						}elseif($crumbs=='adcia'){
-							echo'<li class="active"><span>Compañias agregadas a Entidades</span></li>';
+							echo'<li class="active"><span lang="es">Compañías agregadas a Entidades</span></li>';
 						}elseif($crumbs=='cab'){
-							echo'<li class="active"><span>Cabecera</span></li>';
+							echo'<li class="active"><span lang="es">Cabecera</span></li>';
 						}elseif($crumbs=='au'){
-							echo'<li class="active"><span>Automotores</span></li>';
+							echo'<li class="active"><span lang="es">Automotores</span></li>';
 						}elseif($crumbs=='nos'){
-							echo'<li class="active"><span>Contenido Nosotros</span></li>';
+							echo'<li class="active"><span lang="es">Contenido Nosotros</span></li>';
 						}elseif($crumbs=='fp'){
-							echo'<li class="active"><span>Forma de Pago</span></li>';
+							echo'<li class="active"><span lang="es">Forma de Pago</span></li>';
 						}elseif($crumbs=='est'){
-							echo'<li class="active"><span>Estados</span></li>';
+							echo'<li class="active"><span lang="es">Estados</span></li>';
 						}elseif($crumbs=='trd'){
-							echo'<li class="active"><span>Todo Riesgo Domiciliario</span></li>';
+							echo'<li class="active"><span lang="es">Todo Riesgo Domiciliario</span></li>';
 						}elseif($crumbs=='trem'){
-							echo'<li class="active"><span>Todo Riesgo Equipo Movil</span></li>';
+							echo'<li class="active"><span lang="es">Ramos Técnicos</span></li>';
 						}elseif($crumbs=='tcm'){
-							echo'<li class="active"><span>Tipo de Cambio Moneda</span></li>';
+							echo'<li class="active"><span lang="es">Tipo de Cambio Moneda</span></li>';
 						}elseif($crumbs=='pe'){
-							echo'<li class="active"><span>Producto Extra</span></li>';
+							echo'<li class="active"><span lang="es">Producto Extra</span></li>';
 						}elseif($crumbs=='th'){
-							echo'<li class="active"><span>Tarjetahabiente</span></li>';
+							echo'<li class="active"><span lang="es">Tarjetahabiente</span></li>';
 						}elseif($crumbs=='mod'){
-							echo'<li class="active"><span>Modalidad</span></li>';
+							echo'<li class="active"><span lang="es">Modalidad</span></li>';
+						}elseif($crumbs=='vg'){
+							echo'<li class="active"><span lang="es">Vida en Grupo</span></li>';
 						}
 					}else{
-					   echo'<li class="active"><span><img src="images/icons/black/16/home.png" alt="Home" />Inicio</span></li>';	
+					   echo'<li class="active"><span lang="es"><img src="images/icons/black/16/home.png" alt="Home" />Inicio</span></li>';	
 					}
 		   echo'</ul>
 			</div> 

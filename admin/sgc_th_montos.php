@@ -40,7 +40,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=th_montos&var=th');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -200,126 +201,131 @@ function mostrar_lista_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_se
 								sh.id_ef = ef.id_ef and sh.producto='TH')
 							  and ef.id_ef = '".$id_ef_sesion."';";
 	}
-	$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);
-	$num_reg = $resef->num_rows;
-	/*echo'<div class="da-panel collapsible">
-			<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-				<ul class="action_user">
-					<li style="margin-right:6px;">
-					   <a href="?l=au_montos&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="Añadir nuevo registro">
-					   <img src="images/add_new.png" width="32" height="32"></a>
-					</li>
-				</ul>
-			</div>
-		 </div>';*/
-	if($num_reg>0){	 
-		while($regief = $resef->fetch_array(MYSQL_ASSOC)){		
-			$selectFor="select
-						   id_home,
-						   producto,
-						   limite_cotizacion,
-						   max_cotizacion_usd,
-						   max_cotizacion_bs,
-						   max_emision_usd,
-						   max_emision_bs,
-						   edad_max,
-						   edad_min,
-						   id_ef,
-						   max_detalle ,
-						   case facturacion
-						     when 0 then 'No'
-							 when 1 then 'Si'
-						   end as facturacion,
-						   case implante
-						     when 0 then 'No'
-							 when 1 then 'Si'
-						   end as implante_text,
-						   implante,
-						   certificado_provisional,
-						   case certificado_provisional
-							 when 0 then 'No'
-							 when 1	then 'Si'
-						   end as cert_provisional_text,
-						   case modalidad
-							 when 0 then 'No'
-							 when 1	then 'Si'
-						   end as modalidad_text,
-						   anio as antiguedad,
-						   monto_facultativo	  	  
-						from
-						  s_sgc_home
-						where
-						  producto='TH' and id_ef='".$regief['id_ef']."';";
-			$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);		  
-			
-			echo'
-			<div class="da-panel collapsible">
-				<div class="da-panel-header">
-					<span class="da-panel-title" style="font-size:11.5px;">
-						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Administrar Montos Tarjetahabiente
-					</span>
-				</div>
-				<div class="da-panel-content">
-					<table class="da-table">
-						<thead>
-							<tr style="font-size:11.5px;">
-								<th style="text-align:center;"><b>Caducidad Cotizacion (dias)</b></th>
-								<th style="text-align:center;"><b>Edad Minima</b></th>
-								<th style="text-align:center;"><b>Edad Maxima</b></th>
-								<th style="text-align:center;"><b>Facturación</b></th>
-								<th style="text-align:center;"><b>Implante</b></th>
-								<th style="text-align:center;"><b>Certificado <br/>Provisional</b></th>
-								<th style="text-align:center;"><b>Modalidad</b></th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>';
-						  $num = $res->num_rows;
-						  if($num>0){
-								while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-									echo'<tr style="font-size:11.5px;">
-											<td style="text-align:center;">'.$regi['limite_cotizacion'].'</td>
-											<td style="text-align:center;">'.$regi['edad_min'].'</td>
-											<td style="text-align:center;">'.$regi['edad_max'].'</td>
-											<td style="text-align:center;">'.$regi['facturacion'].'</td>
-											<td style="text-align:center;">'.$regi['implante_text'].'</td>
-											<td style="text-align:center;">'.$regi['cert_provisional_text'].'</td>
-											<td style="text-align:center;">'.$regi['modalidad_text'].'</td>
-											<td>
-											   <ul class="action_user">
-												  <li style="margin-right:5px;"><a href="?l=th_montos&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
-												   /*echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_home'].'|'.$regief['id_ef'].'"></a></li>';
-												  if($regi['activado']=='deshabilitado'){
-													  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
-												  }else{
-													  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
-												  }*/
-										  echo'</ul>	
-											</td>
-										</tr>';
-								}			
-						  }else{
-							 echo'<tr><td colspan="8">
-									  <div class="da-message info">
-										   No existe registros alguno, ingrese nuevos registros
-									  </div>
-								  </td></tr>';
-						  }
-				   echo'</tbody>
-					</table>
-				</div>
-			</div>';
-	 }
+	if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+			$num_reg = $resef->num_rows;
+			/*echo'<div class="da-panel collapsible">
+					<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+						<ul class="action_user">
+							<li style="margin-right:6px;">
+							   <a href="?l=au_montos&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="Añadir nuevo registro">
+							   <img src="images/add_new.png" width="32" height="32"></a>
+							</li>
+						</ul>
+					</div>
+				 </div>';*/
+			if($num_reg>0){	 
+				while($regief = $resef->fetch_array(MYSQL_ASSOC)){		
+					$selectFor="select
+								   id_home,
+								   producto,
+								   limite_cotizacion,
+								   max_cotizacion_usd,
+								   max_cotizacion_bs,
+								   max_emision_usd,
+								   max_emision_bs,
+								   edad_max,
+								   edad_min,
+								   id_ef,
+								   max_detalle ,
+								   case facturacion
+									 when 0 then 'No'
+									 when 1 then 'Si'
+								   end as facturacion,
+								   case implante
+									 when 0 then 'No'
+									 when 1 then 'Si'
+								   end as implante_text,
+								   implante,
+								   certificado_provisional,
+								   case certificado_provisional
+									 when 0 then 'No'
+									 when 1	then 'Si'
+								   end as cert_provisional_text,
+								   case modalidad
+									 when 0 then 'No'
+									 when 1	then 'Si'
+								   end as modalidad_text,
+								   anio as antiguedad,
+								   monto_facultativo	  	  
+								from
+								  s_sgc_home
+								where
+								  producto='TH' and id_ef='".$regief['id_ef']."';";
+					$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);		  
+					
+					echo'
+					<div class="da-panel collapsible">
+						<div class="da-panel-header">
+							<span class="da-panel-title" style="font-size:11.5px;">
+								<img src="images/icons/black/16/list.png" alt="" />
+								<b>'.$regief['nombre'].'</b> - <span lang="es">Administrar parametros del Producto Tarjetahabiente</span>
+							</span>
+						</div>
+						<div class="da-panel-content">
+							<table class="da-table">
+								<thead>
+									<tr style="font-size:11.5px;">
+										<th style="text-align:center;"><b><span lang="es">Caducidad Cotización (días)<span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Edad Mínima</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Edad Máxima</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Facturación</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Implante</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Certificado Provisional</span></b></th>
+										<th style="text-align:center;"><b><span lang="es">Modalidad</span></b></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>';
+								  $num = $res->num_rows;
+								  if($num>0){
+										while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+											echo'<tr style="font-size:11.5px;">
+													<td style="text-align:center;">'.$regi['limite_cotizacion'].'</td>
+													<td style="text-align:center;">'.$regi['edad_min'].'</td>
+													<td style="text-align:center;">'.$regi['edad_max'].'</td>
+													<td style="text-align:center;" lang="es">'.$regi['facturacion'].'</td>
+													<td style="text-align:center;" lang="es">'.$regi['implante_text'].'</td>
+													<td style="text-align:center;" lang="es">'.$regi['cert_provisional_text'].'</td>
+													<td style="text-align:center;" lang="es">'.$regi['modalidad_text'].'</td>
+													<td>
+													   <ul class="action_user">
+														  <li style="margin-right:5px;"><a href="?l=th_montos&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+														   /*echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_home'].'|'.$regief['id_ef'].'"></a></li>';
+														  if($regi['activado']=='deshabilitado'){
+															  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
+														  }else{
+															  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
+														  }*/
+												  echo'</ul>	
+													</td>
+												</tr>';
+										}
+										$res->free();			
+								  }else{
+									 echo'<tr><td colspan="8">
+											  <div class="da-message info" lang="es">
+												   No existe ningun dato, ingrese nuevos registros
+											  </div>
+										  </td></tr>';
+								  }
+						   echo'</tbody>
+							</table>
+						</div>
+					</div>';
+			    }
+				$resef->free();
+			}else{
+			  echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Tarjetahabiente</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				 </div>';
+			}
 	}else{
-	  echo'<div class="da-message warning">
-				   No existe registros alguno, razones alguna: 
-				   <ul>
-					<li>La Entidad Financiera no esta activada</li>
-					<li>No existe resgistros creados</li>
-					<li>El producto no esta agregado a la Entidad Financiera</li>
-				   </ul>
-			  </div>';	
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'><span lang='es'>Error en la consulta</span>: ".$conexion->errno. ": ".$conexion->error."</div>";
 	}
 }
 
@@ -356,7 +362,7 @@ function agregar_nuevos_montos($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			    header('Location: index.php?l=au_montos&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
 			} else {
-				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
+			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ".$conexion->error;
 			    header('Location: index.php?l=au_montos&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
 				exit;
 			}
@@ -782,7 +788,7 @@ function editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $
 			    header('Location: index.php?l=th_montos&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
             } else{
-                $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".mysql_errno($conexion) . ": " . mysql_error($conexion);
+                $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ".$conexion->error;
 			    header('Location: index.php?l=th_montos&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
 				exit;
             }
@@ -975,7 +981,7 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 	 
 	  $('#btnCancelar').click(function(e){
 		  var variable=$('#var').prop('value');
-		  $(location).attr('href', 'index.php?l=au_montos&var='+variable); 
+		  $(location).attr('href', 'index.php?l=th_montos&var='+variable); 
 	  });  
   });
 </script>
@@ -1007,174 +1013,177 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 					sh.producto = 'TH' and sh.id_home = '".$idhome."'
 						and sh.id_ef = '".$id_ef."' and ef.activado=1;";
 	
-	$rs = $conexion->query($select, MYSQLI_STORE_RESULT);
-	$num = $rs->num_rows;
-	
-	//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
-	if($num>0) {
-
-		$fila = $rs->fetch_array(MYSQLI_ASSOC);
-        $rs->free();
-		if(isset($_POST['txtLimitCotiz'])) $txtLimitCotiz = $_POST['txtLimitCotiz']; else $txtLimitCotiz = $fila['limite_cotizacion'];
-		//if(isset($_POST['txtMaxCotiUsd'])) $txtMaxCotiUsd = $_POST['txtMaxCotiUsd']; else $txtMaxCotiUsd = $fila['max_cotizacion_usd'];
+	if($rs = $conexion->query($select, MYSQLI_STORE_RESULT)){
+			$num = $rs->num_rows;
+			
+			//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
+			if($num>0) {
 		
-		//if(isset($_POST['txtMaxEmiUsd'])) $txtMaxEmiUsd = $_POST['txtMaxEmiUsd']; else $txtMaxEmiUsd = $fila['max_emision_usd'];
-		
-		if(isset($_POST['txtEdadMax'])) $txtEdadMax = $_POST['txtEdadMax']; else $txtEdadMax = $fila['edad_max'];
-		if(isset($_POST['txtEdadMin'])) $txtEdadMin = $_POST['txtEdadMin']; else $txtEdadMin = $fila['edad_min'];
-		//if(isset($_POST['txtNumAutos'])) $txtNumAutos = $_POST['txtNumAutos']; else $txtNumAutos = $fila['max_detalle'];
-		if(isset($_POST['factura'])) $factura = $_POST['factura']; else $factura = $fila['facturacion'];
-		if(isset($_POST['implante'])) $implante = $_POST['implante']; else $implante = $fila['implante'];
-		if(isset($_POST['cert_prov'])) $cert_prov = $_POST['cert_prov']; else $cert_prov = $fila['certificado_provisional'];
-		if(isset($_POST['modalidad'])) $modalidad = $_POST['modalidad']; else $modalidad = $fila['modalidad'];
-		//if(isset($_POST['antiguedad'])) $antiguedad = $_POST['antiguedad']; else $antiguedad = $fila['anio'];
-		//if(isset($_POST['txtMontFacu'])) $txtMontFacu = $_POST['txtMontFacu']; else $txtMontFacu = $fila['monto_facultativo'];
+				$fila = $rs->fetch_array(MYSQLI_ASSOC);
+				$rs->free();
+				if(isset($_POST['txtLimitCotiz'])) $txtLimitCotiz = $_POST['txtLimitCotiz']; else $txtLimitCotiz = $fila['limite_cotizacion'];
+				//if(isset($_POST['txtMaxCotiUsd'])) $txtMaxCotiUsd = $_POST['txtMaxCotiUsd']; else $txtMaxCotiUsd = $fila['max_cotizacion_usd'];
 				
-		  echo'<div class="da-panel" style="width:600px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/pencil.png" alt="" />
-						Editar Datos Tarjetahabiente
-					</span>
-				</div>
-				<div class="da-panel-content">
-					<form class="da-form" name="frmDatosAdmin" action="" method="post" id="frmDatosAdmin">
-						<div class="da-form-row">
-							 <label style="width:190px; text-align:right; margin-right:10px;"><b>Entidad Financiera</b></label>
-							 <div class="da-form-item large">
-								 <i>'.$fila['nombre'].'</i>
-								 <input type="hidden" name="idenfin" value="'.$fila['id_ef'].'"/>								 
-							 </div>	 
-						</div>	
-						<div class="da-form-row">
-							<label style="width:190px; text-align:right; margin-right:10px;"><b>Caducidad cotizacion (días)</b></label>
-							<div class="da-form-item large">
-								<input class="textbox required" type="text" name="txtLimitCotiza" id="txtLimitCotiza" style="width: 200px;" value="'.$txtLimitCotiz.'" autocomplete="off"/>
-								<span class="errorMessage" id="errorcaducidad"></span>
-							</div>
+				//if(isset($_POST['txtMaxEmiUsd'])) $txtMaxEmiUsd = $_POST['txtMaxEmiUsd']; else $txtMaxEmiUsd = $fila['max_emision_usd'];
+				
+				if(isset($_POST['txtEdadMax'])) $txtEdadMax = $_POST['txtEdadMax']; else $txtEdadMax = $fila['edad_max'];
+				if(isset($_POST['txtEdadMin'])) $txtEdadMin = $_POST['txtEdadMin']; else $txtEdadMin = $fila['edad_min'];
+				//if(isset($_POST['txtNumAutos'])) $txtNumAutos = $_POST['txtNumAutos']; else $txtNumAutos = $fila['max_detalle'];
+				if(isset($_POST['factura'])) $factura = $_POST['factura']; else $factura = $fila['facturacion'];
+				if(isset($_POST['implante'])) $implante = $_POST['implante']; else $implante = $fila['implante'];
+				if(isset($_POST['cert_prov'])) $cert_prov = $_POST['cert_prov']; else $cert_prov = $fila['certificado_provisional'];
+				if(isset($_POST['modalidad'])) $modalidad = $_POST['modalidad']; else $modalidad = $fila['modalidad'];
+				//if(isset($_POST['antiguedad'])) $antiguedad = $_POST['antiguedad']; else $antiguedad = $fila['anio'];
+				//if(isset($_POST['txtMontFacu'])) $txtMontFacu = $_POST['txtMontFacu']; else $txtMontFacu = $fila['monto_facultativo'];
+						
+				  echo'<div class="da-panel" style="width:600px;">
+						<div class="da-panel-header">
+							<span class="da-panel-title">
+								<img src="images/icons/black/16/pencil.png" alt="" />
+								<span lang="es">Editar Datos Tarjetahabiente</span>
+							</span>
 						</div>
-						<div class="da-form-row">
-							<label style="text-align:right; width:190px; margin-right:10px;"><b>Facturación</b></label>
-							<div class="da-form-item">
-								<ul class="da-form-list inline">';
-								   if($factura==1){	
-									  echo'<li><input type="radio" name="factura" id="rd-1" value="1" class="required" checked/> <label>Si</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="factura" id="rd-1" value="1" class="required"/> <label>Si</label></li>'; 
-								   }
-								   if($factura==0){
-									  echo'<li><input type="radio" name="factura" id="rd-2" value="0" class="required" checked/> <label>No</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="factura" id="rd-2" value="0" class="required"/> <label>No</label></li>'; 
-								   }
-						   echo'</ul>
-								<span class="errorMessage" id="errorfactura"></span>
-							</div>
+						<div class="da-panel-content">
+							<form class="da-form" name="frmDatosAdmin" action="" method="post" id="frmDatosAdmin">
+								<div class="da-form-row">
+									 <label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Entidad Financiera</span></b></label>
+									 <div class="da-form-item large">
+										 <i>'.$fila['nombre'].'</i>
+										 <input type="hidden" name="idenfin" value="'.$fila['id_ef'].'"/>								 
+									 </div>	 
+								</div>	
+								<div class="da-form-row">
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Caducidad Cotización (días)</span></b></label>
+									<div class="da-form-item large">
+										<input class="textbox required" type="text" name="txtLimitCotiza" id="txtLimitCotiza" style="width: 200px;" value="'.$txtLimitCotiz.'" autocomplete="off"/>
+										<span class="errorMessage" id="errorcaducidad" lang="es"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="text-align:right; width:190px; margin-right:10px;"><b><span lang="es">Facturación</span></b></label>
+									<div class="da-form-item">
+										<ul class="da-form-list inline">';
+										   if($factura==1){	
+											  echo'<li><input type="radio" name="factura" id="rd-1" value="1" class="required" checked/> <label lang="es">Si</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="factura" id="rd-1" value="1" class="required"/> <label lang="es">Si</label></li>'; 
+										   }
+										   if($factura==0){
+											  echo'<li><input type="radio" name="factura" id="rd-2" value="0" class="required" checked/> <label>No</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="factura" id="rd-2" value="0" class="required"/> <label>No</label></li>'; 
+										   }
+								   echo'</ul>
+										<span class="errorMessage" id="errorfactura"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="text-align:right; width:190px; margin-right:10px;"><b><span lang="es">Implante</span></b></label>
+									<div class="da-form-item">
+										<ul class="da-form-list inline">';
+										   if($implante==1){	
+											  echo'<li><input type="radio" name="implante" id="rd-1" value="1" class="required" checked/> <label lang="es">Si</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="implante" id="rd-1" value="1" class="required"/> <label lang="es">Si</label></li>'; 
+										   }
+										   if($implante==0){
+											  echo'<li><input type="radio" name="implante" id="rd-2" value="0" class="required" checked/> <label>No</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="implante" id="rd-2" value="0" class="required"/> <label>No</label></li>'; 
+										   }
+								   echo'</ul>
+										<span class="errorMessage" id="errorimplante"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Certificado Provisional</span></b></label>
+									<div class="da-form-item">
+										<ul class="da-form-list inline">';
+										   if($cert_prov==1){	
+											  echo'<li><input type="radio" name="cert_prov" id="ctp-1" value="1" class="required" checked/> <label lang="es">Si</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="cert_prov" id="ctp-1" value="1" class="required"/> <label lang="es">Si</label></li>'; 
+										   }
+										   if($cert_prov==0){
+											  echo'<li><input type="radio" name="cert_prov" id="ctp-2" value="0" class="required" checked/> <label>No</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="cert_prov" id="ctp-2" value="0" class="required"/> <label>No</label></li>'; 
+										   }
+								   echo'</ul>
+										<span class="errorMessage" id="errorcertprovisional"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Modalidad</span></b></label>
+									<div class="da-form-item">
+										<ul class="da-form-list inline">';
+										   if($modalidad==1){	
+											  echo'<li><input type="radio" name="modalidad" id="mod-1" value="1" class="required" checked/> <label lang="es">Si</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="modalidad" id="mod-1" value="1" class="required"/> <label lang="es">Si</label></li>'; 
+										   }
+										   if($modalidad==0){
+											  echo'<li><input type="radio" name="modalidad" id="mod-2" value="0" class="required" checked/> <label>No</label></li>';
+										   }else{
+											  echo'<li><input type="radio" name="modalidad" id="mod-2" value="0" class="required"/> <label>No</label></li>'; 
+										   }
+								   echo'</ul>
+										<span class="errorMessage" id="errorcermodalidad"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Edad Mínima</span></b></label>
+									<div class="da-form-item large">';
+										$j=18;
+									  echo'<select id="txtEdadMin" name="txtEdadMin" style="width:120px;" class="required">';
+											  echo'<option value="" lang="es">seleccione...</option>';
+											  while($j<=85){
+												 if($txtEdadMin==$j){  
+													echo'<option value="'.$j.'" selected>'.$j.'</option>'; 
+												 }else{
+													echo'<option value="'.$j.'">'.$j.'</option>';  
+												 }
+												 $j++;   
+											  }
+									  echo'</select>
+										  <span class="errorMessage" id="errorminedad" lang="es"></span>'; 	
+							   echo'</div>
+								</div>		
+								<div class="da-form-row">
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Edad Máxima</span></b></label>
+									<div class="da-form-item large">';
+										 $i=18;
+									  echo'<select id="txtEdadMax" name="txtEdadMax" style="width:120px;" class="required">';
+											  echo'<option value="" lang="es">seleccione...</option>';
+											  while($i<=85){
+												 if($txtEdadMax==$i){ 
+													echo'<option value="'.$i.'" selected>'.$i.'</option>'; 
+												 }else{
+													echo'<option value="'.$i.'">'.$i.'</option>'; 
+												 }
+												 $i++;   
+											  }
+									  echo'</select>
+										  <span class="errorMessage" id="errormaxedad" lang="es"></span>';
+											
+							   echo'</div>
+								</div>												
+								<div class="da-button-row">
+									<input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar" lang="es"/>
+									<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
+									
+									<input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
+								</div>
+							</form>
 						</div>
-						<div class="da-form-row">
-							<label style="text-align:right; width:190px; margin-right:10px;"><b>Implante</b></label>
-							<div class="da-form-item">
-								<ul class="da-form-list inline">';
-								   if($implante==1){	
-									  echo'<li><input type="radio" name="implante" id="rd-1" value="1" class="required" checked/> <label>Si</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="implante" id="rd-1" value="1" class="required"/> <label>Si</label></li>'; 
-								   }
-								   if($implante==0){
-									  echo'<li><input type="radio" name="implante" id="rd-2" value="0" class="required" checked/> <label>No</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="implante" id="rd-2" value="0" class="required"/> <label>No</label></li>'; 
-								   }
-						   echo'</ul>
-								<span class="errorMessage" id="errorimplante"></span>
-							</div>
-						</div>
-						<div class="da-form-row">
-							<label style="width:190px; text-align:right; margin-right:10px;"><b>Certificado Provisional</b></label>
-							<div class="da-form-item">
-								<ul class="da-form-list inline">';
-								   if($cert_prov==1){	
-									  echo'<li><input type="radio" name="cert_prov" id="ctp-1" value="1" class="required" checked/> <label>Si</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="cert_prov" id="ctp-1" value="1" class="required"/> <label>Si</label></li>'; 
-								   }
-								   if($cert_prov==0){
-									  echo'<li><input type="radio" name="cert_prov" id="ctp-2" value="0" class="required" checked/> <label>No</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="cert_prov" id="ctp-2" value="0" class="required"/> <label>No</label></li>'; 
-								   }
-						   echo'</ul>
-								<span class="errorMessage" id="errorcertprovisional"></span>
-							</div>
-						</div>
-						<div class="da-form-row">
-							<label style="width:190px; text-align:right; margin-right:10px;"><b>Modalidad</b></label>
-							<div class="da-form-item">
-								<ul class="da-form-list inline">';
-								   if($modalidad==1){	
-									  echo'<li><input type="radio" name="modalidad" id="mod-1" value="1" class="required" checked/> <label>Si</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="modalidad" id="mod-1" value="1" class="required"/> <label>Si</label></li>'; 
-								   }
-								   if($modalidad==0){
-									  echo'<li><input type="radio" name="modalidad" id="mod-2" value="0" class="required" checked/> <label>No</label></li>';
-								   }else{
-									  echo'<li><input type="radio" name="modalidad" id="mod-2" value="0" class="required"/> <label>No</label></li>'; 
-								   }
-						   echo'</ul>
-								<span class="errorMessage" id="errorcermodalidad"></span>
-							</div>
-						</div>
-						<div class="da-form-row">
-							<label style="width:190px; text-align:right; margin-right:10px;"><b>Edad Minima</b></label>
-							<div class="da-form-item large">';
-								$j=18;
-							  echo'<select id="txtEdadMin" name="txtEdadMin" style="width:120px;" class="required">';
-									  echo'<option value="">Seleccione...</option>';
-									  while($j<=85){
-										 if($txtEdadMin==$j){  
-										    echo'<option value="'.$j.'" selected>'.$j.'</option>'; 
-										 }else{
-											echo'<option value="'.$j.'">'.$j.'</option>';  
-										 }
-										 $j++;   
-									  }
-							  echo'</select>
-							      <span class="errorMessage" id="errorminedad"></span>'; 	
-					   echo'</div>
-						</div>		
-						<div class="da-form-row">
-							<label style="width:190px; text-align:right; margin-right:10px;"><b>Edad Maxima</b></label>
-							<div class="da-form-item large">';
-								 $i=18;
-							  echo'<select id="txtEdadMax" name="txtEdadMax" style="width:120px;" class="required">';
-									  echo'<option value="">Seleccione...</option>';
-									  while($i<=85){
-										 if($txtEdadMax==$i){ 
-										    echo'<option value="'.$i.'" selected>'.$i.'</option>'; 
-										 }else{
-											echo'<option value="'.$i.'">'.$i.'</option>'; 
-										 }
-										 $i++;   
-									  }
-							  echo'</select>
-							      <span class="errorMessage" id="errormaxedad"></span>';
-								 	
-					   echo'</div>
-						</div>												
-						<div class="da-button-row">
-							<input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar"/>
-							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
-							
-							<input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
-						</div>
-					</form>
-				</div>
-			</div>';
-	
-	} else {
-		//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
-		header('Location: index.php?l=th_montos&var='.$_GET['var']);
+					</div>';
+			
+			} else {
+				//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
+				header('Location: index.php?l=th_montos&var='.$_GET['var']);
+			}
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: ".$conexion->errno.": ".$conexion->error."</div>";
 	}
 }
 ?>

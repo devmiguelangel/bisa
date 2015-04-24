@@ -192,133 +192,145 @@ if($tipo_sesion=='ROOT'){
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
   if($resef=$conexion->query($selectEf,MYSQLI_STORE_RESULT)){
-		/*echo'<div class="da-panel collapsible">
-				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-					<ul class="action_user">
-						<li style="margin-right:6px;">
-						   <a href="?l=des_datos&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="Añadir nuevo registro">
-						   <img src="images/add_new.png" width="32" height="32"></a>
-						</li>
-					</ul>
-				</div>
-			 </div>';*/
-		 while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		
-				$selectFor="select
-							   id_home,
-							   producto,
-							   limite_cotizacion,
-							   max_cotizacion_usd,
-							   max_cotizacion_bs,
-							   max_emision_usd,
-							   max_emision_bs,
-							   edad_max,
-							   edad_min,
-							   id_ef,
-							   max_detalle,
-							   implante,
-							   (case implante
-								 when 0 then 'No'
-								 when 1 then 'Si'
-							   end) as implante_text,
-							   certificado_provisional,
-							   (case certificado_provisional
-								 when 0 then 'No'
-								 when 1	then 'Si'
-							   end) as cert_provisional_text,
-							   (case modalidad
-								 when 0 then 'No'
-								 when 1	then 'Si'
-							   end) as modalidad_text,
-							   (case web_service
-							     when 0 then 'No'
-								 when 1 then 'Si'
-							   end) as webservice_text	 	   	    
-							from
-							  s_sgc_home
-							where
-							  producto='DE' and id_ef='".$regief['id_ef']."';";
-				if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){		  
-				
-						echo'
-						<div class="da-panel collapsible">
-							<div class="da-panel-header">
-								<span class="da-panel-title" style="font-size:11.5px;">
-									<img src="images/icons/black/16/list.png" alt="" />
-									<b>'.$regief['nombre'].'</b> - Administrar parametros del Producto Desgravamen
-								</span>
-							</div>
-							<div class="da-panel-content">
-								<table class="da-table">
-									<thead>
-										<tr style="font-size:11.5px;">
-											<th style="text-align:center;"><b>Caducidad Cotizacion (días)</b></th>
-											<th style="text-align:center;"><b>Monto Max Cotizacion (usd)</b></th>
-											<th style="text-align:center;"><b>Monto Max Cotizacion (bs)</b></th>
-											<th style="text-align:center;"><b>Monto Max Emision (usd)</b></th>
-											<th style="text-align:center;"><b>Monto Max Emision (bs)</b></th>
-											<th style="text-align:center;"><b>Edad Minima</b></th>
-											<th style="text-align:center;"><b>Edad Maxima</b></th>
-											<th style="text-align:center;"><b>N&deg; Titulares</b></th>
-											<th style="text-align:center;"><b>Implante</b></th>
-											<th style="text-align:center;"><b>Certificado <br/>Provisional</b></th>
-											<th style="text-align:center;"><b>Modalidad</b></th>';
-											  if($tipo_sesion=='ROOT'){
-											    echo'<th style="text-align:center;"><b>Web<br/>Service</b></th>';
-											  }
-									   echo'<th></th>
-										</tr>
-									</thead>
-									<tbody>';
-									  $num = $res->num_rows;
-									  if($num>0){
-											while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-												echo'<tr style="font-size:11.5px;">
-														<td style="text-align:center;">'.$regi['limite_cotizacion'].'</td>
-														<td style="text-align:center;">'.$regi['max_cotizacion_usd'].'</td>
-														<td style="text-align:center;">'.$regi['max_cotizacion_bs'].'</td>
-														<td style="text-align:center;">'.$regi['max_emision_usd'].'</td>
-														<td style="text-align:center;">'.$regi['max_emision_bs'].'</td>
-														<td style="text-align:center;">'.$regi['edad_min'].'</td>
-														<td style="text-align:center;">'.$regi['edad_max'].'</td>
-														<td style="text-align:center;">'.$regi['max_detalle'].'</td>
-														<td style="text-align:center;">'.$regi['implante_text'].'</td>
-														<td style="text-align:center;">'.$regi['cert_provisional_text'].'</td>
-														<td style="text-align:center;">'.$regi['modalidad_text'].'</td>';
-														if($tipo_sesion=='ROOT'){
-														  echo'<td style="text-align:center;">'.$regi['webservice_text'].'</td>';
-														}
-												   echo'<td>
-														   <ul class="action_user">
-															  <li style="margin-right:5px;"><a href="?l=des_datos&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
-															   /*echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_home'].'|'.$regief['id_ef'].'"></a></li>';
-															  if($regi['activado']=='deshabilitado'){
-																  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
-															  }else{
-																  echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
-															  }*/
-													  echo'</ul>	
-														</td>
-													</tr>';
+	  $num_regi_ef = $resef->num_rows;
+	  if($num_regi_ef>0){
+			  /*echo'<div class="da-panel collapsible">
+					  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+						  <ul class="action_user">
+							  <li style="margin-right:6px;">
+								 <a href="?l=des_datos&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="Añadir nuevo registro">
+								 <img src="images/add_new.png" width="32" height="32"></a>
+							  </li>
+						  </ul>
+					  </div>
+				   </div>';*/
+			   while($regief = $resef->fetch_array(MYSQLI_ASSOC)){		
+					  $selectFor="select
+									 id_home,
+									 producto,
+									 limite_cotizacion,
+									 max_cotizacion_usd,
+									 max_cotizacion_bs,
+									 max_emision_usd,
+									 max_emision_bs,
+									 edad_max,
+									 edad_min,
+									 id_ef,
+									 max_detalle,
+									 implante,
+									 (case implante
+									   when 0 then 'No'
+									   when 1 then 'Si'
+									 end) as implante_text,
+									 certificado_provisional,
+									 (case certificado_provisional
+									   when 0 then 'No'
+									   when 1	then 'Si'
+									 end) as cert_provisional_text,
+									 (case modalidad
+									   when 0 then 'No'
+									   when 1	then 'Si'
+									 end) as modalidad_text,
+									 (case web_service
+									   when 0 then 'No'
+									   when 1 then 'Si'
+									 end) as webservice_text	 	   	    
+								  from
+									s_sgc_home
+								  where
+									producto='DE' and id_ef='".$regief['id_ef']."';";
+					  if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){		  
+					  
+							  echo'
+							  <div class="da-panel collapsible">
+								  <div class="da-panel-header">
+									  <span class="da-panel-title" style="font-size:11.5px;">
+										  <img src="images/icons/black/16/list.png" alt="" />
+										  <b>'.$regief['nombre'].'</b> - <span lang="es">Administrar parametros del Producto Desgravamen</span>
+									  </span>
+								  </div>
+								  <div class="da-panel-content">
+									  <table class="da-table">
+										  <thead>
+											  <tr style="font-size:11.5px;">
+												  <th style="text-align:center;"><b><span lang="es">Caducidad Cotización (días)</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Monto Max Cotización (usd)</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Monto Max Cotización (bs)</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Monto Max Emisión (usd)</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Monto Max Emisión (bs)</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Edad Mínima</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Edad Máxima</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Nro Titulares</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Implante</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Certificado Provisional</span></b></th>
+												  <th style="text-align:center;"><b><span lang="es">Modalidad</span></b></th>';
+													if($tipo_sesion=='ROOT'){
+													  echo'<th style="text-align:center;"><b><span lang="es">Web Service</span></b></th>';
+													}
+											 echo'<th></th>
+											  </tr>
+										  </thead>
+										  <tbody>';
+											$num = $res->num_rows;
+											if($num>0){
+												  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+													  echo'<tr style="font-size:11.5px;">
+															  <td style="text-align:center;">'.$regi['limite_cotizacion'].'</td>
+															  <td style="text-align:center;">'.$regi['max_cotizacion_usd'].'</td>
+															  <td style="text-align:center;">'.$regi['max_cotizacion_bs'].'</td>
+															  <td style="text-align:center;">'.$regi['max_emision_usd'].'</td>
+															  <td style="text-align:center;">'.$regi['max_emision_bs'].'</td>
+															  <td style="text-align:center;">'.$regi['edad_min'].'</td>
+															  <td style="text-align:center;">'.$regi['edad_max'].'</td>
+															  <td style="text-align:center;">'.$regi['max_detalle'].'</td>
+															  <td style="text-align:center;">'.$regi['implante_text'].'</td>
+															  <td style="text-align:center;">'.$regi['cert_provisional_text'].'</td>
+															  <td style="text-align:center;">'.$regi['modalidad_text'].'</td>';
+															  if($tipo_sesion=='ROOT'){
+																echo'<td style="text-align:center;">'.$regi['webservice_text'].'</td>';
+															  }
+														 echo'<td>
+																 <ul class="action_user">
+																	<li style="margin-right:5px;"><a href="?l=des_datos&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+																	 /*echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_home'].'|'.$regief['id_ef'].'"></a></li>';
+																	if($regi['activado']=='deshabilitado'){
+																		echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&daralta=v&var='.$_GET['var'].'" class="daralta da-tooltip-s" title="Activar"></a></li>';
+																	}else{
+																		echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'" class="darbaja da-tooltip-s" title="Desactivar"></a></li>';  
+																	}*/
+															echo'</ul>	
+															  </td>
+														  </tr>';
+												  }
+												  $res->free();			
+											}else{
+											   echo'<tr><td colspan="8">
+														<div class="da-message info">
+															 No existe registros alguno, ingrese nuevos registros
+														</div>
+													</td></tr>';
 											}
-											$res->free();			
-									  }else{
-										 echo'<tr><td colspan="8">
-												  <div class="da-message info">
-													   No existe registros alguno, ingrese nuevos registros
-												  </div>
-											  </td></tr>';
-									  }
-							   echo'</tbody>
-								</table>
-							</div>
-						</div>';
-				}else{
-				    echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
-		               ."</div>";	
-			    }
-		 }
-		 $resef->free();
+									 echo'</tbody>
+									  </table>
+								  </div>
+							  </div>';
+					  }else{
+						  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+				Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+							 ."</div>";	
+					  }
+			   }
+			   $resef->free();
+	  }else{
+		  echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Desgravamen</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				</div>'; 
+	  }
   }else{
 	  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
 		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
@@ -1004,62 +1016,62 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 						<div class="da-panel-header">
 							<span class="da-panel-title">
 								<img src="images/icons/black/16/pencil.png" alt="" />
-								Editar Datos Desgravamen
+								<span lang="es">Editar Datos Desgravamen</span>
 							</span>
 						</div>
 						<div class="da-panel-content">
 							<form class="da-form" name="frmDatosAdmin" action="" method="post" id="frmDatosAdmin">
 								<div class="da-form-row">
-									 <label style="width:190px; text-align:right; margin-right:10px;"><b>Entidad Financiera</b></label>
+									 <label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Entidad Financiera</span></b></label>
 									 <div class="da-form-item large">
 										 '.$fila['nombre'].'
 										 <input type="hidden" name="idenfin" value="'.$fila['id_ef'].'"/>								 
 									 </div>	 
 								</div>	
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Caducidad cotizacion (días)</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Caducidad Cotización (días)</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtLimitCotiza" id="txtLimitCotiza" style="width: 200px;" value="'.$txtLimitCotiz.'" autocomplete="off"/>
-										<span class="errorMessage" id="errorcaducidad" style="margin-top:0px;"></span>
+										<span class="errorMessage" id="errorcaducidad" style="margin-top:0px;" lang="es"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Monto Maximo Cotizacion (Bs)</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Monto Máximo Cotización (Bs)</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtMaxCotiBs" id="txtMaxCotiBs" style="width: 200px;" value="'.$txtMaxCotiBs.'" autocomplete="off"/>
 										<span class="errorMessage" id="errorarmaxcotibs" style="margin-top:0px;"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Monto Maximo Cotizacion (USD)</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Monto Máximo Cotización (USD)</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtMaxCotiUsd" id="txtMaxCotiUsd" style="width: 200px;" value="'.$txtMaxCotiUsd.'" autocomplete="off"/>
 										<span class="errorMessage" id="errorarmaxcotiusd" style="margin-top:0px;"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Monto Maximo Emision (Bs)</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Monto Máximo Emisión (Bs)</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtMaxEmiBs" id="txtMaxEmiBs" style="width: 200px;" value="'.$txtMaxEmiBs.'" autocomplete="off"/>
 										<span class="errorMessage" id="errormaxemibs" style="margin-top:0px;"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Monto Maximo Emision (USD)</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Monto Máximo Emisión (USD)</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtMaxEmiUsd" id="txtMaxEmiUsd" style="width: 200px;" value="'.$txtMaxEmiUsd.'" autocomplete="off"/>
 										<span class="errorMessage" id="errorarmaxemiusd" style="margin-top:0px;"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Numero de Titulares</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Numero de Titulares</span></b></label>
 									<div class="da-form-item large">
 										<input class="textbox required" type="text" name="txtNumTitulares" id="txtNumTitulares" style="width: 200px;" value="'.$txtNumTitulares.'"/>
-										<span class="errorMessage" id="errornumtitular"></span>
+										<span class="errorMessage" id="errornumtitular" lang="es"></span>
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Implante</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Implante</span></b></label>
 									<div class="da-form-item">
 										<ul class="da-form-list inline">';
 										   if($implante==1){	
@@ -1077,7 +1089,7 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Certificado Provisional</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Certificado Provisional</span></b></label>
 									<div class="da-form-item">
 										<ul class="da-form-list inline">';
 										   if($cert_prov==1){	
@@ -1095,7 +1107,7 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 									</div>
 								</div>
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Modalidad</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Modalidad</span></b></label>
 									<div class="da-form-item">
 										<ul class="da-form-list inline">';
 										   if($modalidad==1){	
@@ -1133,9 +1145,9 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 										</div>';
 							   }
 						   echo'<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Edad Minima</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Edad Mínima</span></b></label>
 									<div class="da-form-item large">';
-										$j=18;
+										$j=15;
 									  echo'<select id="txtEdadMin" name="txtEdadMin" style="width:120px;" class="required">';
 											  echo'<option value="">Seleccione...</option>';
 											  while($j<=85){
@@ -1147,13 +1159,13 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 												 $j++;   
 											  }
 									  echo'</select>
-										  <span class="errorMessage" id="errorminedad"></span>'; 	
+										  <span class="errorMessage" id="errorminedad" lang="es"></span>'; 	
 							   echo'</div>
 								</div>		
 								<div class="da-form-row">
-									<label style="width:190px; text-align:right; margin-right:10px;"><b>Edad Maxima</b></label>
+									<label style="width:190px; text-align:right; margin-right:10px;"><b><span lang="es">Edad Máxima</span></b></label>
 									<div class="da-form-item large">';
-										 $i=18;
+										 $i=15;
 									  echo'<select id="txtEdadMax" name="txtEdadMax" style="width:120px;" class="required">';
 											  echo'<option value="">Seleccione...</option>';
 											  while($i<=85){
@@ -1165,13 +1177,13 @@ function mostrar_editar_datos_admin($id_usuario_sesion, $tipo_sesion, $usuario_s
 												 $i++;   
 											  }
 									  echo'</select>
-										  <span class="errorMessage" id="errormaxedad"></span>';
+										  <span class="errorMessage" id="errormaxedad" lang="es"></span>';
 											
 							   echo'</div>
 								</div>												
 								<div class="da-button-row">
-									<input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar"/>
-									<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
+									<input type="button" value="Cancelar" class="da-button gray left" name="btnCancelar" id="btnCancelar" lang="es"/>
+									<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
 									
 									<input type="hidden" name="var" id="var" value="'.$_GET['var'].'"/>
 									<input type="hidden" id="tipo_cambio" value="'.$fila['valor_boliviano'].'"/>

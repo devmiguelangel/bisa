@@ -233,15 +233,15 @@ if($num_regi_ef>0){
 				<div class="da-panel-header">
 					<span class="da-panel-title">
 						<img src="images/icons/black/16/list.png" alt="" />
-						<b>'.$regief['nombre'].'</b> - Administrar preguntas desgravamen 
+						<b>'.$regief['nombre'].'</b> - <span lang="es">Administrar preguntas Desgravamen</span> 
 					</span>
 				</div>
 				<div class="da-panel-content">
 					<table class="da-table">
 						<thead>
 							<tr>
-							  <th style="text-align:center;"><b>Compañia de Seguro</b></th>
-							  <th style="text-align:center;"><b>Logo</b></th>
+							  <th style="text-align:center;"><b><span lang="es">Compañía de Seguros</span></b></th>
+							  <th style="text-align:center;"><b><span lang="es">Imagen</span></b></th>
 							  <th></th>
 							</tr>
 						</thead>
@@ -270,7 +270,7 @@ if($num_regi_ef>0){
 											   <ul class="action_user">';
 											   
 												   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
-												   echo'<li style="margin-right:5px;"><a href="?l=des_preguntas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarpreguntas=v&var='.$_GET['var'].'" class="admi-preg da-tooltip-s" title="Administrar preguntas"></a></li>';
+												   echo'<li style="margin-right:5px;"><a href="?l=des_preguntas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&id_ef='.base64_encode($regi['id_ef']).'&listarpreguntas=v&var='.$_GET['var'].'&producto='.base64_encode('DE').'" class="admi-preg da-tooltip-s" title="<span lang=\'es\'>Administrar preguntas</span>"></a></li>';
 												   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
 											   
 											 												 
@@ -299,9 +299,14 @@ if($num_regi_ef>0){
 	 }
 	 $resef->free();
  }else{
-	echo'<div class="da-message info">
-			 No existe registros alguno o la entidad Financiera no esta activada
-		</div>'; 
+	echo'<div class="da-message warning">
+			   <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+			   <ul>
+				  <li lang="es">La Entidad Financiera no tiene asignado el producto Desgravamen</li>
+				  <li lang="es">La Entidad Financiera no esta activado</li>
+				  <li lang="es">La Entidad Financiera no esta creada</li>
+				</ul>
+		  </div>'; 
  }
 }
 
@@ -397,11 +402,11 @@ echo'<div class="da-panel collapsible">
 		<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			<ul class="action_user">
 				<li style="margin-right:6px;">
-					 <a href="?l=des_preguntas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
+					 <a href="?l=des_preguntas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				</li>
 				<li style="margin-right:6px;">
-				   <a href="adicionar_registro.php?opcion=crear_pregunta&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s pregunta fancybox.ajax" title="Añadir nueva pregunta">
+				   <a href="adicionar_registro.php?opcion=crear_pregunta&id_ef_cia='.$_GET['id_ef_cia'].'&compania='.$_GET['compania'].'&entidad='.$_GET['entidad'].'&id_ef='.$_GET['id_ef'].'&producto='.$_GET['producto'].'" class="da-tooltip-s pregunta fancybox.ajax" title="<span lang=\'es\'>Añadir nueva pregunta</span>">
 				   <img src="images/add_new.png" width="32" height="32"></a>
 				</li>
 			</ul>
@@ -412,7 +417,7 @@ echo'
 	<div class="da-panel-header">
 		<span class="da-panel-title">
 			<img src="images/icons/black/16/list.png" alt="" />
-			<b>'.$entidad.' - '.$compania.'</b> - Listado de Preguntas
+			<b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Listado de Preguntas</span>
 		</span>
 	</div>
 	<div class="da-panel-content">
@@ -420,9 +425,9 @@ echo'
 			<thead>
 				<tr>
 					<th style="width:25px;"><b>No</b></th>
-					<th style="width:300px;"><b>Pregunta</b></th>
-					<th style="width:20px; text-align:center;"><b>Respuesta <br/>Esperada</b></th>
-					<th style="width:20px; text-align:center;"><b>Estado</b></th>
+					<th style="width:300px;"><b><span lang="es">Preguntas</span></b></th>
+					<th style="width:20px; text-align:center;"><b><span lang="es">Respuesta esperada</span></b></th>
+					<th style="width:20px; text-align:center;"><b><span lang="es">Estado</span></b></th>
 					<th style="width:20px;">&nbsp;</th>
 				</tr>
 			</thead>
@@ -441,15 +446,15 @@ echo'
 						  echo'>
 								<td>'.$regi['orden'].'</td>
 								<td>'.$regi['pregunta'].'</td>
-								<td style="text-align:center;">'.$regi['respuesta_text'].'</td>
-								<td style="text-align:center;">'.$regi['activado_text'].'</td>
+								<td style="text-align:center;" lang="es">'.$regi['respuesta_text'].'</td>
+								<td style="text-align:center;" lang="es">'.$regi['activado_text'].'</td>
 								<td class="da-icon-column">
 								   <ul class="action_user">
-									  <li style="margin-right:5px;"><a href="adicionar_registro.php?opcion=edita_pregunta&idpregunta='.base64_encode($regi['id_pregunta']).'&editar=v&var='.$_GET['var'].'&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_ef='.$_GET['id_ef'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="edit da-tooltip-s pregunta fancybox.ajax" title="Editar"></a></li>';
+									  <li style="margin-right:5px;"><a href="adicionar_registro.php?opcion=edita_pregunta&idpregunta='.base64_encode($regi['id_pregunta']).'&editar=v&var='.$_GET['var'].'&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_ef='.$_GET['id_ef'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&producto='.$_GET['producto'].'" class="edit da-tooltip-s pregunta fancybox.ajax" title="<span lang=\'es\'>Editar</span>"></a></li>';
 									  if($regi['activado']==0){
-										  echo'<li><a href="#" id="'.$regi['id_pregunta'].'|'.$regi['id_ef_cia'].'|activar" class="daralta da-tooltip-s accion_active" title="Activar"></a></li>';
+										  echo'<li><a href="#" id="'.$regi['id_pregunta'].'|'.$regi['id_ef_cia'].'|activar" class="daralta da-tooltip-s accion_active" title="<span lang=\'es\'>Activar</span>"></a></li>';
 									  }else{
-										  echo'<li><a href="#" id="'.$regi['id_pregunta'].'|'.$regi['id_ef_cia'].'|desactivar" class="darbaja da-tooltip-s accion_active" title="Desactivar"></a></li>';  
+										  echo'<li><a href="#" id="'.$regi['id_pregunta'].'|'.$regi['id_ef_cia'].'|desactivar" class="darbaja da-tooltip-s accion_active" title="<span lang=\'es\'>Desactivar</span>"></a></li>';  
 									  }	  
 								  //echo'<li><a href="?l=compania&idcompania='.base64_encode($regi['id_compania']).'&darbaja=v&var='.$_GET['var'].'&idcompania='.base64_encode($idcompania).'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>';  	 
 							  echo'</ul>	

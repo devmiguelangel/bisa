@@ -195,3 +195,48 @@ a.cert-medico{
 a.cert-medico:hover{
 	background:url(../images/certmedic2.png) 0 0 no-repeat;
 }
+
+/*****************LINK ADJUNTO*******************/
+.attached, .list-vh a.attached, .attached-link, .list-vh .attached-link{
+	display:inline-block;
+	*display:inline;
+	_display:inline;
+	zoom: 1;
+	vertical-align:top;
+	width:200px;
+	height:auto;
+	margin:0 auto;
+	padding:7px 15px;
+	border-radius:5px;
+	background:#069;
+	color:#FFF;
+	text-align:center;
+	text-decoration:none;
+}
+
+.attached:hover, .list-vh a.attached:hover{
+	background:#099;
+	color:#FFF;
+}
+
+.attached-link, .list-vh .attached-link{
+	background:#00B359;
+}
+
+.attached-link:hover, .list-vh .attached-link:hover{
+	background:#00D76B;
+	color:#FFF;
+}
+
+.attached-mess {
+    width:350px;
+    height:auto;
+    margin:5px auto;
+    padding:5px 5px;
+    border: 1px solid #878e31;
+    background:#fbffc9;
+    font-size:9px;
+    font-weight:bold;
+    text-align:center;
+    color:#393939;
+}

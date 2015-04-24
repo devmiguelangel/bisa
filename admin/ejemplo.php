@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>Documento sin título</title>
+<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+       $('.page').click(function(){
+			 alert('hola mundo');  
+	   });
+  });
+</script>
 </head>
 
 <body>
@@ -16,6 +24,8 @@ echo $myJson;echo'<br/>';
 $nonsequential = array(0=>"foo", 1=>"bar", 2=>"baz", 3=>"blong");
 $resp = json_encode($nonsequential);	
 echo $resp;
+
+echo'<a href="#" class="page">link</a>';
 ?>
 </body>
 </html>

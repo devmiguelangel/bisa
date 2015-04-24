@@ -244,7 +244,7 @@ if($tipo_sesion=='ROOT'){
 				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 					<ul class="action_user">
 						<li style="margin-right:6px;">
-						   <a href="?l=ocupacion&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various fancybox.ajax" title="Añadir Ocupacion">
+						   <a href="?l=ocupacion&var='.$_GET['var'].'&crear=v&producto='.$_GET['producto'].'" class="da-tooltip-s various fancybox.ajax" title="Añadir Ocupacion">
 						   <img src="images/add_new.png" width="32" height="32"></a>
 						</li>
 					</ul>
@@ -262,7 +262,7 @@ if($tipo_sesion=='ROOT'){
 								  s_ocupacion as soc
 								  inner join s_sgc_home as sh on (sh.id_ef=soc.id_ef)
 								where
-								  soc.id_ef='".$regief['id_ef']."' and soc.producto=sh.producto  
+								  soc.id_ef='".$regief['id_ef']."' and soc.producto=sh.producto and sh.producto='".base64_decode($_GET['producto'])."' 
 								order by
 								  soc.id_ocupacion asc;";
 					  
@@ -366,9 +366,12 @@ function mostrar_crear_ocupacion($id_usuario_sesion, $tipo_sesion, $usuario_sesi
            //HABILITAMOS PRODUCTO DE ACUERDO A LA ENTIDAD FINANCIERA EXISTENTE DE LA TABLA HOME
 		   $('#idefin').change(function(){
 			  var idefin = $(this).prop('value');
+			  var producto = '<?=base64_decode($_GET['producto']);?>';
+			  alert(producto);
 			  if(idefin!=''){
 				  $('#content-entidadf').fadeIn('slow');
-				  var dataString = 'idefin='+idefin+'&opcion=buscar_producto_ocupacion';
+				  var dataString = 'idefin='+idefin+'&producto='+producto+'&opcion=buscar_producto_ocupacion';
+				   alert(dataString);
 				   $.ajax({
 						 async: true,
 						 cache: false,
@@ -491,7 +494,7 @@ function mostrar_crear_ocupacion($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 					<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 						<ul class="action_user">
 							<li style="margin-right:6px;">
-							   <a href="?l=ocupacion&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+							   <a href="?l=ocupacion&var='.$_GET['var'].'&producto='.$_GET['producto'].'" class="da-tooltip-s" title="Volver">
 							   <img src="images/retornar.png" width="32" height="32"></a>
 							</li>
 						</ul>

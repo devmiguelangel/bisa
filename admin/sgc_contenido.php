@@ -293,7 +293,7 @@ function mostrar_lista_contenido($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 							<ul class="action_user">
 								<li style="margin-right:6px;">
-								   <a href="?l=contenidohome&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="Añadir nuevo registro">
+								   <a href="?l=contenidohome&var='.$_GET['var'].'&crear=v" class="da-tooltip-s various" title="<span lang=\'es\'>Añadir Nuevo Registro</span>">
 								   <img src="images/add_new.png" width="32" height="32"></a>
 								</li>
 							</ul>
@@ -333,15 +333,15 @@ function mostrar_lista_contenido($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 							<div class="da-panel-header">
 								<span class="da-panel-title">
 									<img src="images/icons/black/16/list.png" alt="" />
-									<b>'.$regief['nombre'].'</b> - Lista Contenido Home
+									<b>'.$regief['nombre'].'</b> - <span lang="es">Lista Contenido Inicio</span>
 								</span>
 							</div>
 							<div class="da-panel-content">
 								<table class="da-table">
 									<thead>
 										<tr>
-										   <th><b>Contenido</b></th>
-										   <th style="width:200px; text-align:center"><b>Imagen</b></th>
+										   <th><b><span lang="es">Contenido</span></b></th>
+										   <th style="width:200px; text-align:center"><b><span lang="es">Imagen</span></b></th>
 										   <th></th>
 										</tr>
 									</thead>
@@ -368,8 +368,8 @@ function mostrar_lista_contenido($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 												   echo'</td>
 														<td class="da-icon-column">
 														   <ul class="action_user">
-															  <li style="margin-right:5px;"><a href="?l=contenidohome&idslider='.base64_encode($regi['id_slider']).'&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&tipo='.base64_encode($regi['tipo']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="Editar"></a></li>';
-														 echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_slider'].'|'.$regi['imagen'].'|'.$regi['id_home'].'|'.$regi['tipo'].'|'.$regief['id_ef'].'"></a></li>';
+															  <li style="margin-right:5px;"><a href="?l=contenidohome&idslider='.base64_encode($regi['id_slider']).'&editar=v&var='.$_GET['var'].'&idhome='.base64_encode($regi['id_home']).'&tipo='.base64_encode($regi['tipo']).'&id_ef='.base64_encode($regief['id_ef']).'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar"></a></li>';
+														 echo'<li><a href="#" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>" id="'.$regi['id_slider'].'|'.$regi['imagen'].'|'.$regi['id_home'].'|'.$regi['tipo'].'|'.$regief['id_ef'].'"></a></li>';
 													  echo'</ul>	
 														</td>
 													</tr>';
@@ -390,15 +390,16 @@ function mostrar_lista_contenido($id_usuario_sesion, $tipo_sesion, $usuario_sesi
 				  $resef->free();
 			}else{
 				echo'<div class="da-message warning">
+						<span lang="es">No existe ningun registro, probablemente se debe a</span>:
 						<ul>
-						  <li>No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
-						  <li>Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
+						  <li lang="es">No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
+						  <li lang="es">Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
 						</ul>
 					 </div>';
 			}
 	}else{
 		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		  Error en la consulta: ".$conexion->errno. ": ".$conexion->error
 		."</div>";
 	}
 }
@@ -600,7 +601,7 @@ tinymce.init({
 				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 					<ul class="action_user">
 					  <li style="margin-right:6px;">
-						 <a href="?l=contenidohome&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+						 <a href="?l=contenidohome&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 						 <img src="images/retornar.png" width="32" height="32"></a>
 					  </li>
 					</ul>
@@ -611,13 +612,13 @@ tinymce.init({
 					  <div class="da-panel-header">
 						  <span class="da-panel-title">
 							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Actualizar contenido
+							  <span lang="es">Actualizar contenido</span>
 						  </span>
 					  </div>
 					  <div class="da-panel-content">
 						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 							  <div class="da-form-row">
-									 <label style="text-align:right;"><b>Entidad Financiera</b></label>
+									 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 									 <div class="da-form-item large">
 										 '.$regImg['nombre'].'
 										 <input type="hidden" name="idenfin" value="'.$regImg['id_ef'].'"/>								 
@@ -627,30 +628,30 @@ tinymce.init({
 								  if(file_exists('../images/'.$regImg['imagen'])){
 									  echo'<img src="../images/'.$regImg['imagen'].'"/>';
 								  }else{
-									  echo'No existe el archivo fisico';  
+									  echo'<span lang="es">No existe el archivo físico</span>';  
 								  }
 						 echo'</div>
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Archivo</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 								  
 								  <div class="da-form-item large">
-									  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 200px por un ancho de 330px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+									  <span lang="es">El tamaño máximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 200px y un ancho de 330px., el formato del archivo a subir debe ser [jpg].</span> 
 									  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 									  <span class="errorMessage">'.$errArr['imagen'].'</span>
-									  <span><b>Archivo actual:</b> '.$regImg['imagen'].'</span>
+									  <span><b><span lang="es">Archivo actual:</span></b> '.$regImg['imagen'].'</span>
 									  <input type="hidden" name="auximage" value="'.$regImg['imagen'].'"/>
 								  </div>
 							  </div>
 							
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Texto</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Texto</span></b></label>
 								  <div class="da-form-item large">
 									<textarea name="descripcion" id="descripcion">'.$descripcion.'</textarea>
 								  </div>
 							  </div>
 							  
 							  <div class="da-button-row">  
-								  <input type="submit" value="Guardar" class="da-button green"/>
+								  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 								  <input type="hidden" name="accionGuardar" value="ok"/> 
 							  </div>
 						  </form>
@@ -845,7 +846,7 @@ tinymce.init({
 			<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 				<ul class="action_user">
 					<li style="margin-right:6px;">
-					   <a href="?l=contenidohome&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+					   <a href="?l=contenidohome&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					   <img src="images/retornar.png" width="32" height="32"></a>
 					</li>
 				</ul>
@@ -887,16 +888,16 @@ tinymce.init({
 					  <div class="da-panel-header">
 						  <span class="da-panel-title">
 							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Agregar Contenido
+							  <span lang="es">Agregar Contenido</span>
 						  </span>
 					  </div>
 					  <div class="da-panel-content">
 						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage"> 
 							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+								   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 								   <div class="da-form-item small">
 									   <select id="idefin" name="idefin" class="requerid" style="width:160px;">';
-										  echo'<option value="">seleccione...</option>';
+										  echo'<option value="" lang="es">seleccione...</option>';
 										  while($regi1 = $res1->fetch_array(MYSQLI_ASSOC)){
 											  if($idefin==$regi1['id_ef']){ 
 											   echo'<option value="'.$regi1['id_ef'].'" selected>'.$regi1['nombre'].'</option>';  
@@ -906,29 +907,29 @@ tinymce.init({
 										  }
 										  $res1->free();
 								  echo'</select>
-									   <span class="errorMessage" id="errorentidad">'.$errArr['errorentidad'].'</span>
+									   <span class="errorMessage" id="errorentidad" lang="es">'.$errArr['errorentidad'].'</span>
 								   </div>	 
 							  </div>	
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Imagen</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Imagen</span></b></label>
 								  <div class="da-form-item large">
-									  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 200px y un ancho de 330px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+									  <span lang="es">El tamaño máximo del archivo es de 1Mb. Se recomienda que la imagen tenga un alto de 200px y un ancho de 330px., el formato del archivo a subir debe ser [jpg].</span> 
 									  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 									  <span class="errorMessage">'.$errArr['imagen'].'</span>
 								  </div>
 							  </div>
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Contenido</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Contenido</span></b></label>
 								  <div class="da-form-item large">
 									<textarea name="descripcion" id="descripcion">'.$descripcion.'</textarea>
-									<span class="errorMessage">'.$errArr['errorcontenido'].'</span>
+									<span class="errorMessage" lang="es">'.$errArr['errorcontenido'].'</span>
 								  </div>
 							  </div>
 							  <div class="da-button-row">';  
 								 if($num>0){ 
-									echo'<input type="submit" value="Guardar" class="da-button green"/>';
+									echo'<input type="submit" value="Guardar" class="da-button green" lang="es"/>';
 								 }else{
-									echo'<input type="submit" value="Guardar" class="da-button green" disabled/>';
+									echo'<input type="submit" value="Guardar" class="da-button green" disabled lang="es"/>';
 								 }	
 								  echo'<input type="hidden" name="accionGuardar" value="ok"/> 
 							  </div>
@@ -1065,7 +1066,7 @@ echo'<div class="da-panel collapsible">
 			<div class="da-panel-header">
 				<span class="da-panel-title">
 					<img src="images/icons/black/16/list.png" alt="" />
-					<b>Entidad Financiera: '.$regief['nombre'].'</b> - Lista Cabecera Home
+					<b>'.$regief['nombre'].'</b> - Lista Cabecera Inicio
 				</span>
 			</div>
 			<div class="da-panel-content">
@@ -1645,15 +1646,15 @@ function mostrar_lista_contenido_nosotros($id_usuario_sesion, $tipo_sesion, $usu
 								<div class="da-panel-header">
 									<span class="da-panel-title">
 										<img src="images/icons/black/16/list.png" alt="" />
-										<b>'.$regief['nombre'].'</b> - Contenido Nosotros
+										<b>'.$regief['nombre'].'</b> - <span lang="es">Contenido Nosotros</span>
 									</span>
 								</div>
 								<div class="da-panel-content">
 									<table class="da-table">
 										<thead>
 											<tr>
-											   <th><b>Contenido</b></th>
-											   <th style="width:200px; text-align:center"><b>Imagen</b></th>
+											   <th><b><span lang="es">Contenido</span></b></th>
+											   <th style="width:200px; text-align:center"><b><span lang="es">Imagen</span></b></th>
 											   <th></th>
 											</tr>
 										</thead>
@@ -1666,15 +1667,15 @@ function mostrar_lista_contenido_nosotros($id_usuario_sesion, $tipo_sesion, $usu
 															 if(file_exists('../images/'.$regi['imagen'])){  
 																echo'<img src="../images/'.$regi['imagen'].'"/>';
 															 }else{
-																echo'no existe el archivo fisico';   
+																echo'<span lang="es">no existe el archivo físico</span>';   
 															 }
 														 }else{
-															echo'no existe el nombre del archivo en la base de datos';   
+															echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
 														 }
 												 echo'</td>
 													  <td class="da-icon-column">
 														 <ul class="action_user">
-															<li style="margin-right:5px;"><a href="?l=contenidohome&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar_nosotros=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
+															<li style="margin-right:5px;"><a href="?l=contenidohome&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&editar_nosotros=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
 													   //echo'<li><a href="#" class="eliminar da-tooltip-s" title="Eliminar" id="'.$regi['id_slider'].'|'.$regi['imagen'].'|'.$regi['id_home'].'|'.$regi['tipo'].'|'.$regief['id_ef'].'"></a></li>';
 													echo'</ul>	
 													  </td>
@@ -1682,7 +1683,7 @@ function mostrar_lista_contenido_nosotros($id_usuario_sesion, $tipo_sesion, $usu
 										  }else{
 											 echo'<tr><td colspan="3">
 													  <div class="da-message info">
-														   No existe registros alguno, ingrese nuevos registros
+														   <span lang="es">No existe registros alguno, ingrese nuevos registros</span>
 													  </div>
 												  </td></tr>';
 										  }
@@ -1699,9 +1700,10 @@ function mostrar_lista_contenido_nosotros($id_usuario_sesion, $tipo_sesion, $usu
 				$resef->free();
 		  }else{
 			  echo'<div class="da-message warning">
+					  <span lang="es">No existe ningun registro, probablemente se debe a</span>:
 					  <ul>
-						<li>No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
-						<li>Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
+						<li lang="es">No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
+						<li lang="es">Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
 					  </ul>
 				   </div>';
 		  }
@@ -1871,7 +1873,7 @@ tinymce.init({
 				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 					<ul class="action_user">
 					  <li style="margin-right:6px;">
-						 <a href="?l=contenidohome&var='.$_GET['var'].'&list_nosotros=v" class="da-tooltip-s" title="Volver">
+						 <a href="?l=contenidohome&var='.$_GET['var'].'&list_nosotros=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 						 <img src="images/retornar.png" width="32" height="32"></a>
 					  </li>
 					</ul>
@@ -1882,13 +1884,13 @@ tinymce.init({
 					  <div class="da-panel-header">
 						  <span class="da-panel-title">
 							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Editar contenido nosotros
+							  <span lang="es">Editar contenido nosotros</span>
 						  </span>
 					  </div>
 					  <div class="da-panel-content">
 						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+								   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 								   <div class="da-form-item large">
 									   '.$regImg['nombre'].'
 								   </div>	 
@@ -1898,26 +1900,26 @@ tinymce.init({
 									  if(file_exists('../images/'.$regImg['imagen'])){
 										  echo'<img src="../images/'.$regImg['imagen'].'"/>';
 									  }else{
-										  echo'No existe el archivo fisico';  
+										  echo'<span lang="es">No existe el archivo físico</span>';  
 									  }
 								 }else{
-									echo'Campo vacio';	 
+									echo'<span lang="es">campo vacio</span>';	 
 								 }
 						 echo'</div>
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Archivo</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 								  
 								  <div class="da-form-item large">
-									  <span>El tama&ntilde;o m&aacute;ximo del archivo es de 1Mb. Se recomienda que la imagen tenga un ancho de 350px.,&nbsp;el formato del archivo a subir debe ser [jpg].</span> 
+									  <span lang="es">El tamaño máximo del archivo es de 1Mb. Se recomienda que la imagen tenga un ancho de 350px., el formato del archivo a subir debe ser [jpg].</span> 
 									  <input type="file" class="da-custom-file" id="update" name="txtImagen"/>
 									  <span class="errorMessage">'.$errArr['imagen'].'</span>
-									  <span><b>Archivo actual:</b> '.$regImg['imagen'].'</span>
+									  <span><b><span lang="es">Archivo actual:</span></b> '.$regImg['imagen'].'</span>
 									  <input type="hidden" name="auximage" value="'.$regImg['imagen'].'"/>
 								  </div>
 							  </div>
 							
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Texto</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Texto</span></b></label>
 								  <div class="da-form-item large">
 									<textarea name="descripcion" id="descripcion">'.$descripcion.'</textarea>
 									<span class="errorMessage">'.$errArr['errorcontenido'].'</span>
@@ -1925,7 +1927,7 @@ tinymce.init({
 							  </div>
 							  
 							  <div class="da-button-row">  
-								  <input type="submit" value="Guardar" class="da-button green"/>
+								  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 								  <input type="hidden" name="accionGuardar" value="ok"/> 
 							  </div>
 						  </form>
@@ -1934,7 +1936,7 @@ tinymce.init({
 			  </div>';
   }else{
 	 echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		  <span lang='es'>Error en la consulta:</span> ".$conexion->errno.": ".$conexion->error
 		."</div>"; 
   }
 }
@@ -2262,15 +2264,15 @@ function mostrar_lista_contenido_preg_frec($id_usuario_sesion, $tipo_sesion, $us
 							<div class="da-panel-header">
 								<span class="da-panel-title">
 									<img src="images/icons/black/16/list.png" alt="" />
-									<b>'.$regief['nombre'].'</b> - Lista Contenido Preguntas Frecuentes
+									<b>'.$regief['nombre'].'</b> - <span lang="es">Lista Contenido Preguntas Frecuentes</span>
 								</span>
 							</div>
 							<div class="da-panel-content">
 								<table class="da-table">
 									<thead>
 										<tr>
-										   <th><b>Preguntas Frecuentes</b></th>
-										   <th><b>Producto</b></th>
+										   <th><b><span lang="es">Preguntas Frecuentes</span></b></th>
+										   <th><b><span lang="es">Producto</span></b></th>
 										   <th>&nbsp;</th>
 										</tr>
 									</thead>
@@ -2282,7 +2284,7 @@ function mostrar_lista_contenido_preg_frec($id_usuario_sesion, $tipo_sesion, $us
 														<td style="text-align:center;">'.$regi['producto_nombre'].'</td>
 														<td class="da-icon-column">
 														   <ul class="action_user">
-															  <li style="margin-right:5px;"><a href="?l=contenidohome&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&producto='.base64_encode($regi['producto']).'&entidad='.base64_encode($regief['nombre']).'&editar_preg_frec=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
+															  <li style="margin-right:5px;"><a href="?l=contenidohome&idhome='.base64_encode($regi['id_home']).'&id_ef='.base64_encode($regief['id_ef']).'&producto='.base64_encode($regi['producto']).'&entidad='.base64_encode($regief['nombre']).'&editar_preg_frec=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
 													  echo'</ul>	
 														</td>
 													</tr>';
@@ -2291,7 +2293,7 @@ function mostrar_lista_contenido_preg_frec($id_usuario_sesion, $tipo_sesion, $us
 									  }else{
 										 echo'<tr><td colspan="3">
 												  <div class="da-message info">
-													   No existe registros alguno, ingrese nuevos registros
+													   <span lang="es">No existe registros alguno, ingrese nuevos registros</span>
 												  </div>
 											  </td></tr>';
 									  }
@@ -2303,15 +2305,16 @@ function mostrar_lista_contenido_preg_frec($id_usuario_sesion, $tipo_sesion, $us
 				  $resef->free();
 			}else{
 				echo'<div class="da-message warning">
+						<span lang="es">No existe ningun registro, probablemente se debe a</span>:
 						<ul>
-						  <li>No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
-						  <li>Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
+						  <li lang="es">No existe una cabecera creada para la nueva Entidad Financiera, consulte con su administrador</li>
+						  <li lang="es">Verificar que la Entindad Financiera este activa, consulte con su administrador</li>
 						</ul>
 					 </div>';
 			}	
 	}else{
 		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
-		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		  <span lang='es'>Error en la consulta:</span> ".$conexion->errno .": ".$conexion->error
 		   ."</div>"; 
 	}
 }
@@ -2428,31 +2431,31 @@ tinymce.init({
 					  <div class="da-panel-header">
 						  <span class="da-panel-title">
 							  <img src="images/icons/black/16/pencil.png" alt=""/>
-							  Actualizar contenido
+							  <span lang="es">Actualizar contenido</span>
 						  </span>
 					  </div>
 					  <div class="da-panel-content">
 						  <form class="da-form" action="" method="POST" enctype="multipart/form-data" name="formUpdateImage" id="formUpdateImage">
 							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+								   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 								   <div class="da-form-item large">
 									   '.$entidad.'						 
 								   </div>	 
 							  </div>
 							  <div class="da-form-row">
-								   <label style="text-align:right;"><b>Producto</b></label>
+								   <label style="text-align:right;"><b><span lang="es">Producto</span></b></label>
 								   <div class="da-form-item large">
 									   '.$reg['producto_nombre'].'						 
 								   </div>	 
 							  </div>					  	
 							  <div class="da-form-row">
-								  <label style="text-align:right;"><b>Preguntas Frecuentes</b></label>
+								  <label style="text-align:right;"><b><span lang="es">Preguntas Frecuentes</span></b></label>
 								  <div class="da-form-item large">
 									<textarea name="descripcion" id="descripcion">'.$reg['preguntas_frecuentes'].'</textarea>
 								  </div>
 							  </div>
 							  <div class="da-button-row">  
-								  <input type="submit" value="Guardar" class="da-button green"/>
+								  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
 								  <input type="hidden" name="accionGuardar" value="ok"/> 
 							  </div>
 						  </form>

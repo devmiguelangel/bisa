@@ -16,7 +16,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=entidades&var=enti');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -172,7 +173,7 @@ function mostrar_lista_entidadesfin($id_usuario_sesion, $tipo_sesion, $usuario_s
 		   var vec = valor.split('|');
 		   var id_ef = vec[0];
 		   var text = vec[1]; 		  
-		   jConfirm("¿Esta seguro de "+text+" la Entidad Financiera?", ""+text+" registro", function(r) {
+		   jConfirm("¿<span lang='es'>Esta seguro de "+text+" la Entidad Financiera</span>?", ""+text+" registro", function(r) {
 				//alert(r);
 				if(r) {
 						var dataString ='id_ef='+id_ef+'&text='+text+'&opcion=enabled_disabled_ef';
@@ -237,91 +238,96 @@ $selectFor="select
 			   codigo
 			from
 			  s_entidad_financiera;";
-$res = $conexion->query($selectFor, MYSQLI_STORE_RESULT);		  
+   if($res = $conexion->query($selectFor, MYSQLI_STORE_RESULT)){
 
-echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			  <ul class="action_user">
-				  <li style="margin-right:6px;">
-					 <a href="?l=entidades&crear_entidad=v&var='.$_GET['var'].'" class="da-tooltip-s" title="Agregar Registro">
-					 <img src="images/add_new.png" width="32" height="32"></a>
-				  </li>
-			  </ul>
-		  </div>
-	  </div>';
-
-echo'
-<div class="da-panel collapsible" style="width:860px;">
-	<div class="da-panel-header">
-		<span class="da-panel-title">
-			<img src="images/icons/black/16/list.png" alt="" />
-			Entidades Financieras
-		</span>
-	</div>
-	<div class="da-panel-content">
-		<table class="da-table">
-			<thead>
-				<tr>
-					<th><b>Entidad Financiera</b></th>
-					<th><b>Codigo</b></th>
-					<th style="width:200px; text-align:center"><b>Logo</b></th>
-					<th style="width:100px;"><b>Estado</b></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>';
-			  $num = $res->num_rows;
-			  if($num>0){
-					while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-						echo'<tr ';
-						        if($regi['activado']=='inactivo'){
-									echo'style="background:#D44D24; color:#ffffff;"'; 
-								 }else{
-								    echo'';	 
-							     }
-						echo'>
-								<td>'.$regi['nombre'].'</td>
-								<td>'.$regi['codigo'].'</td>
-								<td style="text-align:center;">';
-								   if($regi['logo']!=''){
-									   if(file_exists('../images/'.$regi['logo'])){
-										  $imagen = getimagesize('../images/'.$regi['logo']);    //Sacamos la información
-                                          $ancho = $imagen[0];              //Ancho
-                                          $alto = $imagen[1];   
-									      echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
-									   }else{
-										  echo'no existe el archivo fisico';   
-									   }
-								   }else{
-									  echo'no existe el nombre del archivo en la base de datos';   
-								   }
-						   echo'</td>
-						        <td>'.$regi['activado'].'</td>
-								<td class="da-icon-column">
-								   <ul class="action_user">
-									  <li style="margin-right:5px;"><a href="?l=entidades&identidad='.base64_encode($regi['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="Editar"></a></li>';
-									  if($regi['activado']=='inactivo'){
-										  echo'<li><a href="#" id="'.base64_encode($regi['id_ef']).'|activar" class="daralta da-tooltip-s accionef" title="Activar"></a></li>';
-									  }else{
-										  echo'<li><a href="#" id="'.base64_encode($regi['id_ef']).'|desactivar" class="darbaja da-tooltip-s accionef" title="Desactivar"></a></li>';  
-									  }
-									  							
-							  echo'</ul>	
-								</td>
-							</tr>';
-					}
-					$res->free();			
-			  }else{
-			     echo'<tr><td colspan="7">
-				          <div class="da-message info">
-                               No existe registros alguno, ingrese nuevos registros
-                          </div>
-				      </td></tr>';
-			  }
-	   echo'</tbody>
-		</table>
-	</div>
-</div>';
+		echo'<div class="da-panel collapsible">
+				  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+					  <ul class="action_user">
+						  <li style="margin-right:6px;">
+							 <a href="?l=entidades&crear_entidad=v&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Agregar Registro</span>">
+							 <img src="images/add_new.png" width="32" height="32"></a>
+						  </li>
+					  </ul>
+				  </div>
+			  </div>';
+		
+		echo'
+		<div class="da-panel collapsible" style="width:860px;">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/list.png" alt="" />
+					<span lang="es">Entidades Financieras</span>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<table class="da-table">
+					<thead>
+						<tr>
+							<th><b><span lang="es">Entidad Financiera</span></b></th>
+							<th><b><span lang="es">Codigo</span></b></th>
+							<th style="width:200px; text-align:center"><b><span lang="es">Imagen</span></b></th>
+							<th style="width:100px;"><b><span lang="es">Estado</span></b></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>';
+					  $num = $res->num_rows;
+					  if($num>0){
+							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+								echo'<tr ';
+										if($regi['activado']=='inactivo'){
+											echo'style="background:#D44D24; color:#ffffff;"'; 
+										 }else{
+											echo'';	 
+										 }
+								echo'>
+										<td>'.$regi['nombre'].'</td>
+										<td>'.$regi['codigo'].'</td>
+										<td style="text-align:center;">';
+										   if($regi['logo']!=''){
+											   if(file_exists('../images/'.$regi['logo'])){
+												  $imagen = getimagesize('../images/'.$regi['logo']);    //Sacamos la información
+												  $ancho = $imagen[0];              //Ancho
+												  $alto = $imagen[1];   
+												  echo'<img src="../images/'.$regi['logo'].'" width="'.($ancho/2).'" height="'.($alto/2).'"/>';
+											   }else{
+												  echo'<span lang="es">no existe el archivo físico</span>';   
+											   }
+										   }else{
+											  echo'<span lang="es">no existe el nombre del archivo en la base de datos</span>';   
+										   }
+								   echo'</td>
+										<td lang="es">'.$regi['activado'].'</td>
+										<td class="da-icon-column">
+										   <ul class="action_user">
+											  <li style="margin-right:5px;"><a href="?l=entidades&identidad='.base64_encode($regi['id_ef']).'&editar=v&var='.$_GET['var'].'" class="edit da-tooltip-s" title="<span lang=\'es\'>Editar</span>"></a></li>';
+											  if($regi['activado']=='inactivo'){
+												  echo'<li><a href="#" id="'.base64_encode($regi['id_ef']).'|activar" class="daralta da-tooltip-s accionef" title="<span lang=\'es\'>Activar</span>"></a></li>';
+											  }else{
+												  echo'<li><a href="#" id="'.base64_encode($regi['id_ef']).'|desactivar" class="darbaja da-tooltip-s accionef" title="<span lang=\'es\'>Desactivar</span>"></a></li>';  
+											  }
+																		
+									  echo'</ul>	
+										</td>
+									</tr>';
+							}
+							$res->free();			
+					  }else{
+						 echo'<tr><td colspan="7">
+								  <div class="da-message info" lang="es">
+									   <span lang="es">No existe ningun registro, ingrese nuevos registros</span>
+								  </div>
+							  </td></tr>';
+					  }
+			   echo'</tbody>
+				</table>
+			</div>
+		</div>';
+   }else{
+	   echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		 <span lang='es'> Error en la consulta:</span> ".$conexion->errno. ": ".$conexion->error
+		."</div>";
+   }
 }
 
 //FUNCION QUE PERMITE VISUALIZAR EL FORMULARIO NUEVO USUARIO
@@ -355,10 +361,10 @@ function agregar_nueva_entidadfin($id_usuario_sesion, $tipo_sesion, $usuario_ses
 			$titulo = $conexion->real_escape_string($_POST['txtTitulo']);
 			$codigo = $conexion->real_escape_string($_POST['txtCodigo']);
 			$nombre_hosting = $conexion->real_escape_string($_POST['txtHost']);
-							
-			
+					    
 			//generamos un idusuario unico encriptado
-			$id_new_ef = generar_id_codificado('@S#1$2013');					
+			$id_new_ef = generar_id_codificado('@S#1$2013');
+						
 			//METEMOS LOS DATOS A LA BASE DE DATOS
 			$insert ="INSERT INTO s_entidad_financiera(id_ef, nombre, logo, codigo, host_ws, activado) "
 				    ."VALUES('".$id_new_ef."', '".$titulo."', '".$imagenServidor."', '".$codigo."', '".$nombre_hosting."', 0)";
@@ -371,13 +377,13 @@ function agregar_nueva_entidadfin($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				$vec=explode('|',$vecidmultiple[$i]); 
 				//generamos un idusuario unico encriptado
 				 $id_new_home = generar_id_codificado('@S#1$2013');
-				 $insert_ef = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, id_usuario) VALUES('".$id_new_home."', '".$id_new_ef."', '".$vec[0]."', '".$vec[1]."', '".$id_usuario_sesion."');";
+				 $insert_ef = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, id_usuario, activado) VALUES('".$id_new_home."', '".$id_new_ef."', '".$vec[0]."', '".$vec[1]."', '".$id_usuario_sesion."', 1);";
 				 $conexion->query($insert_ef);
 			}
 			
 			//INSERTAMOS EL NUEVO HOME PARA LA ENTIDAD FINANCIERA
 			$id_new_home_ef_H = generar_id_codificado('@S#1$2013');
-			$insert_ef_H = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, cliente, cliente_logo, id_usuario) VALUES('".$id_new_home_ef_H."', '".$id_new_ef."', 'H', '', '".$titulo."', '".$imagenServidor."', '".$id_usuario_sesion."');";
+			$insert_ef_H = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, cliente, cliente_logo, id_usuario, activado) VALUES('".$id_new_home_ef_H."', '".$id_new_ef."', 'H', '', '".$titulo."', '".$imagenServidor."', '".$id_usuario_sesion."', 1);";
 			
 			
 			//VERIFICAMOS SI HUBO ERROR EN EL INGRESO DEL REGISTRO
@@ -393,12 +399,26 @@ function agregar_nueva_entidadfin($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				$resizeObj -> resizeImage($ancho, 75, 'portrait');
 				// *** 3) Save image
 				$resizeObj -> saveImage('../images/'.$imagenServidor, 100);
+				//AGREGAMOS EL USUARIO ADMINISTRADOR
+				if($tipo_sesion == 'ROOT'){
+					$prefijo2 = '@S#1$2013';
+					$id_unico2 = '';
+					$id_unico2 = uniqid($prefijo2,true);
+					$insert_user_ef = "INSERT INTO s_ef_usuario(id_eu, usuario, id_usuario, id_ef) VALUES('".$id_unico2."', '".$usuario_sesion."', '".$id_usuario_sesion."', '".$id_new_ef."');";
+					if($conexion->query($insert_user_ef)===TRUE){
+						$mensaje="Se registro correctamente los datos del formulario";
+			            header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
+			            exit;	
+					}else{
+						$mensaje="Hubo un error al ingresar los datos a la tabla ".$conexion->errno.": ". $conexion->error;
+			            header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
+				        exit;
+					}
+					  
+				}		
 				
-				$mensaje="Se registro correctamente los datos del formulario";
-			    header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
-			    exit;
 			} else {
-				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
+				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ". $conexion->error;
 			    header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
 				exit;
 			}
@@ -496,15 +516,33 @@ function mostrar_crear_entidad($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 	   });
     </script>
  
- <?php
-  $text = array("Desgravamen", "Automotores", "Todo Riesgo Domiciliario","Todo Riesgo Equipo Movil", "Tarjetahabiente");
-  $value = array("DE", "AU", "TRD", "TRM", "TH");
+<?php
+$text = array(
+	"Desgravamen", 
+	"Automotores", 
+	"Todo Riesgo Domiciliario",
+	"Ramos Tecnicos", 
+	"Tarjetahabiente",
+	"Accidentes Personales",
+	"Vida Individual"
+);
+
+$value = array(
+	"DE", 
+	"AU", 
+	"TRD", 
+	"TRM", 
+	"TH",
+	"AP",
+	"VI"
+);
+
   $result = count($value);
   echo'<div class="da-panel collapsible">
 		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 			  <ul class="action_user">
 				  <li style="margin-right:6px;">
-					 <a href="?l=entidades&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
+					 <a href="?l=entidades&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 					 <img src="images/retornar.png" width="32" height="32"></a>
 				  </li>
 			  </ul>
@@ -514,55 +552,55 @@ function mostrar_crear_entidad($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 		<div class="da-panel-header">
 			<span class="da-panel-title">
 				<img src="images/icons/black/16/pencil.png" alt="" />
-				Nueva Entidad Financiera
+				<span lang="es">Nueva Entidad Financiera</span>
 			</span>
 		</div>
 		<div class="da-panel-content">
 			<form class="da-form" name="frmEntidad" id="frmEntidad" action="" method="post" enctype="multipart/form-data">
 				<div class="da-form-row">
-				   <label style="text-align:right;"><b>Entidad Financiera</b></label>
+				   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
 				   <div class="da-form-item large">
 					  <input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="" autocomplete="off"/>
-					  <span class="errorMessage" id="errortitulo"></span>
+					  <span class="errorMessage" id="errortitulo" lang="es"></span>
 				   </div>
 				</div>
 				<div class="da-form-row">
-				   <label style="text-align:right;"><b>Codigo</b></label>
+				   <label style="text-align:right;"><b><span lang="es">Codigo</span></b></label>
 				   <div class="da-form-item large">
 					   <input class="textbox required" type="text" id="txtCodigo" name="txtCodigo" value="" autocomplete="off" maxlength="4" style="width: 400px;"/>
-					   <span class="errorMessage" id="errorcodigo"></span>
+					   <span class="errorMessage" id="errorcodigo" lang="es"></span>
 				   </div>	   
 				</div>
 				<div class="da-form-row">
-				   <label style="text-align:right;"><b>Nombre Hosting</b></label>
+				   <label style="text-align:right;"><b><span lang="es">Nombre del dominio</span></b></label>
 				   <div class="da-form-item large">
 					   <input class="textbox required" type="text" id="txtHost" name="txtHost" value="" autocomplete="off" style="width: 400px;"/>
-					   <span class="errorMessage" id="errorhosting"></span>
+					   <span class="errorMessage" id="errorhosting" lang="es"></span>
 				   </div>	   
 				</div>
 				<div class="da-form-row">
-				   <label style="text-align:right;"><b>Productos</b></label>
+				   <label style="text-align:right;"><b><span lang="es">Productos</span></b></label>
 				   <div class="da-form-item large">
-					<select name="idmultiple[]" id="idmultiple" class="requerid" style="width:200px;" size="5" multiple="multiple">';
+					<select name="idmultiple[]" id="idmultiple" class="requerid" style="width:200px; height: 150px;" size="5" multiple="multiple">';
 						for($i=0;$i<$result;$i++){
 						  echo'<option value="'.$value[$i].'|'.$text[$i].'">'.$text[$i].'</option>';  
 						}
 			  echo'</select>
-					<span class="errorMessage" id="errorproducto"></span>  
+					<span class="errorMessage" id="errorproducto" lang="es"></span>  
 				   </div>
 				</div>   		
 				<div class="da-form-row">
-					<label style="text-align:right;"><b>Archivo</b></label>
+					<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
 					<div class="da-form-item large">
-					    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. Se recomienda que la imagen tenga un alto de 75px, el formato del archivo a subir debe ser [JPG] ó [PNG]</span> 
+					    <span lang="es">El tamaño máximo del archivo es de 2Mb. Se recomienda que la imagen tenga un alto de 75px, el formato del archivo a subir debe ser [JPG] ó [PNG]</span> 
 						<input type="file" id="txtArchivo" name="txtArchivo"/>
 						<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
 					</div>
 				</div>
 																
 				<div class="da-button-row">
-					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
+					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar" lang="es"/>
+					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
 					<input type="hidden" name="accionGuardar" value="checkdatos"/>
 					<input type="hidden" id="var" value="'.$_GET['var'].'"/>
 				</div>
@@ -641,23 +679,47 @@ function editar_entidad($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
             //echo $update;
             $conexion->query($update);
             
+			//CEREAMOS LAS ACTIVACIONES DE LOS PRODUCTOS CREADOS
+			$query="select
+						id_home,
+						id_ef
+					  from
+						s_sgc_home
+					  where
+						id_ef='".$identidad."';";
+			$consult=$conexion->query($query,MYSQLI_STORE_RESULT);
+			while($row=$consult->fetch_array(MYSQLI_ASSOC)){
+				$update = "UPDATE s_sgc_home SET activado=0 where id_ef='".$identidad."' and id_home='".$row['id_home']."' and producto!='H';";
+				$conexion->query($update);
+			}			
+			$consult->free();
+			
 			$vecidmultiple=$_POST['idmultiple'];
 			$cant=count($vecidmultiple);	
 			//INSERTAMOS LOS PRODUCTOS ELEGIDOS
 			for($i=0;$i<$cant;$i++){
 				$vec=explode('|',$vecidmultiple[$i]);
 				$busca="select
-						  count(id_home) as cant
+						  id_home,
+						  id_ef,
+						  producto
 						from
 						  s_sgc_home
 						where
 						  id_ef='".$identidad."' and producto='".$vec[0]."';";
 				$resib = $conexion->query($busca, MYSQLI_STORE_RESULT);
 				$regib = $resib->fetch_array(MYSQLI_ASSOC);
-				if($regib['cant']==0){
+				if($resib->num_rows !== 0){
 					//generamos un idusuario unico encriptado
+					$update = "UPDATE s_sgc_home SET activado=1 where id_ef='".$identidad."' and id_home='".$regib['id_home']."';";
+				    if($conexion->query($update) === TRUE){
+						$resultado = TRUE;
+					}else{
+						$resultado = FALSE;
+					} 
+				}else{
 					 $id_new_home = generar_id_codificado('@S#1$2013');
-					 $insert_ef = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, id_usuario) VALUES('".$id_new_home."', '".$identidad."', '".$vec[0]."', '".$vec[1]."', '".$id_usuario_sesion."');";
+					 $insert_ef = "INSERT INTO s_sgc_home(id_home, id_ef, producto, producto_nombre, id_usuario, activado) VALUES('".$id_new_home."', '".$identidad."', '".$vec[0]."', '".$vec[1]."', '".$id_usuario_sesion."', 1);";
 					 if($conexion->query($insert_ef) === TRUE){
 						 $resultado=TRUE;
 					 }else{
@@ -671,7 +733,7 @@ function editar_entidad($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 			    header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
             } else{
-                $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
+                $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ". $conexion->error;
 			    header('Location: index.php?l=entidades&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
 				exit;
             }
@@ -788,128 +850,150 @@ function mostrar_editar_entidad($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				  id_ef='".$identidad."' and activado=1
 				limit
 				  0,1;";
-	$rs = $conexion->query($select, MYSQLI_STORE_RESULT);
-	$num = $rs->num_rows;
-	
-	//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
-	if($num>0) {
-
-		$fila = $rs->fetch_array(MYSQLI_ASSOC);
-        $rs->free();
-		if(isset($_POST['txtTitulo'])) $titulo = $_POST['txtTitulo']; else $titulo = $fila['nombre'];
-		if(isset($_POST['txtCodigo'])) $txtCodigo = $_POST['txtCodigo']; else $txtCodigo = $fila['codigo'];
-		if(isset($_POST['txtHost'])) $txtHost = $_POST['txtHost']; else $txtHost = $fila['host_ws'];
+	if($rs = $conexion->query($select, MYSQLI_STORE_RESULT)){
+			$num = $rs->num_rows;
+			
+			//SI EXISTE EL USUARIO DADO EN LA BASE DE DATOS, LO EDITAMOS
+			if($num>0) {
 		
-		$archivo = $fila['logo'];
+				$fila = $rs->fetch_array(MYSQLI_ASSOC);
+				$rs->free();
+				if(isset($_POST['txtTitulo'])) $titulo = $_POST['txtTitulo']; else $titulo = $fila['nombre'];
+				if(isset($_POST['txtCodigo'])) $txtCodigo = $_POST['txtCodigo']; else $txtCodigo = $fila['codigo'];
+				if(isset($_POST['txtHost'])) $txtHost = $_POST['txtHost']; else $txtHost = $fila['host_ws'];
 				
-		$text = array("Desgravamen", "Automotores", "Todo Riesgo Domiciliario","Todo Riesgo Equipo Movil", "Tarjetahabiente");
-        $value = array("DE", "AU", "TRD", "TRM", "TH");
-        $result = count($value);
-		echo'<div class="da-panel collapsible">
-				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-					<ul class="action_user">
-						<li style="margin-right:6px;">
-						   <a href="?l=entidades&var='.$_GET['var'].'" class="da-tooltip-s" title="Volver">
-						   <img src="images/retornar.png" width="32" height="32"></a>
-						</li>
-						<li style="margin-right:6px;">
-						   <a href="?l=entidades&crear_entidad=v&var='.$_GET['var'].'" class="da-tooltip-s" title="Agregar Registro">
-						   <img src="images/add_new.png" width="32" height="32"></a>
-						</li>
-					</ul>
-				</div>
-			</div>';
-				
-		  echo'<div class="da-panel" style="width:650px;">
-				<div class="da-panel-header">
-					<span class="da-panel-title">
-						<img src="images/icons/black/16/pencil.png" alt="" />
-						Editar Entidad Financiera
-					</span>
-				</div>
-				<div class="da-panel-content">
-					<form class="da-form" name="frmEntidad" id="frmEntidad" action="" method="post" enctype="multipart/form-data">
-						<div class="da-form-row">
-						  <label style="text-align:right; margin-right:15px;"><b>Logo</b></label>';
-						  if($archivo!=''){
-						    if(file_exists('../images/'.$archivo)){
-							   echo'<img src="../images/'.$archivo.'" />';
-							}else{
-							   echo'no existe el archivo';	
-							}
-						  }else{
-							echo'campo vacio';  
-						  }
-				   echo'</div>
-						<div class="da-form-row">
-							<label style="text-align:right;"><b>Archivo</b></label>
-							<div class="da-form-item large">
-							    <span>El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. Se recomienda que la imagen tenga un alto de 75px, el formato del archivo a subir debe ser [JPG] ó [PNG]</span>
-								<input type="file" id="txtArchivo" name="txtArchivo"/>
-								<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
-								<span>Archivo actual: '.$archivo.'</span>
-							</div>
+				$archivo = $fila['logo'];
+						
+				$text = array(
+					"Desgravamen", 
+					"Automotores", 
+					"Todo Riesgo Domiciliario",
+					"Ramos Tecnicos", 
+					"Tarjetahabiente",
+					"Accidentes Personales",
+					"Vida Individual"
+				);
+
+				$value = array(
+					"DE", 
+					"AU", 
+					"TRD", 
+					"TRM", 
+					"TH",
+					"AP",
+					"VI"
+				);
+				$result = count($value);
+				echo'<div class="da-panel collapsible">
+						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+							<ul class="action_user">
+								<li style="margin-right:6px;">
+								   <a href="?l=entidades&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+								   <img src="images/retornar.png" width="32" height="32"></a>
+								</li>
+								<li style="margin-right:6px;">
+								   <a href="?l=entidades&crear_entidad=v&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Agregar Registro</span>">
+								   <img src="images/add_new.png" width="32" height="32"></a>
+								</li>
+							</ul>
 						</div>
-						<div class="da-form-row">
-							<label style="text-align:right;"><b>Entidad Financiera</b></label>
-							<div class="da-form-item large">
-								<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomplete="off"/>
-								<span class="errorMessage" id="errortitulo"></span>
-							</div>
+					</div>';
+						
+				  echo'<div class="da-panel" style="width:650px;">
+						<div class="da-panel-header">
+							<span class="da-panel-title">
+								<img src="images/icons/black/16/pencil.png" alt="" />
+								<span lang="es">Editar Entidad Financiera</span>
+							</span>
 						</div>
-						<div class="da-form-row">
-						   <label style="text-align:right;"><b>Codigo</b></label>
-						   <div class="da-form-item large">
-						       <input class="textbox required" type="text" id="txtCodigo" name="txtCodigo" value="'.$txtCodigo.'" autocomplete="off" maxlength="4" style="width: 400px;"/>
-						       <span class="errorMessage" id="errorcodigo"></span>
-						   </div>	   
-					    </div>
-						<div class="da-form-row">
-						   <label style="text-align:right;"><b>Nombre Hosting</b></label>
-						   <div class="da-form-item large">
-							   <input class="textbox required" type="text" id="txtHost" name="txtHost" value="'.$txtHost.'" autocomplete="off" style="width: 400px;"/>
-							   <span class="errorMessage" id="errorhosting"></span>
-						   </div>	   
+						<div class="da-panel-content">
+							<form class="da-form" name="frmEntidad" id="frmEntidad" action="" method="post" enctype="multipart/form-data">
+								<div class="da-form-row">
+								  <label style="text-align:right; margin-right:15px;"><b><span lang="es">Imagen</span></b></label>';
+								  if($archivo!=''){
+									if(file_exists('../images/'.$archivo)){
+									   echo'<img src="../images/'.$archivo.'" />';
+									}else{
+									   echo'no existe el archivo';	
+									}
+								  }else{
+									echo'<span lang="es">campo vacio</span>';  
+								  }
+						   echo'</div>
+								<div class="da-form-row">
+									<label style="text-align:right;"><b><span lang="es">Archivo</span></b></label>
+									<div class="da-form-item large">
+										<span lang="es">El tamaño máximo del archivo es de 2Mb. Se recomienda que la imagen tenga un alto de 75px, el formato del archivo a subir debe ser [JPG] ó [PNG]</span>
+										<input type="file" id="txtArchivo" name="txtArchivo"/>
+										<span class="errorMessage">'.$errArr['errorarchivo'].'</span>
+										<span><span lang="es">Archivo actual:</span> '.$archivo.'</span>
+									</div>
+								</div>
+								<div class="da-form-row">
+									<label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+									<div class="da-form-item large">
+										<input class="textbox required" type="text" name="txtTitulo" id="txtTitulo" style="width: 400px;" value="'.$titulo.'" autocomplete="off"/>
+										<span class="errorMessage" id="errortitulo" lang="es"></span>
+									</div>
+								</div>
+								<div class="da-form-row">
+								   <label style="text-align:right;"><b><span lang="es">Codigo</span></b></label>
+								   <div class="da-form-item large">
+									   <input class="textbox required" type="text" id="txtCodigo" name="txtCodigo" value="'.$txtCodigo.'" autocomplete="off" maxlength="4" style="width: 400px;"/>
+									   <span class="errorMessage" id="errorcodigo" lang="es"></span>
+								   </div>	   
+								</div>
+								<div class="da-form-row">
+								   <label style="text-align:right;"><b><span lang="es">Nombre del dominio</span></b></label>
+								   <div class="da-form-item large">
+									   <input class="textbox required" type="text" id="txtHost" name="txtHost" value="'.$txtHost.'" autocomplete="off" style="width: 400px;"/>
+									   <span class="errorMessage" id="errorhosting" lang="es"></span>
+								   </div>	   
+								</div>
+								<div class="da-form-row">
+								   <label style="text-align:right;"><b><span lang="es">Productos</span></b></label>
+								   <div class="da-form-item large">
+									<select name="idmultiple[]" id="idmultiple" class="requerid" style="width:200px; height: 150px;" size="5" multiple="multiple">';
+										for($j=0;$j<$result;$j++){
+											  $selectEnFi="select
+															  count(id_ef) as numreg
+														   from
+															  s_sgc_home
+														   where
+															  id_ef='".$fila['id_ef']."' and producto='".$value[$j]."' and activado=true;";				                                      $rescant = $conexion->query($selectEnFi,MYSQLI_STORE_RESULT); 
+											  $cant = $rescant->fetch_array(MYSQLI_ASSOC);
+											  if($cant['numreg']>0){
+												 echo'<option value="'.$value[$j].'|'.$text[$j].'" selected>'.$text[$j].'</option>';  
+											  }else{
+												 echo'<option value="'.$value[$j].'|'.$text[$j].'">'.$text[$j].'</option>';   
+											  }
+										}
+										$rescant->free();
+										//unset($vec);
+							   echo'</select>
+									<span class="errorMessage" id="errorproducto"></span>  
+								   </div>
+								</div>     												
+								<div class="da-button-row">
+									<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar" lang="es"/>
+									<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" lang="es"/>
+									<input type="hidden" name="accionGuardar" value="checkdatos"/>
+									<input type="hidden" name="archivoAux" value="'.$archivo.'"/>
+									<input type="hidden" id="var" value="'.$_GET['var'].'"/>
+								</div>
+							</form>
 						</div>
-						<div class="da-form-row">
-						   <label style="text-align:right;"><b>Productos</b></label>
-						   <div class="da-form-item large">
-							<select name="idmultiple[]" id="idmultiple" class="requerid" style="width:200px;" size="5" multiple="multiple">';
-								for($j=0;$j<$result;$j++){
-									  $selectEnFi="select
-													  count(id_ef) as numreg
-												   from
-													  s_sgc_home
-												   where
-													  id_ef='".$fila['id_ef']."' and producto='".$value[$j]."';";				                                      $rescant = $conexion->query($selectEnFi,MYSQLI_STORE_RESULT); 
-									  $cant = $rescant->fetch_array(MYSQLI_ASSOC);
-									  if($cant['numreg']>0){
-										 echo'<option value="'.$value[$j].'|'.$text[$j].'" selected>'.$text[$j].'</option>';  
-									  }else{
-										 echo'<option value="'.$value[$j].'|'.$text[$j].'">'.$text[$j].'</option>';   
-									  }
-								}
-								$rescant->free();
-								//unset($vec);
-					   echo'</select>
-							<span class="errorMessage" id="errorproducto"></span>  
-						   </div>
-						</div>     												
-						<div class="da-button-row">
-							<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
-							<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
-							<input type="hidden" name="accionGuardar" value="checkdatos"/>
-							<input type="hidden" name="archivoAux" value="'.$archivo.'"/>
-							<input type="hidden" id="var" value="'.$_GET['var'].'"/>
-						</div>
-					</form>
-				</div>
-			</div>';
-	
-	} else {
-		//SI NO EXISTE EL USUARIO DADO EN LA BASE DE DATOS, VOLVEMOS A LA LISTA DE USUARIOS
-		header('Location: index.php?l=entidades&var='.$_GET['var']);
-	}
+					</div>';
+			
+			} else {
+				//SI NO EXISTE ENTIDADES EN LA BASE DE DATOS
+				header('Location: index.php?l=entidades&var='.$_GET['var']);
+			}
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>
+		  Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error
+		."</div>";
+	}		
 }
 
 ?>

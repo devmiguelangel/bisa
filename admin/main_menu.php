@@ -8,6 +8,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 		$formularios=false;
 		$compania=false;
 		$desgravamen=false;
+		$vidagrupo=false;
 		$poliza=false;
 		$none=false;
 		$faculde=false;
@@ -108,7 +109,8 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 						
 					 echo'<ul>';
 					   if($inicio){
-						   if($link_page=='escritorio' or $link_page=='slideshow' or $link_page=='contenidohome'){
+						   if($link_page=='escritorio' or $link_page=='slideshow' or 
+						      $link_page=='contenidohome'){
 								$data='class="active"';	
 							}else{$data='';}
 						   echo'<li '.$data.'>
@@ -188,7 +190,9 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 					   if($desgravamen){    //DESGRAVAMEN
 						   if($link_page=='des_producto' or $link_page=='des_preguntas' or 
 							  $link_page=='des_tasas' or $link_page=='des_datos' or 
-							  $link_page=='des_contenido' or $link_page=='des_producto_extra'){
+							  $link_page=='des_contenido' or $link_page=='des_producto_extra' or
+							  $link_page=='des_ocupacion' or $link_page=='certmedico' or
+							  $link_page=='des_estados'){
 								$data='class="active"'; $close='';
 						   }else{$data=''; $close='class="closed"';}
 						   echo'<li '.$data.'>
@@ -202,14 +206,19 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 									  <li><a href="?l=des_datos&var=de">Administrar parametros del Producto</a></li>
 									  <li><a href="?l=des_producto&var=de&list_producto=v">Administrar Producto Crediticio</a></li>
 									  <li><a href="?l=des_preguntas&var=de&list_compania=v">Administrar preguntas</a></li>
-									  <li><a href="?l=des_contenido&var=de">Administrar contenido</a></li>';
-										//echo'<li><a href="?l=des_producto_extra&var=pe&list_compania=v">Administrar producto extra</a></li>';
+									  <li><a href="?l=des_contenido&var=de">Administrar contenido</a></li>
+									  <li><a href="?l=certmedico&var=cert">Administrar Certificado M&eacute;dico</a></li>
+									  <li><a href="?l=des_ocupacion&var=de&producto='.base64_encode('DE').'">Administrar Ocupacion</a></li>
+									  <li><a href="?l=des_estados&var=de&producto='.base64_encode('DE').'">Administrar Estados</a></li>
+									  <li><a href="?l=des_producto_extra&var=pe&list_compania=v">Administrar producto extra</a></li>';
 							   echo'</ul>
 								</li>';
 					   }
 					   if($autos){       //AUTOMOTORES
-						   if($link_page=='au_tipovehiculo' or $link_page=='au_tasas' or $link_page=='au_marca_modelo' 
-							   or $link_page=='au_montos' or $link_page=='au_contenido'){
+						   if($link_page=='au_tipovehiculo' or $link_page=='au_tasas' or 
+						      $link_page=='au_marca_modelo' or $link_page=='au_montos' or 
+							  $link_page=='au_contenido' or $link_page=='au_ocupacion' or
+							  $link_page=='au_estados' or $link_page=='au_formapago'){
 								$data='class="active"'; $close='';
 						   }else{$data=''; $close='class="closed"';}
 						   echo'<li '.$data.'>
@@ -225,11 +234,16 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 										<li><a href="?l=au_tipovehiculo&var=au">Administrar tipo vehículo</a></li>
 										<li><a href="?l=au_marca_modelo&var=au&list_marca=v">Administrar marca/modelo</a></li>
 										<li><a href="?l=au_contenido&var=au">Administrar contenido</a></li>
+										<li><a href="?l=au_ocupacion&var=au&producto='.base64_encode('AU').'">Administrar Ocupacion</a></li>
+										<li><a href="?l=au_estados&var=au&producto='.base64_encode('AU').'">Administrar Estados</a></li>
+										<li><a href="?l=au_formapago&var=au&producto='.base64_encode('AU').'">Administrar Forma de Pago</a></li>
 									</ul>
 								</li>';
 					   }
 					   if($triesgod){    //TODORIEASGO DOMICILIARIO
-						   if($link_page=='tr_tasas' or $link_page=='tr_montos' or $link_page=='tr_contenido'){
+						   if($link_page=='tr_tasas' or $link_page=='tr_montos' or 
+						      $link_page=='tr_contenido' or $link_page=='tr_ocupacion' or
+							  $link_page=='tr_estados' or $link_page=='tr_formapago'){
 								$data='class="active"'; $close='';
 						   }else{$data=''; $close='class="closed"';}
 						   echo'<li '.$data.'>
@@ -243,11 +257,16 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 										<li><a href="?l=tr_montos&var=trd">Administrar montos</a></li>
 										<li><a href="?l=tr_tasas&var=trd&list_compania=v">Administrar tasas</a></li>
 										<li><a href="?l=tr_contenido&var=trd">Administrar contenido</a></li>
+										<li><a href="?l=tr_ocupacion&var=trd&producto='.base64_encode('TRD').'">Administrar Ocupacion</a></li>
+										<li><a href="?l=tr_estados&var=trd&producto='.base64_encode('TRD').'">Administrar Estados</a></li>
+										<li><a href="?l=tr_formapago&var=trd&producto='.base64_encode('TRD').'">Administrar Forma de Pago</a></li>
 									</ul>
 								</li>';
 					   }
 					   if($triesgoeqm){  //TODORIESGO EQUIPO MOVIL
-						   if($link_page=='trem_tasas' or $link_page=='trem_montos' or $link_page=='trem_contenido'){
+						   if($link_page=='trem_tasas' or $link_page=='trem_montos' or 
+						      $link_page=='trem_contenido' or $link_page=='trem_ocupacion' or
+							  $link_page=='trem_estados' or $link_page=='trem_formapago'){
 								$data='class="active"'; $close='';
 						   }else{$data=''; $close='class="closed"';}
 						   echo'<li '.$data.'>
@@ -261,6 +280,9 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 										<li><a href="?l=trem_montos&var=trem">Administrar montos</a></li>
 										<li><a href="?l=trem_tasas&var=trem&list_compania=v">Administrar tasas</a></li>
 										<li><a href="?l=trem_contenido&var=trem">Administrar contenido</a></li>
+										<li><a href="?l=trem_ocupacion&var=trem&producto='.base64_encode('TRM').'">Administrar Ocupacion</a></li>
+										<li><a href="?l=trem_estados&var=trem&producto='.base64_encode('TRM').'">Administrar Estados</a></li>
+										<li><a href="?l=trem_formapago&var=trem&producto='.base64_encode('TRM').'">Administrar Forma de Pago</a></li>
 									</ul>
 								</li>';
 					   }
@@ -611,7 +633,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 				}
 		}else{
 			  //ES EL ROOT TENDRA TODO EL ACCESO
-			  $listado = array("cabecera", "entidadfin", "inicio", "creausuario", "formularios", "compania", "desgravamen", "poliza", "facultativode", "admindatos", "certificadomedico", "email", "agencia", "agregaciaef", "sucursal", "automotores", "formapago", "estados", "todoriesgod", "triesgoeqmov", "tipocambio", "tarjetahabiente", "modalidad");
+			  $listado = array("cabecera", "entidadfin", "inicio", "creausuario", "formularios", "compania", "desgravamen", "vidagrupo", "poliza", "facultativode", "admindatos", "certificadomedico", "email", "agencia", "agregaciaef", "sucursal", "automotores", "formapago", "estados", "todoriesgod", "triesgoeqmov", "tipocambio", "tarjetahabiente", "modalidad");
 			  foreach($listado as $acceso){
 					switch($acceso) {
 						case 'cabecera':  //ADMINISTRAR CABECERA
@@ -635,6 +657,9 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 						case 'desgravamen'://EDITAR PAGINA PERSONAS
 							$desgravamen = true;
 							break;
+						case 'vidagrupo'://EDITAR VIDAGRUPO
+						    $vidagrupo = true;
+							break;	
 						case 'poliza':     //GENERAR REPORTES PERSONAS PRODUCTOS
 							$poliza = true;
 							break;
@@ -711,7 +736,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/home.png" alt="Dashboard" />
 								</span>
-								Home
+								<div lang="es">Inicio</div>
 							</a>';
 							 switch($link_page){
 								 case "slideshow" :
@@ -742,29 +767,29 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 							 }	
 					   echo'<ul '.$close.'> 
 								<li>
-								  <a href="#">Slideshow</a>
+								  <a href="#" lang="es">Diapositiva</a>
 								   <ul '.$closea.'>
 									   <li style="padding-left:10px;">
-									     <a href="?l=slideshow&var=s">Listar imagenes</a>
+									     <a href="?l=slideshow&var=s" lang="es">Listar imagenes</a>
 									   </li>
 									   <li style="padding-left:10px;">
-									     <a href="?l=slideshow&var=s&crear=v">Agregar imagen</a>
+									     <a href="?l=slideshow&var=s&crear=v" lang="es">Agregar imagen</a>
 									   </li>
 								   </ul>
 								</li>     
 								<li>
-								   <a href="#">Contenido home</a>
+								   <a href="#" lang="es">Contenido inicio</a>
 								   <ul '.$closeb.'>
-									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=c">Listar contenido</a></li>
-									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=nos&list_nosotros=v">Nosotros</a></li>
-									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=prgf&list_preg_frec=v">Preguntas Frecuentes</a></li>
+									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=c" lang="es">Listar contenido</a></li>
+									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=nos&list_nosotros=v" lang="es">Nosotros</a></li>
+									   <li style="padding-left:10px;"><a href="?l=contenidohome&var=prgf&list_preg_frec=v" lang="es">Preguntas Frecuentes</a></li>
 								   </ul> 
 								</li>
 							</ul>
 						</li>';
 			   }
 			   if($compania){
-				   if($link_page=='compania'){
+				   if($link_page=='compania' || $link_page=='des_poliza'){
 					    $data='class="active"'; $close='';  
 				   }else{$data=''; $close='class="closed"';}
 				   echo'<li '.$data.'>
@@ -772,10 +797,11 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/companies.png" alt="Form" />
 								</span>
-								Compañía de Seguros
+								<div lang="es">Compañía de Seguros</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=compania&var=cs">Listar Cia. Seguros</a></li>
+								<li><a href="?l=compania&var=cs" lang="es">Lista Compañía de Seguros</a></li>
+								<li><a href="?l=des_poliza&var=pl" lang="es">Administración Pólizas</a></li>
 							</ul>
 						</li>';
 			   }
@@ -789,10 +815,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/apartment_building.png" alt="entidades Financieras" />
 								</span>
-								Entidades Financieras
+								<div lang="es">Entidades Financieras</div>
 							</a>
 							<ul '.$close.'>
-							    <li><a href="?l=entidades&var=enti">Listar Entidades</a></li>
+							    <li><a href="?l=entidades&var=enti" lang="es">Listar Entidades</a></li>
 							</ul>
 						</li>';
 			   }
@@ -806,10 +832,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/add_cia.png" alt="entidades Financieras" />
 								</span>
-								Agregar Cia. a Entidades Financieras
+								<div lang="es">Agregar Compañía a Entidades Financieras</div>
 							</a>
 							<ul '.$close.'>
-							    <li><a href="?l=adciaef&var=adcia">Listar Cia. agregadas a Entidades</a></li>
+							    <li><a href="?l=adciaef&var=adcia" lang="es">Listar Compañía agregadas a Entidades</a></li>
 							</ul>
 						</li>';
 			   }
@@ -822,10 +848,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/users_2.png" alt="Calendar" />
 								</span>
-								Usuarios
+								<div lang="es">Usuarios</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=usuarios">Listar usuarios</a></li>';
+								<li><a href="?l=usuarios" lang="es">Listar usuarios</a></li>';
 								//echo'<li><a href="?l=usuarios&crear=1">Crear usuario</a></li>';
 					   echo'</ul>
 						</li>';
@@ -840,17 +866,19 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/moneda.png" alt="Agencia" />
 								</span>
-								Tipo de Cambio 
+								<div lang="es">Tipo de Cambio</div> 
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=tipocambio&var=tcm">Tipo Cambio Moneda</a></li>
+								<li><a href="?l=tipocambio&var=tcm" lang="es">Tipo de Cambio Moneda</a></li>
 							</ul>
 						</li>';
 			   }
 			   if($desgravamen){    //DESGRAVAMEN
 				   if($link_page=='des_producto' or $link_page=='des_preguntas' or 
 				      $link_page=='des_tasas' or $link_page=='des_datos' or 
-					  $link_page=='des_contenido' or $link_page=='des_producto_extra'){
+					  $link_page=='des_contenido' or $link_page=='des_producto_extra' or
+					  $link_page=='certmedico' or $link_page=='des_ocupacion' or
+					  $link_page=='des_estados'){
 						$data='class="active"'; $close='';
 				   }else{$data=''; $close='class="closed"';}
 				   echo'<li '.$data.'>
@@ -858,20 +886,42 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/product.png" alt="Form" />
 								</span>
-								Desgravamen
+								<div lang="es">Desgravamen</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=des_datos&var=de">Administrar parametros del Producto</a></li>
-								<li><a href="?l=des_producto&var=de&list_producto=v">Administrar Producto Crediticio</a></li>
-								<li><a href="?l=des_preguntas&var=de&list_compania=v">Administrar preguntas</a></li>
-							    <li><a href="?l=des_contenido&var=de">Administrar contenido</a></li>
-								<li><a href="?l=des_producto_extra&var=pe&list_compania=v">Administrar producto extra</a></li>
+								<li><a href="?l=des_datos&var=de" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=des_producto&var=de&list_producto=v" lang="es">Administrar Producto Crediticio</a></li>
+								<li><a href="?l=des_preguntas&var=de&list_compania=v" lang="es">Administrar preguntas</a></li>
+							    <li><a href="?l=des_contenido&var=de" lang="es">Administrar contenido</a></li>
+								<li><a href="?l=des_producto_extra&var=de&list_compania=v" lang="es">Administrar producto extra</a></li>
+								<li><a href="?l=certmedico&var=cert" lang="es">Administrar Certificado Médico</a></li>
+								<li><a href="?l=des_ocupacion&var=de&producto='.base64_encode('DE').'" lang="es">Administrar Ocupación</a></li>
+								<li><a href="?l=des_estados&var=de&producto='.base64_encode('DE').'" lang="es">Administrar Estados</a></li>
+							</ul>
+						</li>';
+			   }
+			   if($vidagrupo){  //VIDAGRUPO
+				   if($link_page=='vg_preguntas' or $link_page=='vg_datos'){
+						$data='class="active"'; $close='';
+				   }else{$data=''; $close='class="closed"';}
+				   echo'<li '.$data.'>
+							<a href="#">
+								<span class="da-nav-icon">
+									<img src="images/icons/black/32/product.png" alt="Form" />
+								</span>
+								<div lang="es">Vida en Grupo</div>
+							</a>
+							<ul '.$close.'>
+								<li><a href="?l=vg_datos&var=vg&producto='.base64_encode('VG').'" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=vg_preguntas&var=vg&list_compania=v&producto='.base64_encode('VG').'" lang="es">Administrar preguntas</a></li>
 							</ul>
 						</li>';
 			   }
 			   if($autos){          //AUTOMOTORES
-				   if($link_page=='au_tipovehiculo' or $link_page=='au_tasas' or $link_page=='au_marca_modelo' 
-				       or $link_page=='au_montos' or $link_page=='au_contenido'){
+				   if($link_page=='au_tipovehiculo' or $link_page=='au_tasas' or 
+				      $link_page=='au_marca_modelo' or $link_page=='au_montos' or 
+					  $link_page=='au_contenido' or $link_page=='au_ocupacion' or
+					  $link_page=='au_estados' or $link_page=='au_formapago'){
 						$data='class="active"'; $close='';
 				   }else{$data=''; $close='class="closed"';}
 				   echo'<li '.$data.'>
@@ -879,19 +929,24 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/product.png" alt="Form" />
 								</span>
-								Automotores
+								<div lang="es">Automotores</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=au_montos&var=au">Administrar parametros del Producto</a></li>
-								<li><a href="?l=au_tasas&var=au&list_compania=v">Administrar tasas</a></li>
-								<li><a href="?l=au_tipovehiculo&var=au">Administrar tipo vehículo</a></li>
-								<li><a href="?l=au_marca_modelo&var=au&list_marca=v">Administrar marca/modelo</a></li>
-							    <li><a href="?l=au_contenido&var=au">Administrar contenido</a></li>
+								<li><a href="?l=au_montos&var=au" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=au_tasas&var=au&list_compania=v" lang="es">Administrar tasas</a></li>
+								<li><a href="?l=au_tipovehiculo&var=au" lang="es">Administrar tipo vehículo</a></li>
+								<li><a href="?l=au_marca_modelo&var=au&list_marca=v" lang="es">Administrar marca/modelo</a></li>
+							    <li><a href="?l=au_contenido&var=au" lang="es">Administrar contenido</a></li>
+								<li><a href="?l=au_ocupacion&var=au&producto='.base64_encode('AU').'" lang="es">Administrar Ocupacion</a></li>
+								<li><a href="?l=au_estados&var=au&producto='.base64_encode('AU').'" lang="es">Administrar Estados</a></li>
+								<li><a href="?l=au_formapago&var=au&producto='.base64_encode('AU').'" lang="es">Administrar Forma de Pago</a></li>
 							</ul>
 						</li>';
 			   }
-			   if($triesgod){       //TODORIEASGO DOMICILIARIO
-				   if($link_page=='tr_tasas' or $link_page=='tr_montos' or $link_page=='tr_contenido'){
+			   if($triesgod){       //TODORIESGO DOMICILIARIO
+				   if($link_page=='tr_tasas' or $link_page=='tr_montos' or
+				      $link_page=='tr_contenido' or $link_page=='tr_ocupacion' or
+					  $link_page=='tr_estados' or $link_page=='tr_formapago'){
 						$data='class="active"'; $close='';
 				   }else{$data=''; $close='class="closed"';}
 				   echo'<li '.$data.'>
@@ -899,17 +954,22 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/product.png" alt="Form" />
 								</span>
-								Todo Riesgo Domiciliario
+								<div lang="es">Todo Riesgo Domiciliario</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=tr_montos&var=trd">Administrar parametros del Producto</a></li>
-								<li><a href="?l=tr_tasas&var=trd&list_compania=v">Administrar tasas</a></li>
-							    <li><a href="?l=tr_contenido&var=trd">Administrar contenido</a></li>
+								<li><a href="?l=tr_montos&var=trd" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=tr_tasas&var=trd&list_compania=v" lang="es">Administrar tasas</a></li>
+							    <li><a href="?l=tr_contenido&var=trd" lang="es">Administrar contenido</a></li>
+								<li><a href="?l=tr_ocupacion&var=trd&producto='.base64_encode('TRD').'" lang="es">Administrar Ocupacion</a></li>
+								<li><a href="?l=tr_estados&var=trd&producto='.base64_encode('TRD').'" lang="es">Administrar Estados</a></li>
+								<li><a href="?l=tr_formapago&var=trd&producto='.base64_encode('TRD').'" lang="es">Administrar Forma de Pago</a></li>
 							</ul>
 						</li>';
 			   }
 			   if($triesgoeqm){     //TODORIESGO EQUIPO MOVIL
-				   if($link_page=='trem_tasas' or $link_page=='trem_montos' or $link_page=='trem_contenido'){
+				   if($link_page=='trem_tasas' or $link_page=='trem_montos' or
+				       $link_page=='trem_contenido' or $link_page=='trem_ocupacion' or
+					   $link_page=='trem_estados' or $link_page=='trem_formapago'){
 						$data='class="active"'; $close='';
 				   }else{$data=''; $close='class="closed"';}
 				   echo'<li '.$data.'>
@@ -917,12 +977,15 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/product.png" alt="Form" />
 								</span>
-								Todo Riesgo Equipo Movil
+								<div lang="es">Todo Riesgo Equipo Movil</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=trem_montos&var=trem">Administrar parametros del Producto</a></li>
-								<li><a href="?l=trem_tasas&var=trem&list_compania=v">Administrar tasas</a></li>
-							    <li><a href="?l=trem_contenido&var=trem">Administrar contenido</a></li>
+								<li><a href="?l=trem_montos&var=trem" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=trem_tasas&var=trem&list_compania=v" lang="es">Administrar tasas</a></li>
+							    <li><a href="?l=trem_contenido&var=trem" lang="es">Administrar contenido</a></li>
+								<li><a href="?l=trem_ocupacion&var=trem&producto='.base64_encode('TRM').'" lang="es">Administrar Ocupacion</a></li>
+								<li><a href="?l=trem_estados&var=trem&producto='.base64_encode('TRM').'" lang="es">Administrar Estados</a></li>
+								<li><a href="?l=trem_formapago&var=trem&producto='.base64_encode('TRM').'" lang="es">Administrar Forma de Pago</a></li>
 							</ul>
 						</li>';
 			   }
@@ -937,18 +1000,18 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/product.png" alt="Form" />
 								</span>
-								Tarjetahabiente
+								<div lang="es">Tarjetahabiente</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=th_montos&var=th">Administrar parametros del Producto</a></li>
-								<li><a href="?l=th_tipotarjeta&var=th&list_producto=v">Administrar tarjeta</a></li>
-								<li><a href="?l=th_marcatarjeta&var=th&list_compania=v">Administrar marca</a></li>
-								<li><a href="?l=th_primastarjeta&var=th&list_compania=v">Administrar primas</a></li>
-								<li><a href="?l=th_contenido&var=th">Administrar contenido</a></li>
+								<li><a href="?l=th_montos&var=th" lang="es">Administrar parametros del Producto</a></li>
+								<li><a href="?l=th_tipotarjeta&var=th&list_producto=v" lang="es">Administrar tarjeta</a></li>
+								<li><a href="?l=th_marcatarjeta&var=th&list_compania=v" lang="es">Administrar marca</a></li>
+								<li><a href="?l=th_primastarjeta&var=th&list_compania=v" lang="es">Administrar primas</a></li>
+								<li><a href="?l=th_contenido&var=th" lang="es">Administrar contenido</a></li>
 							</ul>
 						</li>';
 			   }
-			   if($poliza){
+			   /*if($poliza){
 				   if($link_page=='des_poliza'){
 					   $data='class="active"'; $close=''; 
 				   }else{$data=''; $close='class="closed"';}
@@ -1034,8 +1097,8 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								</li>
 							</ul>
 						</li>';   
-			   }
-			   if($estado){
+			   }*/
+			   /*if($estado){
 				   if($link_page=='estados'){
 						$data='class="active"';	
 					}else{$data='';}
@@ -1067,7 +1130,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 							</ul>
 						</li>';   
 			   }
-			   /*if($modalidad){
+			   if($modalidad){
 				   if($link_page=='modalidad'){
 						$data='class="active"';	
 					}else{$data='';}
@@ -1098,7 +1161,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								</li>
 							</ul>
 						</li>';   
-			   }*/
+			   }
 			   if($certmedico){
 				   if($link_page=='certmedico'){
 						$data='class="active"';	$close='';
@@ -1115,7 +1178,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<li><a href="?l=certmedico&var=cert">Listar Certificados</a></li>
 							</ul>
 						</li>';
-			   }
+			   }*/
 			   if($email){
 				   if($link_page=='email'){
 						$data='class="active"';	$close='';
@@ -1126,10 +1189,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/email.png" alt="Administrar correos" />
 								</span>
-								Administrar Correos
+								<div lang="es">Administrar Correos</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=email&var=em">Administrar correos</a></li>
+								<li><a href="?l=email&var=em" lang="es">Administrar Correos</a></li>
 							</ul>
 						</li>';
 			   }
@@ -1143,10 +1206,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/sucursal.png" alt="Agencia" />
 								</span>
-								Departamentos/<br/>Sucursales
+								<div lang="es">Departamentos</div><div lang="es">Sucursales</div>
 							</a>
 							<ul '.$close.'>
-							    <li><a href="?l=sucursal&var=suc&listarsuc=v">Listar Departamentos<br/>Sucursales</a></li>
+							    <li><a href="?l=sucursal&var=suc&listarsuc=v"><div lang="es">Listar Departamentos</div><div lang="es">Sucursales</div></a></li>
 							</ul>
 						</li>';
 			   }
@@ -1160,10 +1223,10 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/agencia.png" alt="Agencia" />
 								</span>
-								Agencias
+								<div lang="es">Agencias</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=agencia&var=age">Listar Agencias</a></li>
+								<li><a href="?l=agencia&var=age" lang="es">Listar Agencias</a></li>
 							</ul>
 						</li>';
 			   }
@@ -1176,11 +1239,11 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<span class="da-nav-icon">
 									<img src="images/icons/black/32/file_pdf.png" alt="Form" />
 								</span>
-								Formularios
+								<div lang="es">Formularios</div>
 							</a>
 							<ul '.$close.'>
-								<li><a href="?l=archivos&var=f">Listar formularios</a></li>
-								<li><a href="?l=archivos&crear=v&var=f">Agregar formulario</a></li>
+								<li><a href="?l=archivos&var=f" lang="es">Listar formularios</a></li>
+								<li><a href="?l=archivos&crear=v&var=f" lang="es">Agregar formulario</a></li>
 							</ul>
 						</li>';
 			   }

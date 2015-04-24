@@ -60,13 +60,11 @@ $(document).ready(function(e) {
                                 .prop("readonly", false)
                                 .focus().slideDown();
             
-			$("#mess-year").fadeIn();
 		}else{
 			$("#dv-year-other").removeClass('required')
                                 .addClass('not-required')
                                 .prop("readonly", true)
                                 .slideUp();
-			$("#mess-year").fadeOut();
 		}
 	});
 	
@@ -113,7 +111,7 @@ if (($rowAU = $link->get_max_amount_optional($_SESSION['idEF'])) !== FALSE) {
 $swVh = FALSE;
 
 $dv_type_vehicle = '';
-$dv_category = '';
+$dv_plaza = '';
 $dv_make = '';
 $dv_model = '';
 $dv_model_other = '';
@@ -129,7 +127,7 @@ $dv_value_insured = '';
 $title_btn = 'Agregar Vehículo';
 
 $cp = false;
-$link->verifyProvisionalCertificate($_SESSION['idEF'], $_GET['idc'], 'AU', $cp);
+// $link->verifyProvisionalCertificate($_SESSION['idEF'], $_GET['idc'], 'AU', $cp);
 
 if(isset($_GET['idVh'])){
 	$swVh = TRUE;
@@ -138,7 +136,7 @@ if(isset($_GET['idVh'])){
 	$sqlUp = 'select 
 		sad.id_vehiculo as idVh,
 		sad.id_tipo_vh as v_tipo_vehiculo,
-		sad.categoria as v_categoria,
+		sad.plaza as v_plaza,
 		sad.id_marca as v_marca,
 		sad.id_modelo as v_modelo,
 		sad.km as v_km,
@@ -169,7 +167,7 @@ if(isset($_GET['idVh'])){
 		$rsUp->free();
 		
 		$dv_type_vehicle = $rowUp['v_tipo_vehiculo'];
-		$dv_category = $rowUp['v_categoria'];
+		$dv_plaza = $rowUp['v_plaza'];
 		$dv_make = $rowUp['v_marca'];
 		$dv_model = $rowUp['v_modelo'];
 		$dv_model_other = '';
@@ -196,10 +194,7 @@ if($swVh === false && isset($_GET['idc'])){
 		sad.km as v_km,
 		sad.anio as v_anio,
 		sad.placa as v_placa,
-		(case sad.categoria
-			when "RAC" then "Rent a Car"
-			when "OTH" then "Otros"
-		end) as v_categoria,
+		sad.plaza as v_plaza,
 		(case sad.traccion
 			when "4X2" then "4x2"
 			when "4X4" then "4x4"
@@ -220,8 +215,8 @@ if($swVh === false && isset($_GET['idc'])){
 			left join
 		s_au_modelo as smo ON (smo.id_modelo = sad.id_modelo)
 	where
-		sac.id_cotizacion = "'.base64_decode($_GET['idc']).'"
-			and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
+		sac.id_cotizacion = "' . base64_decode($_GET['idc']) . '"
+			and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
 			and sef.activado = true
 	order by sad.id_vehiculo asc
 	;';
@@ -249,7 +244,7 @@ if($swVh === false){
 					<td style="width:5%;">Cero Km.</td>
 					<td style="width:5%;">Año</td>
 					<td style="width:15%;">Placa</td>
-					<td style="width:5%;">Categoria</td>
+					<td style="width:5%;">Plaza de Circulación</td>
                     <td style="width:5%;">Tracción</td>
                     <td style="width:9%;">Valor Asegurado USD.</td>
 					<td style="width:6%;"></td>
@@ -266,14 +261,14 @@ if($swVh === false){
 ?>
 				<tr style=" <?=$bgFac;?> ">
 					<td style="font-weight:bold;"><?=$cont;?></td>
-					<td><?=$rowVh['v_tipo_vehiculo'];?></td>
-					<td><?=$rowVh['v_marca'];?></td>
-					<td><?=$rowVh['v_modelo'];?></td>
-					<td><?=$rowVh['v_km'];?></td>
-					<td><?=$rowVh['v_anio'];?></td>
-					<td><?=$rowVh['v_placa'];?></td>
-					<td><?=$rowVh['v_categoria'];?></td>
-                    <td><?=$rowVh['v_traccion'];?></td>
+					<td><?= $rowVh['v_tipo_vehiculo'] ;?></td>
+					<td><?= $rowVh['v_marca'] ;?></td>
+					<td><?= $rowVh['v_modelo'] ;?></td>
+					<td><?= $rowVh['v_km'] ;?></td>
+					<td><?= $rowVh['v_anio'] ;?></td>
+					<td><?= $rowVh['v_placa'] ;?></td>
+					<td><?= $link->plaza[$rowVh['v_plaza']] ;?></td>
+                    <td><?= $rowVh['v_traccion'] ;?></td>
                     <td><span class="value"><?=number_format($rowVh['v_valor_asegurado'], 2, '.', ',');?> USD.</span></td>
 					<td><a href="au-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>&idVh=<?=base64_encode($rowVh['idVh']);?>" title="Editar Información"><img src="img/edit-inf-icon.png" width="40" height="40" alt="Editar Información" title="Editar Información"></a></td>
                     <td><a href="au-remove-vehicle.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>&idVh=<?=base64_encode($rowVh['idVh']);?>" title="Eliminar Vehículo" class="fancybox fancybox.ajax"><img src="img/delete-icon.png" width="40" height="40" alt="Eliminar Vehículo" title="Eliminar Vehículo"></a></td>
@@ -287,7 +282,7 @@ if($swVh === false){
 		</table>
 		
 		<div class="mess-cl">
-        	<span class="bg-fac"></span> <strong>Nota:</strong> Año o Monto requieren aprobación de la Compañia de Seguros
+        	<span class="bg-fac"></span> <strong>Nota:</strong> Monto requieren aprobación de la Compañia de Seguros
 		</div>
 		<input type="button" id="dv-next" name="dv-next" value="Continuar" class="btn-next" >
 		<hr>
@@ -295,69 +290,6 @@ if($swVh === false){
 	}
 }
 if($nVh < $max_item || $swVh === true){
-    if ($cp === true) {
-?>
-    <div class="form-col">
-        <input type="hidden" id="cp" name="cp" value="<?=md5(1);?>" >
-        <label>Categoria: <span>*</span></label>
-        <div class="content-input">
-            <select id="dv-category" name="dv-category" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php
-                $arr_category = $link->category;
-                for($i = 0; $i < count($arr_category); $i++){
-                    $category = explode('|', $arr_category[$i]);
-                    if($category[0] === $dv_category) {
-                        echo '<option value="'.base64_encode($category[0]).'" selected>'.$category[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($category[0]).'">'.$category[1].'</option>';
-                    }
-                }
-                ?>
-            </select>
-        </div><br>
-<?php
-        if ($link->verifyModality($_SESSION['idEF'], 'AU') === true) {
-            ?>
-            <label>Modalidad: <span>*</span></label>
-            <div class="content-input" style="width: auto;">
-                <select id="dv-modality" name="dv-modality" class="required fbin">
-                    <option value="">Seleccione...</option>
-<?php
-                    foreach ($link->modAU as $key => $value) {
-                        $modality = explode('|', $value);
-                        if ($dv_modality === $modality[0]) {
-                            echo '<option value="'.base64_encode($modality[0]).'" selected>'.$modality[1].'</option>';
-                        } else {
-                            echo '<option value="'.base64_encode($modality[0]).'">'.$modality[1].'</option>';
-                        }
-                    }
-?>
-                </select>
-            </div><br />
-<?php
-        }
-?>
-    </div><!--
-    --><div class="form-col">
-            <label>Valor Asegurado (USD):<span>*</span></label>
-            <?php
-            $display_value = 'display: none;';
-            if($dv_value_insured > $max_amount) {
-                $display_value = 'display: block;';
-            }
-            ?>
-            <div class="content-input">
-                <input type="text" id="dv-value-insured" name="dv-value-insured"
-                       autocomplete="off" value="<?=$dv_value_insured;?>"
-                       class="required number fbin">
-            </div><br>
-            <div id="mess-amount" class="au-mess"
-                 style=" <?=$display_value;?> ">Vehículos cuyo valor excedan los <?=$max_amount;?> USD
-                requieren aprobación de la Compañia de Seguros</div>
-    </div>
-<?php
-    } else {
 ?>
     <div class="form-col">
         <label>Tipo de Vehículo: <span>*</span></label>
@@ -368,9 +300,11 @@ if($nVh < $max_item || $swVh === true){
                 if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
                     while($rowTv = $rsTv->fetch_array(MYSQLI_ASSOC)){
                         if($rowTv['id_vh'] === $dv_type_vehicle) {
-                            echo '<option value="'.base64_encode($rowTv['id_vh']).'" selected>'.$rowTv['vehiculo'].'</option>';
+                            echo '<option value="'.base64_encode($rowTv['id_vh']) 	
+                            	. '" selected>'.$rowTv['vehiculo'].'</option>';
                         } else {
-                            echo '<option value="'.base64_encode($rowTv['id_vh']).'">'.$rowTv['vehiculo'].'</option>';
+                            echo '<option value="'.base64_encode($rowTv['id_vh']) 
+                            	. '">'.$rowTv['vehiculo'].'</option>';
                         }
                     }
                 }
@@ -378,21 +312,15 @@ if($nVh < $max_item || $swVh === true){
             </select>
         </div><br>
 
-        <label>Categoria: <span>*</span></label>
+        <label>Plaza de Circulación: <span>*</span></label>
         <div class="content-input">
-            <select id="dv-category" name="dv-category" class="required fbin">
+            <select id="dv-plaza" name="dv-plaza" class="required fbin">
                 <option value="">Seleccione...</option>
-                <?php
-                $arr_category = $link->category;
-                for($i = 0; $i < count($arr_category); $i++){
-                    $category = explode('|', $arr_category[$i]);
-                    if($category[0] === $dv_category) {
-                        echo '<option value="'.base64_encode($category[0]).'" selected>'.$category[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($category[0]).'">'.$category[1].'</option>';
-                    }
-                }
-                ?>
+                <?php foreach ($link->plaza as $key => $value): $selected = ''; ?>
+                	<?php if ($dv_plaza === $key): $selected = 'selected'; ?>
+                	<?php endif ?>
+                  	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>';
+                <?php endforeach ?>
             </select>
         </div><br>
 
@@ -485,9 +413,10 @@ if($nVh < $max_item || $swVh === true){
 
         <label></label>
         <div class="content-input">
-            <input type="text" id="dv-year-other" name="dv-year-other" autocomplete="off" value="<?=$dv_year_other;?>" maxlength="4" class="not-required number fbin" readonly style="display:none;">
+            <input type="text" id="dv-year-other" name="dv-year-other" autocomplete="off" 
+            	value="<?=$dv_year_other;?>" maxlength="4" class="not-required number fbin" 
+            	readonly style="display:none;">
         </div><br>
-        <div id="mess-year" class="au-mess" style=" <?=$display_year;?> ">Vehiculos con antigüedad mayor a <?=$year;?> años requieren aprobación de la Compañia de Seguros</div>
     </div><!--
 --><div class="form-col">
         <label>Placa: <span>*</span></label>
@@ -499,7 +428,6 @@ if($nVh < $max_item || $swVh === true){
         <label>Uso de Vehículo: <span>*</span></label>
         <div class="content-input">
             <select id="dv-use" name="dv-use" class="required fbin">
-                <option value="">Seleccione...</option>
                 <?php
                 $arr_use = $link->use;
                 for($i = 0; $i < count($arr_use); $i++){
@@ -590,9 +518,7 @@ if($nVh < $max_item || $swVh === true){
              style=" <?=$display_value;?> ">Vehículos cuyo valor excedan los <?=$max_amount;?> USD
             requieren aprobación de la Compañia de Seguros</div>
     </div>
-<?php
-    }
-?>
+
 	<br>
     <input type="hidden" id="max-amount" name="max-amount" value="<?=$max_amount;?>">
     <input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">

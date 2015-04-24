@@ -40,7 +40,8 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			mostrar_pagina($_SESSION['id_usuario_sesion'], $_SESSION['tipo_sesion'], $_SESSION['usuario_sesion'], $_SESSION['id_ef_sesion'], $conexion, $lugar);
+			header('Location: index.php?l=au_tipovehiculo&var=au');
+			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
 			session_unset();
@@ -255,89 +256,106 @@ if($tipo_sesion=='ROOT'){
 							sh.id_ef = ef.id_ef and sh.producto='AU')
 						  and ef.id_ef = '".$id_ef_sesion."';";
 }
-$resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT);		  
-echo'<div class="da-panel collapsible">
-		  <div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
-			  <ul class="action_user">
-				  <li style="margin-right:6px;">
-					 <a href="adicionar_registro.php?opcion=crear_tipovehi&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'" class="da-tooltip-s various fancybox.ajax" title="Añadir tipo vehiculo">
-					 <img src="images/add_new.png" width="32" height="32"></a>
-				  </li>
-			  </ul>
-		  </div>
-	  </div>';
- while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	  
-   $select="select
-			   id_tipo_vh,
-			   id_ef,
-			   vehiculo,
-			   activado,
-			   case activado
-			     when 1 then 'activo'
-				 when 0 then 'inactivo'
-			   end as text_activado	  
-			from
-			  s_au_tipo_vehiculo
-			where
-			  id_ef='".$regief['id_ef']."';";
-   $res = $conexion->query($select,MYSQLI_STORE_RESULT);			  
-   echo'<div class="da-panel collapsible" style="width:600px;">
-			<div class="da-panel-header">
-				<span class="da-panel-title">
-					<img src="images/icons/black/16/list.png" alt="" />
-					<b>Entidad Financiera: '.$regief['nombre'].'</b> - Listado tipo de vehiculos</b>
-				</span>
-			</div>
-			<div class="da-panel-content">
-				<table class="da-table">
-					<thead>
-						<tr>
-							<th><b>Tipo Vehículo</b></th>
-							<th><b>Estado</b></th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody>';
-					  $num = $res->num_rows;
-					  if($num>0){
-							$c=0;
-							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
-								$c++;
-								 echo'<tr ';
-										  if($regi['activado']==0){
-											  echo'style="background:#D44D24; color:#ffffff;"'; 
-										   }else{
-											  echo'';	 
-										   }
-								  echo'>
-										<td>'.$regi['vehiculo'].'</td>
-										<td>'.$regi['text_activado'].'</td>
-										<td class="da-icon-column">
-										   <ul class="action_user">
-											  <li style="margin-right:5px;"><a href="adicionar_registro.php?idtipovh='.base64_encode($regi['id_tipo_vh']).'&id_ef='.base64_encode($regief['id_ef']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'&opcion=editar_tipvehi" class="edit da-tooltip-s various fancybox.ajax" title="Editar"></a></li>';
-											  if($regi['activado']==0){
-												  echo'<li><a href="#" id="'.$regi['id_tipo_vh'].'|'.$regief['id_ef'].'|activar" class="daralta da-tooltip-s accion_active" title="Activar"></a></li>';
-											  }else{
-												  echo'<li><a href="#" id="'.$regi['id_tipo_vh'].'|'.$regief['id_ef'].'|desactivar" class="darbaja da-tooltip-s accion_active" title="Desactivar"></a></li>';  
-											  }
-									  echo'</ul>	
-										</td>
-									</tr>';
-							}
-							$res->free();			
-					  }else{
-						 echo'<tr><td colspan="7">
-								  <div class="da-message info">
-									   No existe registros alguno, ingrese nuevos registros
+	if($resef = $conexion->query($selectEf,MYSQLI_STORE_RESULT)){
+		if($resef->num_rows>0){ 		  
+			  echo'<div class="da-panel collapsible">
+						<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
+							<ul class="action_user">
+								<li style="margin-right:6px;">
+								   <a href="adicionar_registro.php?opcion=crear_tipovehi&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'" class="da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Añadir tipo vehiculo</span>">
+								   <img src="images/add_new.png" width="32" height="32"></a>
+								</li>
+							</ul>
+						</div>
+					</div>';
+			   while($regief = $resef->fetch_array(MYSQLI_ASSOC)){	  
+				 $select="select
+							 id_tipo_vh,
+							 id_ef,
+							 vehiculo,
+							 activado,
+							 case activado
+							   when 1 then 'activo'
+							   when 0 then 'inactivo'
+							 end as text_activado	  
+						  from
+							s_au_tipo_vehiculo
+						  where
+							id_ef='".$regief['id_ef']."';";
+				  if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){			  
+						 echo'<div class="da-panel collapsible" style="width:600px;">
+								  <div class="da-panel-header">
+									  <span class="da-panel-title">
+										  <img src="images/icons/black/16/list.png" alt="" />
+										  <b>Entidad Financiera: '.$regief['nombre'].'</b> - <span lang="es">Listado tipo de vehiculos</span></b>
+									  </span>
 								  </div>
-							  </td></tr>';
-					  }
-			   echo'</tbody>
-				</table>
-			</div>
-		</div>';  
- }
- $resef->free();
+								  <div class="da-panel-content">
+									  <table class="da-table">
+										  <thead>
+											  <tr>
+												  <th><b><span lang="es">Tipo Vehículo</span></b></th>
+												  <th><b><span lang="es">Estado</span></b></th>
+												  <th>&nbsp;</th>
+											  </tr>
+										  </thead>
+										  <tbody>';
+											$num = $res->num_rows;
+											if($num>0){
+												  $c=0;
+												  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+													  $c++;
+													   echo'<tr ';
+																if($regi['activado']==0){
+																	echo'style="background:#D44D24; color:#ffffff;"'; 
+																 }else{
+																	echo'';	 
+																 }
+														echo'>
+															  <td>'.$regi['vehiculo'].'</td>
+															  <td lang="es">'.$regi['text_activado'].'</td>
+															  <td class="da-icon-column">
+																 <ul class="action_user">
+																	<li style="margin-right:5px;"><a href="adicionar_registro.php?idtipovh='.base64_encode($regi['id_tipo_vh']).'&id_ef='.base64_encode($regief['id_ef']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&tipo_sesion='.base64_encode($tipo_sesion).'&opcion=editar_tipvehi" class="edit da-tooltip-s various fancybox.ajax" title="<span lang=\'es\'>Editar</span>"></a></li>';
+																	if($regi['activado']==0){
+																		echo'<li><a href="#" id="'.$regi['id_tipo_vh'].'|'.$regief['id_ef'].'|activar" class="daralta da-tooltip-s accion_active" title="<span lang=\'es\'>Activar</span>"></a></li>';
+																	}else{
+																		echo'<li><a href="#" id="'.$regi['id_tipo_vh'].'|'.$regief['id_ef'].'|desactivar" class="darbaja da-tooltip-s accion_active" title="<span lang=\'es\'>Desactivar</span>"></a></li>';  
+																	}
+															echo'</ul>	
+															  </td>
+														  </tr>';
+												  }
+												  $res->free();			
+											}else{
+											   echo'<tr><td colspan="7">
+														<div class="da-message info" lang="es">
+															No existe ningun dato, ingrese nuevos registros
+														</div>
+													</td></tr>';
+											}
+									 echo'</tbody>
+									  </table>
+								  </div>
+							  </div>';  
+				  }else{
+					  echo'<div class="da-message error">error en la consulta'.$conexion->errno.'&nbsp;'.$conexion->error.'</div>'; 
+				  }
+			   }
+			   $resef->free();
+		}else{
+			echo'<div class="da-message warning">
+					 <span lang="es">No existe ningun registro, probablemente se debe a</span>:
+					 <ul>
+						<li lang="es">La Entidad Financiera no tiene asignado el producto Automotores</li>
+						<li lang="es">La Entidad Financiera no esta activado</li>
+						<li lang="es">La Entidad Financiera no esta creada</li>
+					  </ul>
+				 </div>'; 
+		}
+	}else{
+		echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: ".$conexion->errno.": ".$conexion->error."</div>";
+	}
 }
 
 ?>

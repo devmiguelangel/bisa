@@ -19,15 +19,9 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 			header('Location: index.php?l=escritorio');
 			exit;
 		} else {
-			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
-			$sesion = new Session();
-			$sesion->remove_session();
 			mostrar_login_form(2);
 		}
 	} else {
-		//SI NO HA HECHO CLICK EN EL FORM, MOSTRAMOS EL FORMULARIO DE LOGIN
-		$sesion = new Session();
-		$sesion->remove_session();
 		mostrar_login_form(1);
 	}
 }
