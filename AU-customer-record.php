@@ -21,9 +21,12 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		}
 		
 		$di_date_inception = date('Y-m-d');
-		$di_term = 1;
 		$di_method_payment = 'null';
+		$di_term = 1;
 		$di_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
+		if ($di_type_term === 'Y') {
+			$di_term = 12;
+		}
 		$di_warranty = $link->real_escape_string(trim($_POST['di-warranty']));
 		if ($di_warranty === md5('1')) {
 			$di_warranty = true;

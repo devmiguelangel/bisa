@@ -1364,13 +1364,11 @@ class SibasDB extends MySQLi
 		        and sef.id_ef = "' . $idef . '"
 		        and sef.activado = true
 		        and if(satv.categoria = "L",
-		        if(sad.plaza = sat.plaza,
-		            sad.plaza,
-		            "RP"),
+		        if(sad.plaza = "SC", sad.plaza, "RP"),
 		        sad.plaza) = sat.plaza
 		order by sad.id_vehiculo asc
 		;';
-		
+		// echo $this->sql;
 		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if($this->rs->num_rows > 0) {
 				while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {

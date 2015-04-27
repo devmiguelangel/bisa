@@ -70,8 +70,6 @@ switch($sw){
 			sac.garantia as c_garantia,
 			sac.ini_vigencia as c_ini_vigencia,
 			sac.fin_vigencia as c_fin_vigencia,
-			sfp.id_forma_pago,
-		    sfp.codigo as c_forma_pago,
 			sac.plazo as c_plazo,
 			sac.tipo_plazo as c_tipo_plazo,
 			sac.prima_total as c_prima_total,
@@ -109,7 +107,7 @@ switch($sw){
 			"" as cl_adjunto,
 			sad.id_vehiculo as idvh,
 			sad.id_tipo_vh as vh_tipo_vehiculo,
-			sad.categoria as vh_categoria,
+			"" as vh_categoria,
 			sad.id_marca as vh_marca,
 			sad.id_modelo as vh_modelo,
 			sad.anio as vh_anio,
@@ -128,8 +126,6 @@ switch($sw){
 			s_au_cot_detalle as sad ON (sad.id_cotizacion = sac.id_cotizacion)
 				inner join
 			s_entidad_financiera as sef ON (sef.id_ef = sac.id_ef)
-				inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = sac.id_forma_pago)
 		where
 			sac.id_cotizacion = "'.$idc.'"
 				and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
@@ -877,60 +873,33 @@ set_ajax_upload('dv-<?=$k;?>-attached', 'AU');
         <input type="hidden" id="di-warranty" name="di-warranty" value="<?=base64_encode($row['c_garantia']);?>">
     	<label>Inicio de Vigencia: <span>*</span></label>
         <div class="content-input">
-            <input type="text" id="di-date-inception-1" name="di-date-inception-1" autocomplete="off" value="<?=date('d/m/Y', strtotime($row['c_ini_vigencia']));?>" class="required fbin" readonly style="cursor:pointer;" <?=$read_new.$read_edit;?>>
-            <input type="hidden" id="di-date-inception" name="di-date-inception" value="<?=base64_encode($row['c_ini_vigencia']);?>">
-            <input type="hidden" id="di-end-inception" name="di-end-inception" value="<?=base64_encode($row['c_fin_vigencia']);?>">
+            <input type="text" id="di-date-inception-1" name="di-date-inception-1" 
+            	autocomplete="off" value="<?=date('d/m/Y', strtotime($row['c_ini_vigencia']));?>" 
+            	class="required fbin" readonly style="cursor:pointer;" <?=$read_new.$read_edit;?>>
+            <input type="hidden" id="di-date-inception" name="di-date-inception" 
+            	value="<?=base64_encode($row['c_ini_vigencia']);?>">
+            <input type="hidden" id="di-end-inception" name="di-end-inception" 
+            	value="<?=base64_encode($row['c_fin_vigencia']);?>">
         </div><br>
         
-		<label>Plazo del Crédito: <span>*</span></label>
-		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-term" name="di-term" autocomplete="off" value="<?=$cr_term;?>" style="width:30px;" maxlength="" class="not-required number fbin" <?=$read_new.$read_edit;?>>
-		</div>
-		
-		<label>&nbsp;</label>
+		<label>Modalidad de Pago: <span>*</span></label>
 		<div class="content-input">
-			<select id="di-type-term" name="di-type-term" class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
+			<select id="di-type-term" name="di-type-term" 
+				class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
 				<option value="">Seleccione...</option>
-<?php
-$arr_term = array(0 => 'Y|Años', 1 => 'M|Meses', 2 => 'D|Días');
-for($i = 0; $i < count($arr_term); $i++){
-	$term = explode('|',$arr_term[$i]);
-	if($term[0] === $cr_type_term) {
-		echo '<option value="'.$term[0].'" selected>'.$term[1].'</option>';
-	} else {
-		echo '<option value="'.$term[0].'">'.$term[1].'</option>';
-	}
-}
-?>
+				<?php foreach ($link->typeTerm as $key => $value): $selected = ''; ?>
+					<?php if ($key === $cr_type_term): $selected = 'selected'; ?>
+					<?php endif ?>
+					<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+				<?php endforeach ?>
 			</select>
 		</div><br>
 	</div><!--
 	--><div class="form-col">
-    	<label>Forma de Pago: <span>*</span></label>
-        <div class="content-input">
-            <select id="di-method-payment" name="di-method-payment" class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
-	            <option value="">Seleccione...</option>
-<?php
-if(($rsFp = $link->get_method_payment('AU', $_SESSION['idEF'])) !== FALSE) {
-	while($rowFp = $rsFp->fetch_array(MYSQLI_ASSOC)) {
-		if($rowFp['id_forma_pago'] === $row['id_forma_pago']) {
-			echo '<option value="' 
-				. base64_encode($rowFp['id_forma_pago']) . '|' 
-				. base64_encode($rowFp['codigo']) . '" selected>'.$rowFp['forma_pago'] . '</option>';
-		} else {
-			echo '<option value="' 
-				. base64_encode($rowFp['id_forma_pago']) . '|' 
-				. base64_encode($rowFp['codigo']) . '">'.$rowFp['forma_pago'] . '</option>';
-		}
-	}
-}
-?>
-            </select>
-        </div><br>
-    
 		<label>Número de Operación: </label>
 		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-opp" name="di-opp" autocomplete="off" value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
+			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
+				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
 		</div>
 <?php
 if ($swMo === false) {
