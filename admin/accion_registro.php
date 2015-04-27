@@ -975,6 +975,60 @@
 			$data_amount = $datavg['modality'][$_POST['opmod']]['amount'].'|'.$datavg['modality'][1]['amount'];
 		}
 		echo $data_amount; 
+  }elseif($_POST['opcion']=='add_tasa_au'){
+	  $plaza=$conexion->real_escape_string($_POST['plaza']);
+	  $id_tipovh = $conexion->real_escape_string($_POST['id_tipovh']);
+	  $prima_minima = $conexion->real_escape_string($_POST['txtPrimaMinima']);
+	  $tasa = $conexion->real_escape_string($_POST['txtTasa']);
+	  
+	  $queryQ="select
+				   id,
+				   plaza,
+				   id_tipo_vh,
+				   tasa,
+				   prima_minima
+				from
+				   s_au_tasa
+				where
+				   id_tipo_vh = '".$id_tipovh."' and plaza='".$plaza."';";
+	  $result=$conexion->query($queryQ,MYSQLI_STORE_RESULT);
+	  if($result->num_rows===0){
+			$insert ='INSERT INTO s_au_tasa(id, plaza, id_tipo_vh, tasa, prima_minima, activado) VALUES(NULL, "'.$plaza.'", "'.$id_tipovh.'", '.$tasa.', '.$prima_minima.', 1)';
+			 if($conexion->query($insert)===TRUE){
+			   echo 1; 
+			 }else{
+			   echo 2;
+			 } 
+	  }else{
+		 echo 0;   
+	  }
+  }elseif($_POST['opcion']=='edit_tasa_au'){
+	  $plaza=$conexion->real_escape_string($_POST['plaza']);
+	  $id_tipovh = $conexion->real_escape_string($_POST['id_tipovh']);
+	  $prima_minima = $conexion->real_escape_string($_POST['txtPrimaMinima']);
+	  $tasa = $conexion->real_escape_string($_POST['txtTasa']);
+	  /*
+	  $queryQ="select
+				   id,
+				   plaza,
+				   id_tipo_vh,
+				   tasa,
+				   prima_minima
+				from
+				   s_au_tasa
+				where
+				   id_tipo_vh = '".$id_tipovh."' and plaza='".$plaza."';";
+	  $result=$conexion->query($queryQ,MYSQLI_STORE_RESULT);
+	  if($result->num_rows===0){*/
+		  $update = "UPDATE s_au_tasa SET plaza = '".$plaza."', id_tipo_vh='".$id_tipovh."', tasa=".$tasa.", prima_minima=".$prima_minima." WHERE id = ".base64_decode($_POST['id_tasa']).";";
+		 if($conexion->query($update) === TRUE){
+			echo 1; 
+		 }else{
+		    echo 2;	 
+		 }
+	  /*}else{
+		 echo 0;  
+	  }*/
   }
   
   

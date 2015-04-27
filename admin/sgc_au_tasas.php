@@ -252,7 +252,7 @@ if($tipo_sesion=='ROOT'){
 															   <ul class="action_user">';
 															   
 																   /*echo'<li style="padding-right:5px;"><a href="?l=des_producto&var='.$_GET['var'].'&listarproductos=v&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&id_producto='.base64_encode($regi['id_producto']).'&compania='.base64_encode($regi['compania']).'&entidad_fin='.base64_encode($regief['nombre']).'" class="add_mod da-tooltip-s various" title="Agregar Productos"></a></li>';*/
-																   echo'<li style="margin-right:5px;"><a href="?l=au_tasas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'" class="add_mod da-tooltip-s" title="<span lang=\'es\'>Editar Tasas</span>"></a></li>';
+																   echo'<li style="margin-right:5px;"><a href="?l=au_tasas&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listartasas=v&var='.$_GET['var'].'&id_ef='.base64_encode($regief['id_ef']).'" class="add_mod da-tooltip-s" title="<span lang=\'es\'>Editar Tasas</span>"></a></li>';
 																   /*echo'<li><a href="?l=au_incremento&id_ef_cia='.base64_encode($regi['id_ef_cia']).'&entidad='.base64_encode($regief['nombre']).'&compania='.base64_encode($regi['compania']).'&listarincremento=v&var='.$_GET['var'].'" class="ad_incre da-tooltip-s" title="Administrar Incremento"></a></li>';*/
 															   
 																											 
@@ -300,6 +300,7 @@ if($tipo_sesion=='ROOT'){
 
 
 //FUNCION QUE PERMITE LISTAR LAS TASAS PARA EDITAR
+/*
 function listar_tasas_editar($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
   
 	//INICIAMOS EL ARRAY CON LOS ERRORES
@@ -355,10 +356,25 @@ function listar_tasas_editar($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 	  mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr);
 	}
 }
-
+*/
 //VISUALIZMOS EL FORMULARIO CON LAS TASAS PARA SE EDITADAS
-function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr){
-?>	
+function listar_tasas_editar($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
+?>
+<link type="text/css" rel="stylesheet" href="plugins/fancybox/jquery.fancybox.css"/>
+<script type="text/javascript" src="plugins/fancybox/jquery.fancybox.js"></script>
+<script type="text/javascript">
+     $('.tasas_au').fancybox({
+	    maxWidth	: 450,
+		maxHeight	: 460,
+		fitToView	: false,
+		width		: '70%',
+		height		: '100%',
+		autoSize	: false,
+		closeClick	: false,
+		openEffect	: 'elastic',
+		closeEffect	: 'elastic'	 
+	 });
+</script>	
 <link type="text/css" rel="stylesheet" href="plugins/jalerts/jquery.alerts.css"/>
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="plugins/jalerts/jquery.alerts.js"></script>
@@ -403,6 +419,7 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 	});
 </script>
 <script type="text/javascript">
+/*
   $(function(){
 	  $('#btnCancelar').click(function(){
 		  var variable=$('#var').prop('value');  
@@ -467,6 +484,7 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 	  });
 	    
   });
+  */
 </script>
 <script type="text/javascript" src="plugins/ambience/jquery.ambiance.js"></script>
 <script type="text/javascript">
@@ -500,121 +518,105 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 	$entidad=base64_decode($_GET['entidad']);
 	$compania=base64_decode($_GET['compania']);
 	//SACAMOS LAS TASAS
-	$selectTs="select 
-					tsu.id_tasa,
-					tsu.id_ef_cia,
-					tsu.tasa,
-					tsu.anio,
-					max(if(aui.categoria = 'RAC',
-						aui.incremento,
-						'')) as tasa_rac_incremento,
-					max(if(aui.categoria = 'OTH',
-						aui.incremento,
-						'')) as tasa_oth_incremento,
-					max(if(aui.categoria = 'RAC',
-						aui.id_incremento,
-						'')) as id_incremento_rac,
-					max(if(aui.categoria = 'OTH',
-						aui.id_incremento,
-						'')) as id_incremento_oth	
+	$query="select
+				  sat.id as id_tasa_au,
+				  (case sat.plaza
+				     when 'SC' then 'Santa Cruz'
+					 when 'LP' then 'La Paz'
+					 when 'CB' then 'Cochabamba'
+					 when 'RP' then 'Resto del Pais'
+				  end) as plaza,
+				  sat.id_tipo_vh,
+				  sat.tasa,
+				  sat.prima_minima,
+				  sat.activado,
+				  stv.vehiculo
 				from
-					s_tasa_au as tsu
-						inner join
-					s_au_incremento as aui on (aui.id_tasa = tsu.id_tasa)
+				  s_au_tasa sat 
+				  inner join s_au_tipo_vehiculo as stv on (stv.id_tipo_vh=sat.id_tipo_vh)
 				where
-					tsu.id_ef_cia = '".$id_ef_cia."'
-				group by
-				  tsu.id_tasa;";		  
-	if($resu = $conexion->query($selectTs,MYSQLI_STORE_RESULT)){			  		  
+				  stv.activado=true
+				order by
+				  sat.id asc;";		  
+	if($result = $conexion->query($query,MYSQLI_STORE_RESULT)){			  		  
 		echo'<div class="da-panel collapsible">
 				<div class="da-panel-header" style="text-align:right; padding-top:5px; padding-bottom:5px;">
 					<ul class="action_user">
 						<li style="margin-right:6px;">
-							 <a href="?l=au_tasas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
+							 <a href="?l=au_tasas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="Volver">
 							 <img src="images/retornar.png" width="32" height="32"></a>
 						</li>
 						<li style="margin-right:6px;">
-						   <a href="?l=au_tasas&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'" class="da-tooltip-s" title="<span lang=\'es\'>Añadir nuevas tasas</span>">
+						   <a href="adicionar_registro.php?opcion=agregar_tasa_au&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'&id_ef='.$_GET['id_ef'].'" class="da-tooltip-s tasas_au fancybox.ajax" title="Añadir nuevas tasas">
 						   <img src="images/add_new.png" width="32" height="32"></a>
 						</li>
 					</ul>
 				</div>
 			 </div>';
 		echo'
-		<div class="da-panel collapsible" style="width:700px;">
+		<div class="da-panel collapsible" style="width:850px;">
 			<div class="da-panel-header">
 				<span class="da-panel-title">
 					<img src="images/icons/black/16/list.png" alt="" />
-					<b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Editar Tasas</span>
+					<b>'.$entidad.'</b><br/><div style="margin-left:25px;"><b>'.$compania.'</b> - <span lang="es">Listado Tasas y Primas</span></div>
 				</span>
 			</div>
-			<div class="da-panel-content">';
-			 $num = $resu->num_rows;
-			 if($num>0){
-			  echo'<form class="da-form" name="frmTasas" id="frmTasas" action="" method="post">
-						<div class="da-form-row" style="padding:0px;">
-						  <div class="da-form-item large" style="margin:0px;">
-							<table class="da-table">
-								<thead>
-									<tr>
-									  <th style="width:25px;"><b>N&deg;</b></th>
-									  <th><b>Tasa</b></th>
-									  <th><b>Tasa Incremento (RAC)</b></th>
-									  <th><b>Tasa Incremento (OTROS)</b></th>
-									  <th style="text-align:center"><b>Año</b></th>
-									  <th>&nbsp;</th>
-									</tr>
-								</thead>
-								<tbody>';
-										$i=1;
-										while($regi = $resu->fetch_array(MYSQLI_ASSOC)){
-											if(isset($_POST["txtTasa".$i])) $txtTasa = $_POST["txtTasa".$i]; else $txtTasa = $regi['tasa'];
-											if(isset($_POST["txtTasaIncRac".$i])) $txtTasaIncRac = $_POST["txtTasaIncRac".$i]; else $txtTasaIncRac = $regi['tasa_rac_incremento'];
-											if(isset($_POST["txtTasaIncOth".$i])) $txtTasaIncOth = $_POST["txtTasaIncOth".$i]; else $txtTasaIncOth = $regi['tasa_oth_incremento'];
-																													
-											echo'<tr>
-													<td>'.$i.'</td>
-													<td><input type="text" name="txtTasa'.$i.'" id="'.$i.'txtTasa" value="'.$txtTasa.'" class="required" style="width:100px;"/><span class="errorMessage" id="errortasa'.$i.'"></span>
-													</td>
-													<td><input type="text" name="txtTasaIncRac'.$i.'" id="'.$i.'txtTasaIncRac" value="'.$txtTasaIncRac.'" class="required" style="width:100px;"/>
-													<span class="errorMessage" id="errortasaincrac'.$i.'"></span>
-													<input type="hidden" name="id_incremento_rac'.$i.'" value="'.$regi['id_incremento_rac'].'"/>
-													</td>
-													<td><input type="text" name="txtTasaIncOth'.$i.'" id="'.$i.'txtTasaIncOth" value="'.$txtTasaIncOth.'" class="required" style="width:100px;"/>
-													<span class="errorMessage" id="errortasaincoth'.$i.'"></span>
-													<input type="hidden" name="id_incremento_oth'.$i.'" value="'.$regi['id_incremento_oth'].'"/>
-													</td>
-													<td style="text-align:center">'.$regi['anio'].'
-													<input type="hidden" name="id_tasa'.$i.'" id="id_tasa'.$i.'" value="'.$regi['id_tasa'].'"/>
-													<input type="hidden" name="id_ef_cia'.$i.'" id="id_ef_cia'.$i.'" value="'.$regi['id_ef_cia'].'"/>
-													</td>
-													<td class="da-icon-column">
-													   <ul class="action_user">
-														 <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_ef_cia'].'|'.$regi['id_incremento_rac'].'|'.$regi['id_incremento_oth'].'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>
-													   </ul>
-													</td>
-												</tr>';
-												$i++;
-										}			
-										$resu->free();
-								  
-						   echo'</tbody>
-							</table>
-						  </div>	
-						</div>
-						<div class="da-button-row">
-						   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta"/>
-						   <input type="hidden" name="accionGuardar" value="checkdatos"/>
-						   <input type="hidden" name="cant_tasas" value="'.$num.'" id="cant_tasas"/>
-						   <input type="hidden" id="var" value="'.$_GET['var'].'"/>
-						</div>	
-				   </form>';
-			 }else{
-				 echo'<div class="da-message info" lang="es">
-						  No existe ningun dato, ingrese nuevos registros
-					  </div>';
-			 }		   	
-		echo'</div>
+			<div class="da-panel-content">
+				<table class="da-table">
+					<thead>
+						<tr>
+							<th style="text-align:center;"><b><span lang="es">Plaza</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Tipo de Vehículo</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Tasa</span></b></th>
+							<th style="text-align:center;"><b><span lang="es">Prima mínima en (USD)</span></b></th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>';
+					  $num = $result->num_rows;
+					  if($num>0){
+							$c=0;
+							while($regi = $result->fetch_array(MYSQLI_ASSOC)){
+								$c++;
+								echo'<tr id="del-'.$c.'">
+										<td style="text-align:center;">'.$regi['plaza'].'</td>
+										<td style="text-align:center;">'.$regi['vehiculo'].'</td>
+										<td style="text-align:center;">'.$regi['tasa'].'</td>
+										<td style="text-align:center;">'.number_format($regi['prima_minima'],0,'.',',').'</td>
+										<td class="da-icon-column">
+										  <ul class="action_user">
+											  <li style="margin-right:5px;">
+												<a href="adicionar_registro.php?opcion=editar_tasa_au&var='.$_GET['var'].'&id_ef_cia='.$_GET['id_ef_cia'].'&id_ef='.$_GET['id_ef'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&id_tasa='.base64_encode($regi['id_tasa_au']).'" class="edit da-tooltip-s tasas_au fancybox.ajax" title="Editar"></a>
+											  </li>';/*
+											$busca="select
+													  count(id_cotizacion) as row_cta
+													from
+													  s_de_cot_cabecera
+													where  
+													  id_pr_extra='".$regi['id_pr_extra']."';";
+										   $resb = $conexion->query($busca,MYSQLI_STORE_RESULT);
+										   $regib = $resb->fetch_array(MYSQLI_ASSOC);
+										   if($regib['row_cta']==0){			    
+										  echo'<li><a href="#" id="'.$regi['id_ef_cia'].'|'.$regi['id_pr_extra'].'|'.$c.'" class="eliminar da-tooltip-s" title="Eliminar"></a></li>';  	  
+										   }else{
+											echo'<li style="margin-left:10px;">&nbsp;</li>';   
+										   }*/
+									  echo'</ul>
+										</td>
+									</tr>';
+							}
+							$result->free();			
+					  }else{
+						 echo'<tr><td colspan="5">
+								  <div class="da-message info">
+								       No existe ningun registro, ingrese nuevos registros<br>
+									   Verifique que el tipo de vehiculo este activado para ingresar nuevos registros
+								  </div>
+							  </td></tr>';
+					  }
+			   echo'</tbody>
+				</table>
+			</div>
 		</div>';
 	}else{
 	  echo"<div style='font-size:8pt; text-align:center; margin-top:20px; margin-bottom:15px; border:1px solid #C68A8A; background:#FFEBEA; padding:8px; width:600px;'>Error en la consulta: "."\n ".$conexion->errno . ": " .$conexion->error."</div>";	

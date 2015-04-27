@@ -11,10 +11,9 @@ class SibasDB extends MySQLi
 					2 => 'TRD|Todo Riesgo Domiciliario',
 					3 => 'TRM|Todo Riesgo Equipo Móvil'),
 		$typeTerm = array(
-					0 => 'Y|Años', 
-					1 => 'M|Meses', 
-					2 => 'W|Semanas',
-					3 => 'D|Días'),
+			'Y' => 'Anual', 
+			'M' => 'Mensual'
+		),
 		$gender = array(
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),
@@ -1337,57 +1336,50 @@ class SibasDB extends MySQLi
 		return (int)$year;
 	}
 	
-	public function get_tasa_au($cia, $idef, $idc, $year)
+	public function getTasaAu($idef, $idc)
 	{
+		$data = array();
+
 		$this->sql = 'select 
-				sac.id_cotizacion as idc,
-				sad.id_vehiculo as idVh,
-				sta.anio as t_anio,
-				sta.tasa as t_tasa,
-				sai.incremento as t_incremento,
-				(sta.tasa + sai.incremento) as t_tasa_final,
-				(sad.valor_asegurado * (sta.tasa + sai.incremento)) / 100 as v_prima
-			from
-				s_au_cot_cabecera as sac
-					inner join
-				s_au_cot_detalle as sad ON (sad.id_cotizacion = sac.id_cotizacion)
-					inner join
-				s_entidad_financiera as sef ON (sef.id_ef = sac.id_ef)
-					inner join
-				s_ef_compania as sec ON (sec.id_ef = sef.id_ef)
-					inner join
-				s_compania as scia ON (scia.id_compania = sec.id_compania)
-					inner join
-				s_tasa_au as sta ON (sta.id_ef_cia = sec.id_ef_cia)
-					inner join
-				s_au_incremento as sai ON (sai.id_tasa = sta.id_tasa
-					and sai.categoria = sad.categoria)
-					inner join
-			    s_forma_pago as sfp ON (sfp.id_forma_pago = sac.id_forma_pago)
-			where
-				sac.id_cotizacion = "'.$idc.'"
-					and sef.id_ef = "'.$idef.'"
-					and sef.activado = true
-					and scia.id_compania = "'.$cia.'"
-					and sec.producto = "AU"
-					and scia.activado = true
-					and sta.anio = (case sfp.codigo
-					when "AN" then if('.$year.' < 3, '.$year.', 3)
-					when "PC" then if('.$year.' < 3, '.$year.', 3)
-					when "CO" then 1
-				end)
-			order by sad.id_vehiculo asc
-			;';
-		//echo $this->sql;
-		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))) {
+		    sac.id_cotizacion as idc,
+		    sad.id_vehiculo as idvh,
+		    sat.tasa as v_tasa,
+		    sat.prima_minima as v_prima_minima,
+		    (sad.valor_asegurado * sat.tasa) / 100 as v_prima,
+		    sat.plaza as plaza_ts,
+		    sad.plaza as plaza_vh,
+		    satv.categoria as categoria_vh
+		from
+		    s_au_cot_cabecera as sac
+		        inner join
+		    s_au_cot_detalle as sad on (sad.id_cotizacion = sac.id_cotizacion)
+		        inner join
+		    s_au_tipo_vehiculo as satv on (satv.id_tipo_vh = sad.id_tipo_vh)
+		        inner join
+		    s_au_tasa as sat on (sat.id_tipo_vh = satv.id_tipo_vh)
+		        inner join
+		    s_entidad_financiera as sef on (sef.id_ef = sac.id_ef)
+		where
+		    sac.id_cotizacion = "' . $idc . '"
+		        and sef.id_ef = "' . $idef . '"
+		        and sef.activado = true
+		        and if(satv.categoria = "L",
+		        if(sad.plaza = sat.plaza,
+		            sad.plaza,
+		            "RP"),
+		        sad.plaza) = sat.plaza
+		order by sad.id_vehiculo asc
+		;';
+		
+		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if($this->rs->num_rows > 0) {
-				return $this->rs;
-			} else {
-				return FALSE;
+				while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
+					$data[] = $this->row;
+				}
 			}
-		} else {
-			return FALSE;
 		}
+
+		return $data;
 	}
 	
 	public function get_tasa_year_au($cia, $idef, $category, $year, $payment)

@@ -4040,5 +4040,408 @@ $num_regi_ef = $resef->num_rows;
 				</form>
 			</div>
 		</div>';
+}elseif($_GET['opcion']=='agregar_tasa_au'){
+?>
+   <script type="text/javascript">
+     $(document).ready(function() {
+		$('#frmAdTasaAuto').submit(function(e){
+			  
+			  var plaza = $('#plaza option:selected').prop('value');
+			  var id_tipovh = $('#id_tipovh option:selected').prop('value');
+			  var prima_minima = $('#txtPrimaMinima').prop('value');
+			  var tasa = $('#txtTasa').prop('value');
+			  var sum=0;
+			  $(this).find('.required').each(function() {
+				   if(plaza!=''){
+					  $('#error_plaza').hide('slow');
+				   }else{
+					  sum++;
+					  $('#error_plaza').show('slow');
+					  $('#error_plaza').html('campo requerido');
+				   }
+				   
+				   if(id_tipovh!=''){
+					  $('#error_tipo_vehiculo').hide('slow');
+				   }else{
+					  sum++;
+					  $('#error_tipo_vehiculo').show('slow');
+					  $('#error_tipo_vehiculo').html('campo requerido');
+				   }
+				   if(prima_minima!=''){
+					 if(prima_minima.match(/^[0-9\.]+$/)){
+						 $('#error_primaminima').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#error_primaminima').slideDown('slow');
+						 $('#error_primaminima').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#error_primaminima').slideDown('slow');
+					  $('#error_primaminima').html('campo requerido');
+				  }
+				  if(tasa!=''){
+					 if(tasa.match(/^[0-9\.]+$/)){
+						 $('#error_tasa').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#error_tasa').slideDown('slow');
+						 $('#error_tasa').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#error_tasa').slideDown('slow');
+					  $('#error_tasa').html('campo requerido');
+				  }
+  
+			  });
+			  if(sum==0){
+					 $("#frmAdTasaAuto :submit").attr("disabled", true);
+					 e.preventDefault();
+					 var FormCadena = $(this).serialize();
+					 //alert (FormCadena);
+					 //ejecutando ajax
+					 $.ajax({
+						   async: true,
+						   cache: false,
+						   type: "POST",
+						   url: "accion_registro.php",
+						   data: FormCadena+'&opcion=add_tasa_au',
+						   beforeSend: function(){
+								$("#response-loading").css({
+									'height': '30px'
+								});
+						   },
+						   complete: function(){
+								$("#response-loading").css({
+									"background": "transparent"
+								});
+						   },
+						   success: function(datareturn) {
+								  //alert(datareturn);
+						          if(datareturn==0){
+									 $("#frmAdTasaAuto :submit").removeAttr('disabled');
+									 $('#response-loading').html('<div style="color:#d44d24;">Los datos plaza y tipo de auto ya estan registrados, seleccione otros datos</div>');
+									 e.preventDefault();
+								  }else if(datareturn==1){
+									 $('#response-loading').html('<div style="color:#62a426;">Se creo correctamente el registro</div>');
+									  window.setTimeout('location.reload()', 3000);
+								  }else if(datareturn==2){
+									  $("#frmAdTasaAuto :submit").removeAttr('disabled');
+									 $('#response-loading').html('<div style="color:#d44d24;">Hubo un error al crear el registro, consulte con su administrador</div>');
+									 e.preventDefault();
+								  }
+								  
+						   }
+					 });
+			  }else{
+				 e.preventDefault();
+			  }
+			  
+		});
+		
+	 });
+   </script>
+<?php	
+	 $plaza = array("La Paz", "Santa Cruz", "Cochabamba", "Resto del País");
+	 $id_plaza = array("LP", "SC", "CB", "RP");
+	 $num_data = count($plaza);
+	 
+	 /*$queryTvh="select
+				  tvh.id_tipo_vh,
+				  tvh.id_ef,
+				  tvh.vehiculo
+				from
+				  s_au_tipo_vehiculo as tvh
+				where
+				  tvh.activado=true and tvh.id_ef='".base64_decode($_GET['id_ef'])."' and
+				  NOT EXISTS (
+					 SELECT  sat.id_tipo_vh
+					 FROM    s_au_tasa as sat 
+					 WHERE   sat.id_tipo_vh = tvh.id_tipo_vh
+			     )
+				order by
+				  id_tipo_vh asc;";*/
+	 $queryTvh="select
+				  id_tipo_vh,
+				  id_ef,
+				  vehiculo
+				from
+				  s_au_tipo_vehiculo
+				where
+				  activado=true and id_ef='".base64_decode($_GET['id_ef'])."'
+				order by
+				  id_tipo_vh asc;";			  
+	 //echo $queryTvh;			  
+	 $result=$conexion->query($queryTvh,MYSQLI_STORE_RESULT);			  
+	 echo'<div class="da-panel">
+		  <div class="da-panel-header">
+			  <span class="da-panel-title">
+				  <img src="images/icons/black/16/pencil.png" alt="" />
+				  <span lang="es">Agregar Tasa Prima</span>
+			  </span>
+		  </div>
+		  <div class="da-panel-content">
+			  <form class="da-form" name="frmAdTasaAuto" id="frmAdTasaAuto" action="" method="post">
+				  <div class="da-form-row">
+					   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span>:</b></label>
+					   <div class="da-form-item large">
+						   '.base64_decode($_GET['entidad']).'
+					   </div>
+				  </div>
+				  <div class="da-form-row">
+					   <label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span>:</b></label>
+					   <div class="da-form-item large">
+						   '.base64_decode($_GET['compania']).'
+					   </div>
+				  </div>
+				  <div class="da-form-row">
+					  <label style="text-align:right;"><b><span lang="es">Plaza</span>:</b></label>
+					  <div class="da-form-item large">
+						  <select id="plaza" name="plaza" class="required" style="width:200px;">';
+							  echo'<option value="" lang="es">seleccione...</option>';
+							  for($i=0;$i<$num_data;$i++){
+								echo'<option value="'.$id_plaza[$i].'">'.$plaza[$i].'</option>';
+							  }
+					echo'</select>
+						  <span class="errorMessage" id="error_plaza"></span>
+					  </div>
+				  </div>
+				  <div class="da-form-row">
+					  <label style="text-align:right;"><b><span lang="es">Tipo Vehiculo</span>:</b></label>
+					  <div class="da-form-item large">
+						  <select id="id_tipovh" name="id_tipovh" class="required" style="width:200px;">';
+							  echo'<option value="" lang="es">seleccione...</option>';
+							  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+								echo'<option value="'.$row['id_tipo_vh'].'">'.$row['vehiculo'].'</option>';
+							  }
+					echo'</select>
+						  <span class="errorMessage" id="error_tipo_vehiculo"></span>
+					  </div>
+				  </div>
+				  <div class="da-form-row">
+					<label style="text-align:right;"><b><span lang="es">Tasa</span></b></label>
+					<div class="da-form-item medium">
+					  <input type="text" id="txtTasa" name="txtTasa" value="" class="required"/>
+					  <span class="errorMessage" id="error_tasa"></span>
+					</div>
+				  </div>
+				  <div class="da-form-row">
+					<label style="text-align:right;"><b><span lang="es">Prima Minima</span></b></label>
+					<div class="da-form-item medium">
+					  <input type="text" id="txtPrimaMinima" name="txtPrimaMinima" value="" class="required"/>
+					  <span class="errorMessage" id="error_primaminima"></span>
+					</div>
+				  </div>
+				  <div class="da-button-row">
+					 <input type="submit" value="Guardar" class="da-button green" lang="es"/>
+					 <div id="response-loading" class="loading-fac"></div>';
+			 echo'</div>
+			  </form>
+		  </div>
+	  </div>';
+}elseif($_GET['opcion']=='editar_tasa_au'){
+?>
+   <script type="text/javascript">
+     $(document).ready(function() {
+		$('#frmEditTasaAuto').submit(function(e){
+			  
+			  var plaza = $('#plaza option:selected').prop('value');
+			  var id_tipovh = $('#id_tipovh option:selected').prop('value');
+			  var prima_minima = $('#txtPrimaMinima').prop('value');
+			  var tasa = $('#txtTasa').prop('value');
+			  var sum=0;
+			  $(this).find('.required').each(function() {
+				   if(plaza!=''){
+					  $('#error_plaza').hide('slow');
+				   }else{
+					  sum++;
+					  $('#error_plaza').show('slow');
+					  $('#error_plaza').html('campo requerido');
+				   }
+				   
+				   if(id_tipovh!=''){
+					  $('#error_tipo_vehiculo').hide('slow');
+				   }else{
+					  sum++;
+					  $('#error_tipo_vehiculo').show('slow');
+					  $('#error_tipo_vehiculo').html('campo requerido');
+				   }
+				   if(prima_minima!=''){
+					 if(prima_minima.match(/^[0-9\.]+$/)){
+						 $('#error_primaminima').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#error_primaminima').slideDown('slow');
+						 $('#error_primaminima').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#error_primaminima').slideDown('slow');
+					  $('#error_primaminima').html('campo requerido');
+				  }
+				  if(tasa!=''){
+					 if(tasa.match(/^[0-9\.]+$/)){
+						 $('#error_tasa').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#error_tasa').slideDown('slow');
+						 $('#error_tasa').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#error_tasa').slideDown('slow');
+					  $('#error_tasa').html('campo requerido');
+				  }
+  
+			  });
+			  if(sum==0){
+					 $("#frmEditTasaAuto :submit").attr("disabled", true);
+					 e.preventDefault();
+					 var FormCadena = $(this).serialize();
+					 //alert (FormCadena);
+					 //ejecutando ajax
+					 $.ajax({
+						   async: true,
+						   cache: false,
+						   type: "POST",
+						   url: "accion_registro.php",
+						   data: FormCadena+'&opcion=edit_tasa_au',
+						   beforeSend: function(){
+								$("#response-loading").css({
+									'height': '30px'
+								});
+						   },
+						   complete: function(){
+								$("#response-loading").css({
+									"background": "transparent"
+								});
+						   },
+						   success: function(datareturn) {
+								  //alert(datareturn);
+								  if(datareturn==1){
+									 $('#response-loading').html('<div style="color:#62a426;">Se creo correctamente el registro</div>');
+									  window.setTimeout('location.reload()', 3000);
+								  }else if(datareturn==2){
+									  $("#frmEditTasaAuto :submit").removeAttr('disabled');
+									 $('#response-loading').html('<div style="color:#d44d24;">Hubo un error al crear el registro, consulte con su administrador</div>');
+									 e.preventDefault();
+								  }
+								  
+						   }
+					 });
+			  }else{
+				 e.preventDefault();
+			  }
+			  
+		});
+		
+		$("select.readonly option").not(":selected").attr("disabled", "disabled");
+		
+	 });
+   </script>
+<?php	
+	 $plaza = array("La Paz", "Santa Cruz", "Cochabamba", "Resto del País");
+	 $id_plaza = array("LP", "SC", "CB", "RP");
+	 $num_data = count($plaza);
+	 
+	 $queryTvh="select
+				  id_tipo_vh,
+				  id_ef,
+				  vehiculo
+				from
+				  s_au_tipo_vehiculo
+				where
+				  activado=true and id_ef='".base64_decode($_GET['id_ef'])."'
+				order by
+				  id_tipo_vh asc;";
+	 //echo $queryTvh;			  
+	 $result=$conexion->query($queryTvh,MYSQLI_STORE_RESULT);			  
+	 
+	 $queryTasa="select
+				   id,
+				   plaza,
+				   id_tipo_vh,
+				   tasa,
+				   prima_minima
+				from
+				   s_au_tasa
+				where
+				   id = ".base64_decode($_GET['id_tasa']).";";
+	 $result_tasa = $conexion->query($queryTasa,MYSQLI_STORE_RESULT); 
+	 $rowt = $result_tasa->fetch_array(MYSQLI_ASSOC);
+	 echo'<div class="da-panel">
+		  <div class="da-panel-header">
+			  <span class="da-panel-title">
+				  <img src="images/icons/black/16/pencil.png" alt="" />
+				  <span lang="es">Editar Tasa Prima</span>
+			  </span>
+		  </div>
+		  <div class="da-panel-content">
+			  <form class="da-form" name="frmEditTasaAuto" id="frmEditTasaAuto" action="" method="post">
+				  <div class="da-form-row">
+					   <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span>:</b></label>
+					   <div class="da-form-item large">
+						   '.base64_decode($_GET['entidad']).'
+					   </div>
+				  </div>
+				  <div class="da-form-row">
+					   <label style="text-align:right;"><b><span lang="es">Compañía de Seguros</span>:</b></label>
+					   <div class="da-form-item large">
+						   '.base64_decode($_GET['compania']).'
+					   </div>
+				  </div>
+				  <div class="da-form-row">
+					  <label style="text-align:right;"><b><span lang="es">Plaza</span>:</b></label>
+					  <div class="da-form-item large">
+						  <select id="plaza" name="plaza" class="required readonly" style="width:200px;">';
+							  echo'<option value="" lang="es">seleccione...</option>';
+							  for($i=0;$i<$num_data;$i++){
+								  if($rowt['plaza']==$id_plaza[$i])
+								    echo'<option value="'.$id_plaza[$i].'" selected>'.$plaza[$i].'</option>';
+								  else
+								    echo'<option value="'.$id_plaza[$i].'">'.$plaza[$i].'</option>';
+							  }
+					echo'</select>
+						  <span class="errorMessage" id="error_plaza"></span>
+					  </div>
+				  </div>
+				  <div class="da-form-row">
+					  <label style="text-align:right;"><b><span lang="es">Tipo Vehiculo</span>:</b></label>
+					  <div class="da-form-item large">
+						  <select id="id_tipovh" name="id_tipovh" class="required readonly" style="width:200px;">';
+							  echo'<option value="" lang="es">seleccione...</option>';
+							  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+								 if($rowt['id_tipo_vh']==$row['id_tipo_vh']) 
+								   echo'<option value="'.$row['id_tipo_vh'].'" selected>'.$row['vehiculo'].'</option>';
+								 else
+								   echo'<option value="'.$row['id_tipo_vh'].'">'.$row['vehiculo'].'</option>';
+							  }
+					echo'</select>
+						  <span class="errorMessage" id="error_tipo_vehiculo"></span>
+					  </div>
+				  </div>
+				  <div class="da-form-row">
+					<label style="text-align:right;"><b><span lang="es">Tasa</span></b></label>
+					<div class="da-form-item medium">
+					  <input type="text" id="txtTasa" name="txtTasa" value="'.$rowt['tasa'].'" class="required"/>
+					  <span class="errorMessage" id="error_tasa"></span>
+					</div>
+				  </div>
+				  <div class="da-form-row">
+					<label style="text-align:right;"><b><span lang="es">Prima Minima</span></b></label>
+					<div class="da-form-item medium">
+					  <input type="text" id="txtPrimaMinima" name="txtPrimaMinima" value="'.$rowt['prima_minima'].'" class="required"/>
+					  <span class="errorMessage" id="error_primaminima"></span>
+					</div>
+				  </div>
+				  <div class="da-button-row">
+					 <input type="submit" value="Guardar" class="da-button green" lang="es"/>
+					 <input type="hidden" name="id_tasa" value="'.$_GET['id_tasa'].'"/>
+					 <div id="response-loading" class="loading-fac"></div>';
+			 echo'</div>
+			  </form>
+		  </div>
+	  </div>';
 }
 ?>
