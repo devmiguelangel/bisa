@@ -96,6 +96,8 @@ switch($sw){
 			scl.fecha_nacimiento as cl_fecha_nacimiento,
 			scl.complemento as cl_complemento,
 			scl.genero as cl_genero,
+			scl.direccion_domicilio as cl_direccion_domicilio,
+			scl.direccion_laboral as cl_direccion_laboral,
 			scl.telefono_domicilio as cl_tel_domicilio,
 			scl.telefono_celular as cl_tel_celular,
 			scl.telefono_oficina as cl_tel_oficina,
@@ -114,6 +116,11 @@ switch($sw){
 			sad.uso as vh_uso,
 			sad.traccion as vh_traccion,
 			sad.km as vh_km,
+			sad.color as vh_color,
+			sad.motor as vh_motor,
+			sad.chasis as vh_chasis,
+			"" as vh_cap_ton,
+			sad.no_asiento as vh_no_asiento,
 			sad.modalidad as vh_modalidad,
 			sad.valor_asegurado as vh_valor_asegurado,
 			sad.tasa as vh_tasa,
@@ -146,8 +153,6 @@ if($sw !== 1){
 		sae.no_emision,
 		sae.ini_vigencia as c_ini_vigencia,
 		sae.fin_vigencia as c_fin_vigencia,
-		sfp.id_forma_pago,
-		sfp.codigo as c_forma_pago,
 		sae.plazo as c_plazo,
 		sae.tipo_plazo as c_tipo_plazo,
 		sae.prima_total as c_prima_total,
@@ -208,8 +213,6 @@ if($sw !== 1){
 		s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
 			inner join
 		s_entidad_financiera as sef ON (sef.id_ef = sae.id_ef)
-			inner join
-	    s_forma_pago as sfp ON (sfp.id_forma_pago = sae.id_forma_pago)
 	where
 		sae.id_emision = "'.$ide.'"
 			and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
@@ -284,8 +287,6 @@ if($rs->data_seek(0) === TRUE){
 	$cr_term = $row['c_plazo'];
 	$cr_type_term = $row['c_tipo_plazo'];
 	
-	$cl_avc = $cl_dir = $cl_dir_office = $cl_nd = '';
-	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
 	
 	if($cl_type_client === 0) { 
@@ -303,12 +304,6 @@ if($rs->data_seek(0) === TRUE){
 		$cr_policy = $row['c_poliza'];
 		$mFC = $row['c_motivo_facultativo'];
 		
-		$cl_avc = $row['cl_avc'];
-		$cl_dir = $row['cl_direccion_domicilio'];
-		$cl_nd = $row['cl_no_domicilio'];
-		
-		if($cl_type_client === 0) { $cl_dir_office = $row['cl_direccion_laboral']; }
-		
 		if($sw === 2 || $sw === 3){
 			if((boolean)$row['c_facultativo'] === TRUE) {
 				$FC = TRUE;
@@ -320,7 +315,7 @@ if($rs->data_seek(0) === TRUE){
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
 ?>
-	<h4>Datos del Prestatario</h4>
+	<h4>Datos del Cliente</h4>
 <?php
 if($sw > 1){
 	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" 
@@ -333,6 +328,13 @@ if($sw > 1){
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
+            <label>Nombres: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-name" name="dc-name" 
+                	autocomplete="off" value="<?=$row['cl_nombre'];?>" 
+                		class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+            </div><br>
+            
             <label>Apellido Paterno: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-ln-patern" name="dc-ln-patern" 
@@ -345,20 +347,6 @@ if($sw > 1){
                 <input type="text" id="dc-ln-matern" name="dc-ln-matern" 
                 	autocomplete="off" value="<?=$row['cl_materno'];?>" 
                 		class="text fbin" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Nombres: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-name" name="dc-name" 
-                	autocomplete="off" value="<?=$row['cl_nombre'];?>" 
-                		class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Apellido de Casada: </label>
-            <div class="content-input">
-                <input type="text" id="dc-ln-married" name="dc-ln-married" 
-                	autocomplete="off" value="<?=$row['cl_ap_casada'];?>" 
-                		class="not-required text fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Documento de Identidad: <span>*</span></label>
@@ -400,57 +388,12 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
-            <label>Género: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-gender" name="dc-gender" class="<?=$read_nat;?> 
-                	fbin field-person <?=$read_new;?>" <?=$read_new;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_gender = $link->gender;
-for($i = 0; $i < count($arr_gender); $i++){
-	$gender = explode('|',$arr_gender[$i]);
-	if($gender[0] === $row['cl_genero']) {
-		echo '<option value="'.$gender[0].'" selected>'.$gender[1].'</option>';
-	} else {
-		echo '<option value="'.$gender[0].'">'.$gender[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
             
             <label>Fecha de Nacimiento: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-date-birth" name="dc-date-birth" 
                 	autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" 
                 	class="<?=$read_nat;?> fbin date field-person" readonly style="cursor:pointer;" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Lugar de Residencia: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-place-res" name="dc-place-res" 
-                	class="<?=$read_nat;?> fbin " <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-if ($rsDep->data_seek(0) === TRUE) {
-	while($rowDep = $rsDep->fetch_array(MYSQLI_ASSOC)){
-		if((boolean)$rowDep['tipo_dp'] === TRUE){
-			if($rowDep['id_depto'] === $row['cl_lugar_residencia']) {
-				echo '<option value="'.$rowDep['id_depto'].'" selected>'.$rowDep['departamento'].'</option>';
-			} else {
-				echo '<option value="'.$rowDep['id_depto'].'">'.$rowDep['departamento'].'</option>';
-			}
-		}
-	}
-}
-?>
-                </select>
-            </div><br>
-            <label>Localidad: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-locality" name="dc-locality" 
-                	autocomplete="off" value="<?=$row['cl_localidad'];?>" 
-                	class="<?=$read_nat;?> text-2 fbin" <?=$read_save;?>>
             </div><br>
             
             <label>Teléfono de domicilio: <span>*</span></label>
@@ -475,62 +418,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 			</div><br>
         </div><!--
         --><div class="form-col">
-			<label>Avenida o Calle: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-avc" name="dc-avc" 
-                	class="<?=$read_nat;?> fbin <?=$read_save;?>" <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_AC = $link->avc;
-for($i = 0; $i < count($arr_AC); $i++){
-	$AC = explode('|',$arr_AC[$i]);
-	if($AC[0] === $cl_avc) {
-		echo '<option value="'.$AC[0].'" selected>'.$AC[1].'</option>';
-	}else {
-		echo '<option value="'.$AC[0].'">'.$AC[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
-            
             <label>Dirección domicilio: <span>*</span></label><br>
             <textarea id="dc-address-home" name="dc-address-home" 
-            	class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
-            
-            <label>Número de domicilio: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-nhome" name="dc-nhome" 
-                	autocomplete="off" value="<?=$cl_nd;?>" 
-                	class="<?=$read_nat;?> number fbin" <?=$read_save;?>>
-            </div><br>
-            
-            <label>Ocupación: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-occupation" name="dc-occupation" 
-                	class="<?=$read_nat;?> fbin " <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'AU')) !== FALSE) {
-	while($rowOcc = $rsOcc->fetch_array(MYSQLI_ASSOC)){
-		if($rowOcc['id_ocupacion'] === $row['cl_ocupacion']) {
-			echo '<option value="'.base64_encode($rowOcc['id_ocupacion']).'" selected>'.$rowOcc['ocupacion'].'</option>';
-		} else {
-			echo '<option value="'.base64_encode($rowOcc['id_ocupacion']).'">'.$rowOcc['ocupacion'].'</option>';
-		}
-	}
-}
-?>
-                </select>
-            </div><br>
-            
-            <label style="width:auto;">Descripción Ocupación: <span>*</span></label><br>
-            <textarea id="dc-desc-occ" name="dc-desc-occ" 	
-            	class="<?=$read_nat;?> fbin" <?=$read_save;?> ><?=$row['cl_desc_ocupacion'];?></textarea><br>
+            	class="<?=$read_nat;?> fbin" 
+            	<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
             
             <label>Dirección laboral: <span>*</span></label><br>
             <textarea id="dc-address-work" name="dc-address-work" 
-            	class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir_office;?></textarea><br>
+            	class="<?=$read_nat;?> fbin" 
+            	<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
@@ -595,35 +491,15 @@ if ($rsDep->data_seek(0) === TRUE) {
             </div><br>
         </div><!--
         --><div class="form-col">
-        	<label>Avenida o Calle: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-company-avc" name="dc-company-avc" 
-                	class="<?=$read_jur;?> fbin <?=$read_save;?>" <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_AC = $link->avc;
-for($i = 0; $i < count($arr_AC); $i++){
-	$AC = explode('|',$arr_AC[$i]);
-	if($AC[0] === $cl_avc) {
-		echo '<option value="'.$AC[0].'" selected>'.$AC[1].'</option>';
-	} else {
-		echo '<option value="'.$AC[0].'">'.$AC[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
-            
-            <label>Dirección domicilio: <span>*</span></label><br>
+        	<label>Dirección domicilio: <span>*</span></label><br>
 			<textarea id="dc-company-address-home" name="dc-company-address-home" 
-				class="<?=$read_jur;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
-            
-            <label>Número de domicilio: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-company-nhome" name="dc-company-nhome" 
-                	autocomplete="off" value="<?=$cl_nd;?>" 
-                	class="<?=$read_jur;?> number fbin" <?=$read_save;?>>
-            </div><br>
+				class="<?=$read_jur;?> fbin" 
+				<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
+
+        	<label>Dirección laboral: <span></span></label><br>
+			<textarea id="dc-company-address-work" name="dc-company-address-work" 
+				class="<?=$read_jur;?> fbin" 
+				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
         </div>
     </div>
 <?php
@@ -631,32 +507,32 @@ for($i = 0; $i < count($arr_AC); $i++){
 
 ?>
 	<hr>
-    <div class="form-col">
-	    <input type="hidden" id="dc-attached" name="dc-attached" 
-	    	value="<?=base64_encode($row['cl_adjunto']);?>" class="required">
+    <div class="form-col"><!-- 
+    	    <input type="hidden" id="dc-attached" name="dc-attached" 
+    	    	value="<?=base64_encode($row['cl_adjunto']);?>" class="required">
         <div class="content-input" style="width:100%; text-align:center;">
-<?php
-if($sw === 2 || $sw === 3) {
-	echo '<a href="files/'.$row['cl_adjunto'].'" target="_blank" class="attached-link">
-		Documentación del Prestatario</a><br><br>';
-}
-
-if($sw !== 2) {
-?>
-			<a href="javascript:;" id="a-dc-attached" 
-				class="attached">Adjuntar documentación del Prestatario</a>
+    <?php
+    if($sw === 2 || $sw === 3) {
+    	echo '<a href="files/'.$row['cl_adjunto'].'" target="_blank" class="attached-link">
+    		Documentación del Cliente</a><br><br>';
+    }
+    
+    if($sw !== 2) {
+    ?>
+    			<a href="javascript:;" id="a-dc-attached" 
+    				class="attached">Adjuntar documentación del Cliente</a>
             <div class="attached-mess">
                 El tamaño máximo del archivo es de 20Mb. <br>
                 El formato del archivo a subir debe ser JPG, PNG, PDF, RAR ó ZIP
             </div>
-<script type="text/javascript">
-set_ajax_upload('dc-attached', 'AU');
-</script>
-<?php
-}
-?>
-		</div><br>
-    </div><!--
+    <script type="text/javascript">
+    set_ajax_upload('dc-attached', 'AU');
+    </script>
+    <?php
+    }
+    ?>
+    		</div><br>
+     --></div><!--
     --><div class="form-col">
 <?php
 if($sw !== 2) {
@@ -670,7 +546,7 @@ if($sw !== 2) {
                 <li>Fotocopia de fundempresa (para Personas Jurídicas)</li>
                 <li>Testimonio de Poder del representante legal (para Personas Jurídicas)</li>
                 <li>Testimonio de Constitución (para Personas Jurídicas)</li>
-                <li>Conformidad del Prestatario y especificando la forma de pago (Contado o Contado anualizado)</li>
+                <li>Conformidad del Cliente y especificando la forma de pago (Contado o Contado anualizado)</li>
                 <li>Copia del Avalúo actualizado (de ser necesario para Inmuebles y Automotores).</li>
             </ul>
         </div>
@@ -687,14 +563,6 @@ if($rs->data_seek(0) === TRUE){
 	<table class="list-cl list-vh">
 <?php
 	while($rowVh = $rs->fetch_array(MYSQLI_ASSOC)){
-		$vh_color = $vh_motor = $vh_chassis = $vh_capton = $vh_nseat = '';
-		if($sw !== 1) {
-			$vh_color = $rowVh['vh_color'];
-			$vh_motor = $rowVh['vh_motor'];
-			$vh_chassis = $rowVh['vh_chasis'];
-			$vh_capton = $rowVh['vh_cap_ton'];
-			$vh_nseat = $rowVh['vh_no_asiento'];
-		}
 		$k += 1;
 ?>
 		<tr class="title-vh" valign="top">
@@ -705,7 +573,7 @@ if($rs->data_seek(0) === TRUE){
             <td style="width:10%;">Uso</td>
             <td style="width:20%;">Placa</td>
             <td style="width:10%;">Tracción</td>
-            <td style="width:7%;">Cero Km.</td>
+            <td style="width:7%;"></td>
         </tr>
         <tr valign="top">
         	<td>
@@ -716,7 +584,7 @@ if($sw > 1){
 }
 ?>
             	<select id="dv-<?=$k;?>-type-vehicle" name="dv-<?=$k;?>-type-vehicle" 
-            		class="required fbin " <?=$read_save;?>>
+            		class="required fbin <?= $read_new . $read_edit ;?>" <?=$read_save;?>>
             		<option value="">Seleccione...</option>
 <?php
 if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
@@ -732,8 +600,8 @@ if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
 				</select>
             </td>
             <td>
-            	<select data-rel="<?=$k;?>" id="dv-<?=$k;?>-make" 
-            		name="dv-<?=$k;?>-make" class="dv-make required fbin " <?=$read_save;?>>
+            	<select data-rel="<?=$k;?>" id="dv-<?=$k;?>-make" name="dv-<?=$k;?>-make" 
+            		class="dv-make required fbin <?= $read_new . $read_edit ;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rsMa = $link->get_make($_SESSION['idEF'])) !== FALSE){
@@ -750,7 +618,7 @@ if(($rsMa = $link->get_make($_SESSION['idEF'])) !== FALSE){
             </td>
             <td>
             	<select id="dv-<?=$k;?>-model" name="dv-<?=$k;?>-model" 
-            		class="required fbin " <?=$read_save;?>>
+            		class="required fbin <?= $read_new . $read_edit ;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rsMo = $link->get_model($_SESSION['idEF'], $rowVh['vh_marca'])) !== FALSE){
@@ -768,7 +636,7 @@ echo '<option value="OTHER">OTRO</option>';
             </td>
             <td>	
             	<select id="dv-<?=$k;?>-year" name="dv-<?=$k;?>-year" 
-            		class="required fbin <?=$read_edit;?>" <?=$read_save;?>>
+            		class="required fbin <?=$read_new . $read_edit;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rowYear = $link->get_year_cot($_SESSION['idEF'])) !== FALSE){
@@ -813,11 +681,11 @@ for($i = 0; $i < count($arr_use); $i++){
             <td>
             	<input type="text" id="dv-<?=$k;?>-plate" name="dv-<?=$k;?>-plate" 
             		autocomplete="off" value="<?=$rowVh['vh_placa'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?> >
+            		class="required text-2 fbin" <?=$read_save . ' ' . $read_new . $read_edit;?> >
             </td>
             <td>
             	<select id="dv-<?=$k;?>-traction" name="dv-<?=$k;?>-traction" 
-            		class="required fbin " <?=$read_save;?>>
+            		class="required fbin <?= $read_new . $read_edit ;?>" <?=$read_save;?>>
             		<option value="">Seleccione...</option>
 <?php
 $arr_traction = $link->traction;
@@ -833,21 +701,7 @@ for($i = 0; $i < count($arr_traction); $i++){
 				</select>
             </td>
             <td>
-            	<select id="dv-<?=$k;?>-zero-km" name="dv-<?=$k;?>-zero-km" 
-            		class="required fbin " <?=$read_save;?>>
-    	        	<option value="">Seleccione...</option>
-<?php
-$arr_zero_km = array(0 => 'SI|SI', 1 => 'NO|NO');
-for($i = 0; $i < count($arr_zero_km); $i++){
-	$zero_km = explode('|', $arr_zero_km[$i]);
-	if($zero_km[0] === $rowVh['vh_km']) {
-		echo '<option value="'.base64_encode($zero_km[0]).'" selected>'.$zero_km[1].'</option>';
-	} else {
-		echo '<option value="'.base64_encode($zero_km[0]).'">'.$zero_km[1].'</option>';
-	}
-}
-?>
-				</select>
+            	
             </td>
         </tr>
         <tr class="title-vh">
@@ -862,27 +716,27 @@ for($i = 0; $i < count($arr_zero_km); $i++){
         <tr valign="top">
         	<td>
             	<input type="text" id="dv-<?=$k;?>-color" name="dv-<?=$k;?>-color" 
-            		autocomplete="off" value="<?=$vh_color;?>" 
+            		autocomplete="off" value="<?=$rowVh['vh_color'];?>" 
             		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-motor" name="dv-<?=$k;?>-motor" 
-            		autocomplete="off" value="<?=$vh_motor;?>" 
+            		autocomplete="off" value="<?=$rowVh['vh_motor'];?>" 
             		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-chassis" name="dv-<?=$k;?>-chassis" 
-            		autocomplete="off" value="<?=$vh_chassis;?>" 
+            		autocomplete="off" value="<?=$rowVh['vh_chasis'];?>" 
             		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-capton" name="dv-<?=$k;?>-capton" 
-            		autocomplete="off" value="<?=$vh_capton;?>" 
+            		autocomplete="off" value="<?=$rowVh['vh_cap_ton'];?>" 
             		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-nseat" name="dv-<?=$k;?>-nseat" 
-            		autocomplete="off" value="<?=$vh_nseat;?>" 
+            		autocomplete="off" value="<?=$rowVh['vh_no_asiento'];?>" 
             		class="required number fbin" <?=$read_save;?>>
             </td>
             <td>	
@@ -905,29 +759,29 @@ for($i = 0; $i < count($arr_zero_km); $i++){
 			</td>
         </tr>
         <tr class="thead">
-        	<td colspan="8">
-            	<input type="hidden" id="dv-<?=$k;?>-attached" name="dv-<?=$k;?>-attached" 
-            		value="<?=base64_encode($rowVh['vh_adjunto']);?>" class="required">
-<?php
-if($sw === 2 || $sw === 3) {
-	echo '<a href="files/'.$rowVh['vh_adjunto'].'" target="_blank" 
-		class="attached-link">Documentación del Vehículo</a>';
-}
-if($sw !== 2) {
-?>
-			<a href="javascript:;" id="a-dv-<?=$k;?>-attached" 
-				class="attached">Adjuntar documentación del Vehículo</a>
-            <div class="attached-mess">
-                El tamaño máximo del archivo es de 20Mb. <br>
-                El formato del archivo a subir debe ser JPG, PNG, PDF, RAR ó ZIP
-            </div>
-<script type="text/javascript">
-set_ajax_upload('dv-<?=$k;?>-attached', 'AU');
-</script>
-<?php    
-}
-?>
-            </td>
+        	<td colspan="8"><!-- 
+        	            	<input type="hidden" id="dv-<?=$k;?>-attached" name="dv-<?=$k;?>-attached" 
+        	            		value="<?=base64_encode($rowVh['vh_adjunto']);?>" class="required">
+        	<?php
+        	if($sw === 2 || $sw === 3) {
+        		echo '<a href="files/'.$rowVh['vh_adjunto'].'" target="_blank" 
+        			class="attached-link">Documentación del Vehículo</a>';
+        	}
+        	if($sw !== 2) {
+        	?>
+        				<a href="javascript:;" id="a-dv-<?=$k;?>-attached" 
+        					class="attached">Adjuntar documentación del Vehículo</a>
+        	            <div class="attached-mess">
+        	                El tamaño máximo del archivo es de 20Mb. <br>
+        	                El formato del archivo a subir debe ser JPG, PNG, PDF, RAR ó ZIP
+        	            </div>
+        	<script type="text/javascript">
+        	set_ajax_upload('dv-<?=$k;?>-attached', 'AU');
+        	</script>
+        	<?php    
+        	}
+        	?>
+        	             --></td>
         </tr>
 <?php
 	}
@@ -976,7 +830,8 @@ if ($swMo === false) {
 ?>
 		<label>Número de Póliza: <span>*</span></label>
 		<div class="content-input">
-			<select id="di-policy" name="di-policy" class="required fbin" <?=$read_save;?>>
+			<select id="di-policy" name="di-policy" 
+				class="required fbin <?= $read_edit ;?>" <?=$read_save;?>>
 				<option value="">Seleccione...</option>
 <?php
 if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {

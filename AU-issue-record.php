@@ -29,11 +29,6 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$max_anio = (int)$rowAU['max_anio'];
 		}
 		
-		$year_min = 0;
-		if(($rowYear = $link->get_year_cot($_SESSION['idEF'])) !== FALSE) {
-			$year_min = (int)$rowYear['anio_min'];
-		}
-		
 		$target = '';
 		if(isset($_POST['target'])) {
 			$target = '&target='.$link->real_escape_string(trim($_POST['target']));
@@ -68,12 +63,14 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$dcr_warranty = (int)$link->real_escape_string(trim(base64_decode($_POST['di-warranty'])));
 			$dcr_date_begin = $link->real_escape_string(trim(base64_decode($_POST['di-date-inception'])));
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
-			$dcr_term = $link->real_escape_string(trim($_POST['di-term']));
+			$dcr_term = 1;
 			$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-			$methodPayment = $link->real_escape_string(trim($_POST['di-method-payment']));
-			$methodPayment = explode('|', $methodPayment);
-			$dcr_method_payment = $link->real_escape_string(trim(base64_decode($methodPayment[0])));
-			$codeMethodPayment = $link->real_escape_string(trim(base64_decode($methodPayment[1])));
+			if ($dcr_type_term === 'Y') {
+				$dcr_term = 12;
+			}
+			$methodPayment = '';
+			$dcr_method_payment = 'null';
+			$codeMethodPayment = '';
 			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
 			$dcr_policy = 'null';
 			if (isset($_POST['di-policy'])) {
@@ -99,6 +96,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$cl_date_birth = $cl_gender = $cl_place_res = $cl_locality = $cl_phone_home = $cl_phone_cel = $cl_avc = 
 			$cl_address_home = $cl_nhome = $cl_occupation = $cl_desc_occ = $cl_address_work = $cl_phone_office = 
 			$cl_email = $cl_company_name = $cl_attached = '';
+			$cl_place_res = 'null';
+			$cl_occupation = 'null';
 			
 			if(isset($_POST['dc-idcl'])) {
 				$idcl = $link->real_escape_string(trim(base64_decode($_POST['dc-idcl'])));
@@ -109,26 +108,22 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_name = $link->real_escape_string(trim($_POST['dc-name']));
 				$cl_patern = $link->real_escape_string(trim($_POST['dc-ln-patern']));
 				$cl_matern = $link->real_escape_string(trim($_POST['dc-ln-matern']));
-				$cl_married = $link->real_escape_string(trim($_POST['dc-ln-married']));
+				$cl_married = '';
 				$cl_ci = $link->real_escape_string(trim($_POST['dc-doc-id']));
 				$cl_comp = $link->real_escape_string(trim($_POST['dc-comp']));
 				$cl_ext = $link->real_escape_string(trim($_POST['dc-ext']));
-				$cl_gender = $link->real_escape_string(trim($_POST['dc-gender']));
+				$cl_gender = '';
 				$cl_date_birth = $link->real_escape_string(trim($_POST['dc-date-birth']));
-				$cl_place_res = $link->real_escape_string(trim($_POST['dc-place-res']));
-				$cl_locality = $link->real_escape_string(trim($_POST['dc-locality']));
+				$cl_locality = '';
 				$cl_phone_home = $link->real_escape_string(trim($_POST['dc-phone-1']));
 				$cl_phone_cel = $link->real_escape_string(trim($_POST['dc-phone-2']));
 				$cl_email = $link->real_escape_string(trim($_POST['dc-email']));
-				$cl_avc = $link->real_escape_string(trim($_POST['dc-avc']));
+				$cl_avc = '';
 				$cl_address_home = $link->real_escape_string(trim($_POST['dc-address-home']));
-				$cl_nhome = $link->real_escape_string(trim($_POST['dc-nhome']));
-				$cl_occupation = $link->real_escape_string(trim(base64_decode($_POST['dc-occupation'])));
-				$cl_occupation = '"'.$cl_occupation.'"';
-				$cl_desc_occ = $link->real_escape_string(trim($_POST['dc-desc-occ']));
+				$cl_nhome = '';
+				$cl_desc_occ = '';
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
-				if ($cl_gender === 'M') { $cl_married = ''; }
 				$cl_dni = $cl_ci;
 			}else{
 				$cl_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
@@ -136,17 +131,15 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_ext = $link->real_escape_string(trim($_POST['dc-depto']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-company-phone-office']));
 				$cl_email = $link->real_escape_string(trim($_POST['dc-company-email']));
-				$cl_avc = $link->real_escape_string(trim($_POST['dc-company-avc']));
 				$cl_address_home = $link->real_escape_string(trim($_POST['dc-company-address-home']));
-				$cl_nhome = $link->real_escape_string(trim($_POST['dc-company-nhome']));
-				$cl_occupation = 'NULL';
-				$cl_place_res = $cl_ext;
+				$cl_address_work = $link->real_escape_string(trim($_POST['dc-company-address-work']));
 				$cl_date_birth = date('Y-m-d', time());
 				$cl_dni = $cl_nit;
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
 			}			
 			
-			$cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
+			// $cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
+			$cl_attached = '';
 			$nVh = (int)$link->real_escape_string(trim(base64_decode($_POST['nVh'])));
 			
 			$swCl = FALSE;
@@ -181,14 +174,14 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					} else { $arr_vh[$k]['idvh'] = uniqid('@S#2$2013'.$k, true); }
 					
 					$arr_vh[$k]['type-vehicle'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-type-vehicle'])));
-					$arr_vh[$k]['category'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-category'])));
+					$arr_vh[$k]['category'] = '';
 					$arr_vh[$k]['make'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-make'])));
 					$arr_vh[$k]['model'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-model'])));
 					$arr_vh[$k]['year'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-year'])));
 					$arr_vh[$k]['use'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-use'])));
 					$arr_vh[$k]['plate'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-plate']));
 					$arr_vh[$k]['traction'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-traction'])));
-					$arr_vh[$k]['km'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-zero-km'])));
+					$arr_vh[$k]['km'] = '';
 					
 					$arr_vh[$k]['color'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-color']));
 					$arr_vh[$k]['motor'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-motor']));
@@ -205,7 +198,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_vh[$k]['value-insured'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-value-insured'])));
 					$arr_vh[$k]['rate'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-rate'])));
 					$arr_vh[$k]['premium'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-premium'])));
-					$arr_vh[$k]['attached'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-attached'])));
+					// $arr_vh[$k]['attached'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-attached'])));
+					$arr_vh[$k]['attached'] = '';
 					
 					$arr_vh[$k]['FAC'] = FALSE;
 					$arr_vh[$k]['reason'] = '';
@@ -215,12 +209,6 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						$arr_vh[$k]['FAC'] = TRUE;
 						$_FAC = TRUE;
 						$arr_vh[$k]['reason'] .= '| El valor asegurado del Vehículo excede el máximo valor permitido. Valor permitido: '.number_format($max_amount, 2, '.', ',').' USD';
-					}
-					
-					if($arr_vh[$k]['year'] < $year_min) {
-						$arr_vh[$k]['FAC'] = TRUE;
-						$_FAC = TRUE;
-						$arr_vh[$k]['reason'] .= '| El Vehículo tiene una antiguedad mayor a '.$max_anio.' años';
 					}
 					
 					if($arr_vh[$k]['FAC'] === TRUE) { $arr_vh[$k]['approved'] = FALSE; }
@@ -235,67 +223,89 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$swReg = FALSE;
 			$sql = $sqlCl = '';
 			if($sw === 1) {
-				if($swCl === FALSE) {	// REGISTRAR POLIZA
+				if($swCl === FALSE) {	// REGISTRAR POLIZAc
 					$sqlCl = 'INSERT INTO s_cliente 
-					(`id_cliente`, `id_ef`, `tipo`, `razon_social`, `paterno`, `materno`, `nombre`, `ap_casada`, `fecha_nacimiento`, `lugar_nacimiento`, `ci`, `extension`, `complemento`, `tipo_documento`, `estado_civil`, `ci_archivo`, `lugar_residencia`, `localidad`, `avenida`, `direccion`, `no_domicilio`, `direccion_laboral`, `pais`, `id_ocupacion`, `desc_ocupacion`, `telefono_domicilio`, `telefono_oficina`, `telefono_celular`, `email`, `peso`, `estatura`, `genero`, `edad`, `mano`) 
-					VALUES ("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", '.(int)$cl_type_client.', "'.$cl_company_name.'", 
-						"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", "'.$cl_married.'", "'.$cl_date_birth.'", "", 
-						"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", "", "'.$cl_attached.'", '.$cl_place_res.', 
-						"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", "'.$cl_nhome.'", "'.$cl_address_work.'", 
-						"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", "'.$cl_phone_home.'", "'.$cl_phone_office.'", 
-						"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
-						TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "") ;';
+					(id_cliente, id_ef, tipo, razon_social, paterno, materno, 
+						nombre, ap_casada, fecha_nacimiento, lugar_nacimiento, 
+						ci, extension, complemento, tipo_documento, estado_civil, 
+						ci_archivo, lugar_residencia, localidad, avenida, direccion, 
+						no_domicilio, direccion_laboral, pais, id_ocupacion, 
+						desc_ocupacion, telefono_domicilio, telefono_oficina, 
+						telefono_celular, email, peso, estatura, genero, edad, mano) 
+					VALUES 
+						("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
+							'.(int)$cl_type_client.', "'.$cl_company_name.'", 
+							"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", 
+							"'.$cl_married.'", "'.$cl_date_birth.'", "", 
+							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", "", 
+							"'.$cl_attached.'", '.$cl_place_res.', 
+							"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", 
+							"'.$cl_nhome.'", "'.$cl_address_work.'", 
+							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", 
+							"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
+							"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
+							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "") ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
-					SET `razon_social` = "'.$cl_company_name.'", `paterno` = "'.$cl_patern.'", `materno` = "'.$cl_matern.'", 
-						`nombre` = "'.$cl_name.'", `ap_casada` = "'.$cl_married.'", `fecha_nacimiento` = "'.$cl_date_birth.'", 
-						`extension` = '.$cl_ext.', `complemento` = "'.$cl_comp.'", `ci_archivo` = "'.$cl_attached.'", 
-						`lugar_residencia` = '.$cl_place_res.', `localidad` = "'.$cl_locality.'", `avenida` = "'.$cl_avc.'", 
-						`direccion` = "'.$cl_address_home.'", `no_domicilio` = "'.$cl_nhome.'", 
-						`direccion_laboral` = "'.$cl_address_work.'", `id_ocupacion` = '.$cl_occupation.', 
-						`desc_ocupacion` = "'.$cl_desc_occ.'", `telefono_domicilio` = "'.$cl_phone_home.'", 
-						`telefono_oficina` = "'.$cl_phone_office.'", `telefono_celular` = "'.$cl_phone_cel.'", 
-						`email` = "'.$cl_email.'", `genero` = "'.$cl_gender.'", 
-						`edad` = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
-					WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
+					SET razon_social = "'.$cl_company_name.'", 
+						paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+						nombre = "'.$cl_name.'", ap_casada = "'.$cl_married.'", 
+						fecha_nacimiento = "'.$cl_date_birth.'", 
+						extension = '.$cl_ext.', complemento = "'.$cl_comp.'", 
+						ci_archivo = "'.$cl_attached.'", 
+						lugar_residencia = '.$cl_place_res.', 
+						localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
+						direccion = "'.$cl_address_home.'", 
+						no_domicilio = "'.$cl_nhome.'", 
+						direccion_laboral = "'.$cl_address_work.'", 
+						id_ocupacion = '.$cl_occupation.', 
+						desc_ocupacion = "'.$cl_desc_occ.'", 
+						telefono_domicilio = "'.$cl_phone_home.'", 
+						telefono_oficina = "'.$cl_phone_office.'", 
+						telefono_celular = "'.$cl_phone_cel.'", 
+						email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
+						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+					WHERE id_cliente = "'.$idcl.'" 
+						and id_ef = "'.base64_decode($_SESSION['idEF']).'"
 						and tipo = '.(int)$cl_type_client.' ;';
 				}
-					
-				if($link->query($sqlCl) === TRUE) {
+				
+				if($link->query($sqlCl)) {
 					$record = $link->getRegistrationNumber($_SESSION['idEF'], 'AU', 1, 'AU');
 					
 					$sql = 'insert into s_au_em_cabecera 
-					(`id_emision`, `no_emision`, `id_ef`, `id_cotizacion`, 
-					`certificado_provisional`, `garantia`, `tipo`, 
-					`id_cliente`, `no_operacion`, `prefijo`, `ini_vigencia`, 
-					`fin_vigencia`, `id_forma_pago`, `plazo`, `tipo_plazo`, 
-					`factura_nombre`, `factura_nit`, `fecha_creacion`, 
-					`id_usuario`, `anulado`, `and_usuario`, `fecha_anulado`, 
-					`motivo_anulado`, `emitir`, `fecha_emision`, `id_compania`, 
-					`id_poliza`, `no_copia`, `facultativo`, `motivo_facultativo`, 
-					`prima_total`, `leido`) 
-					values ("'.$ide.'", '.$record.', 
-					"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", '.$cp.', 
-					'.$dcr_warranty.', '.(int)$cl_type_client.', "'.$idcl.'", 
-					"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
-					"'.$dcr_method_payment.'", '.$dcr_term.', "'.$dcr_type_term.'", 
-					"'.$bl_name.'", "'.$bl_nit.'", curdate(), 
-					"'.base64_decode($_SESSION['idUser']).'", 0, 
-					"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
-					"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
-					"'.$_FAC_REASON.'", '.$PRIMA.', false) ;';
+					(id_emision, no_emision, id_ef, id_cotizacion, 
+						certificado_provisional, garantia, tipo, 
+						id_cliente, no_operacion, prefijo, ini_vigencia, 
+						fin_vigencia, id_forma_pago, plazo, tipo_plazo, 
+						factura_nombre, factura_nit, fecha_creacion, 
+						id_usuario, anulado, and_usuario, fecha_anulado, 
+						motivo_anulado, emitir, fecha_emision, id_compania, 
+						id_poliza, no_copia, facultativo, motivo_facultativo, 
+						prima_total, leido) 
+					values 
+					("'.$ide.'", '.$record.', 
+						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", '.$cp.', 
+						'.$dcr_warranty.', '.(int)$cl_type_client.', "'.$idcl.'", 
+						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
+						'.$dcr_method_payment.', '.$dcr_term.', "'.$dcr_type_term.'", 
+						"'.$bl_name.'", "'.$bl_nit.'", curdate(), 
+						"'.base64_decode($_SESSION['idUser']).'", 0, 
+						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
+						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
+						"'.$_FAC_REASON.'", '.$PRIMA.', false) ;';
 					
 					if($link->query($sql) === TRUE) {
 						$auxPrefix = null;
 						
 						$sqlVh = 'insert into s_au_em_detalle 
-						(`id_vehiculo`, `id_emision`, `no_detalle`, 
-						`prefijo`, `prefix`, `id_tipo_vh`, `categoria`,  
-						`id_marca`, `id_modelo`, `anio`, `placa`, `uso`, 
-						`traccion`, `km`, `color`, `motor`, `chasis`, 
-						`cap_ton`, `no_asiento`, `modalidad`, `valor_asegurado`, 
-						`tasa`, `prima`, `facultativo`, `motivo_facultativo`, 
-						`aprobado`, `leido`, `vh_archivo`) 
+						(id_vehiculo, id_emision, no_detalle, 
+						prefijo, prefix, id_tipo_vh, categoria,  
+						id_marca, id_modelo, anio, placa, uso, 
+						traccion, km, color, motor, chasis, 
+						cap_ton, no_asiento, modalidad, valor_asegurado, 
+						tasa, prima, facultativo, motivo_facultativo, 
+						aprobado, leido, vh_archivo) 
 						values ';
 						
 						for($k = 1; $k <= $nVh; $k++) {
@@ -341,7 +351,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						
 						if($link->query($sqlVh) === TRUE){
 							$swReg = TRUE;
-							$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&ide='.base64_encode($ide).'&flag='.md5('i-read').'&cia='.base64_encode($idcia).'';
+							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
+								. '&pr=' . $pr . '&ide=' . base64_encode($ide) 
+								. '&flag=' . md5('i-read') . '&cia=' . base64_encode($idcia);
 							$arrAU[2] = 'La Póliza fue registrada con exito !';
 						} else {
 							$arrAU[2] = 'Los Vehículos no pudieron ser registrados';
@@ -349,47 +361,49 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					} else {
 						$arrAU[2] = 'La Póliza no pudo ser registrada';
 					}
-				} else { $arrAU[2] = 'El Prestatario no pudo ser registrado'; }
+				} else {
+					$arrAU[2] = 'El Prestatario no pudo ser registrado'; 
+				}
 			}elseif($sw === 3) {	// ACTUALIZAR POLIZA
 				$sqlCl = 'UPDATE s_cliente 
-					SET `razon_social` = "'.$cl_company_name.'", `paterno` = "'.$cl_patern.'", `materno` = "'.$cl_matern.'", 
-						`nombre` = "'.$cl_name.'", `fecha_nacimiento` = "'.$cl_date_birth.'", 
-						`extension` = '.$cl_ext.', `complemento` = "'.$cl_comp.'", `ci_archivo` = "'.$cl_attached.'", 
-						`lugar_residencia` = '.$cl_place_res.', `localidad` = "'.$cl_locality.'", `avenida` = "'.$cl_avc.'", 
-						`direccion` = "'.$cl_address_home.'", `no_domicilio` = "'.$cl_nhome.'", 
-						`direccion_laboral` = "'.$cl_address_work.'", `id_ocupacion` = '.$cl_occupation.', 
-						`desc_ocupacion` = "'.$cl_desc_occ.'", `telefono_domicilio` = "'.$cl_phone_home.'", 
-						`telefono_oficina` = "'.$cl_phone_office.'", `telefono_celular` = "'.$cl_phone_cel.'", 
-						`email` = "'.$cl_email.'", `genero` = "'.$cl_gender.'", 
-						`edad` = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+					SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+						nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
+						extension = '.$cl_ext.', complemento = "'.$cl_comp.'", ci_archivo = "'.$cl_attached.'", 
+						lugar_residencia = '.$cl_place_res.', localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
+						direccion = "'.$cl_address_home.'", no_domicilio = "'.$cl_nhome.'", 
+						direccion_laboral = "'.$cl_address_work.'", id_ocupacion = '.$cl_occupation.', 
+						desc_ocupacion = "'.$cl_desc_occ.'", telefono_domicilio = "'.$cl_phone_home.'", 
+						telefono_oficina = "'.$cl_phone_office.'", telefono_celular = "'.$cl_phone_cel.'", 
+						email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
+						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
 					WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
 						and tipo = '.(int)$cl_type_client.' ;';
 					
 				if($link->query($sqlCl) === TRUE) {
 					$sql = 'UPDATE s_au_em_cabecera 
-						SET `no_operacion` = "'.$dcr_opp.'", `ini_vigencia` = "'.$dcr_date_begin.'", 
-						`fin_vigencia` = "'.$dcr_date_end.'", `id_forma_pago` = "'.$dcr_method_payment.'", `plazo` = '.$dcr_term.', 
-						`tipo_plazo` = "'.$dcr_type_term.'", `factura_nombre` = "'.$bl_name.'", `factura_nit` =  "'.$bl_nit.'", 
-						`id_poliza` = '.$dcr_policy.', `no_copia` = 0, `facultativo` = '.(int)$_FAC.', 
-						`motivo_facultativo` = "'.$_FAC_REASON.'", `prima_total` = '.$PRIMA.', `leido` = FALSE
+						SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
+						fin_vigencia = "'.$dcr_date_end.'", id_forma_pago = '.$dcr_method_payment.', plazo = '.$dcr_term.', 
+						tipo_plazo = "'.$dcr_type_term.'", factura_nombre = "'.$bl_name.'", factura_nit =  "'.$bl_nit.'", 
+						id_poliza = '.$dcr_policy.', no_copia = 0, facultativo = '.(int)$_FAC.', 
+						motivo_facultativo = "'.$_FAC_REASON.'", prima_total = '.$PRIMA.', leido = FALSE
 						WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
 					
 					if($link->query($sql) === TRUE) {
 						$sqlVh = '';
 						for($k = 1; $k <= $nVh; $k++) {
 							$sqlVh .= 'update s_au_em_detalle 
-							set `id_tipo_vh` = "'.$arr_vh[$k]['type-vehicle'].'", 
-								`categoria` = "'.$arr_vh[$k]['category'].'", `id_marca` = "'.$arr_vh[$k]['make'].'", 
-								`id_modelo` = "'.$arr_vh[$k]['model'].'", `anio` = '.$arr_vh[$k]['year'].', 
-								`placa` = "'.$arr_vh[$k]['plate'].'", `uso` = "'.$arr_vh[$k]['use'].'", 
-								`traccion` = "'.$arr_vh[$k]['traction'].'", `km` = "'.$arr_vh[$k]['km'].'", 
-								`color` = "'.$arr_vh[$k]['color'].'", `motor` = "'.$arr_vh[$k]['motor'].'", 
-								`chasis` = "'.$arr_vh[$k]['chassis'].'", `cap_ton` = "'.$arr_vh[$k]['capton'].'", 
-								`no_asiento` = "'.$arr_vh[$k]['nseat'].'",`modalidad` = '.$arr_vh[$k]['modality'].',
-								`valor_asegurado` = '.$arr_vh[$k]['value-insured'].', `tasa` = '.$arr_vh[$k]['rate'].',
-								`prima` = '.$arr_vh[$k]['premium'].', `facultativo` = '.(int)$arr_vh[$k]['FAC'].',
-								`motivo_facultativo` = "'.$arr_vh[$k]['reason'].'", `aprobado` = '.(int)$arr_vh[$k]['approved'].',
-								`leido` = FALSE, `vh_archivo` = "'.$arr_vh[$k]['attached'].'"
+							set id_tipo_vh = "'.$arr_vh[$k]['type-vehicle'].'", 
+								categoria = "'.$arr_vh[$k]['category'].'", id_marca = "'.$arr_vh[$k]['make'].'", 
+								id_modelo = "'.$arr_vh[$k]['model'].'", anio = '.$arr_vh[$k]['year'].', 
+								placa = "'.$arr_vh[$k]['plate'].'", uso = "'.$arr_vh[$k]['use'].'", 
+								traccion = "'.$arr_vh[$k]['traction'].'", km = "'.$arr_vh[$k]['km'].'", 
+								color = "'.$arr_vh[$k]['color'].'", motor = "'.$arr_vh[$k]['motor'].'", 
+								chasis = "'.$arr_vh[$k]['chassis'].'", cap_ton = "'.$arr_vh[$k]['capton'].'", 
+								no_asiento = "'.$arr_vh[$k]['nseat'].'",modalidad = '.$arr_vh[$k]['modality'].',
+								valor_asegurado = '.$arr_vh[$k]['value-insured'].', tasa = '.$arr_vh[$k]['rate'].',
+								prima = '.$arr_vh[$k]['premium'].', facultativo = '.(int)$arr_vh[$k]['FAC'].',
+								motivo_facultativo = "'.$arr_vh[$k]['reason'].'", aprobado = '.(int)$arr_vh[$k]['approved'].',
+								leido = FALSE, vh_archivo = "'.$arr_vh[$k]['attached'].'"
 							where id_vehiculo = "'.$arr_vh[$k]['idvh'].'" and id_emision = "'.$ide.'" ;';
 						}
 						
