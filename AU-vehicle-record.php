@@ -72,6 +72,9 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
             $dv_model = base64_decode($dv_model);
         }
 
+        $dv_motor = $link->real_escape_string(trim($_POST['dv-motor']));
+        $dv_color = $link->real_escape_string(trim($_POST['dv-color']));
+        $dv_nseat = $link->real_escape_string(trim($_POST['dv-nseat']));
         $dv_year = $link->real_escape_string(trim($_POST['dv-year']));
         if($dv_year === 'YEAR') {
             $dv_year = $link->real_escape_string(trim($_POST['dv-year-other']));
@@ -82,9 +85,10 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
             $dv_year = base64_decode($dv_year);
         }
         $dv_plate = $link->real_escape_string(trim($_POST['dv-plate']));
+        $dv_displacement = $link->real_escape_string(trim($_POST['dv-displacement']));
+        $dv_chassis = $link->real_escape_string(trim($_POST['dv-chassis']));
         $dv_use = $link->real_escape_string(trim(base64_decode($_POST['dv-use'])));
         $dv_traction = $link->real_escape_string(trim(base64_decode($_POST['dv-traction'])));
-        $dv_zero_km = $link->real_escape_string(trim(base64_decode($_POST['dv-zero-km'])));
 
         $dv_plaza = $link->real_escape_string(trim($_POST['dv-plaza']));
 		$dv_modality = 'null';
@@ -132,17 +136,21 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 
                         $sql = 'insert into s_au_cot_detalle
                         (id_vehiculo, id_cotizacion, id_tipo_vh,
-	                        plaza, id_marca, id_modelo,
-	                        anio, placa, uso, traccion,
-	                        km, modalidad, valor_asegurado,
-	                        facultativo, motivo_facultativo)
+	                        plaza, id_marca, id_modelo, motor, anio, 
+	                        placa, no_asiento, cilindrada, chasis, 
+	                        uso, traccion, color, km, modalidad, 
+	                        valor_asegurado, facultativo, motivo_facultativo)
                         values
-                        ("' . $idVh . '", "' . $idc . '", "' . $dv_type_vehicle . '",
-	                        "' . $dv_plaza . '", "' . $dv_make . '", "' . $dv_model . '",
-	                        "' . $dv_year . '", "' . $dv_plate . '", "' . $dv_use . '", 
-	                        "' . $dv_traction . '", "' . $dv_zero_km . '", 
-	                        ' . $dv_modality . ', "' . $dv_value_insured . '",
-	                        "' . (int)$_FAC . '", "' . $reason . '") ;';
+                        ("' . $idVh . '", "' . $idc . '", 
+                        	"' . $dv_type_vehicle . '", "' . $dv_plaza . '", 
+                        	"' . $dv_make . '", "' . $dv_model . '",
+	                        "' . $dv_motor . '", "' . $dv_year . '", 
+	                        "' . $dv_plate . '", "' . $dv_nseat . '", 
+	                        "' . $dv_displacement . '", "' . $dv_chassis . '", 
+	                        "' . $dv_use . '", "' . $dv_traction . '", 
+	                        "' . $dv_color . '", "", ' . $dv_modality . ', 
+	                        "' . $dv_value_insured . '", "' . (int)$_FAC . '", 
+	                        "' . $reason . '") ;';
 						
 						if($link->query($sql)){
 							$arrAU[0] = 1;
@@ -160,11 +168,15 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
                             sdd.plaza = "' . $dv_plaza . '",
                             sdd.id_marca = "' . $dv_make . '",
                             sdd.id_modelo = "' . $dv_model . '",
+                            sdd.motor = "' . $dv_motor . '",
                             sdd.anio = "' . $dv_year . '",
                             sdd.placa = "' . $dv_plate . '",
+                            sdd.no_asiento = "' . $dv_nseat . '",
+                            sdd.cilindrada = "' . $dv_displacement . '",
+                            sdd.chasis = "' . $dv_chassis . '",
                             sdd.uso = "' . $dv_use . '",
                             sdd.traccion = "' . $dv_traction . '",
-                            sdd.km = "' . $dv_zero_km . '",
+                            sdd.color = "' . $dv_color . '",
                             sdd.modalidad = ' . $dv_modality . ',
                             sdd.valor_asegurado = "' . $dv_value_insured . '",
                             sdd.facultativo = "' . (int)$_FAC . '",

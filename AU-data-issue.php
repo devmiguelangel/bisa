@@ -107,7 +107,6 @@ switch($sw){
 			"" as cl_adjunto,
 			sad.id_vehiculo as idvh,
 			sad.id_tipo_vh as vh_tipo_vehiculo,
-			"" as vh_categoria,
 			sad.id_marca as vh_marca,
 			sad.id_modelo as vh_modelo,
 			sad.anio as vh_anio,
@@ -117,6 +116,8 @@ switch($sw){
 			sad.km as vh_km,
 			sad.modalidad as vh_modalidad,
 			sad.valor_asegurado as vh_valor_asegurado,
+			sad.tasa as vh_tasa,
+			sad.prima as vh_prima,
 			"" as vh_adjunto
 		from
 			s_au_cot_cabecera as sac
@@ -182,7 +183,6 @@ if($sw !== 1){
 		scl.ci_archivo as cl_adjunto,
 		sad.id_vehiculo as idvh,
 		sad.id_tipo_vh as vh_tipo_vehiculo,
-		sad.categoria as vh_categoria,
 		sad.id_marca as vh_marca,
 		sad.id_modelo as vh_modelo,
 		sad.anio as vh_anio,
@@ -253,8 +253,14 @@ function validarRealf(dat){
 }
 </script>
 <h3 id="issue-title"><?=$title;?></h3>
-<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('AU');?>" class="fancybox fancybox.ajax btn-see-slip">Ver Slip Cotización</a>
-<form id="fde-issue" name="fde-issue" action="" method="post" class="form-quote form-customer" enctype="multipart/form-data">
+<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
+	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
+	base64_encode('AU');?>" class="fancybox fancybox.ajax btn-see-slip">
+	Ver Slip Cotización
+</a>
+
+<form id="fde-issue" name="fde-issue" action="" method="post" 
+	class="form-quote form-customer" enctype="multipart/form-data">
 <?php
 $cont = 0;
 
@@ -317,47 +323,62 @@ if($rs->data_seek(0) === TRUE){
 	<h4>Datos del Prestatario</h4>
 <?php
 if($sw > 1){
-	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" value="'.base64_encode($row['idcl']).'" class="required">';
+	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" 
+		value="'.base64_encode($row['idcl']).'" class="required">';
 }
 ?>
-    <input type="hidden" id="dc-type-client" name="dc-type-client" value="<?=base64_encode($cl_type_client);?>">
+    <input type="hidden" id="dc-type-client" name="dc-type-client" 
+    	value="<?=base64_encode($cl_type_client);?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
             <label>Apellido Paterno: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-ln-patern" name="dc-ln-patern" autocomplete="off" value="<?=$row['cl_paterno'];?>" class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+                <input type="text" id="dc-ln-patern" name="dc-ln-patern" 
+                	autocomplete="off" value="<?=$row['cl_paterno'];?>" 
+                		class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
             </div><br>
             
             <label>Apellido Materno: </label>
             <div class="content-input">
-                <input type="text" id="dc-ln-matern" name="dc-ln-matern" autocomplete="off" value="<?=$row['cl_materno'];?>" class="text fbin" <?=$read_new;?>>
+                <input type="text" id="dc-ln-matern" name="dc-ln-matern" 
+                	autocomplete="off" value="<?=$row['cl_materno'];?>" 
+                		class="text fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Nombres: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-name" name="dc-name" autocomplete="off" value="<?=$row['cl_nombre'];?>" class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+                <input type="text" id="dc-name" name="dc-name" 
+                	autocomplete="off" value="<?=$row['cl_nombre'];?>" 
+                		class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
             </div><br>
             
             <label>Apellido de Casada: </label>
             <div class="content-input">
-                <input type="text" id="dc-ln-married" name="dc-ln-married" autocomplete="off" value="<?=$row['cl_ap_casada'];?>" class="not-required text fbin" <?=$read_new;?>>
+                <input type="text" id="dc-ln-married" name="dc-ln-married" 
+                	autocomplete="off" value="<?=$row['cl_ap_casada'];?>" 
+                		class="not-required text fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Documento de Identidad: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-doc-id" name="dc-doc-id" autocomplete="off" value="<?=$row['cl_dni'];?>" class="<?=$read_nat;?> dni fbin field-person" <?=$read_new.$read_edit;?>>
+                <input type="text" id="dc-doc-id" name="dc-doc-id" 
+                	autocomplete="off" value="<?=$row['cl_dni'];?>" 
+                	class="<?=$read_nat;?> dni fbin field-person" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Complemento: </label>
             <div class="content-input">
-                <input type="text" id="dc-comp" name="dc-comp" autocomplete="off" value="<?=$row['cl_complemento'];?>" class="not-required dni fbin" style="width:60px;" <?=$read_new;?>>
+                <input type="text" id="dc-comp" name="dc-comp" 
+                	autocomplete="off" value="<?=$row['cl_complemento'];?>" 
+                	class="not-required dni fbin" style="width:60px;" <?=$read_new;?>>
             </div><br>
             
             <label>Extensión: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-ext" name="dc-ext" class="<?=$read_nat;?> fbin field-person <?=$read_new.$read_edit;?>" <?=$read_new;?> >
+                <select id="dc-ext" name="dc-ext" class="<?=$read_nat;?> fbin 
+                	field-person <?=$read_new.$read_edit;?>" <?=$read_new;?> >
                     <option value="">Seleccione...</option>
 <?php
 $rsDep = null;
@@ -381,7 +402,8 @@ if ($rsDep->data_seek(0) === TRUE) {
             </div><br>
             <label>Género: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-gender" name="dc-gender" class="<?=$read_nat;?> fbin field-person <?=$read_new;?>" <?=$read_new;?>>
+                <select id="dc-gender" name="dc-gender" class="<?=$read_nat;?> 
+                	fbin field-person <?=$read_new;?>" <?=$read_new;?>>
                     <option value="">Seleccione...</option>
 <?php
 $arr_gender = $link->gender;
@@ -399,12 +421,15 @@ for($i = 0; $i < count($arr_gender); $i++){
             
             <label>Fecha de Nacimiento: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-date-birth" name="dc-date-birth" autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" class="<?=$read_nat;?> fbin date field-person" readonly style="cursor:pointer;" <?=$read_new;?>>
+                <input type="text" id="dc-date-birth" name="dc-date-birth" 
+                	autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" 
+                	class="<?=$read_nat;?> fbin date field-person" readonly style="cursor:pointer;" <?=$read_new;?>>
             </div><br>
             
             <label>Lugar de Residencia: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-place-res" name="dc-place-res" class="<?=$read_nat;?> fbin " <?=$read_save;?>>
+                <select id="dc-place-res" name="dc-place-res" 
+                	class="<?=$read_nat;?> fbin " <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if ($rsDep->data_seek(0) === TRUE) {
@@ -423,28 +448,37 @@ if ($rsDep->data_seek(0) === TRUE) {
             </div><br>
             <label>Localidad: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-locality" name="dc-locality" autocomplete="off" value="<?=$row['cl_localidad'];?>" class="<?=$read_nat;?> text-2 fbin" <?=$read_save;?>>
+                <input type="text" id="dc-locality" name="dc-locality" 
+                	autocomplete="off" value="<?=$row['cl_localidad'];?>" 
+                	class="<?=$read_nat;?> text-2 fbin" <?=$read_save;?>>
             </div><br>
             
             <label>Teléfono de domicilio: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-phone-1" name="dc-phone-1" autocomplete="off" value="<?=$row['cl_tel_domicilio'];?>" class="<?=$read_nat;?> phone fbin" <?=$read_new;?>>
+                <input type="text" id="dc-phone-1" name="dc-phone-1" 
+                	autocomplete="off" value="<?=$row['cl_tel_domicilio'];?>" 
+                	class="<?=$read_nat;?> phone fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Teléfono celular: </label>
             <div class="content-input">
-                <input type="text" id="dc-phone-2" name="dc-phone-2" autocomplete="off" value="<?=$row['cl_tel_celular'];?>" class="not-required phone fbin" <?=$read_new;?>>
+                <input type="text" id="dc-phone-2" name="dc-phone-2" 
+                	autocomplete="off" value="<?=$row['cl_tel_celular'];?>" 
+                	class="not-required phone fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Email: </label>
 			<div class="content-input">
-				<input type="text" id="dc-email" name="dc-email" autocomplete="off" value="<?=$row['cl_email'];?>" class="not-required email fbin" <?=$read_new;?>>
+				<input type="text" id="dc-email" name="dc-email" 
+					autocomplete="off" value="<?=$row['cl_email'];?>" 
+					class="not-required email fbin" <?=$read_new;?>>
 			</div><br>
         </div><!--
         --><div class="form-col">
 			<label>Avenida o Calle: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-avc" name="dc-avc" class="<?=$read_nat;?> fbin <?=$read_save;?>" <?=$read_save;?>>
+                <select id="dc-avc" name="dc-avc" 
+                	class="<?=$read_nat;?> fbin <?=$read_save;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 $arr_AC = $link->avc;
@@ -461,16 +495,20 @@ for($i = 0; $i < count($arr_AC); $i++){
             </div><br>
             
             <label>Dirección domicilio: <span>*</span></label><br>
-            <textarea id="dc-address-home" name="dc-address-home" class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
+            <textarea id="dc-address-home" name="dc-address-home" 
+            	class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
             
             <label>Número de domicilio: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-nhome" name="dc-nhome" autocomplete="off" value="<?=$cl_nd;?>" class="<?=$read_nat;?> number fbin" <?=$read_save;?>>
+                <input type="text" id="dc-nhome" name="dc-nhome" 
+                	autocomplete="off" value="<?=$cl_nd;?>" 
+                	class="<?=$read_nat;?> number fbin" <?=$read_save;?>>
             </div><br>
             
             <label>Ocupación: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-occupation" name="dc-occupation" class="<?=$read_nat;?> fbin " <?=$read_save;?>>
+                <select id="dc-occupation" name="dc-occupation" 
+                	class="<?=$read_nat;?> fbin " <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'AU')) !== FALSE) {
@@ -487,14 +525,18 @@ if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'AU')) !== FALSE) {
             </div><br>
             
             <label style="width:auto;">Descripción Ocupación: <span>*</span></label><br>
-            <textarea id="dc-desc-occ" name="dc-desc-occ" class="<?=$read_nat;?> fbin" <?=$read_save;?> ><?=$row['cl_desc_ocupacion'];?></textarea><br>
+            <textarea id="dc-desc-occ" name="dc-desc-occ" 	
+            	class="<?=$read_nat;?> fbin" <?=$read_save;?> ><?=$row['cl_desc_ocupacion'];?></textarea><br>
             
             <label>Dirección laboral: <span>*</span></label><br>
-            <textarea id="dc-address-work" name="dc-address-work" class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir_office;?></textarea><br>
+            <textarea id="dc-address-work" name="dc-address-work" 
+            	class="<?=$read_nat;?> fbin" <?=$read_save;?>><?=$cl_dir_office;?></textarea><br>
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
-                <input type="text" id="dc-phone-office" name="dc-phone-office" autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" class="not-required phone fbin" <?=$read_save;?>>
+                <input type="text" id="dc-phone-office" name="dc-phone-office" 
+                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
+                	class="not-required phone fbin" <?=$read_save;?>>
             </div><br>
         </div><br>
     </div>
@@ -504,17 +546,23 @@ if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'AU')) !== FALSE) {
     	<div class="form-col">
             <label style="width:auto;">Nombre o Razón Social: <span>*</span></label><br>
             <div class="content-input">
-                <textarea id="dc-company-name" name="dc-company-name" class="<?=$read_jur;?> fbin field-company" <?=$read_new;?>><?=$row['cl_razon_social'];?></textarea><br>
+                <textarea id="dc-company-name" name="dc-company-name" 
+                	class="<?=$read_jur;?> fbin field-company" 
+                	<?=$read_new;?>><?=$row['cl_razon_social'];?></textarea><br>
             </div><br>
             
             <label>NIT: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" value="<?=$row['cl_dni'];?>" class="<?=$read_jur;?> dni fbin field-company" <?=$read_new.$read_edit;?>>
+                <input type="text" id="dc-nit" name="dc-nit" 
+                	autocomplete="off" value="<?=$row['cl_dni'];?>" 
+                	class="<?=$read_jur;?> dni fbin field-company" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Departamento: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-depto" name="dc-depto" class="<?=$read_jur;?> fbin field-company <?=$read_new.$read_edit;?>" <?=$read_save;?>>
+                <select id="dc-depto" name="dc-depto" 
+                	class="<?=$read_jur;?> fbin field-company 
+                	<?=$read_new.$read_edit;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if ($rsDep->data_seek(0) === TRUE) {
@@ -534,18 +582,23 @@ if ($rsDep->data_seek(0) === TRUE) {
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
-                <input type="text" id="dc-company-phone-office" name="dc-company-phone-office" autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" class="not-required phone  fbin" <?=$read_new;?>>
+                <input type="text" id="dc-company-phone-office" name="dc-company-phone-office" 
+                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
+                	class="not-required phone  fbin" <?=$read_new;?>>
             </div><br>
                 
 			<label>Email: </label>
             <div class="content-input">
-                 <input type="text" id="dc-company-email" name="dc-company-email" autocomplete="off" value="<?=$row['cl_email'];?>" class="not-required email fbin" <?=$read_new;?>>
+                 <input type="text" id="dc-company-email" name="dc-company-email" 
+                 	autocomplete="off" value="<?=$row['cl_email'];?>" 
+                 	class="not-required email fbin" <?=$read_new;?>>
             </div><br>
         </div><!--
         --><div class="form-col">
         	<label>Avenida o Calle: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-company-avc" name="dc-company-avc" class="<?=$read_jur;?> fbin <?=$read_save;?>" <?=$read_save;?>>
+                <select id="dc-company-avc" name="dc-company-avc" 
+                	class="<?=$read_jur;?> fbin <?=$read_save;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 $arr_AC = $link->avc;
@@ -562,11 +615,14 @@ for($i = 0; $i < count($arr_AC); $i++){
             </div><br>
             
             <label>Dirección domicilio: <span>*</span></label><br>
-			<textarea id="dc-company-address-home" name="dc-company-address-home" class="<?=$read_jur;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
+			<textarea id="dc-company-address-home" name="dc-company-address-home" 
+				class="<?=$read_jur;?> fbin" <?=$read_save;?>><?=$cl_dir;?></textarea><br>
             
             <label>Número de domicilio: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-company-nhome" name="dc-company-nhome" autocomplete="off" value="<?=$cl_nd;?>" class="<?=$read_jur;?> number fbin" <?=$read_save;?>>
+                <input type="text" id="dc-company-nhome" name="dc-company-nhome" 
+                	autocomplete="off" value="<?=$cl_nd;?>" 
+                	class="<?=$read_jur;?> number fbin" <?=$read_save;?>>
             </div><br>
         </div>
     </div>
@@ -576,16 +632,19 @@ for($i = 0; $i < count($arr_AC); $i++){
 ?>
 	<hr>
     <div class="form-col">
-	    <input type="hidden" id="dc-attached" name="dc-attached" value="<?=base64_encode($row['cl_adjunto']);?>" class="required">
+	    <input type="hidden" id="dc-attached" name="dc-attached" 
+	    	value="<?=base64_encode($row['cl_adjunto']);?>" class="required">
         <div class="content-input" style="width:100%; text-align:center;">
 <?php
 if($sw === 2 || $sw === 3) {
-	echo '<a href="files/'.$row['cl_adjunto'].'" target="_blank" class="attached-link">Documentación del Prestatario</a><br><br>';
+	echo '<a href="files/'.$row['cl_adjunto'].'" target="_blank" class="attached-link">
+		Documentación del Prestatario</a><br><br>';
 }
 
 if($sw !== 2) {
 ?>
-			<a href="javascript:;" id="a-dc-attached" class="attached">Adjuntar documentación del Prestatario</a>
+			<a href="javascript:;" id="a-dc-attached" 
+				class="attached">Adjuntar documentación del Prestatario</a>
             <div class="attached-mess">
                 El tamaño máximo del archivo es de 20Mb. <br>
                 El formato del archivo a subir debe ser JPG, PNG, PDF, RAR ó ZIP
@@ -652,10 +711,12 @@ if($rs->data_seek(0) === TRUE){
         	<td>
 <?php
 if($sw > 1){
-	echo '<input type="hidden" id="dv-'.$k.'-idvh" name="dv-'.$k.'-idvh" value="'.base64_encode($rowVh['idvh']).'" class="required">';
+	echo '<input type="hidden" id="dv-' . $k . '-idvh" name="dv-' . $k 
+		. '-idvh" value="' . base64_encode($rowVh['idvh']) . '" class="required">';
 }
 ?>
-            	<select id="dv-<?=$k;?>-type-vehicle" name="dv-<?=$k;?>-type-vehicle" class="required fbin " <?=$read_save;?>>
+            	<select id="dv-<?=$k;?>-type-vehicle" name="dv-<?=$k;?>-type-vehicle" 
+            		class="required fbin " <?=$read_save;?>>
             		<option value="">Seleccione...</option>
 <?php
 if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
@@ -671,7 +732,8 @@ if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
 				</select>
             </td>
             <td>
-            	<select data-rel="<?=$k;?>" id="dv-<?=$k;?>-make" name="dv-<?=$k;?>-make" class="dv-make required fbin " <?=$read_save;?>>
+            	<select data-rel="<?=$k;?>" id="dv-<?=$k;?>-make" 
+            		name="dv-<?=$k;?>-make" class="dv-make required fbin " <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rsMa = $link->get_make($_SESSION['idEF'])) !== FALSE){
@@ -687,7 +749,8 @@ if(($rsMa = $link->get_make($_SESSION['idEF'])) !== FALSE){
 				</select>
             </td>
             <td>
-            	<select id="dv-<?=$k;?>-model" name="dv-<?=$k;?>-model" class="required fbin " <?=$read_save;?>>
+            	<select id="dv-<?=$k;?>-model" name="dv-<?=$k;?>-model" 
+            		class="required fbin " <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rsMo = $link->get_model($_SESSION['idEF'], $rowVh['vh_marca'])) !== FALSE){
@@ -704,7 +767,8 @@ echo '<option value="OTHER">OTRO</option>';
 				</select>
             </td>
             <td>	
-            	<select id="dv-<?=$k;?>-year" name="dv-<?=$k;?>-year" class="required fbin <?=$read_edit;?>" <?=$read_save;?>>
+            	<select id="dv-<?=$k;?>-year" name="dv-<?=$k;?>-year" 
+            		class="required fbin <?=$read_edit;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if(($rowYear = $link->get_year_cot($_SESSION['idEF'])) !== FALSE){
@@ -731,8 +795,8 @@ if(($rowYear = $link->get_year_cot($_SESSION['idEF'])) !== FALSE){
 				</select>
             </td>
             <td>
-            	<select id="dv-<?=$k;?>-use" name="dv-<?=$k;?>-use" class="required fbin " <?=$read_save;?>>
-    	        	<option value="">Seleccione...</option>
+            	<select id="dv-<?=$k;?>-use" name="dv-<?=$k;?>-use" 
+            		class="required fbin " <?=$read_save;?>>
 <?php
 $arr_use = $link->use;
 for($i = 0; $i < count($arr_use); $i++){
@@ -747,10 +811,13 @@ for($i = 0; $i < count($arr_use); $i++){
 				</select>
             </td>
             <td>
-            	<input type="text" id="dv-<?=$k;?>-plate" name="dv-<?=$k;?>-plate" autocomplete="off" value="<?=$rowVh['vh_placa'];?>" class="required text-2 fbin" <?=$read_save;?> >
+            	<input type="text" id="dv-<?=$k;?>-plate" name="dv-<?=$k;?>-plate" 
+            		autocomplete="off" value="<?=$rowVh['vh_placa'];?>" 
+            		class="required text-2 fbin" <?=$read_save;?> >
             </td>
             <td>
-            	<select id="dv-<?=$k;?>-traction" name="dv-<?=$k;?>-traction" class="required fbin " <?=$read_save;?>>
+            	<select id="dv-<?=$k;?>-traction" name="dv-<?=$k;?>-traction" 
+            		class="required fbin " <?=$read_save;?>>
             		<option value="">Seleccione...</option>
 <?php
 $arr_traction = $link->traction;
@@ -766,7 +833,8 @@ for($i = 0; $i < count($arr_traction); $i++){
 				</select>
             </td>
             <td>
-            	<select id="dv-<?=$k;?>-zero-km" name="dv-<?=$k;?>-zero-km" class="required fbin " <?=$read_save;?>>
+            	<select id="dv-<?=$k;?>-zero-km" name="dv-<?=$k;?>-zero-km" 
+            		class="required fbin " <?=$read_save;?>>
     	        	<option value="">Seleccione...</option>
 <?php
 $arr_zero_km = array(0 => 'SI|SI', 1 => 'NO|NO');
@@ -793,60 +861,62 @@ for($i = 0; $i < count($arr_zero_km); $i++){
         </tr>
         <tr valign="top">
         	<td>
-            	<input type="text" id="dv-<?=$k;?>-color" name="dv-<?=$k;?>-color" autocomplete="off" value="<?=$vh_color;?>" class="required text-2 fbin" <?=$read_save;?>>
+            	<input type="text" id="dv-<?=$k;?>-color" name="dv-<?=$k;?>-color" 
+            		autocomplete="off" value="<?=$vh_color;?>" 
+            		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
-            	<input type="text" id="dv-<?=$k;?>-motor" name="dv-<?=$k;?>-motor" autocomplete="off" value="<?=$vh_motor;?>" class="required text-2 fbin" <?=$read_save;?>>
+            	<input type="text" id="dv-<?=$k;?>-motor" name="dv-<?=$k;?>-motor" 
+            		autocomplete="off" value="<?=$vh_motor;?>" 
+            		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
-            	<input type="text" id="dv-<?=$k;?>-chassis" name="dv-<?=$k;?>-chassis" autocomplete="off" value="<?=$vh_chassis;?>" class="required text-2 fbin" <?=$read_save;?>>
+            	<input type="text" id="dv-<?=$k;?>-chassis" name="dv-<?=$k;?>-chassis" 
+            		autocomplete="off" value="<?=$vh_chassis;?>" 
+            		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
-            	<input type="text" id="dv-<?=$k;?>-capton" name="dv-<?=$k;?>-capton" autocomplete="off" value="<?=$vh_capton;?>" class="required text-2 fbin" <?=$read_save;?>>
+            	<input type="text" id="dv-<?=$k;?>-capton" name="dv-<?=$k;?>-capton" 
+            		autocomplete="off" value="<?=$vh_capton;?>" 
+            		class="required text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
-            	<input type="text" id="dv-<?=$k;?>-nseat" name="dv-<?=$k;?>-nseat" autocomplete="off" value="<?=$vh_nseat;?>" class="required number fbin" <?=$read_save;?>>
+            	<input type="text" id="dv-<?=$k;?>-nseat" name="dv-<?=$k;?>-nseat" 
+            		autocomplete="off" value="<?=$vh_nseat;?>" 
+            		class="required number fbin" <?=$read_save;?>>
             </td>
             <td>	
-            	<span class="value"><?=number_format($rowVh['vh_valor_asegurado'], 2, '.', ',');?> USD.</span>
+            	<span class="value">
+            		<?=number_format($rowVh['vh_valor_asegurado'], 2, '.', ',');?> USD.
+        		</span>
             </td>
             <td colspan="2">
 <?php
-if($sw === 1) {
-	if(($rowTasa = $link->get_tasa_year_au($_GET['cia'], base64_encode($rowVh['id_ef']), $rowVh['vh_categoria'], $YEAR_FINAL, $rowVh['c_forma_pago'])) !== FALSE){
-		$TASA = $rowTasa['t_tasa_final'];
-		$PRIMA = ($rowVh['vh_valor_asegurado'] * $TASA) / 100;
-	}
-} else {
 	$TASA = $rowVh['vh_tasa'];
 	$PRIMA = $rowVh['vh_prima'];
-}
 ?>
 				<span class="value value-premium"><?=number_format($PRIMA, 2, '.', ',');?> USD.</span>
-                <input type="hidden" id="dv-<?=$k;?>-category" name="dv-<?=$k;?>-category" value="<?=base64_encode($rowVh['vh_categoria']);?>" class="required">
-                <input type="hidden" id="dv-<?=$k;?>-value-insured" name="dv-<?=$k;?>-value-insured" value="<?=base64_encode($rowVh['vh_valor_asegurado']);?>" class="required"> 
-                <input type="hidden" id="dv-<?=$k;?>-rate" name="dv-<?=$k;?>-rate" value="<?=base64_encode($TASA);?>" class="required">
-                <input type="hidden" id="dv-<?=$k;?>-premium" name="dv-<?=$k;?>-premium" value="<?=base64_encode($PRIMA);?>" class="required">
-<?php
-if ($rowVh['vh_modalidad'] !== null) {
-	$swMo = true;
-?>
-				<input type="hidden" id="dv-<?=$k;?>-modality" name="dv-<?=$k;?>-modality" value="<?=base64_encode($rowVh['vh_modalidad']);?>" >
-<?php
-}
-?>
+                <input type="hidden" id="dv-<?=$k;?>-value-insured" name="dv-<?=$k;?>-value-insured" 
+                	value="<?=base64_encode($rowVh['vh_valor_asegurado']);?>" class="required"> 
+                <input type="hidden" id="dv-<?=$k;?>-rate" name="dv-<?=$k;?>-rate" 
+                	value="<?=base64_encode($TASA);?>" class="required">
+                <input type="hidden" id="dv-<?=$k;?>-premium" name="dv-<?=$k;?>-premium" 
+                	value="<?=base64_encode($PRIMA);?>" class="required">
 			</td>
         </tr>
         <tr class="thead">
         	<td colspan="8">
-            	<input type="hidden" id="dv-<?=$k;?>-attached" name="dv-<?=$k;?>-attached" value="<?=base64_encode($rowVh['vh_adjunto']);?>" class="required">
+            	<input type="hidden" id="dv-<?=$k;?>-attached" name="dv-<?=$k;?>-attached" 
+            		value="<?=base64_encode($rowVh['vh_adjunto']);?>" class="required">
 <?php
 if($sw === 2 || $sw === 3) {
-	echo '<a href="files/'.$rowVh['vh_adjunto'].'" target="_blank" class="attached-link">Documentación del Vehículo</a>';
+	echo '<a href="files/'.$rowVh['vh_adjunto'].'" target="_blank" 
+		class="attached-link">Documentación del Vehículo</a>';
 }
 if($sw !== 2) {
 ?>
-			<a href="javascript:;" id="a-dv-<?=$k;?>-attached" class="attached">Adjuntar documentación del Vehículo</a>
+			<a href="javascript:;" id="a-dv-<?=$k;?>-attached" 
+				class="attached">Adjuntar documentación del Vehículo</a>
             <div class="attached-mess">
                 El tamaño máximo del archivo es de 20Mb. <br>
                 El formato del archivo a subir debe ser JPG, PNG, PDF, RAR ó ZIP
@@ -936,13 +1006,15 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
         <div class="form-col">
             <label>Facturar a: <span>*</span></label><br>
             <div class="content-input">
-                <textarea id="bl-name" name="bl-name" class="required fbin" <?=$read_new;?>><?=$row['facturacion_nombre'];?></textarea><br>
+                <textarea id="bl-name" name="bl-name" class="required fbin" 
+                	<?=$read_new;?>><?=$row['facturacion_nombre'];?></textarea><br>
             </div><br>
         </div><!--
         --><div class="form-col">
             <label>NIT: <span>*</span></label><br>
             <div class="content-input">
-                <input type="text" id="bl-nit" name="bl-nit" autocomplete="off" value="<?=$row['cl_dni'];?>" class="required dni fbin field-company" <?=$read_new;?>>
+                <input type="text" id="bl-nit" name="bl-nit" autocomplete="off" 
+                	value="<?=$row['cl_dni'];?>" class="required dni fbin field-company" <?=$read_new;?>>
             </div><br>
         </div>
     </div>

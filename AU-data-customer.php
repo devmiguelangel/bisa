@@ -44,6 +44,9 @@ $(document).ready(function(e) {
 				$("#form-company").find('.field-company')
 					.removeClass('required')
 					.addClass('not-required');
+
+				$("#form-company").find('input[type="text"], textarea')
+					.prop('value', '');
 				break;
 			case 'JUR':
 				$("#dsc-type-client").prop('value', 'JUR');
@@ -54,6 +57,9 @@ $(document).ready(function(e) {
 				$("#form-person").find('.field-person')
 					.removeClass('required')
 					.addClass('not-required');
+
+				$("#form-person").find('input[type="text"], textarea')
+					.prop('value', '');
 				break;
 			}
 		}else{
@@ -82,12 +88,16 @@ $dc_comp = '';
 $dc_ext = '';
 $dc_depto = '';
 $dc_birth = '';
-$dc_gender = '';
+$dc_address_home = '';
+$dc_address_work = '';
 $dc_phone_1 = '';
 $dc_phone_2 = '';
 $dc_email = '';
 $dc_company_email = '';
 $dc_phone_office = '';
+$dc_activity = '';
+$dc_executive = '';
+$dc_position = '';
 
 
 $title_btn = 'Cotiza tu mejor seguro';
@@ -125,6 +135,11 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 			scl.complemento as cl_complemento,
 			scl.extension as cl_extension,
 			scl.fecha_nacimiento as cl_fecha_nacimiento,
+			scl.direccion_domicilio as cl_direccion_domicilio,
+			scl.direccion_laboral as cl_direccion_laboral,
+			scl.actividad as cl_actividad,
+			scl.ejecutivo as cl_ejecutivo,
+			scl.cargo as cl_cargo,
 			scl.telefono_domicilio as cl_tel_domicilio,
 			scl.telefono_celular as cl_tel_celular,
 			scl.telefono_oficina as cl_tel_oficina,
@@ -135,8 +150,8 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 				inner join
 			s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
 		where
-			scl.ci = "'.$dni.'"
-				and scl.tipo = '.$type_client.'
+			scl.ci = "' . $dni . '"
+				and scl.tipo = ' . $type_client . '
 				and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
 				and sef.activado = true
 		limit 0 , 1
@@ -156,6 +171,11 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 			$dc_comp = $rowSc['cl_complemento'];
 			$dc_depto = $dc_ext = $rowSc['cl_extension'];
 			$dc_birth = $rowSc['cl_fecha_nacimiento'];
+			$dc_address_home = $rowSc['cl_direccion_domicilio'];
+			$dc_address_work = $rowSc['cl_direccion_laboral'];
+			$dc_activity = $rowSc['cl_actividad'];
+			$dc_executive = $rowSc['cl_ejecutivo'];
+			$dc_position = $rowSc['cl_cargo'];
 			$dc_phone_1 = $rowSc['cl_tel_domicilio'];
 			$dc_phone_2 = $rowSc['cl_tel_celular'];
 			$dc_company_email = $dc_email = $rowSc['cl_email'];
@@ -234,13 +254,6 @@ for($i = 0; $i < count($arr_type_client); $i++){
                 	class="not-required text fbin">
             </div><br>
             
-            <label>Apellido de Casada: </label>
-            <div class="content-input">
-                <input type="text" id="dc-ln-married" name="dc-ln-married" 
-                	autocomplete="off" value="<?=$dc_lnmarried;?>" 
-                	class="not-required text fbin">
-            </div><br>
-            
             <label>Documento de Identidad: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-doc-id" name="dc-doc-id" 
@@ -279,26 +292,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
-        </div><!--
-        --><div class="form-col">
-        	<label>Género: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-gender" name="dc-gender" class="<?=$require_nat;?> fbin field-person">
-                    <option value="">Seleccione...</option>
-<?php
-$arr_gender = $link->gender;
-for($i = 0; $i < count($arr_gender); $i++){
-	$gender = explode('|',$arr_gender[$i]);
-	if($gender[0] === $dc_gender) {
-		echo '<option value="'.$gender[0].'" selected>'.$gender[1].'</option>';
-	} else {
-		echo '<option value="'.$gender[0].'">'.$gender[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
-            
+
             <label>Fecha de Nacimiento: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-date-birth" name="dc-date-birth" 
@@ -306,12 +300,28 @@ for($i = 0; $i < count($arr_gender); $i++){
                 	class="<?=$require_nat;?> fbin date field-person" 
                 	readonly style="cursor:pointer;">
             </div><br>
-            
+        </div><!--
+        --><div class="form-col">
+        	<label>Dirección domicilio: <span>*</span></label><br>
+			<textarea id="dc-address-home" name="dc-address-home" 
+				class="fbin <?= $require_nat ;?> field-person"><?= $dc_address_home ;?></textarea><br>
+
+			<label>Dirección Laboral: <span></span></label><br>
+			<textarea id="dc-address-work" name="dc-address-work" 
+				class="not-required fbin"><?= $dc_address_work ;?></textarea><br>
+
             <label>Teléfono de domicilio: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-phone-1" name="dc-phone-1" 
                 	autocomplete="off" value="<?=$dc_phone_1;?>" 
                 	class="<?=$require_nat;?> phone fbin field-person">
+            </div><br>
+
+            <label>Teléfono de oficina: <span></span></label>
+            <div class="content-input">
+                <input type="text" id="dc-phone-office" name="dc-phone-office" 
+                	autocomplete="off" value="<?=$dc_phone_office;?>" 
+                	class="not-required phone fbin">
             </div><br>
             
             <label>Teléfono celular: </label>
@@ -363,14 +373,46 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
+			
+            <label>Dirección domicilio: <span></span></label><br>
+            <div class="content-input">
+                <textarea id="dc-address-home2" name="dc-address-home2" 
+					class="not-required fbin"><?= $dc_address_home ;?></textarea>
+            </div><br>
+			
+			<label>Dirección Laboral: <span>*</span></label><br>
+			<div class="content-input">
+				<textarea id="dc-address-work2" name="dc-address-work2" 
+					class="<?= $require_jur ;?> fbin field-company"><?= $dc_address_work ;?></textarea><br>
+			</div><br>
         </div><!--
         --><div class="form-col">
-        	<label>Teléfono oficina: </label>
-		<div class="content-input">
-			<input type="text" id="dc-phone-office" name="dc-phone-office" 
-				autocomplete="off" value="<?=$dc_phone_office;?>" 
-				class="not-required phone  fbin">
-		</div><br>
+        	<label>Actividad y/o Giro del Negocio: <span>*</span></label><br>
+			<div class="content-input">
+				<textarea id="dc-activity" name="dc-activity" 
+					class="<?= $require_jur ;?> fbin field-company"><?= $dc_activity ;?></textarea><br>
+			</div><br>
+
+			<label>Principal Ejecutivo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-executive" name="dc-executive" 
+					autocomplete="off" value="<?=$dc_executive;?>" 
+					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+			</div><br>
+
+			<label>Cargo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-position" name="dc-position" 
+					autocomplete="off" value="<?=$dc_position;?>" 
+					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+			</div><br>
+
+        	<label>Teléfono: </label>
+			<div class="content-input">
+				<input type="text" id="dc-phone-office2" name="dc-phone-office2" 
+					autocomplete="off" value="<?=$dc_phone_office;?>" 
+					class="not-required phone fbin">
+			</div><br>
             
             <label>Email: </label>
             <div class="content-input">
@@ -389,7 +431,7 @@ if ($rsDep->data_seek(0) === TRUE) {
         		value="1">&nbsp;&nbsp;Subrogada</label>
 		<label class="check" style="width:auto;">
         	<input type="radio" id="di-warranty-n" name="di-warranty" 
-        		value="2" checked>&nbsp;&nbsp;Voluntaria</label><br>
+        		value="0" checked>&nbsp;&nbsp;Voluntaria</label><br>
 	</div><br>
     
     <label>Modalidad de Pago: <span>*</span></label>

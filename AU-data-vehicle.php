@@ -115,12 +115,16 @@ $dv_plaza = '';
 $dv_make = '';
 $dv_model = '';
 $dv_model_other = '';
+$dv_motor = '';
+$dv_traction = '';
+$dv_color = '';
+$dv_nseat = '';
 $dv_year = '';
 $dv_year_other = '';
 $dv_plate = '';
+$dv_displacement = '';
+$dv_chassis = '';
 $dv_use = '';
-$dv_traction = '';
-$dv_zero_km = '';
 $dv_modality = '';
 $dv_value_insured = '';
 
@@ -139,12 +143,16 @@ if(isset($_GET['idVh'])){
 		sad.plaza as v_plaza,
 		sad.id_marca as v_marca,
 		sad.id_modelo as v_modelo,
-		sad.km as v_km,
+		sad.motor as v_motor,
+		sad.no_asiento as v_nasiento,
 		sad.modalidad as v_modalidad,
 		sad.anio as v_anio,
 		sad.placa as v_placa,
+		sad.cilindrada as v_cilindrada,
+		sad.chasis as v_chasis,
 		sad.uso as v_uso,
 		sad.traccion as v_traccion,
+		sad.color as v_color,
 		sad.valor_asegurado as v_valor_asegurado
 	from
 		s_au_cot_detalle as sad
@@ -171,12 +179,16 @@ if(isset($_GET['idVh'])){
 		$dv_make = $rowUp['v_marca'];
 		$dv_model = $rowUp['v_modelo'];
 		$dv_model_other = '';
+		$dv_motor = $rowUp['v_motor'];
 		$dv_year = (int)$rowUp['v_anio'];
 		$dv_year_other = '';
 		$dv_plate = $rowUp['v_placa'];
+		$dv_displacement = $rowUp['v_cilindrada'];
+		$dv_chassis = $rowUp['v_chasis'];
 		$dv_use = $rowUp['v_uso'];
 		$dv_traction = $rowUp['v_traccion'];
-		$dv_zero_km = $rowUp['v_km'];
+		$dv_color = $rowUp['v_color'];
+		$dv_nseat = $rowUp['v_nasiento'];
 		$dv_modality = $rowUp['v_modalidad'];
 		$dv_value_insured = (int)$rowUp['v_valor_asegurado'];
 	}
@@ -191,7 +203,7 @@ if($swVh === false && isset($_GET['idc'])){
 		stv.vehiculo as v_tipo_vehiculo,
 		sma.marca as v_marca,
 		smo.modelo as v_modelo,
-		sad.km as v_km,
+		sad.color as v_color,
 		sad.anio as v_anio,
 		sad.placa as v_placa,
 		sad.plaza as v_plaza,
@@ -241,7 +253,7 @@ if($swVh === false){
 					<td style="width:13%;">Vehículo</td>
 					<td style="width:14%;">Marca</td>
 					<td style="width:14%;">Modelo</td>
-					<td style="width:5%;">Cero Km.</td>
+					<td style="width:5%;">Color</td>
 					<td style="width:5%;">Año</td>
 					<td style="width:15%;">Placa</td>
 					<td style="width:5%;">Plaza de Circulación</td>
@@ -264,7 +276,7 @@ if($swVh === false){
 					<td><?= $rowVh['v_tipo_vehiculo'] ;?></td>
 					<td><?= $rowVh['v_marca'] ;?></td>
 					<td><?= $rowVh['v_modelo'] ;?></td>
-					<td><?= $rowVh['v_km'] ;?></td>
+					<td><?= $rowVh['v_color'] ;?></td>
 					<td><?= $rowVh['v_anio'] ;?></td>
 					<td><?= $rowVh['v_placa'] ;?></td>
 					<td><?= $link->plaza[$rowVh['v_plaza']] ;?></td>
@@ -309,18 +321,6 @@ if($nVh < $max_item || $swVh === true){
                     }
                 }
                 ?>
-            </select>
-        </div><br>
-
-        <label>Plaza de Circulación: <span>*</span></label>
-        <div class="content-input">
-            <select id="dv-plaza" name="dv-plaza" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php foreach ($link->plaza as $key => $value): $selected = ''; ?>
-                	<?php if ($dv_plaza === $key): $selected = 'selected'; ?>
-                	<?php endif ?>
-                  	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>';
-                <?php endforeach ?>
             </select>
         </div><br>
 
@@ -370,7 +370,67 @@ if($nVh < $max_item || $swVh === true){
 
         <label></label>
         <div class="content-input">
-            <input type="text" id="dv-model-other" name="dv-model-other" autocomplete="off" value="" class="not-required text-2 fbin" readonly style="display:none;">
+            <input type="text" id="dv-model-other" name="dv-model-other" 
+            	autocomplete="off" value="" class="not-required text-2 fbin" 
+            	readonly style="display:none;">
+        </div><br>
+
+        <label>Motor: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-motor" name="dv-motor" autocomplete="off" 
+            	value="<?=$dv_motor;?>" class="required text-2 fbin">
+        </div><br>
+
+        <label>Tracción: <span>*</span></label>
+        <div class="content-input">
+            <select id="dv-traction" name="dv-traction" class="required fbin">
+                <option value="">Seleccione...</option>
+                <?php
+                $arr_traction = $link->traction;
+                for($i = 0; $i < count($arr_traction); $i++){
+                    $traction = explode('|', $arr_traction[$i]);
+                    if($traction[0] === $dv_traction) {
+                        echo '<option value="'.base64_encode($traction[0]).'" 
+                        	selected>'.$traction[1].'</option>';
+                    } else {
+                        echo '<option value="'.base64_encode($traction[0]).'">' 
+                        	. $traction[1].'</option>';
+                    }
+                }
+                ?>
+            </select>
+        </div><br>
+
+        <label>Color: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-color" name="dv-color" autocomplete="off" 
+            	value="<?=$dv_color;?>" class="required text-2 fbin">
+        </div><br>
+
+        <label>Número de Asientos: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-nseat" name="dv-nseat" autocomplete="off" 
+            	value="<?=$dv_nseat;?>" class="required number fbin">
+        </div><br>
+    </div><!--
+--><div class="form-col">
+		<label>Placa: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-plate" name="dv-plate" autocomplete="off" 
+            	value="<?=$dv_plate;?>" class="required text-2 fbin">
+        </div><br>
+        <div class="au-mess">En caso de que la placa este en tramite esciba ET</div>
+
+		<label>Cilindrada: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-displacement" name="dv-displacement" 
+            	autocomplete="off" value="<?=$dv_displacement;?>" class="required text-2 fbin">
+        </div><br>
+
+        <label>Chasis: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="dv-chassis" name="dv-chassis" 
+            	autocomplete="off" value="<?=$dv_chassis;?>" class="required text-2 fbin">
         </div><br>
 
         <label>Año: <span>*</span></label>
@@ -409,21 +469,14 @@ if($nVh < $max_item || $swVh === true){
                 }
                 ?>
             </select>
-        </div><br>
+        </div>
 
-        <label></label>
-        <div class="content-input">
+        <label style="height: auto;"></label>
+        <div class="content-input" style="height: auto;">
             <input type="text" id="dv-year-other" name="dv-year-other" autocomplete="off" 
             	value="<?=$dv_year_other;?>" maxlength="4" class="not-required number fbin" 
             	readonly style="display:none;">
-        </div><br>
-    </div><!--
---><div class="form-col">
-        <label>Placa: <span>*</span></label>
-        <div class="content-input">
-            <input type="text" id="dv-plate" name="dv-plate" autocomplete="off" value="<?=$dv_plate;?>" class="required text-2 fbin">
-        </div><br>
-        <div class="au-mess">En caso de que la placa este en tramite esciba ET</div>
+        </div>
 
         <label>Uso de Vehículo: <span>*</span></label>
         <div class="content-input">
@@ -442,66 +495,18 @@ if($nVh < $max_item || $swVh === true){
             </select>
         </div><br>
 
-        <label>Tracción: <span>*</span></label>
+        <label>Plaza de Circulación: <span>*</span></label>
         <div class="content-input">
-            <select id="dv-traction" name="dv-traction" class="required fbin">
+            <select id="dv-plaza" name="dv-plaza" class="required fbin">
                 <option value="">Seleccione...</option>
-                <?php
-                $arr_traction = $link->traction;
-                for($i = 0; $i < count($arr_traction); $i++){
-                    $traction = explode('|', $arr_traction[$i]);
-                    if($traction[0] === $dv_traction) {
-                        echo '<option value="'.base64_encode($traction[0]).'" selected>'.$traction[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($traction[0]).'">'.$traction[1].'</option>';
-                    }
-                }
-                ?>
+                <?php foreach ($link->plaza as $key => $value): $selected = ''; ?>
+                	<?php if ($dv_plaza === $key): $selected = 'selected'; ?>
+                	<?php endif ?>
+                  	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>';
+                <?php endforeach ?>
             </select>
         </div><br>
 
-        <label>Cero Kilómetros: <span>*</span></label>
-        <div class="content-input">
-            <select id="dv-zero-km" name="dv-zero-km" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php
-                $arr_zero_km = array(0 => 'SI|SI', 1 => 'NO|NO');
-                for($i = 0; $i < count($arr_zero_km); $i++){
-                    $zero_km = explode('|', $arr_zero_km[$i]);
-                    if($zero_km[0] === $dv_zero_km) {
-                        echo '<option value="'.base64_encode($zero_km[0]).'" selected>'.$zero_km[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($zero_km[0]).'">'.$zero_km[1].'</option>';
-                    }
-                }
-                ?>
-            </select>
-        </div><br>
-
-        <?php
-        if ($link->verifyModality($_SESSION['idEF'], 'AU') === true) {
-            ?>
-            <label>Modalidad: <span>*</span></label>
-            <div class="content-input" style="width: auto;">
-                <select id="dv-modality" name="dv-modality" class="required fbin">
-                    <option value="">Seleccione...</option>
-                    <?php
-                    foreach ($link->modAU as $key => $value) {
-                        $modality = explode('|', $value);
-                        if ($dv_modality === $modality[0]) {
-                            echo '<option value="'.base64_encode($modality[0]).'" selected>'.$modality[1].'</option>';
-                        } else {
-                            echo '<option value="'.base64_encode($modality[0]).'">'.$modality[1].'</option>';
-                        }
-
-                    }
-
-                    ?>
-                </select>
-            </div><br />
-        <?php
-        }
-        ?>
         <label>Valor Asegurado (USD):<span>*</span></label>
         <?php
         $display_value = 'display: none;';
