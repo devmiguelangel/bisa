@@ -8,6 +8,13 @@ header("Pragma: no-cache");
 require('classes/certificate-sibas.class.php');
 if ((isset($_GET['ide']) || isset($_GET['idc'])) && isset($_GET['type']) && isset($_GET['pr'])) {
 	$category = $ide = $idc = $idcia = $extra = NULL;
+	$popup = false;
+
+	if (isset($_GET['popup'])) {
+		if ($_GET['popup'] === md5('true')) {
+			$popup = true;
+		}
+	}
 	
 	if (isset($_GET['ide'])) {
 		$ide = base64_decode($_GET['ide']);
@@ -51,6 +58,10 @@ if ((isset($_GET['ide']) || isset($_GET['idc'])) && isset($_GET['type']) && isse
 	}
 	
 	$cs->extra = $extra;
+	
+	if ($type === 'PRINT' && $popup === true) {
+		echo '<meta charset="utf-8">';
+	}
 	
 	if ($cs->Output() === true) {
 		if ($type === 'MAIL') {

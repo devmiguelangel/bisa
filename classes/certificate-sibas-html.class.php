@@ -1,5 +1,6 @@
 <?php
 require('includes-ce/certificate-DE-EM.inc.php');
+//require('includes-ce/certificate-DE-EM-APS.inc.php');
 require('includes-ce/certificate-DE-EM-MO.inc.php');
 require('includes-ce/certificate-AU-EM.inc.php');
 require('includes-ce/certificate-AU-EM-MO.inc.php');
@@ -50,7 +51,7 @@ class CertificateHtml{
 		$self = $_SERVER['HTTP_HOST'];
 		$this->url = 'http://' . $self . '/';
 		
-		if (($this->host_ws = $this->cx->getNameHostEF($_SESSION['idEF'])) !== false) {
+		if (($this->host_ws = $this->cx->getNameHostEF(base64_encode($this->rowPo['idef']))) !== false) {
 			$this->host_ws .= '.';
 		}
 		
@@ -163,59 +164,83 @@ class CertificateHtml{
 	//SLIP DE COTIZACIONES
 	private function set_html_de_sc(){ //DESGRAVAMEN SLIP
 		if ($this->modality === false) {
-			return de_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return de_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		} else {
-			return de_sc_mo_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return de_sc_mo_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		}
 	}
 	
 	private function set_html_au_sc(){//AUTOMOTORES SLIP
-	    return au_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);	
+	    return au_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	    						$this->implant, $this->fac, $this->reason);	
 	}
 	
 	private function set_html_trd_sc(){//TODO RIESGO DOMICILIARIO SLIP
-	    return trd_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);	
+	    return trd_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	    						$this->implant, $this->fac, $this->reason);	
 	}
 	
 	private function set_html_trm_sc(){//TODO RIESGO EQUIPO MOVIL SLIP
-	    return trm_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);	
+	    return trm_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	    						$this->implant, $this->fac, $this->reason);	
 	}
 	
 	//SLIP PRODUCTO EXTRA
 	private function set_html_de_pes(){ //DESGRAVAMEN SLIP
-		return de_pes_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+		return de_pes_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	
 	//CERTIFICADOS EMISIONES
 	private function set_html_de_em() {	//	Desgravamen
 		if ($this->modality === false) {
-			return de_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			switch ((int)$this->rowPo['id_certificado']) {
+			case 1:
+				return de_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+										$this->implant, $this->fac, $this->reason, $this->type);
+				break;
+			case 2:
+				return de_em_certificate_aps($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+										$this->implant, $this->fac, $this->reason);
+				break;
+			default:
+				break;
+			}
 		} else {
-			return de_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return de_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		}
 	}
 	
 	private function set_html_au_em() {	//	Automotores
 		if ($this->modality === false) {
-			return au_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return au_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		} else {
-			return au_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return au_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		}
 	}
 	
 	private function set_html_trd_em() {	//	Todo Riesgo Domiciliario
 		if ($this->modality === false) {
-			return trd_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return trd_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		} else {
-			return trd_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return trd_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		}
 	}
 	
 	private function set_html_trm_em() {	//	Todo Riesgo Equipo Movil
 		if ($this->modality === false) {
-			return trm_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return trm_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		} else {
-			return trm_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+			return trm_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+									$this->implant, $this->fac, $this->reason);
 		}
 	}
 	
@@ -225,33 +250,40 @@ class CertificateHtml{
 		} else {
 			$prefix = json_decode($this->rowPo['prefix'], true);
 			if ($prefix['prefix'] === 'PTC') {
-				return thc_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+				return thc_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+										$this->implant, $this->fac, $this->reason);
 			} elseif ($prefix['prefix'] === 'PTD') {
-				return thd_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+				return thd_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+										$this->implant, $this->fac, $this->reason);
 			}
 		}
 	}
 	
 	//CERTIFICADOS PROVISIONALES
 	private function set_html_de_cp(){		//Desgravamen
-	  return de_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);	
+	  return de_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	  						$this->implant, $this->fac, $this->reason);	
 	}
 	
 	private function set_html_au_cp(){ 		//Automotores
-	  return au_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);	
+	  return au_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	  						$this->implant, $this->fac, $this->reason);	
 	}
 	
 	private function set_html_trd_cp() {	//	Todo Riesgo Domiciliario
-		return trd_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+		return trd_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	
 	private function set_html_trm_cp() {	//Todo Riesgo Equipo Movil
-		return trm_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+		return trm_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	
 	//CERTIFICADOS EMISIONES PRODUCTO EXTRA
 	private function set_html_de_em_pec() {	//	Desgravamen
-		return de_em_pec_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, $this->implant, $this->fac, $this->reason);
+		return de_em_pec_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	
 }

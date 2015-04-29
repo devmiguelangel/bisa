@@ -1,5 +1,6 @@
 <?php
 require_once('sibas-db.class.php');
+require_once('session.class.php');
 require_once('PHPMailer/class.phpmailer.php');
 require_once('certificate-sibas-query.class.php');
 /**
@@ -34,8 +35,19 @@ class CertificateSibas extends CertificateQuery{
 
 	public function Output() {
 		if (!isset($_SESSION['idEF'])) {
-			session_start();
+			$session = new Session();
+			$session->getSessionCookie();
+			$token = $session->check_session();
+
+			if ($token === false) {
+				if (($HOST_CLIENT = $this->cx->get_financial_institution_ins()) !== false) {
+					$_SESSION['idEF'] = base64_encode($HOST_CLIENT['idef']);
+				} else {
+					exit();
+				}
+			}
 		}
+
 		$this->modality = $this->cx->verifyModality($_SESSION['idEF'], $this->product);
 		parent::__construct();
 		
@@ -43,9 +55,11 @@ class CertificateSibas extends CertificateQuery{
 		
 		if ($this->error === FALSE) {
 			if ($this->implant === TRUE) {
-				$this->subject = 'Solicitud de aprobacion: Poliza No. '.$this->product.'-'.$this->rowPo['no_emision'];
+				$this->subject = 'Solicitud de aprobacion: Poliza No. '
+					. $this->rowPo['prefijo'] . '-' . $this->rowPo['no_emision'];
 			} elseif ($this->fac === TRUE) {
-				$this->subject = 'Solicitud de aprobacion: Caso Facultativo No. '.$this->product.'-'.$this->rowPo['no_emision'];
+				$this->subject = 'Solicitud de aprobacion: Caso Facultativo No. ' 
+					. $this->rowPo['prefijo'] . '-' . $this->rowPo['no_emision'];
 			} else {
 				switch ($this->product) {
 				case 'DE':
@@ -268,27 +282,27 @@ class CertificateSibas extends CertificateQuery{
 			$mail->From = $this->host['from'];
 			$mail->FromName = $this->host['fromName'];
 		} else{
-			$mail->Host = $this->rowPo['u_email'];
-			$mail->From = $this->rowPo['u_email'];
+			$mail->Host = 'emontano@sudseguros.com';//$this->rowPo['u_email'];
+			$mail->From = 'emontano@sudseguros.com';//$this->rowPo['u_email'];
 			$mail->FromName = $this->rowPo['ef_nombre'];
 		}
 		
 		$mail->Subject = $this->subject;
-		
-		$mail->addCC($this->rowPo['u_email'], $this->rowPo['u_nombre']);
-		if (is_array($this->host) === TRUE) {
-			$mail->addCC($this->host['from'], $this->host['fromName']);
-		}
-		
+
 		if (is_array($this->address) === TRUE) {
 			for ($i = 0; $i < count($this->address); $i++) {
 				$mail->addAddress($this->address[$i]['address'], $this->address[$i]['name']);
 			}
 		}
-				
+		
+		$mail->addAddress($this->rowPo['u_email'], $this->rowPo['u_nombre']);
+		
 		if (($rsc = $this->email_copy()) !== FALSE) {
 			while($rowc = $rsc->fetch_array(MYSQLI_ASSOC)){
-				if ($this->fac === TRUE && $this->implant === FALSE && $rowc['producto'] === 'F'.$this->product) {
+				if ($this->fac === TRUE 
+					&& $this->implant === FALSE 
+					&& $rowc['producto'] === 'F' . $this->product
+					) {
 					$mail->addAddress($rowc['correo'], $rowc['nombre']);
 				} else {
 					$mail->addCC($rowc['correo'], $rowc['nombre']);
@@ -296,6 +310,11 @@ class CertificateSibas extends CertificateQuery{
 			}
 		}
 		
+		//$mail->addCC($this->rowPo['u_email'], $this->rowPo['u_nombre']);
+		if (is_array($this->host) === TRUE) {
+			$mail->addCC($this->host['from'], $this->host['fromName']);
+		}
+				
 		$mail->Body = $this->html;
 		$mail->AltBody = $this->html;
 		//echo $mail->Body;
@@ -335,29 +354,33 @@ class CertificateSibas extends CertificateQuery{
 			
 			$mail->Subject = $this->subject;
 			
-			$mail->addCC($this->rowPo['u_email'], $this->rowPo['u_nombre']);
-			if (is_array($this->host) === TRUE) {
-				$mail->addCC($this->host['from'], $this->host['fromName']);
-			}
-			
 			if (is_array($this->address) === TRUE) {
 				for ($i = 0; $i < count($this->address); $i++) {
 					$mail->addAddress($this->address[$i]['address'], $this->address[$i]['name']);
 				}
 			}
+
+			$mail->addAddress($this->rowPo['u_email'], $this->rowPo['u_nombre']);
 		
 			if (($rsc = $this->email_copy()) !== FALSE) {
 				while($rowc = $rsc->fetch_array(MYSQLI_ASSOC)){
-					if ($this->fac === TRUE && $this->implant === FALSE && $rowc['producto'] === 'F'.$this->product) {
+					if ($this->fac === TRUE 
+						&& $this->implant === FALSE 
+						&& $rowc['producto'] === 'F' . $this->product) {
 						$mail->addAddress($rowc['correo'], $rowc['nombre']);
 					} else {
 						$mail->addCC($rowc['correo'], $rowc['nombre']);
 					}
 				}
 			}
+
+			//$mail->addCC($this->rowPo['u_email'], $this->rowPo['u_nombre']);
+			if (is_array($this->host) === TRUE) {
+				$mail->addCC($this->host['from'], $this->host['fromName']);
+			}
 			
 			//$mail->AddAttachment($attached,'Detalle-Certificado-Automotores.pdf','base64','application/pdf');
-			$mail->AddStringAttachment($attached, $this->title.'.pdf', 'base64', 'application/pdf');
+			$mail->AddStringAttachment($attached, $this->title . '.pdf', 'base64', 'application/pdf');
 			
 			$mail->Body = $this->html;
 			$mail->AltBody = $this->html;
@@ -587,14 +610,18 @@ function confirmExit(){
 </a>
 <?php
 	if($this->category === 'SC' || $this->category === 'PES' || $this->product === 'TH') {
-		
-?>
-	<a href="certificate-detail.php?idc=<?=base64_encode($this->rowPo['id_cotizacion']);?>&type=<?=base64_encode('PDF')?>&pr=<?=base64_encode($this->product);?>&cia=<?=base64_encode($this->idcia);?>&category=<?=base64_encode($this->category).$this->linkExtra;?>" target="_blank" title="Exportar a PDF" class="link-cert">
-<?php
-	} else{
- ?> 
-	<a href="certificate-detail.php?ide=<?=base64_encode($this->rowPo['id_emision']);?>&type=<?=base64_encode('PDF')?>&pr=<?=base64_encode($this->product);?>&category=<?=base64_encode($this->category);?>" target="_blank" title="Exportar a PDF" class="link-cert">
-<?php
+		echo '<a href="' . $this->url . 'certificate-detail.php?idc=' 
+			. base64_encode($this->rowPo['id_cotizacion']) . '&type=' 
+			. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
+			. '&cia=' . base64_encode($this->idcia) . '&category=' 
+			. base64_encode($this->category).$this->linkExtra . '" 
+			target="_blank" title="Exportar a PDF" class="link-cert">';
+	} else {
+		echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
+			. base64_encode($this->rowPo['id_emision']) . '&type=' 
+			. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
+			. '&category=' . base64_encode($this->category) . '" 
+			target="_blank" title="Exportar a PDF" class="link-cert">';
 	}
 ?>  
 	<img src="img/icon-pdf-01.png" width="50" height="50" alt="Exportar a PDF" />

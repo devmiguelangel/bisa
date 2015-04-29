@@ -108,10 +108,10 @@ class CertificateQuery extends CertificateHtml {
 			$this->set_query_de_cp();
 			break;
 		case 'AU':
-		    $this->set_query_au_cp();
+		   $this->set_query_au_cp();
 		   break;
-        case 'TRD':
-            $this->set_query_trd_cp();
+		case 'TRD':
+		   $this->set_query_trd_cp();
 			break;
 		case 'TRM':
 			$this->set_query_trm_cp();
@@ -131,116 +131,124 @@ class CertificateQuery extends CertificateHtml {
 	//QUERYS SLIP DE COTIZACION
 	private function set_query_de_sc(){		//DESGRAVAMEN
 	  $this->sqlPo="select 
-            scc.id_cotizacion,
-            scc.id_ef as idef,
-            scc.no_cotizacion,
-            scc.cobertura,
-            scc.monto,
-            scc.moneda,
-            scc.plazo,
-            case scc.tipo_plazo
-                when 'Y' then 'años'
-                when 'D' then 'dias'
-                when 'M' then 'meses'
-                when 'W' then 'semanas'
-            end as tipoplazo,
-            spc.nombre as producto,
-            std.tasa_final,
-            sus.email as u_email,
-            sus.nombre as u_nombre,
-            scia.nombre as compania,
-            scia.logo as logo_cia,
-            ef.nombre as ef_nombre,
-            ef.logo as logo_ef
-        from
-            s_de_cot_cabecera as scc
-                inner join
-            s_producto_cia as spc ON (spc.id_prcia = scc.id_prcia)
-                inner join
-            s_tasa_de as std ON (std.id_prcia = scc.id_prcia)
-                inner join
-            s_usuario as sus ON (sus.id_usuario = scc.id_usuario)
-                inner join
-            s_ef_compania as efc on (efc.id_ef=scc.id_ef)
-                inner join
-            s_compania as scia on (scia.id_compania=efc.id_compania)
-                inner join
-            s_entidad_financiera as ef on (ef.id_ef=scc.id_ef)
-                inner join
-            s_ef_compania as sefc on (sefc.id_ef=ef.id_ef and sefc.producto='".$this->product."')
-                inner join
-            s_compania as sc on (sc.id_compania=sefc.id_compania)
-        where
-            scc.id_cotizacion = '".$this->idc."' and sc.id_compania='".$this->idcia."'
-        limit 0 , 1;";
-	  //echo $this->sqlPo;				
-	  if($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){//DESGRAVAMEN
-		  if($this->rsPo->num_rows === 1){
-			 $this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
-			 $this->rsPo->free();
+			scc.id_cotizacion,
+			scc.id_ef as idef,
+			scc.no_cotizacion,
+			scc.cobertura,
+			scc.monto,
+			scc.moneda,
+			scc.plazo,
+			case scc.tipo_plazo
+				when 'Y' then 'años'
+				when 'D' then 'dias'
+				when 'M' then 'meses'
+				when 'W' then 'semanas'
+			end as tipoplazo,
+			scc.fecha_creacion,
+			spc.nombre as producto,
+			std.tasa_final,
+			sus.email as u_email,
+			sus.nombre as u_nombre,
+			scia.nombre as compania,
+			scia.logo as logo_cia,
+			ef.nombre as ef_nombre,
+			ef.logo as logo_ef,
+			stpc.valor_boliviano as tipo_cambio
+		from
+			s_de_cot_cabecera as scc
+				inner join
+			s_producto_cia as spc ON (spc.id_prcia = scc.id_prcia)
+				inner join
+			s_tasa_de as std ON (std.id_prcia = scc.id_prcia)
+				inner join
+			s_usuario as sus ON (sus.id_usuario = scc.id_usuario)
+			    inner join 
+			s_ef_compania as efc on (efc.id_ef=scc.id_ef)
+			    inner join 
+			s_compania as scia on (scia.id_compania=efc.id_compania)
+			    inner join 
+			s_entidad_financiera as ef on (ef.id_ef=scc.id_ef)
+			    inner join
+		    s_ef_compania as sefc on (sefc.id_ef=ef.id_ef and sefc.producto='".$this->product."')
+			    inner join
+		    s_compania as sc on (sc.id_compania=sefc.id_compania)
+			    inner join
+			s_tipo_cambio as stpc on (stpc.id_ef=scc.id_ef)					    
+		where
+			scc.id_cotizacion = '".$this->idc."' and sc.id_compania='".$this->idcia."' and stpc.activado=true
+		limit 0 , 1;";
+	  //echo $this->sqlPo;
+		if($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){//DESGRAVAMEN
+			if($this->rsPo->num_rows === 1){
+				$this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
+				$this->rsPo->free();
 			 
-			 $this->sqlDt="select 
-                scd.id_detalle,
-                scd.id_cotizacion,
-                scd.id_cliente,
-                scd.titular,
-                case scd.titular
-                    when 'DD' then '1'
-                    when 'CC' then '2'
-                end as cont_titular,
-                acc.paterno,
-                acc.materno,
-                acc.nombre,
-                acc.ap_casada,
-                acc.fecha_nacimiento,
-                acc.lugar_nacimiento,
-                if(sdep.codigo = 'PE',
-                    concat('E-',
-                            acc.ci,
-                            ' ',
-                            acc.complemento,
-                            ' ',
-                            sdep.codigo),
-                    concat(acc.ci,
-                            ' ',
-                            acc.complemento,
-                            ' ',
-                            sdep.codigo)) as ci,
-                acc.tipo_documento,
-                acc.estado_civil,
-                sdto.departamento as lugar_residencia,
-                acc.localidad,
-                acc.direccion,
-                acc.pais,
-                sdo.ocupacion,
-                acc.desc_ocupacion,
-                acc.telefono_domicilio,
-                acc.telefono_oficina,
-                acc.telefono_celular,
-                case acc.genero
-                    when 'M' then 'Masculino'
-                    when 'F' then 'Femenino'
-                end as genero,
-                acc.edad,
-                acc.peso,
-                acc.estatura,
-                sdcr.respuesta,
-                sdcr.observacion
-            from
-                s_de_cot_detalle as scd
-                    inner join
-                s_de_cot_cliente as acc ON (acc.id_cliente = scd.id_cliente)
-                    inner join
-                s_ocupacion as sdo ON (sdo.id_ocupacion = acc.id_ocupacion)
-                    inner join
-                s_departamento as sdep ON (sdep.id_depto = acc.extension)
-                    inner join
-                s_departamento as sdto ON (sdto.id_depto = acc.lugar_residencia)
-                    inner join
-                s_de_cot_respuesta as sdcr ON (sdcr.id_detalle = scd.id_detalle)
-            where
-                scd.id_cotizacion = '".$this->idc."';";
-			 //echo $this->sqlDt;				
+			 	$this->sqlDt="select 
+					scd.id_detalle,
+					scd.id_cotizacion,
+					scd.id_cliente,
+					scd.titular,
+					case scd.titular
+						when 'DD' then '1'
+						when 'CC' then '2'
+					end as cont_titular,
+					scd.porcentaje_credito,
+					scd.monto_banca_comunal,
+					acc.paterno,
+					acc.materno,
+					acc.nombre,
+					acc.ap_casada,
+					acc.fecha_nacimiento,
+					acc.lugar_nacimiento,
+					if(sdep.codigo = 'PE',
+						concat('E-',
+								acc.ci,
+								' ',
+								acc.complemento,
+								' ',
+								sdep.codigo),
+						concat(acc.ci,
+								' ',
+								acc.complemento,
+								' ',
+								sdep.codigo)) as ci,
+					acc.tipo_documento,
+					acc.estado_civil,
+					sdto.departamento as lugar_residencia,
+					acc.localidad,
+					acc.direccion,
+					acc.pais,
+					sdo.ocupacion,
+					acc.desc_ocupacion,
+					acc.telefono_domicilio,
+					acc.telefono_oficina,
+					acc.telefono_celular,
+					case acc.genero
+						when 'M' then 'Masculino'
+						when 'F' then 'Femenino'
+					end as genero,
+					acc.edad,
+					acc.peso,
+					acc.estatura,
+					sdcr.respuesta,
+					sdcr.observacion
+				from
+					s_de_cot_detalle as scd
+						inner join
+					s_de_cot_cliente as acc ON (acc.id_cliente = scd.id_cliente)
+						inner join
+					s_ocupacion as sdo ON (sdo.id_ocupacion = acc.id_ocupacion)
+						inner join
+					s_departamento as sdep ON (sdep.id_depto = acc.extension)
+						left join
+					s_departamento as sdto ON (sdto.id_depto = acc.lugar_residencia)
+						inner join
+					s_de_cot_respuesta as sdcr ON (sdcr.id_detalle = scd.id_detalle)
+				where
+					scd.id_cotizacion = '".$this->idc."'
+				order by scd.id_detalle asc
+				;";
+			 //echo $this->sqlDt;
 			 if($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT)){
 				  if($this->rsDt->num_rows > 0){
 					  $this->error = FALSE;
@@ -536,214 +544,160 @@ class CertificateQuery extends CertificateHtml {
 	
 	//QUERYS CERTIFICADOS EMISION
 	private function set_query_de_em () {	//DESGRAVAMEN
-		$this->sqlPo = "select 
-			sdec.id_emision,
-			sdec.no_emision,
-			sdec.id_ef as idef,
-			sdec.id_cotizacion,
-			sdec.no_operacion,
-			sdec.prefijo,
-			sdec.cobertura,
-			sdec.id_prcia,
-			sdec.monto_solicitado,
-			(case sdec.moneda
-				when 'USD' then 'X-'
-				when 'BS' then '-X'
-			end) as moneda,
-			sdec.monto_deudor as saldo_deudor,
-			sdec.monto_codeudor,
-			sdec.cumulo_deudor,
-			@monto_s:=(case sdec.moneda
-				when 'BS' then (sdec.monto_solicitado * sed.porcentaje_credito) / 100
-				when 'USD' then (((sdec.monto_solicitado * stc.valor_boliviano) * sed.porcentaje_credito) / 100)
-			end) as monto_sol_bs,
-			(case sdec.operacion
-				when 'PU' then @monto_s
-				when 'AD' then sdec.monto_deudor + @monto_s
-				when 'LC' then sdec.cumulo_deudor
-			end) as monto_actual_acumulado,
-			sdec.cumulo_codeudor,
-			sdec.id_tc,
-			(case sdec.tipo_plazo
-				when 'Y' then concat(sdec.plazo, ' ', 'años')
-				when 'D' then concat(sdec.plazo, ' ', 'dias')
-				when 'M' then concat(sdec.plazo, ' ', 'meses')
-				when 'W' then concat(sdec.plazo, ' ', 'semanas')
-			end) as tipo_plazo,
-			sdec.id_usuario,
-			sdec.fecha_creacion,
-			sdec.anulado,
-			sdec.emitir,
-			sdec.fecha_emision,
-			sdec.id_compania,
-			(case sdec.operacion
-				when 'PU' then 'X--'
-				when 'AD' then '-X-'
-				when 'LC' then '--X'
-			end) as tipo_operacion,
-			if(sdec.facultativo = 1,
-				sdf.tasa_final,
-				sdec.tasa) as tasa_final,
-			sdf.observacion,
-			(case sdec.no_copia
-				when 0 then 'ORIGINAL'
-				else 'COPIA No. '
-			end) as text_copia,
-			(case sdec.no_copia
-				when 0 then ''
-				else (sdec.no_copia + 1)
-			end) as num_copia,
-			sdec.facultativo,
-			sdec.motivo_facultativo,
-			(if(@monto_s > 35000, 1, 0)) as verifica_vida,
-			sdec.tasa,
-			sdec.prima_total,
-			sdec.no_copia,
-			sdec.aprobado,
-			sdec.rechazado,
+		$this->sqlPo = 'select 
+			sde.id_emision,
+			sde.no_emision,
+			sde.id_cotizacion,
+			sdc.no_cotizacion,
+			sef.id_ef as idef,
 			sef.nombre as ef_nombre,
-			scia.nombre as compania,
-			count(sed.id_cliente) as num_cliente,
-			if(count(sed.id_cliente) = 1,
-				'X-',
-				'-X') as tipo_seguro,
+			sc.nombre as compania,
+			sc.logo as logo_cia,
+			sef.logo as logo_ef,
+			spc.id_prcia,
+			spc.nombre as tipo_credito,
+			count(sdd.id_cliente) as num_cliente,
+			sde.no_operacion,
+			sde.prefijo,
+			sde.cobertura,
+			sde.monto_solicitado,
+			sde.moneda,
+			sde.monto_deudor as saldo_deudor,
+			sde.monto_codeudor as saldo_codeudor,
+			sde.cumulo_deudor,
+			sde.cumulo_codeudor,
+			@monto_s := (case sde.moneda
+				when "BS" then (sde.monto_solicitado * sdd.porcentaje_credito) / 100
+				when "USD" then (((sde.monto_solicitado * 7) * sdd.porcentaje_credito) / 100)
+			end) as monto_sol_bs,
+			(case sde.tipo_plazo
+				when "Y" then "años"
+				when "D" then "dias"
+				when "M" then "meses"
+				when "W" then "semanas"
+			end) as tipo_plazo,
+			sde.plazo,
+			su.id_usuario,
+			sdep.departamento as u_departamento,
+			su.nombre as u_nombre,
+			su.email as u_email,
+			su.fono_agencia,
+			sde.fecha_creacion,
+			sde.anulado,
+			sdep.departamento,
+			sde.fecha_anulado,
+			sde.motivo_anulado,
+			sde.emitir,
+			sde.fecha_emision,
+			spo.no_poliza,
+			sde.facultativo,
+			sde.motivo_facultativo,
+			sde.prima_total,
 			sdf.aprobado,
 			sdf.tasa_recargo,
 			sdf.porcentaje_recargo,
 			sdf.tasa_actual,
-			sp.no_poliza,
-			su.usuario,
-			su.nombre as u_nombre,
-			su.fono_agencia as fono_sucursal,
-			su.email as u_email,
-			sdep.departamento as user_departamento,
-			sdcc.no_cotizacion,
-			(case spcia.nombre
-				when 'HIPOTECARIO' then 'X---'
-				when 'COMERCIAL' then '-X--'
-				when 'CONSUMO' then '--X-'
-				when 'OTROS' then '---X'
-			end) as tipo_credito,
-			efcia.id_ef_cia 
-		from
-			s_de_em_cabecera as sdec
+			if(sde.facultativo = true,
+				sdf.tasa_final,
+				sde.tasa) as tasa_final,
+			sdf.observacion,
+			sde.id_certificado
+		from 
+			s_de_em_cabecera as sde
 				inner join
-			s_entidad_financiera as sef ON (sef.id_ef = sdec.id_ef)
+			s_de_cot_cabecera as sdc ON (sdc.id_cotizacion = sde.id_cotizacion)
 				inner join
-			s_ef_compania as efcia ON (efcia.id_ef = sef.id_ef
-				and efcia.producto = '".$this->product."')
+			s_de_em_detalle as sdd ON (sdd.id_emision = sde.id_emision)
+				left join
+			s_de_facultativo as sdf ON (sdf.id_emision = sde.id_emision)
 				inner join
-			s_compania as scia ON (scia.id_compania = efcia.id_compania)
+			s_entidad_financiera as sef ON (sef.id_ef = sde.id_ef)
 				inner join
-			s_de_em_detalle as sed ON (sed.id_emision = sdec.id_emision)
+			s_compania as sc ON (sc.id_compania = sde.id_compania)
 				inner join
-			s_poliza as sp ON (sp.id_poliza = sdec.id_poliza)
-				inner join
-			s_usuario as su ON (su.id_usuario = sdec.id_usuario)
+			s_usuario as su ON (su.id_usuario = sde.id_usuario)
 				inner join
 			s_departamento as sdep ON (sdep.id_depto = su.id_depto)
 				inner join
-			s_de_cot_cabecera as sdcc ON (sdcc.id_cotizacion = sdec.id_cotizacion)
+			s_producto_cia as spc ON (spc.id_prcia = sde.id_prcia)
 				inner join
-			s_producto_cia as spcia ON (spcia.id_prcia = sdec.id_prcia
-				and spcia.id_ef_cia = efcia.id_ef_cia)
-				inner join
-			s_tipo_cambio as stc ON (stc.id_tc = sdec.id_tc)
-				left join
-			s_de_facultativo as sdf ON (sdf.id_emision = sdec.id_emision)
-		where
-			sdec.id_emision = '".$this->ide."';";
+			s_poliza as spo ON (spo.id_poliza = sde.id_poliza)
+		where sde.id_emision = "' . $this->ide . '" 
+		;';
 		//echo $this->sqlPo;
 		if (($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT))) {
 			if ($this->rsPo->num_rows === 1) {
 				$this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
 				$this->rsPo->free();
 				
-				$this->sqlDt = "select 
-									sc.id_cliente,
-									sc.paterno,
-									sc.materno,
-									sc.nombre,
-									sc.ap_casada,
-									(case sc.genero
-										when 'M' then 'x-'
-										when 'F' then '-x'
-									end) as sexo,
-									concat('Dia: ',
-											day(sc.fecha_nacimiento),
-											' Mes: ',
-											month(sc.fecha_nacimiento),
-											' Año: ',
-											year(sc.fecha_nacimiento)) as fecha_nacimiento,
-									sc.lugar_nacimiento,
-									if(sdep.codigo = 'PE',
-										concat(sc.tipo_documento,
-												' ',
-												'E-',
-												sc.ci,
-												' ',
-												sc.complemento),
-										concat(sc.tipo_documento,
-												' ',
-												sc.ci,
-												' ',
-												sc.complemento,
-												' ',
-												sdep.codigo)) as ci,
-									sc.estado_civil,
-									sdto.departamento as lugar_residencia,
-									sc.localidad,
-									sc.avenida,
-									concat(sc.direccion,
-											' ',
-											(if(sc.no_domicilio = '',
-												'S/N',
-												sc.no_domicilio))) as direccion,
-									sc.direccion_laboral,
-									sc.pais,
-									sdo.ocupacion,
-									sc.desc_ocupacion,
-									concat((if(sc.telefono_domicilio != '',
-												sc.telefono_domicilio,
-												'')),
-											' ',
-											(if(sc.telefono_celular != '',
-												sc.telefono_celular,
-												'')),
-											' ',
-											(if(sc.telefono_oficina != '',
-												sc.telefono_oficina,
-												''))) as telefono,
-									sc.email,
-									sc.peso,
-									sc.estatura,
-									sc.edad,
-									sded.porcentaje_credito,
-									(case sc.mano
-										when 'DE' then 'DERECHA'
-										when 'IZ' then 'IZQUIERDA'
-									end) as mano_utilizada,
-									sder.respuesta,
-									sder.observacion,
-									sded.titular as titular_txt,
-									(case sded.titular
-										when 'DD' then 1
-										when 'CC' then 2
-									end) as titular_num
-								from
-									s_cliente as sc
-										inner join
-									s_de_em_detalle as sded ON (sded.id_cliente = sc.id_cliente)
-										inner join
-									s_departamento as sdep ON (sdep.id_depto = sc.extension)
-										inner join
-									s_departamento as sdto ON (sdto.id_depto = sc.lugar_residencia)
-										inner join
-									s_ocupacion as sdo ON (sdo.id_ocupacion = sc.id_ocupacion)
-										inner join
-									s_de_em_respuesta as sder ON (sder.id_detalle = sded.id_detalle)
-								where
-									sded.id_emision = '".$this->rowPo['id_emision']."';";
+				$this->sqlDt = 'select 
+					scl.id_cliente,
+					scl.paterno,
+					scl.materno,
+					scl.nombre,
+					scl.ap_casada,
+					(if(scl.ap_casada="",
+					    concat(scl.nombre," ",scl.paterno," ",scl.paterno),
+						 concat(scl.nombre," ",scl.paterno," de ",scl.ap_casada)
+						 )) as nombre_completo,
+					scl.genero,
+					scl.fecha_nacimiento,
+					scl.lugar_nacimiento,
+					scl.tipo_documento,
+					scl.ci as dni,
+					scl.complemento,
+					sdep1.codigo as extension,
+					scl.estado_civil,
+					sdep2.departamento as lugar_residencia,
+					scl.localidad,
+					scl.avenida,
+					concat(scl.direccion,
+						" ",
+						(if(scl.no_domicilio = "",
+							"S/N",
+							scl.no_domicilio))) as direccion,
+					scl.direccion_laboral,
+					scl.pais,
+					so.ocupacion,
+					scl.desc_ocupacion,
+					scl.telefono_domicilio,
+					scl.telefono_oficina,
+					scl.telefono_celular,
+					scl.email,
+					scl.peso,
+					scl.estatura,
+					scl.edad,
+					sdd.porcentaje_credito,
+					sdr.respuesta,
+					sdr.observacion,
+					sdd.monto_banca_comunal as monto_bc,
+					sdd.saldo,
+					sdd.cumulo,
+					sdd.porcentaje_credito, 
+					sdd.tasa, 
+					sdd.facultativo, 
+					sdd.motivo_facultativo, 
+					sdd.aprobado, 
+					sdd.detalle_f, 
+					sdd.detalle_p, 
+					sdd.titular
+				from 
+					s_cliente as scl
+						inner join 
+					s_de_em_detalle as sdd ON (sdd.id_cliente = scl.id_cliente)
+						inner join
+					s_de_em_respuesta as sdr ON (sdr.id_detalle = sdd.id_detalle)
+						inner join
+					s_departamento as sdep1 ON (sdep1.id_depto = scl.extension)
+						left join
+					s_departamento as sdep2 ON (sdep2.id_depto = scl.lugar_residencia)
+						inner join
+					s_ocupacion as so ON (so.id_ocupacion = scl.id_ocupacion)
+				where
+					sdd.id_emision = "' . $this->rowPo['id_emision'] . '" 
+				order by sdd.id_detalle asc
+				;';
+
 				//echo $this->sqlDt;
 				if (($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT))) {
 					if ($this->rsDt->num_rows > 0) {
@@ -767,12 +721,21 @@ class CertificateQuery extends CertificateHtml {
 		    sde.id_prcia,
 		    spr.nombre as tipo_credito,
 		    sde.monto_solicitado,
+			(if(sde.moneda='USD',(sde.monto_solicitado*stc.valor_boliviano),sde.monto_solicitado)) as monto_conver,
 		    (case sde.moneda
 		        when 'BS' then 'Bs.'
 		        when 'USD' then 'Sus.'
 		    end) as moneda,
-		    sde.cumulo_deudor,
-		    sde.cumulo_codeudor,
+			(case sde.moneda
+		        when 'BS' then 'expresado en bolivianos'
+		        when 'USD' then 'expresado en dolares americanos'
+		    end) as expresado_moneda,
+			(case sde.moneda
+		        when 'BS' then (10000*stc.valor_boliviano)
+		        when 'USD' then 10000
+		    end) as limite_maximo,
+		    (if(sde.moneda='BS',sde.cumulo_deudor,(sde.cumulo_deudor/stc.valor_boliviano))) as cumulo_deudor,
+		    (if(sde.moneda='BS',sde.cumulo_codeudor,(sde.cumulo_codeudor/stc.valor_boliviano))) as cumulo_codeudor,
 		    sde.id_tc,
 		    (case sde.tipo_plazo
 		        when 'Y' then concat(sde.plazo, ' ', 'años')
@@ -820,7 +783,8 @@ class CertificateQuery extends CertificateHtml {
 		    sdc.no_cotizacion,
 		    sde.id_ef as idef,
 		    sef.nombre as ef_nombre,
-		    scia.nombre as compania
+		    scia.nombre as compania,
+			stc.valor_boliviano as tipo_cambio
 		from
 		    s_de_em_cabecera as sde
 		        inner join
@@ -860,7 +824,7 @@ class CertificateQuery extends CertificateHtml {
 				        if(scl.ap_casada = '',
 				            concat(scl.paterno, ' ', scl.materno),
 				            concat(scl.paterno, ' DE ', scl.ap_casada)))) as apellidos,
-				    scl.fecha_nacimiento,
+				    date_format(scl.fecha_nacimiento, '%d-%m-%Y') as fecha_nacimiento,
 				    scl.lugar_nacimiento,
 				    concat(scl.ci, ' ', scl.complemento) as ci_document,
 				    (case sdep.codigo
@@ -878,7 +842,6 @@ class CertificateQuery extends CertificateHtml {
 				    scl.estatura,
 				    scl.edad,
 				    scl.estado_civil,
-				    sdep.departamento as lugar_residencia,
 				    concat(scl.direccion,
 				            ' ',
 				            (if(scl.no_domicilio = '',
@@ -896,7 +859,8 @@ class CertificateQuery extends CertificateHtml {
 				        when 'DD' then 1
 				        when 'CC' then 2
 				    end) as titular_num,
-				    sdd.id_detalle
+				    sdd.id_detalle,
+					dp.departamento as lugar_residencia
 				from
 				    s_de_em_cabecera as sde
 				        inner join
@@ -909,6 +873,8 @@ class CertificateQuery extends CertificateHtml {
 				    s_de_em_respuesta as sder ON (sder.id_detalle = sdd.id_detalle)
 				        inner join
 				    s_ocupacion as sdo ON (sdo.id_ocupacion = scl.id_ocupacion)
+					    inner join
+				   	s_departamento as dp on (dp.id_depto = scl.lugar_residencia)
 			  	where
 				  	sde.id_emision = '" . $this->rowPo['id_emision'] . "';";
 				
@@ -932,10 +898,10 @@ class CertificateQuery extends CertificateHtml {
 		    sdec.cobertura,
 		    sdec.id_prcia,
 		    (case sdec.id_prcia
-		        when 1 then '--X-'
-		        when 2 then '-X--'
-		        when 3 then 'X---'
-		        when 4 then '---X'
+		        when 4 then 'X---'
+		        when 3 then '-X--'
+		        when 2 then '--X-'
+		        when 5 then '---X'
 		    end) as tipo_credito,
 		    sdec.monto_solicitado,
 		    (case sdec.moneda
@@ -1159,124 +1125,124 @@ class CertificateQuery extends CertificateHtml {
 	//CERTIFICADO SLIP AUTOMOTORES
 	private function set_query_au_sc (){
 	    $this->sqlPo = "select 
-              aucc.id_cotizacion,
-              aucc.no_cotizacion,
-              aucc.id_ef as idef,
-              aucc.id_cliente,
-              aucc.certificado_provisional,
-              aucc.garantia,
-              aucc.tipo,
-              aucc.ini_vigencia,
-              aucc.fin_vigencia,
-              aucc.tipo_plazo as tip_plz_code,
-              aucc.plazo as plz_anio,
-              concat(aucc.plazo,
-                      ' ',
-                      case aucc.tipo_plazo
-                          when 'Y' then 'Años'
-                          when 'D' then 'Dias'
-                          when 'M' then 'Meses'
-                          when 'W' then 'Semanas'
-                      end) as tipo_plazo,
-              @conversor:=(if(aucc.tipo_plazo = 'M',
-                  ROUND(aucc.plazo / 12),
-                  if(aucc.tipo_plazo = 'D',
-                      ROUND(aucc.plazo / 365),
-                      if(aucc.tipo_plazo = 'W',
-                          ROUND(aucc.plazo / 52),
-                          aucc.plazo)))) as resu_conversor,
-              @newanio:=(if(@conversor > 0, @conversor, 1)) as cant_plazo,
-              aucc.fecha_creacion,
-              aucc.id_usuario,
-              aucc.cuota,
-              aucc.prima_total,
-              sfp.forma_pago,
-              sfp.codigo as frm_pago_code,
-              sc.nombre as compania,
-              sc.logo as logo_cia,
-              sc.id_compania,
-              sef.nombre as ef_nombre,
-              sef.logo as logo_ef,
-              su.nombre as u_nombre,
-              su.email as u_email,
-              case clt.tipo
-                 when 0 then 'titular'
-                 when 1 then 'empresa'
-              end as tipo_cliente,
-              clt.razon_social,
-              clt.paterno,
-              clt.materno,
-              clt.nombre,
-              clt.ap_casada,
-              concat(clt.ci,
-                      ' ',
-                      clt.complemento,
-                      ' ',
-                      sd.codigo) as ci,
-              case clt.genero
-                 when 'M' then 'Masculino'
-                 when 'F' then 'Femenino'
-              end as genero,
-              clt.fecha_nacimiento,
-              clt.telefono_domicilio,
-              clt.telefono_celular,
-              clt.email,
-              sefc.id_ef_cia,
-              sc.id_compania,
-              sh.monto_facultativo,
-              sh.anio as anio_max
-          from
-              s_au_cot_cabecera as aucc
-                  inner join
-              s_forma_pago as sfp ON (sfp.id_forma_pago = aucc.id_forma_pago)
-                  inner join
-              s_entidad_financiera as sef ON (sef.id_ef = aucc.id_ef)
-                  inner join
-              s_ef_compania as sefc ON (sefc.id_ef = sef.id_ef and sefc.producto='".$this->product."')
-                  inner join
-              s_compania as sc ON (sc.id_compania = sefc.id_compania)
-                  inner join
-              s_usuario as su ON (su.id_usuario = aucc.id_usuario)
-                  inner join
-              s_au_cot_cliente as clt ON (clt.id_cliente = aucc.id_cliente)
-                  inner join
-              s_departamento as sd ON (sd.id_depto = clt.extension)
-                  inner join
-              s_sgc_home as sh on (sh.id_ef=aucc.id_ef and sh.producto='".$this->product."')
-          where
-              aucc.id_cotizacion = '".$this->idc."'
-                  and sc.id_compania = '".$this->idcia."';";
+				aucc.id_cotizacion,
+				aucc.no_cotizacion,
+				aucc.id_ef as idef,
+				aucc.id_cliente,
+				aucc.certificado_provisional,
+				aucc.garantia,
+				aucc.tipo,
+				aucc.ini_vigencia,
+				aucc.fin_vigencia,
+				aucc.tipo_plazo as tip_plz_code,
+				aucc.plazo,
+				aucc.tipo_plazo,
+				aucc.fecha_creacion,
+				aucc.id_usuario,
+				sc.nombre as compania,
+				sc.logo as logo_cia,
+				sc.id_compania,
+				sef.nombre as ef_nombre,
+				sef.logo as logo_ef,
+				su.nombre as u_nombre,
+				su.email as u_email,
+				sdu.departamento as u_departamento,
+				case clt.tipo
+					when 0 then 'titular'
+					when 1 then 'empresa'
+				end as tipo_cliente,
+				clt.razon_social,
+				clt.actividad,
+				clt.ejecutivo,
+				clt.cargo,
+				clt.paterno,
+				clt.materno,
+				clt.nombre,
+				clt.ap_casada,
+				clt.ci as nit,
+				concat(clt.ci,
+						' ',
+						clt.complemento,
+						' ',
+						sd.codigo) as ci,
+				clt.fecha_nacimiento,
+				clt.telefono_domicilio,
+				clt.telefono_celular,
+				clt.telefono_oficina,
+				clt.direccion_domicilio,
+				clt.direccion_laboral,
+				clt.email,
+				sefc.id_ef_cia,
+				sc.id_compania,
+				sh.monto_facultativo,
+				sh.anio as anio_max
+			from
+				s_au_cot_cabecera as aucc
+					inner join
+				s_entidad_financiera as sef ON (sef.id_ef = aucc.id_ef)
+					inner join
+				s_ef_compania as sefc ON (sefc.id_ef = sef.id_ef
+					and sefc.producto = '".$this->product."')
+					inner join
+				s_compania as sc ON (sc.id_compania = sefc.id_compania)
+					inner join
+				s_usuario as su ON (su.id_usuario = aucc.id_usuario)
+					inner join
+				s_departamento as sdu on (sdu.id_depto = su.id_depto)	
+					inner join
+				s_au_cot_cliente as clt ON (clt.id_cliente = aucc.id_cliente)
+					inner join
+				s_departamento as sd ON (sd.id_depto = clt.extension)
+					inner join
+				s_sgc_home as sh ON (sh.id_ef = aucc.id_ef
+					and sh.producto = '".$this->product."')
+			where
+				aucc.id_cotizacion = '".$this->idc."'
+					and sc.id_compania = '".$this->idcia."';";
 		//echo $this->sqlPo;					  			  
 		if($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){
 			if($this->rsPo->num_rows === 1){
 				$this->rowPo=$this->rsPo->fetch_array(MYSQLI_ASSOC);
 				$this->rsPo->free();
 				
-				$this->sqlDt="select
-                  auc.id_vehiculo,
-                  auc.id_cotizacion,
-                  auc.categoria as category,
-                  case auc.categoria
-                    when 'RAC' then 'Renta Car'
-                    when 'OTH' then 'Otros'
-                  end as categoria,
-                  auc.anio,
-                  auc.placa,
-                  auc.uso,
-                  auc.traccion,
-                  auc.km,
-                  auc.valor_asegurado,
-                  auc.facultativo,
-                  autv.vehiculo,
-                  aumr.marca,
-                  aumod.modelo
-                from
-                  s_au_cot_detalle as auc
-                  left join s_au_tipo_vehiculo as autv on (autv.id_tipo_vh=auc.id_tipo_vh)
-                  left join s_au_marca as aumr on (aumr.id_marca=auc.id_marca)
-                  left join s_au_modelo as aumod on (aumod.id_modelo=auc.id_modelo)
-                where
-                  auc.id_cotizacion='".$this->idc."';";
+				$this->sqlDt="select 
+						auc.id_vehiculo,
+						auc.id_cotizacion,
+					    (case auc.plaza
+						   when 'LP' then 'La Paz'
+						   when 'CB' then 'Cochabamba'
+						   when 'SC' then 'Santa Cruz'
+						   when 'RP' then 'Resto del Pais'
+						end) as plaza,
+						auc.motor,
+						auc.anio,
+						auc.placa,
+						auc.cilindrada,
+						auc.chasis,
+						auc.uso,
+						auc.traccion,
+						auc.color,
+						auc.km,
+						auc.no_asiento,
+						auc.valor_asegurado,
+						auc.tasa,
+						auc.prima,
+						auc.created_at,
+						auc.updated_at,
+						auc.facultativo,
+						autv.vehiculo,
+						aumr.marca,
+						aumod.modelo
+					from
+						s_au_cot_detalle as auc
+							left join
+						s_au_tipo_vehiculo as autv ON (autv.id_tipo_vh = auc.id_tipo_vh)
+							left join
+						s_au_marca as aumr ON (aumr.id_marca = auc.id_marca)
+							left join
+						s_au_modelo as aumod ON (aumod.id_modelo = auc.id_modelo)
+					where
+						auc.id_cotizacion = '".$this->idc."';";
 				if($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT)){
 					if ($this->rsDt->num_rows > 0) {
 						$this->error = FALSE;
@@ -1324,7 +1290,7 @@ class CertificateQuery extends CertificateHtml {
 				when 0 then 'Natural'
 				when 1 then 'Juridico'
 			  end tipo_cliente,
-			  sclie.razon_social as cl_razon_social,
+			  sclie.razon_social as cl_razon_social, 
 			  sclie.paterno,
 			  sclie.materno,
 			  sclie.nombre,
@@ -1353,7 +1319,7 @@ class CertificateQuery extends CertificateHtml {
 				  when 0 then ''
 				  else (auec.no_copia + 1)
 			  end) as num_copia,
-			  auec.emitir
+			  auec.emitir  
 			from
 			  s_au_em_cabecera as auec
 			  inner join s_cliente as sclie on (sclie.id_cliente=auec.id_cliente)
@@ -1526,35 +1492,35 @@ class CertificateQuery extends CertificateHtml {
 				$this->rsPo->free();
 				
 				$this->sqlDt="select
-                    trdd.id_inmueble,
-                    trdd.id_cotizacion,
-                    case trdd.tipo_in
-                      when 'HOME' then 'Casa'
-                      when 'DEPT' then 'Departamento'
-                      when 'BLDN' then 'Edificio'
-                      when 'LOCL' then 'Local Comercial/Oficina'
-                    end as tipo_inmueble,
-                    case trdd.uso
-                       when 'COM' then 'Comercial'
-                       when 'DMC' then 'Domiciliario'
-                       when 'OTH' then 'Otros'
-                    end as uso_inmueble,
-                    trdd.uso_otro,
-                    case trdd.estado
-                       when 'FINS' then 'Terminado'
-                       when 'CONS' then 'En construcción'
-                       when 'PRAR' then 'En proceso de remodelación, ampliación o refacción'
-                    end as estado_inmueble,
-                    trdd.zona,
-                    trdd.localidad,
-                    trdd.direccion,
-                    trdd.valor_asegurado,
-                    sd.departamento
-                  from
-                    s_trd_cot_detalle  as trdd
-                    left join s_departamento as sd on (sd.id_depto=trdd.departamento)
-                  where
-                    trdd.id_cotizacion='".$this->idc."';";
+								trdd.id_inmueble,
+								trdd.id_cotizacion,
+								case trdd.tipo_in
+								  when 'HOME' then 'Casa' 
+								  when 'DEPT' then 'Departamento' 
+								  when 'BLDN' then 'Edificio' 
+								  when 'LOCL' then 'Local Comercial/Oficina'
+								end as tipo_inmueble, 
+								case trdd.uso
+								   when 'COM' then 'Comercial'
+								   when 'DMC' then 'Domiciliario'
+								   when 'OTH' then 'Otros'
+								end as uso_inmueble,
+								trdd.uso_otro,
+								case trdd.estado
+								   when 'FINS' then 'Terminado'
+								   when 'CONS' then 'En construcción'
+								   when 'PRAR' then 'En proceso de remodelación, ampliación o refacción'
+								end as estado_inmueble,
+								trdd.zona,
+								trdd.localidad,
+								trdd.direccion,
+								trdd.valor_asegurado,
+								sd.departamento
+							  from
+								s_trd_cot_detalle  as trdd
+								inner join s_departamento as sd on (sd.id_depto=trdd.departamento)
+							  where
+								trdd.id_cotizacion='".$this->idc."';";
 				if($this->rsDt=$this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT)){
 					if($this->rsDt->num_rows > 0){
 				       $this->error=FALSE;	
@@ -2076,114 +2042,144 @@ class CertificateQuery extends CertificateHtml {
 	//CERTIFICADO PROVISIONAL AUTOMOTORES
 	private function set_query_au_cp(){
 		 $this->sqlPo = "select
-		      sacc.id_cotizacion as idc,
-              sacc.id_ef as idef,
-              sacc.no_cotizacion,
-              sacc.no_cotizacion as no_emision,
-              sacc.id_cliente,
-              sacc.ini_vigencia,
-              sacc.fin_vigencia,
-              sacc.id_forma_pago,
-              sfp.codigo as c_forma_pago,
-              sacc.plazo as c_plazo,
-              sacc.tipo_plazo as c_tipo_plazo,
-              concat(sacc.plazo,
-                  ' ',
-                  case sacc.tipo_plazo
-                      when 'Y' then 'Años'
-                      when 'D' then 'Dias'
-                      when 'M' then 'Meses'
-                      when 'W' then 'Semanas'
-                  end) as plazo,
-              sacc.fecha_creacion,
-              sacc.id_usuario,
-              sc.id_compania as idcia,
-              sacc.prima_total,
-              scl.tipo as cl_tipo,
-              case scl.tipo
-              when 0 then 'Natural'
-              when 1 then 'Juridico'
-              end tipo_cliente,
-              scl.razon_social as razon_social ,
-              scl.paterno,
-              scl.materno,
-              scl.nombre,
-              scl.ap_casada,
-              scl.telefono_domicilio,
-              scl.telefono_oficina,
-              scl.telefono_celular,
-              scl.ci,
-              sef.nombre as ef_nombre,
-              sef.logo as logo_ef,
-              sc.nombre as compania,
-              sc.logo as logo_cia,
-              su.nombre as u_nombre,
-              su.email as u_email,
-              sd.departamento
-            from
-              s_au_cot_cabecera as sacc
-                inner join
-                  s_au_cot_cliente as scl on (scl.id_cliente = sacc.id_cliente)
-                inner join
-                  s_entidad_financiera as sef on (sef.id_ef = sacc.id_ef)
-                inner join
-                  s_ef_compania as sec on (sec.id_ef = sef.id_ef
-                                           and sec.producto = '" . $this->product . "')
-                inner join
-                  s_compania as sc on (sc.id_compania = sec.id_compania)
-                inner join
-                  s_usuario as su on (su.id_usuario = sacc.id_usuario)
-                inner join
-                  s_departamento as sd on (sd.id_depto = su.id_depto)
-                inner join
-                  s_forma_pago as sfp on (sfp.id_forma_pago = sacc.id_forma_pago)
-            where
-              sacc.id_cotizacion = '" . $this->idc . "'
-                and sc.id_compania = '" . $this->idcia . "'
-            ;";
-		//echo $this->sqlPo;
+						  auec.id_emision,
+						  auec.no_emision,
+						  auec.id_ef as idef,
+						  auec.id_cotizacion,
+						  auec.id_cliente,
+						  auec.no_operacion,
+						  auec.prefijo,
+						  auec.ini_vigencia,
+						  auec.fin_vigencia,
+						  auec.id_forma_pago,
+						  auec.plazo as plz_anio,
+						  auec.tipo_plazo as tip_plz_code,
+						  concat(auec.plazo,
+								  ' ',
+								  case auec.tipo_plazo
+									  when 'Y' then 'Años'
+									  when 'D' then 'Dias'
+									  when 'M' then 'Meses'
+									  when 'W' then 'Semanas'
+								  end) as tipo_plazo,
+						  @conversor:=(if(auec.tipo_plazo = 'M',
+							  ROUND(auec.plazo / 12),
+							  if(auec.tipo_plazo = 'D',
+								  ROUND(auec.plazo / 365),
+								  if(auec.tipo_plazo = 'W',
+									  ROUND(auec.plazo / 52),
+									  auec.plazo)))) as resu_conversor,
+						  @newanio:=(if(@conversor > 0, @conversor, 1)) as cant_plazo,		  
+						  auec.fecha_creacion,
+						  auec.id_usuario,
+						  auec.anulado,
+						  auec.fecha_anulado,
+						  auec.fecha_emision,
+						  auec.id_compania,
+						  auec.id_poliza,
+						  auec.no_copia,
+						  auec.facultativo,
+						  auec.prima_total,
+						  case sclie.tipo
+							when 0 then 'Natural'
+							when 1 then 'Juridico'
+						  end tipo_cliente, 
+						  sclie.paterno,
+						  sclie.materno,
+						  sclie.nombre,
+						  sclie.ap_casada,
+						  sclie.avenida,
+						  sclie.direccion,
+						  sclie.no_domicilio,
+						  sclie.localidad,
+						  sclie.telefono_domicilio,
+						  sclie.telefono_oficina,
+						  sclie.telefono_celular,
+						  sclie.ci,
+						  case sclie.genero
+						     when 'M' then 'Masculino'
+							 when 'F' then 'Femenino'
+						  end as genero,
+						  sclie.fecha_nacimiento,
+						  sclie.razon_social,
+						  sef.nombre as ef_nombre,
+						  sef.logo as logo_ef,
+						  sc.nombre as compania,
+						  sc.logo as logo_cia,
+						  su.nombre as u_nombre,
+						  su.email as u_email,
+                          aucot.no_cotizacion,
+						  aucot.cuota,
+						  auec.emitir,
+						  sfp.forma_pago,
+						  sfp.codigo as frm_pago_code  
+						from
+						  s_au_em_cabecera as auec
+						  inner join s_cliente as sclie on (sclie.id_cliente=auec.id_cliente)
+						  inner join s_entidad_financiera as sef on (sef.id_ef=auec.id_ef)
+						  inner join s_compania as sc on (sc.id_compania=auec.id_compania)
+						  inner join s_usuario as su on (su.id_usuario=auec.id_usuario)
+						  inner join s_au_cot_cabecera as aucot on (aucot.id_cotizacion=auec.id_cotizacion)
+						  inner join s_forma_pago as sfp ON (sfp.id_forma_pago = auec.id_forma_pago)
+						where
+						  auec.id_emision='".$this->ide."';";
+		//echo $this->sqlPo;					  			  
 		if($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){
 			if($this->rsPo->num_rows === 1){
 				$this->rowPo=$this->rsPo->fetch_array(MYSQLI_ASSOC);
 				$this->rsPo->free();
 				
-				$this->sqlDt="select
-                  sacd.id_vehiculo,
-                  sacd.id_tipo_vh,
-                  sacd.categoria as vh_categoria,
-                  case sacd.categoria
-                  when 'RAC' then 'Renta Car'
-                  when 'OTH' then 'Otros'
-                  end as categoria,
-                  sacd.id_marca,
-                  sacd.id_modelo,
-                  sacd.anio,
-                  sacd.placa,
-                  sacd.uso as uso_vehiculo,
-                  sacd.traccion as traccion,
-                  sacd.km,
-                  sacd.valor_asegurado,
-                  sacc.prima_total,
-                  sacd.facultativo,
-                  sacd.motivo_facultativo,
-                  satv.vehiculo,
-                  sama.marca,
-                  samo.modelo
-                from
-                  s_au_cot_detalle as sacd
-                    inner join
-                      s_au_cot_cabecera as sacc on (sacc.id_cotizacion = sacd.id_cotizacion)
-                    left join
-                      s_au_tipo_vehiculo as satv on (satv.id_tipo_vh = sacd.id_tipo_vh)
-                    left join
-                      s_au_marca as sama on (sama.id_marca = sacd.id_marca)
-                    left join
-                      s_au_modelo as samo on (samo.id_modelo = sacd.id_modelo)
-                where
-                  sacc.id_cotizacion = '".$this->idc."'
-                order by sacd.id_vehiculo asc
-                ;";
-                //echo $this->sqlDt;
+				$this->sqlDt="select 
+								emd.id_vehiculo,
+								emd.id_emision,
+								emd.id_tipo_vh,
+								emd.categoria as category,
+							    case emd.categoria
+							 	  when 'RAC' then 'Renta Car'
+								  when 'OTH' then 'Otros'
+							    end as categoria,
+								emd.id_marca,
+								emd.id_modelo,
+								emd.anio,
+								emd.placa,
+								emd.uso as uso_vehiculo,
+								emd.traccion as traccion,
+								emd.km,
+								emd.color,
+								emd.motor,
+								emd.chasis,
+								emd.cap_ton,
+								emd.no_asiento,
+								emd.valor_asegurado,
+								emd.tasa,
+								emd.prima,
+								emd.facultativo,
+								emd.motivo_facultativo,
+								emd.aprobado,
+								tipv.vehiculo,
+								aumr.marca,
+								aumod.modelo,
+								auf.aprobado as vh_aprobado,
+								auf.tasa_recargo as vh_tasa_recargo,
+								auf.porcentaje_recargo as vh_porcentaje,
+								auf.tasa_actual as vh_tasa_actual,
+								auf.tasa_final as vh_tasa_final,
+								auf.observacion as vh_observacion
+							from
+								s_au_em_detalle as emd
+									inner join
+								s_au_marca as aumr ON (aumr.id_marca = emd.id_marca)
+									inner join
+								s_au_modelo as aumod ON (aumod.id_modelo = emd.id_modelo)
+									inner join
+								s_au_tipo_vehiculo as tipv ON (tipv.id_tipo_vh = emd.id_tipo_vh)
+									left join
+								s_au_facultativo as auf ON (auf.id_emision = emd.id_emision and auf.id_vehiculo=emd.id_vehiculo)
+									left join
+								s_au_pendiente as aup ON (aup.id_emision = emd.id_emision and aup.id_vehiculo=emd.id_vehiculo)
+							where
+								emd.id_emision = '".$this->ide."'
+							order by emd.id_vehiculo asc;";
 				if($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT)){
 					if ($this->rsDt->num_rows > 0) {
 						$this->error = FALSE;
@@ -2203,74 +2199,83 @@ class CertificateQuery extends CertificateHtml {
 	
 	//CERTIFICADO PROVISIONAL TODO RIESGO DOMICILIARIO
 	private function set_query_trd_cp(){
-		 $this->sqlPo = 'select
-              stcc.id_cotizacion,
-              stcc.id_cotizacion as idc,
-              sef.id_ef as idef,
-              sef.nombre as ef_nombre,
-              sef.logo as ef_logo,
-              scia.nombre as cia_nombre,
-              scia.logo as cia_logo,
-              stcc.no_cotizacion as no_emision,
-              stcc.no_cotizacion,
-              stcc.ini_vigencia,
-              stcc.fin_vigencia,
-              @plazo:=(case stcc.tipo_plazo
-                       when "Y" then "Años"
-                       when "D" then "Dias"
-                       when "M" then "Meses"
-                       when "W" then "Semanas"
-                       end ) as plazo_text,
-              concat(stcc.plazo," ",@plazo) as tipo_plazo_text,
-              su.nombre as u_nombre,
-              su.email as u_email,
-              sdeu.departamento as u_depto,
-              scl.tipo as cl_tipo,
-              scl.razon_social as cl_razon_social,
-              scl.paterno as cl_paterno,
-              scl.materno as cl_materno,
-              scl.nombre as cl_nombre,
-              scl.ap_casada as cl_ap_casada,
-              (case scl.tipo
-               when 0 then concat(scl.ci, scl.complemento, " ", sdep.codigo)
-               when 1 then scl.ci
-               end) as cl_ci,
-              (case scl.avenida
-               when "AV" then "Avenida"
-               when "CA" then "Calle"
-               end) as cl_avc,
-              scl.direccion as cl_direccion,
-              scl.no_domicilio as cl_no_domicilio,
-              scl.localidad as cl_localidad,
-              scl.telefono_domicilio as cl_tel_domicilio,
-              scl.telefono_oficina as cl_tel_oficina,
-              scl.telefono_celular as cl_tel_celular,
-              scl.direccion_laboral,
-              scl.desc_ocupacion,
-              sfp.forma_pago,
-              stcc.prima_total
-            from
-              s_trd_cot_cabecera as stcc
-                inner join
-                  s_trd_cot_cliente as scl ON (scl.id_cliente = stcc.id_cliente)
-                inner join
-                  s_entidad_financiera as sef ON (sef.id_ef = stcc.id_ef)
-                inner join
-                  s_ef_compania as sec on (sec.id_ef = sef.id_ef
-                                           and sec.producto = "' . $this->product . '")
-                inner join
-                  s_compania as scia ON (scia.id_compania = sec.id_compania)
-                inner join
-                  s_usuario as su ON (su.id_usuario = stcc.id_usuario)
-                inner join
-                  s_forma_pago as sfp ON (sfp.id_forma_pago = stcc.id_forma_pago)
-                inner join
-                  s_departamento as sdep ON (sdep.id_depto = scl.extension)
-                inner join
-                  s_departamento as sdeu ON (sdeu.id_depto = su.id_depto)
-            where
-              stcc.id_cotizacion = "' . $this->idc . '"
-            ;';
+		 $this->sqlPo = 'select 
+			stre.id_emision,
+			strc.id_cotizacion as idc,
+			sef.id_ef as idef,
+			sef.nombre as ef_nombre,
+			sef.logo as ef_logo,
+			sh.producto as ef_producto,
+			scia.nombre as cia_nombre,
+			scia.logo as cia_logo,
+			stre.no_emision,
+			strc.no_cotizacion,
+			stre.prefijo,
+			stre.fecha_emision,
+			stre.ini_vigencia,
+			stre.fin_vigencia,
+			@plazo:=(case stre.tipo_plazo
+				when "Y" then "Años"
+				when "D" then "Dias"
+				when "M" then "Meses"
+				when "W" then "Semanas"
+			end ) as plazo_text,
+			concat(stre.plazo," ",@plazo) as tipo_plazo_text,
+			su.nombre as u_nombre,
+			su.email as u_email,
+			sdeu.departamento as u_depto,
+			scl.tipo as cl_tipo,
+			scl.razon_social as cl_razon_social,
+			scl.paterno as cl_paterno,
+			scl.materno as cl_materno,
+			scl.nombre as cl_nombre,
+			scl.ap_casada as cl_ap_casada,
+			(case scl.tipo
+				when 0 then concat(scl.ci, scl.complemento, " ", sdep.codigo)
+				when 1 then scl.ci
+			end) as cl_ci,
+			(case scl.avenida
+				when "AV" then "Avenida"
+				when "CA" then "Calle"
+			end) as cl_avc,
+			scl.direccion as cl_direccion,
+			scl.no_domicilio as cl_no_domicilio,
+			scl.localidad as cl_localidad,
+			scl.telefono_domicilio as cl_tel_domicilio,
+			scl.telefono_oficina as cl_tel_oficina,
+			scl.telefono_celular as cl_tel_celular,
+			scl.direccion_laboral,
+			scl.desc_ocupacion,
+			ocup.ocupacion, 
+			sfp.forma_pago,
+			stre.tasa,
+			stre.prima_total
+		from
+			s_trd_em_cabecera as stre
+				inner join
+			s_trd_cot_cabecera as strc ON (strc.id_cotizacion = stre.id_cotizacion)
+				inner join
+			s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
+				inner join
+			s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
+				inner join
+			s_compania as scia ON (scia.id_compania = stre.id_compania)
+				inner join
+			s_usuario as su ON (su.id_usuario = stre.id_usuario)
+				inner join
+			s_sgc_home as sh ON (sh.id_ef = sef.id_ef)
+				inner join
+		    s_forma_pago as sfp ON (sfp.id_forma_pago = stre.id_forma_pago)
+				inner join 
+			s_departamento as sdep ON (sdep.id_depto = scl.extension)
+				inner join 
+			s_departamento as sdeu ON (sdeu.id_depto = su.id_depto)
+			    left join
+			s_ocupacion as ocup ON (ocup.id_ocupacion = scl.id_ocupacion and ocup.producto="'.$this->product.'")
+		where
+		    stre.id_emision = "'.$this->ide.'"
+		        and sh.producto = "'.$this->product.'";';
+		//echo $this->sqlPo;
 		if (($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT))) {
 			if ($this->rsPo->num_rows === 1) {
 				$this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
@@ -2287,13 +2292,13 @@ class CertificateQuery extends CertificateHtml {
 					strd.localidad as pr_localidad,
 					strd.valor_asegurado as pr_valor_asegurado
 				from
-					s_trd_cot_detalle as strd
+					s_trd_em_detalle as strd
 						inner join
-					s_trd_cot_cabecera as stre ON (stre.id_cotizacion = strd.id_cotizacion)
-						left join
+					s_trd_em_cabecera as stre ON (stre.id_emision = strd.id_emision)
+						inner join
 					s_departamento as sdep ON (sdep.id_depto = strd.departamento)
 				where
-					stre.id_cotizacion = "'.$this->rowPo['id_cotizacion'].'"
+					stre.id_emision = "'.$this->rowPo['id_emision'].'"
 				order by strd.id_inmueble asc
 				;';
 				//echo $this->sqlDt;
