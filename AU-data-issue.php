@@ -424,9 +424,9 @@ if ($rsDep->data_seek(0) === TRUE) {
             	class="<?=$read_nat;?> fbin" 
             	<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
             
-            <label>Dirección laboral: <span>*</span></label><br>
+            <label>Dirección laboral: <span></span></label><br>
             <textarea id="dc-address-work" name="dc-address-work" 
-            	class="<?=$read_nat;?> fbin" 
+            	class="not-required fbin" 
             	<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
             
             <label>Teléfono oficina: </label>

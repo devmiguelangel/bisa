@@ -136,7 +136,7 @@ if(isset($_GET['pr']) && isset($_GET['ide'])){
 			$sqlUp = 'update s_trm_em_cabecera set aprobado = true where id_emision = "'.$ide.'" ;';
 			break;
 	}
-	
+	// echo $sql;
 	if(($rs = $link->query($sql,MYSQLI_STORE_RESULT))){
 		if($rs->num_rows === 1){
 			$row = $rs->fetch_array(MYSQLI_ASSOC);

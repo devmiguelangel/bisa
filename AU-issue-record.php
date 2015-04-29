@@ -61,7 +61,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$idcia = $link->real_escape_string(trim(base64_decode($_POST['cia'])));
 			$dcr_amount = 0;
 			$dcr_warranty = (int)$link->real_escape_string(trim(base64_decode($_POST['di-warranty'])));
-			$aproved = 1;
+			$approved = 1;
 			if ($dcr_warranty === 1) {
 				$approved = 0;
 			}
@@ -222,6 +222,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				}
 			}else {
 				$arrAU[2] = 'Los Vehículos no pueden ser Registrados';
+			}
+
+			if ($_FAC) {
+				$approved = 0;
 			}
 			
 			$swReg = FALSE;
