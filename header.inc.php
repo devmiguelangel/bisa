@@ -316,14 +316,6 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					</a></li>
 <?php
 				}
-				
-	            if (($rowMenu['producto'] === 'AU' || $rowMenu['producto'] === 'TRD') && true === (boolean)$rowMenu['cp']) {
-?>
-					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_provisional');?>" class="link-pr">
-						Certificados Provisionales
-					</a></li>
-<?php
-				}
 			}
 			
 			if ($user_type === 'FAC' || $user_type === 'ROOT') {
@@ -331,6 +323,9 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_fac');?>" class="link-pr">
 						Registros Facultativos
+					</a></li>
+					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_cancel');?>" class="link-pr">
+						Anular Póliza
 					</a></li>
 <?php
 				}

@@ -69,7 +69,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
 			$dcr_term = 1;
 			$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-			if ($dcr_type_term === 'Y') {
+			if ($dcr_type_term === 'M') {
 				$dcr_term = 12;
 			}
 			$methodPayment = '';
@@ -193,7 +193,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_vh[$k]['capton'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-capton']));
 					$arr_vh[$k]['nseat'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-nseat']));
 					$arr_vh[$k]['modality'] = 'null';
-					if (isset($_POST['dv-'.$k.'-modality'])) {
+					if (isset($_POST['dv-' . $k . '-modality'])) {
 						$swMo = true;
 						$arr_vh[$k]['modality'] = '"' 
 							. $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-modality']))) . '"';

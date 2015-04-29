@@ -25,7 +25,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		$di_warranty = $link->real_escape_string(trim($_POST['di-warranty']));
 		$di_term = 1;
 		$di_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-		if ($di_type_term === 'Y') {
+		if ($di_type_term === 'M') {
 			$di_term = 12;
 		}
 		

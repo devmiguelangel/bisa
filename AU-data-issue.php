@@ -934,8 +934,8 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
+			goto btnIssue;
 			if ((boolean)$row['aprobado']) {
-				goto btnIssue;
 			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}

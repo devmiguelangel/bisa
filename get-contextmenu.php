@@ -277,7 +277,7 @@ if(isset($_GET['ide'])){
 				";
 				break; 
 		}
-		//echo $sql;
+		// echo $sql;
 		
 		if(($rs = $link->query($sql,MYSQLI_STORE_RESULT))){
 			if($rs->num_rows === 1){
@@ -286,71 +286,89 @@ if(isset($_GET['ide'])){
 				
 				$idc = $row['idc'];
 				$cp = (boolean)$row['cp'];
-				if ($cp === true) {
-					$category = base64_encode('CP');
-					$titleCert = 'Certificado Provisional';
-				} else {
-					$category = base64_encode('CE');
-					$titleCert = 'Certificado';
-					if ($product === 'DE' && $row['modalidad'] === null) {
-						$modality = false;
-						$category2 = base64_encode('PEC');
-						$titleCert = 'Certificado Desgravamen';
-						$titleCert2 = 'Certificado Vida en Grupo';
-					}
+				
+				$category = base64_encode('CE');
+				$titleCert = 'Certificado';
+				if ($product === 'DE' && $row['modalidad'] === null) {
+					$modality = false;
+					$category2 = base64_encode('PEC');
+					$titleCert = 'Certificado Desgravamen';
+					$titleCert2 = 'Certificado Vida en Grupo';
 				}
 				
 				//echo (int)$issue;
 				$link->get_state($arr_state, $row, $token, $product, $issue);
-				$menu .= '<li><span class="cm-link"><span class="view-ste">Estado => '.$arr_state['txt'].'</span></span></li>';
+				$menu .= '<li><span class="cm-link"><span class="view-ste">Estado => ' 	
+					. $arr_state['txt'] . '</span></span></li>';
 				
-				if($arr_state['obs'] === 'NINGUNA' || (boolean)$row['estado_facultativo'] === false){
-					$menu .= '<li><span class="cm-link"><span class="view-obs">Observación => '.$arr_state['obs'].'</span></span></li>';
-				}else{
-					$menu .= '<li><a href="fac-'.$pr.'-observation.php?ide='.base64_encode($ide).'&idvh='.base64_encode($idVh).'" class="fancybox fancybox.ajax observation"><span class="view-obs">Observación => '.$arr_state['obs'].'</span></a></li>';
+				if ($arr_state['obs'] === 'NINGUNA' || (boolean)$row['estado_facultativo'] === false) {
+					$menu .= '<li><span class="cm-link"><span class="view-obs">Observación => ' 
+						. $arr_state['obs'] . '</span></span></li>';
+				} else {
+					$menu .= '<li><a href="fac-' . $pr . '-observation.php?ide=' 
+						. base64_encode($ide) . '&idvh=' . base64_encode($idVh) 
+						. '" class="fancybox fancybox.ajax observation">
+						<span class="view-obs">Observación => ' 
+						. $arr_state['obs'] . '</span></a></li>';
 				}
 				//echo $token.' - '.$row['observacion'].' - '.(int)$issue;
-				if(empty($arr_state['action']) === FALSE){
+				if (empty($arr_state['action']) === false) {
 					$fancybox = 'fancybox fancybox.ajax observation';
 					//echo $row['observacion'].' - '.$token;
-					if(($row['observacion'] === 'E' || $token === 3) && $row['estado'] !== 'A' && $token !== 4) {
+					if(($row['observacion'] === 'E' || $token === 3) 
+							&& $row['estado'] !== 'A' && $token !== 4) {
 						$fancybox = '';
 					}
 					
 					if ($product === 'DE' || $product === 'AU' || $product === 'TRD' || $product === 'TRM') {
-						$menu .= '<li><a href="'.$arr_state['link'].'" class="'.$fancybox.'"><span class="view-act">Acción => '.$arr_state['action'].'</span></a></li>';
+						$menu .= '<li><a href="' . $arr_state['link'] . '" class="' 
+							. $fancybox . '"><span class="view-act">Acción => ' 
+							. $arr_state['action'] . '</span></a></li>';
 					}
 				}
 				
-				if($token === 1){
+				if ($token === 1) {
 					$txtMark = '';
-					switch((int)$row['leido']){
+					switch ((int)$row['leido']) {
 						case 1:	$txtMark = 'Marcar como no Leído';	break;
 						case 0:	$txtMark = 'Marcar como Leído';	break;
 					}
 					
-					$menu .= '<li><a href="mark-read-unread.php?ide='.base64_encode($ide).'&idvh='.base64_encode($idVh).'&flag='.base64_encode((int)$row['leido']).'&fwd='.base64_encode($product).'" class="fancybox fancybox.ajax fde-process">'.$txtMark.'</a></li>';
+					$menu .= '<li><a href="mark-read-unread.php?ide=' . base64_encode($ide) 
+						. '&idvh=' . base64_encode($idVh) . '&flag=' 
+						. base64_encode((int)$row['leido']) . '&fwd=' 
+						. base64_encode($product) . '" 
+						class="fancybox fancybox.ajax fde-process">' . $txtMark . '</a></li>';
 				}
 			}
 		}
 		//echo $product;
 		$link->close();
-		if($token !== 3 && $token !== 7) {
-			$menu .= '<li><a href="certificate-detail.php?ide='.base64_encode($ide).'&pr='.base64_encode($product).'&type='.base64_encode('PRINT').'&category='.$category.'" class="fancybox fancybox.ajax observation">Ver '.$titleCert.'</a></li>';
+		if ($token !== 3 && $token !== 7) {
+			$menu .= '<li><a href="certificate-detail.php?ide=' 
+				. base64_encode($ide) . '&pr=' . base64_encode($product) 
+				. '&type=' . base64_encode('PRINT') . '&category=' . $category 
+				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert . '</a></li>';
 			
 			if ($product === 'DE' && $modality === false) {
-				$menu .= '<li><a href="certificate-detail.php?ide='.base64_encode($ide).'&pr='.base64_encode($product).'&type='.base64_encode('PRINT').'&category='.$category2.'" class="fancybox fancybox.ajax observation">Ver '.$titleCert2.'</a></li>';
+				$menu .= '<li><a href="certificate-detail.php?ide=' . base64_encode($ide) 
+					. '&pr=' . base64_encode($product) . '&type=' 
+					. base64_encode('PRINT') . '&category=' . $category2 
+					. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert2 . '</a></li>';
 			}
 		}
 		
 		if ($product !== 'DE') {
-			$menu .= '<li><a href="certificate-detail.php?idc='.base64_encode($idc).'&cia='.base64_encode($row['id_compania']).'&pr='.base64_encode($product).'&type='.base64_encode('PRINT').'" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
+			$menu .= '<li><a href="certificate-detail.php?idc=' 
+				. base64_encode($idc) . '&cia=' . base64_encode($row['id_compania']) 
+				. '&pr=' . base64_encode($product) . '&type=' . base64_encode('PRINT') 
+				. '" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
 		}
 		
-	}else{
+	} else {
 		$idc = $ide;
 
-		if($token === 3 || $token === 2 || $token === 6){
+		if ($token === 3 || $token === 2 || $token === 6) {
 			$sql = 'select 
 			    scot.id_cotizacion as idc,
 			    scot.no_cotizacion as no_ct,
@@ -361,7 +379,7 @@ if(isset($_GET['ide'])){
 			        1) as limite,
                 scot.certificado_provisional as cp
 			from
-			    s_'.$pr.'_cot_cabecera as scot
+			    s_' . $pr . '_cot_cabecera as scot
 			        inner join
 			    s_entidad_financiera as sef ON (sef.id_ef = scot.id_ef)
 					inner join
@@ -427,7 +445,10 @@ if(isset($_GET['ide'])){
 		}
 		
 		if ($token !== 3) {
-			$menu .= '<li><a href="certificate-detail.php?idc='.base64_encode($idc).'&cia='.base64_encode($row['id_compania']).'&pr='.base64_encode($product).'&type='.base64_encode('PRINT').'" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
+			$menu .= '<li><a href="certificate-detail.php?idc=' . base64_encode($idc) 
+				. '&cia=' . base64_encode($row['id_compania']) . '&pr=' 
+				. base64_encode($product) . '&type=' . base64_encode('PRINT') 
+				. '" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
 		}
 	}
 	

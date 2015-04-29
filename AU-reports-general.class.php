@@ -1,7 +1,11 @@
 <?php
+
+session_start();
 require_once('sibas-db.class.php');
+
 class ReportsGeneralAU{
-	private $cx, $sql, $rs, $row, $sqlvh, $rsvh, $rowvh, $pr, $flag, $token, $nEF, $dataToken, $xls, $xlsTitle;
+	private $cx, $sql, $rs, $row, $sqlvh, $rsvh, $rowvh, $pr, 
+		$flag, $token, $nEF, $dataToken, $xls, $xlsTitle, $data_user;
 	protected $data = array();
 	public $err;
 	
@@ -12,6 +16,11 @@ class ReportsGeneralAU{
 		$this->xls = $xls;
 		
 		$this->set_variable($data);
+		
+		if (($this->data_user = $this->cx->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) === false) {
+			$this->data_user['u_tipo_codigo'] = '';
+		}
+
 		$this->get_query_report();
 		
 	}
@@ -119,13 +128,8 @@ class ReportsGeneralAU{
 		    sae.prefijo,
 		    sae.no_emision,
 		    sae.plazo as r_plazo,
-			(case sae.tipo_plazo
-				when 'Y' then 'Años'
-				when 'M' then 'Meses'
-				when 'W' then 'Semanas'
-				when 'D' then 'Días'
-			end) as r_tipo_plazo,
-			sfp.forma_pago as r_forma_pago,
+			sae.tipo_plazo as r_tipo_plazo,
+			'' as r_forma_pago,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
@@ -192,14 +196,14 @@ class ReportsGeneralAU{
 		    s_departamento as sdep ON (sdep.id_depto = scl.extension)
 		        inner join
 		    s_usuario as su ON (su.id_usuario = sae.id_usuario)
+		    	inner join
+		    s_usuario_tipo as sut ON (sut.id_tipo = su.id_tipo)
 		        inner join
 		    s_departamento as sdepu ON (sdepu.id_depto = su.id_depto)
 				left join
 			s_agencia as sag ON (sag.id_agencia = su.id_agencia)
 				inner join
 			s_usuario as sua ON (sua.id_usuario = sae.and_usuario)
-				inner join
-    		s_forma_pago as sfp ON (sfp.id_forma_pago = sae.id_forma_pago)
 		where
 		    sef.id_ef = '".$this->data['idef']."'
 		        and sae.no_emision like '%".$this->data['nc']."%'
@@ -250,6 +254,16 @@ class ReportsGeneralAU{
 		}elseif($this->token === 'AN'){
 			$this->sql .= "and sae.emitir = true
 					and sae.anulado like '%".$this->data['r-canceled']."%'
+					and (case '" . $this->data_user['u_tipo_codigo'] . "'
+				        when 'FAC' then true
+				        when
+				            'LOG'
+				        then
+				            if(curdate() = sae.fecha_emision,
+				                true,
+				                false)
+				        else false
+				    end) = true
 					";
 		}elseif($this->token === 'IM'){
 			$idUser = base64_encode($this->data['idUser']);
@@ -296,7 +310,7 @@ class ReportsGeneralAU{
 		}
 		$this->sql .= "order by sae.id_emision desc
 		;";
-		//echo $this->sql;
+		// echo $this->sql;
 		
 		if(($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))){
 			$this->err = FALSE;
@@ -317,13 +331,7 @@ class ReportsGeneralAU{
 		    count(sac.id_cotizacion) as noVh,
 		    sac.no_cotizacion,
 		    sac.plazo as r_plazo,
-		    (case sac.tipo_plazo
-		        when 'Y' then 'Años'
-		        when 'M' then 'Meses'
-		        when 'W' then 'Semanas'
-		        when 'D' then 'Días'
-		    end) as r_tipo_plazo,
-		    sfp.forma_pago as r_forma_pago,
+		    sac.tipo_plazo as r_tipo_plazo,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
@@ -375,8 +383,6 @@ class ReportsGeneralAU{
 		    s_departamento as sdepu ON (sdepu.id_depto = su.id_depto)
 		        left join
 		    s_agencia as sag ON (sag.id_agencia = su.id_agencia)
-				inner join
-    		s_forma_pago as sfp ON (sfp.id_forma_pago = sac.id_forma_pago)
 		where
 		    sef.id_ef = '".$this->data['idef']."'
 		        and sac.no_cotizacion like '".$this->data['nc']."'
@@ -480,8 +486,7 @@ $(document).ready(function(e) {
             <td><?=htmlentities('Teléfono', ENT_QUOTES, 'UTF-8');?></td>
             <td>Celular</td>
             <td>Email</td>
-            <td><?=htmlentities('Plazo Crédito', ENT_QUOTES, 'UTF-8');?></td>
-            <td>Forma de Pago</td>
+            <td>Modalidad de Pago</td>
             <td><?=htmlentities('Tipo Vehículo', ENT_QUOTES, 'UTF-8');?></td>
             <td>Marca</td>
             <td>Modelo</td>
@@ -489,7 +494,6 @@ $(document).ready(function(e) {
             <td>Placa</td>
             <td>Uso</td>
             <td><?=htmlentities('Tracción', ENT_QUOTES, 'UTF-8');?></td>
-            <td>Cero Km.</td>
             <td>Valor Asegurado</td>
             <td>Creado Por</td>
             <td>Sucursal Registro</td>
@@ -530,6 +534,7 @@ $(document).ready(function(e) {
 			
 			$this->sqlvh = "select 
 				sae.id_emision as ide,
+				sae.id_compania,
 			    sad.id_vehiculo as idVh,
 			    stv.vehiculo as v_tipo_vehiculo,
 			    sma.marca as v_marca,
@@ -689,8 +694,7 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_plazo'].' '.htmlentities($this->row['r_tipo_plazo'], ENT_QUOTES, 'UTF-8');?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_forma_pago'];?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
             <td><?=$this->rowvh['v_modelo'];?></td>
@@ -698,7 +702,6 @@ $(document).ready(function(e) {
             <td><?=$this->rowvh['v_placa'];?></td>
             <td><?=$this->rowvh['v_uso'];?></td>
             <td><?=$this->rowvh['v_traccion'];?></td>
-            <td><?=$this->rowvh['v_km'];?></td>
             <td><?=number_format($this->rowvh['v_valor_asegurado'],2,'.',',');?> USD</td>
             <td><?=htmlentities($this->row['u_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['u_sucursal'];?></td>
@@ -767,8 +770,7 @@ $(document).ready(function(e) {
             <td><?=htmlentities('Teléfono', ENT_QUOTES, 'UTF-8');?></td>
             <td>Celular</td>
             <td>Email</td>
-            <td><?=htmlentities('Plazo Crédito', ENT_QUOTES, 'UTF-8');?></td>
-            <td>Forma de Pago</td>
+            <td>Modalidad de Pago</td>
             <td><?=htmlentities('Tipo Vehículo', ENT_QUOTES, 'UTF-8');?></td>
             <td>Marca</td>
             <td>Modelo</td>
@@ -776,7 +778,6 @@ $(document).ready(function(e) {
             <td>Placa</td>
             <td>Uso</td>
             <td><?=htmlentities('Tracción', ENT_QUOTES, 'UTF-8');?></td>
-            <td>Cero Km.</td>
             <td>Valor Asegurado</td>
             <td>Creado Por</td>
             <td>Fecha de Ingreso</td>
@@ -870,8 +871,7 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_plazo'].' '.htmlentities($this->row['r_tipo_plazo'], ENT_QUOTES, 'UTF-8');?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_forma_pago'];?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
             <td><?=$this->rowvh['v_modelo'];?></td>
@@ -879,13 +879,11 @@ $(document).ready(function(e) {
             <td><?=$this->rowvh['v_placa'];?></td>
             <td><?=$this->rowvh['v_uso'];?></td>
             <td><?=$this->rowvh['v_traccion'];?></td>
-            <td><?=$this->rowvh['v_km'];?></td>
             <td><?=number_format($this->rowvh['v_valor_asegurado'],2,'.',',');?> USD.</td>
             <td><?=htmlentities($this->row['u_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['fecha_ingreso'];?></td>
             <td><?=$this->row['u_sucursal'];?></td>
             <td><?=htmlentities($this->row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td><a href="detalle-cotizacion/detalle-certificado.php?idcotiza=<?=base64_encode($this->row['idc']);?>&cat=<?=base64_encode('DE');?>&type=PRINT" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></td>-->
         </tr>
 <?php
 					}

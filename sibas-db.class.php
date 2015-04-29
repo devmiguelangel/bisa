@@ -164,6 +164,7 @@ class SibasDB extends MySQLi
 		        and su.activado = true
 		        and sef.id_ef = "'.base64_decode($idef).'"
 		        and sef.activado = true
+        limit 0, 1
 		;';
 		//echo $this->sql;
 		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))){
@@ -171,12 +172,10 @@ class SibasDB extends MySQLi
 				$this->row = $this->rs->fetch_array(MYSQLI_ASSOC);
 				$this->rs->free();
 				return $this->row;
-			} else {
-				return FALSE;
 			}
-		} else {
-			return FALSE;
 		}
+
+		return false;
 	}
 
 	public function get_data_user($idUser, $idef) 
@@ -859,10 +858,12 @@ class SibasDB extends MySQLi
 	public function get_state(&$arr_state, $row, $token, $product, $issue)
 	{
 		$state_bank = 0;
-		if($token === 2) {
+		if($token === 2 || $token === 3) {
 			$state_bank = (int)$row['estado_banco'];
 		}
+
 		$pr = strtolower($product);
+
 		switch($row['estado']){
 			case 'A':
 				$arr_state['txt'] = 'APROBADO';
@@ -941,34 +942,46 @@ class SibasDB extends MySQLi
 				break;
 			case 'P':
 				$arr_state['txt'] = 'PENDIENTE';
-				if($token === 2){
+
+				if($token === 2 || $token === 3){
 					if ($state_bank === 3 && (int)$row['estado_facultativo'] === 0) {
 						$arr_state['txt'] = 'PRE APROBADO';
-					} elseif($state_bank === 2 && (int)$row['estado_facultativo'] === 0) {
+					} elseif ($state_bank === 2 && (int)$row['estado_facultativo'] === 0) {
 						$arr_state['txt'] = 'APROBADO';
 					}
+					goto EditData;
 				} elseif ($token === 5) {
 					if ((int)$row['estado_facultativo'] === 0) {
 						$arr_state['txt'] = 'PRE APROBADO';
 					}
 					Approve:
 					$arr_state['action'] = 'APROBAR/RECHAZAR SOLICITUD';
-					$arr_state['link'] = 'implant-approve-policy.php?ide='.base64_encode($row['ide']).'&pr='.base64_encode($product);
+					$arr_state['link'] = 'implant-approve-policy.php?ide=' 
+						. base64_encode($row['ide']) . '&pr=' . base64_encode($product);
 				}
 				$arr_state['bg'] = 'background: #FF3C3C; color: #FFF;';
 				break;
 			case 'F':
-				if (($token === 2 || $token === 3 || $token === 5 || $token === 6) && (int)$row['estado_facultativo'] === 0) {
+				if (($token === 2 || $token === 3 || $token === 5 || $token === 6) 
+						&& (int)$row['estado_facultativo'] === 0) {
 					$arr_state['txt'] = 'APROBADO FREE COVER';
 				} elseif($token === 4) {
 					$arr_state['txt'] = 'APROBADO FREE COVER';
 				}
 				if($token === 3){
+					EditData:
 					$arr_state['action'] = 'Editar Datos';
-					$arr_state['link'] = $pr.'-quote.php?ms='.md5('MS_'.$product).'&page=91a74b6d637860983cc6c1d33bf4d292&pr='.base64_encode($product.'|05').'&ide='.base64_encode($row['ide']).'&flag='.md5('i-read').'&cia='.base64_encode($row['id_compania']);
+					$arr_state['link'] = $pr . '-quote.php?ms=' . md5('MS_' . $product) 
+						. '&page=91a74b6d637860983cc6c1d33bf4d292&pr=' 
+						. base64_encode($product . '|05') . '&ide=' 
+						. base64_encode($row['ide']) . '&flag=' . md5('i-read') 
+						. '&cia=' . base64_encode($row['id_compania']);
 				} elseif($token === 4){
 					$arr_state['action'] = 'Anular Certificado';
-					$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
+					$arr_state['link'] = 'cancel-policy.php?ide=' 
+						. base64_encode($row['ide']) . '&nc=' 
+						. base64_encode($row['r_no_emision']) 
+						. '&pr=' . base64_encode($product);
 				} elseif ($token === 5) {
 					goto Approve;
 				} elseif ($token === 7) {
