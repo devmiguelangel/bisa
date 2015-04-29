@@ -135,8 +135,8 @@ switch($sw){
 				inner join
 			s_entidad_financiera as sef ON (sef.id_ef = sac.id_ef)
 		where
-			sac.id_cotizacion = "'.$idc.'"
-				and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
+			sac.id_cotizacion = "' . $idc . '"
+				and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
 				and sef.activado = true
 		order by sad.id_vehiculo asc
 		;';
@@ -204,7 +204,8 @@ if($sw !== 1){
 		sad.valor_asegurado as vh_valor_asegurado,
 		sad.tasa as vh_tasa,
 		sad.prima as vh_prima,
-		sad.vh_archivo as vh_adjunto
+		sad.vh_archivo as vh_adjunto,
+		sae.aprobado
 	from
 		s_au_em_cabecera as sae
 			inner join
@@ -491,12 +492,12 @@ if ($rsDep->data_seek(0) === TRUE) {
             </div><br>
         </div><!--
         --><div class="form-col">
-        	<label>Dirección domicilio: <span>*</span></label><br>
+        	<label>Dirección domicilio: <span></span></label><br>
 			<textarea id="dc-company-address-home" name="dc-company-address-home" 
-				class="<?=$read_jur;?> fbin" 
+				class="not-required fbin" 
 				<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
 
-        	<label>Dirección laboral: <span></span></label><br>
+        	<label>Dirección laboral: <span>*</span></label><br>
 			<textarea id="dc-company-address-work" name="dc-company-address-work" 
 				class="<?=$read_jur;?> fbin" 
 				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
@@ -927,10 +928,15 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 		if($FC === TRUE && $sw === 2){
 			if(!isset($_GET['target'])) {
 				btnApproval:
-				echo '<a href="company-approval.php?ide='.base64_encode($ide).'&pr='.base64_encode('AU').'" class="fancybox fancybox.ajax btn-issue">Solicitar aprobación de la Compañia</a> ';
+				echo '<a href="company-approval.php?ide=' . base64_encode($ide) 
+					. '&pr=' . base64_encode('AU') . '" 
+					class="fancybox fancybox.ajax btn-issue">
+					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
-			goto btnIssue;
+			if ((boolean)$row['aprobado']) {
+				goto btnIssue;
+			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
 	}

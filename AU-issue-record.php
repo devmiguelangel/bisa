@@ -61,6 +61,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$idcia = $link->real_escape_string(trim(base64_decode($_POST['cia'])));
 			$dcr_amount = 0;
 			$dcr_warranty = (int)$link->real_escape_string(trim(base64_decode($_POST['di-warranty'])));
+			$aproved = 1;
+			if ($dcr_warranty === 1) {
+				$approved = 0;
+			}
 			$dcr_date_begin = $link->real_escape_string(trim(base64_decode($_POST['di-date-inception'])));
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
 			$dcr_term = 1;
@@ -282,18 +286,18 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						id_usuario, anulado, and_usuario, fecha_anulado, 
 						motivo_anulado, emitir, fecha_emision, id_compania, 
 						id_poliza, no_copia, facultativo, motivo_facultativo, 
-						prima_total, leido) 
+						prima_total, leido, aprobado) 
 					values 
 					("'.$ide.'", '.$record.', 
 						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", '.$cp.', 
-						'.$dcr_warranty.', '.(int)$cl_type_client.', "'.$idcl.'", 
+						"'.$dcr_warranty.'", '.(int)$cl_type_client.', "'.$idcl.'", 
 						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
 						'.$dcr_method_payment.', '.$dcr_term.', "'.$dcr_type_term.'", 
 						"'.$bl_name.'", "'.$bl_nit.'", curdate(), 
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
 						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
-						"'.$_FAC_REASON.'", '.$PRIMA.', false) ;';
+						"' . $_FAC_REASON . '", ' . $PRIMA . ', false, "' . $approved . '") ;';
 					
 					if($link->query($sql) === TRUE) {
 						$auxPrefix = null;
