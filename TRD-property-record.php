@@ -1,10 +1,15 @@
 <?php
-require('sibas-db.class.php');
-require('session.class.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
 
 $session = new Session();
+$session->getSessionCookie();
 $token = $session->check_session();
+
 $arrTR = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo procesar el Inmueble');
+$log_msg = '';
 
 $link = new SibasDB();
 
@@ -18,7 +23,8 @@ if($token === FALSE){
 	}
 }
 
-if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr']) && isset($_POST['idef'])){
+if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page']) 
+		&& isset($_POST['pr']) && isset($_POST['idef'])){
 	if($_POST['pr'] === base64_encode('TRD|01')){
 		$link = new SibasDB();
 		$idc = NULL;
@@ -27,14 +33,10 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 		if (isset($_POST['dp-idc'])) {
 			$idc = $link->real_escape_string(trim(base64_decode($_POST['dp-idc'])));
 		}
+
+		$record = 0;
 		
 		$idef = $link->real_escape_string(trim(base64_decode($_POST['idef'])));
-
-        if (isset($_POST['cp'])) {
-            if (md5(1) === $_POST['cp']) {
-                $cp = true;
-            }
-        }
 		
 		$idPr = 0;
 		$flag = FALSE;
@@ -55,130 +57,140 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 			$max_anio = (int)$rowTR['max_anio'];
 		}
 
-        if ($cp === false) {
-            $dp_type = $link->real_escape_string(trim(base64_decode($_POST['dp-type'])));
-            $dp_use = $link->real_escape_string(trim($_POST['dp-use']));
-            $dp_use_other = '';
-            if($dp_use === 'OTH'){
-                $dp_use_other = $link->real_escape_string(trim($_POST['dp-use-other']));
-            }else {
-                $dp_use = base64_decode($dp_use);
-            }
-            $dp_state = $link->real_escape_string(trim(base64_decode($_POST['dp-state'])));
-            $dp_depto = $link->real_escape_string(trim(base64_decode($_POST['dp-depto'])));
-            $dp_zone = $link->real_escape_string(trim($_POST['dp-zone']));
-            $dp_locality = $link->real_escape_string(trim($_POST['dp-locality']));
-            $dp_address = $link->real_escape_string(trim($_POST['dp-address']));
-        } else {
-
-        }
+        $dp_type = $link->real_escape_string(trim($_POST['dp-type']));
+        $dp_use = $link->real_escape_string(trim($_POST['dp-use']));
+        $dp_use_other = '';
+        $dp_state = '';
+        $dp_depto = $link->real_escape_string(trim(base64_decode($_POST['dp-depto'])));
+        $dp_zone = $link->real_escape_string(trim($_POST['dp-zone']));
+        $dp_locality = $link->real_escape_string(trim($_POST['dp-locality']));
+        $dp_address = $link->real_escape_string(trim($_POST['dp-address']));
 
 		$dp_modality = 'null';
-		if (isset($_POST['dp-modality'])) {
-			$dp_modality = '"' . $link->real_escape_string(trim(base64_decode($_POST['dp-modality']))) . '"';
-		}
 		$dp_value_insured = $link->real_escape_string(trim($_POST['dp-value-insured']));
-		
-		/*if($dv_value_insured > $max_amount){
+
+		if($dp_value_insured > $max_amount){
 			$_FAC = TRUE;
-			$reason .= '| El valor asegurado del Vehículo excede el máximo valor permitido. Valor permitido: '.number_format($max_amount, 2, '.', ',').' USD';
-		}*/
-		
+			$reason .= '| El valor asegurado del Inmueble excede el máximo valor 
+				permitido. Valor permitido: ' . number_format($max_amount, 2, '.', ',') . ' USD';
+		}
+
 		$max_value = $link->get_cumulus($dp_value_insured, 'USD', base64_encode($idef), 'TRD');
 		
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));
 		$pr = $link->real_escape_string(trim($_POST['pr']));
 		
-		if($max_value === 1){
+		if ($max_value === 1) {
 			$sql = '';
 			
 			if ($idc === NULL) {
-				$idc = uniqid('@S#3$2013',true);
+				$idc = uniqid('@S#3$2013', true);
 				$record = $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 0);
 				
 				$sql = 'insert into s_trd_cot_cabecera 
-				(`id_cotizacion`, `no_cotizacion`, `id_ef`, 
-				`certificado_provisional`, `fecha_creacion`, `id_usuario`)
+				(id_cotizacion, no_cotizacion, id_ef, 
+					certificado_provisional, fecha_creacion, id_usuario)
 				values
-				("'.$idc.'", '.$record.', "'.base64_decode($_SESSION['idEF']).'", false, 
-				curdate(), "'.base64_decode($_SESSION['idUser']).'") ;';
+				("' . $idc . '", "' . $record . '", "' . base64_decode($_SESSION['idEF']) . '", 
+					false, curdate(), "' . base64_decode($_SESSION['idUser']) . '") ;';
 				
-				if ($link->query($sql) === true) {
+				if ($link->query($sql)) {
 					$token = true;
 				}
 			} else {
+				$sql = 'select 
+					stc.no_cotizacion 
+				from 
+					s_trd_cot_cabecera as stc
+				where 
+					stc.id_cotizacion = "' . $idc . '"
+				limit 0, 1
+				;';
+
+				if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+					if ($rs->num_rows === 1) {
+						$row = $rs->fetch_array(MYSQLI_ASSOC);
+						$rs->free();
+						$record = $row['no_cotizacion'];
+					}
+				}
+
 				$token = true;
 			}
 			
 			if($flag === false && $token === true){
 				$idPr = uniqid('@S#2$2013',true);
 
-                if ($cp === false) {
-                    $sql = 'insert into s_trd_cot_detalle
-                    (`id_inmueble`, `id_cotizacion`, `tipo_in`,
-                    `uso`, `uso_otro`, `estado`, `departamento`,
-                    `zona`, `localidad`, `direccion`, `modalidad`,
-                    `valor_asegurado`)
-                    values
-                    ("'.$idPr.'", "'.$idc.'", "'.$dp_type.'",
-                    "'.$dp_use.'", "'.$dp_use_other.'", "'.$dp_state.'",
-                    '.$dp_depto.', "'.$dp_zone.'", "'.$dp_locality.'",
-                    "'.$dp_address.'", '.$dp_modality.', '.$dp_value_insured.') ;';
-                } else {
-                    $sql = 'insert into s_trd_cot_detalle
-                    (`id_inmueble`, `id_cotizacion`,
-                    `modalidad`, `valor_asegurado`)
-                    values
-                    ("'.$idPr.'", "'.$idc.'",
-                    '.$dp_modality.', '.$dp_value_insured.') ;';
-                }
+                $sql = 'insert into s_trd_cot_detalle
+                (id_inmueble, id_cotizacion, tipo_in,
+	                uso, uso_otro, estado, departamento,
+	                zona, localidad, direccion, modalidad,
+	                valor_asegurado)
+                values
+                ("' . $idPr . '", "' . $idc . '", "' . $dp_type . '",
+	                "' . $dp_use . '", "' . $dp_use_other . '", "' . $dp_state . '",
+	                "' . $dp_depto . '", "' . $dp_zone . '", "' . $dp_locality . '",
+	                "' . $dp_address . '", ' . $dp_modality . ', ' . $dp_value_insured . ') ;';
 				
 				if($link->query($sql) === TRUE){
 					$arrTR[0] = 1;
-					$arrTR[1] = 'trd-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&idc='.base64_encode($idc);
+					$arrTR[1] = 'trd-quote.php?ms=' . $ms . '&page=' . $page 
+						. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 					$arrTR[2] = 'Inmueble registrado con Exito';
-				}else {
+
+					$log_msg = 'TRD - Cot. ' . $record . ' / Record Property';
+
+					$db = new Log($link);
+					$db->postLog($_SESSION['idUser'], $log_msg);
+				} else {
 					$arrTR[2] = 'No se pudo registrar el Inmueble';
 				}
 			} elseif ($token === true) {
                 if ($cp === false) {
                     $sql = 'update s_trd_cot_detalle
-                    set `tipo_in` = "'.$dp_type.'",
-                        `uso` = "'.$dp_use.'",
-                        `uso_otro` = "'.$dp_use_other.'",
-                        `estado` = "'.$dp_state.'",
-                        `departamento` = '.$dp_depto.',
-                        `zona` = "'.$dp_zone.'",
-                        `localidad` = "'.$dp_locality.'",
-                        `direccion` = "'.$dp_address.'",
-                        `modalidad` = '.$dp_modality.',
-                        `valor_asegurado` = '.$dp_value_insured.'
+                    set tipo_in = "'.$dp_type.'",
+                        uso = "'.$dp_use.'",
+                        uso_otro = "'.$dp_use_other.'",
+                        estado = "'.$dp_state.'",
+                        departamento = '.$dp_depto.',
+                        zona = "'.$dp_zone.'",
+                        localidad = "'.$dp_locality.'",
+                        direccion = "'.$dp_address.'",
+                        modalidad = '.$dp_modality.',
+                        valor_asegurado = '.$dp_value_insured.'
                     where id_inmueble = "'.$idPr.'" ;';
                 } else {
                     $sql = 'update s_trd_cot_detalle
-                    set `modalidad` = '.$dp_modality.',
-                        `valor_asegurado` = '.$dp_value_insured.'
+                    set modalidad = '.$dp_modality.',
+                        valor_asegurado = '.$dp_value_insured.'
                     where id_inmueble = "'.$idPr.'" ;';
                 }
 				
 				if($link->query($sql) === TRUE){
 					$arrTR[0] = 1;
-					$arrTR[1] = 'trd-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&idc='.base64_encode($idc);
+					$arrTR[1] = 'trd-quote.php?ms=' . $ms . '&page=' . $page 
+						. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 					$arrTR[2] = 'Los Datos se actualizaron correctamente';
+
+					$log_msg = 'TRD - Cot. ' . $record . ' / Update Property';
+
+					$db = new Log($link);
+					$db->postLog($_SESSION['idUser'], $log_msg);
+
 				}else {
 					$arrTR[2] = 'No se pudo actualizar los datos';
 				}
 			}
 		}else {
-			$arrTR[2] = 'El Valor Asegurado no debe ser mayor a '.number_format($max_value, 2, '.', ',').' USD.';
+			$arrTR[2] = 'El Valor Asegurado no debe ser mayor a ' 
+				. number_format($max_value, 2, '.', ',') . ' USD.';
 		}
 	}else {
 		$arrTR[2] = 'El Inmueble no puede ser registrado';
 	}
-	
-	echo json_encode($arrTR);
-}else {
-	echo json_encode($arrTR);
 }
+
+echo json_encode($arrTR);
+
 ?>

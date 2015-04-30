@@ -1,50 +1,6 @@
-<script type="text/javascript">
-$(document).ready(function(e) {
-	$("#ftr-property").validateForm({
-		action: 'TRD-property-record.php'
-	});
-	
-	$("input[type='text'].fbin, textarea.fbin").keyup(function(e){
-		var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
-		var _val = $(this).prop('value');
-		
-		if($.inArray(e.keyCode, arr_key) < 0 && $(this).hasClass('email') === false){
-			$(this).prop('value',_val.toUpperCase());
-		}
-	});
-	
-	$("#dp-use").change(function(e){
-		var use = $(this).prop('value');
-		if(use === 'OTH'){
-			$("#dp-use-other").removeClass('not-required').addClass('required');
-			$("#dp-use-other").prop("readonly", false).focus();
-		}else{
-			$("#dp-use-other").removeClass('required').addClass('not-required');
-			$("#dp-use-other").prop("readonly", true);
-			$("#dp-use-other").prop("value", '');
-		}
-	});
-	
 <?php
-if (isset($_GET['idc'])) {
-?>
-	$("#dp-cancel").click(function(e){
-		e.preventDefault();
-		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>';
-	});
-	
-	$("#dp-next").click(function(e){
-		e.preventDefault();
-		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=base64_encode('TRD|02');?>&idc=<?=$_GET['idc']?>';
-	});
-<?php
-}
-?>
-	
-});
-</script>
-<?php
-require_once('sibas-db.class.php');
+
+require_once 'sibas-db.class.php';
 $link = new SibasDB();
 
 $max_item = $max_amount = 0;
@@ -61,7 +17,6 @@ $dp_locality = $dp_address = $dp_modality = $dp_value_insured = '';
 $title_btn = 'Agregar Inmueble';
 
 $cp = false;
-$link->verifyProvisionalCertificate($_SESSION['idEF'], $_GET['idc'], 'TRD', $cp);
 
 if(isset($_GET['idPr'])){
 	$swPr = true;
@@ -117,23 +72,9 @@ $nPr = 0;
 if($swPr === false && isset($_GET['idc'])){
 	$sqlPr = 'select 
 	    strd.id_inmueble as idPr,
-	    (case strd.tipo_in
-	        when "HOME" then "Casa"
-	        when "DEPT" then "Departamento"
-	        when "BLDN" then "Edificio"
-	        when "LOCL" then "Local"
-	    end) as pr_tipo,
-	    if(strd.uso != "OTH",
-	        case strd.uso
-	            when "DMC" then "Domiciliario"
-	            when "COM" then "Comercial"
-	        end,
-	        strd.uso_otro) as pr_uso,
-	    (case strd.estado
-	        when "FINS" then "Terminado"
-	        when "CONS" then "En construcción"
-	        when "PRAR" then "En proceso de remodelación, ampliación o refacción"
-	    end) as pr_estado,
+	    strd.tipo_in as pr_tipo,
+	    strd.uso as pr_uso,
+	    strd.estado as pr_estado,
 	    sdep.departamento as pr_departamento,
 	    strd.zona as pr_zona,
 	    strd.localidad as pr_localidad,
@@ -148,8 +89,8 @@ if($swPr === false && isset($_GET['idc'])){
 	        inner join
 	    s_entidad_financiera as sef ON (sef.id_ef = strc.id_ef)
 	where
-	    strc.id_cotizacion = "'.base64_decode($_GET['idc']).'"
-	        and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
+	    strc.id_cotizacion = "' . base64_decode($_GET['idc']) . '"
+	        and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
 	        and sef.activado = true
 	order by strd.id_inmueble asc
 	;';
@@ -173,7 +114,6 @@ if($swPr === FALSE){
 					<td style="width:3%;"></td>
 					<td style="width:8%;">Tipo</td>
 					<td style="width:10%;">Uso</td>
-					<td style="width:10%;">Estado</td>
 					<td style="width:8%;">Departamento</td>
 					<td style="width:15%;">Zona</td>
 					<td style="width:10%;">Ciudad/Localidad</td>
@@ -193,69 +133,47 @@ if($swPr === FALSE){
 ?>
 				<tr style=" <?=$bgFac;?> ">
 					<td style="font-weight:bold;"><?=$cont;?></td>
-					<td><?=$rowPr['pr_tipo'];?></td>
-					<td><?=$rowPr['pr_uso'];?></td>
-					<td><?=$rowPr['pr_estado'];?></td>
+					<td><?= $link->typeProperty[$rowPr['pr_tipo']] ;?></td>
+					<td><?= $link->useProperty[$rowPr['pr_uso']] ;?></td>
 					<td><?=$rowPr['pr_departamento'];?></td>
 					<td><?=$rowPr['pr_zona'];?></td>
 					<td><?=$rowPr['pr_localidad'];?></td>
 					<td><?=$rowPr['pr_direccion'];?></td>
-                    <td><span class="value"><?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.</span></td>
-					<td><a href="trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>&idPr=<?=base64_encode($rowPr['idPr']);?>" title="Editar Información"><img src="img/edit-inf-icon.png" width="40" height="40" alt="Editar Información" title="Editar Información"></a></td>
-                    <td><a href="trd-remove-property.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>&idPr=<?=base64_encode($rowPr['idPr']);?>" title="Eliminar Inmueble" class="fancybox fancybox.ajax"><img src="img/delete-icon.png" width="40" height="40" alt="Eliminar Inmueble" title="Eliminar Vehículo"></a></td>
+                    <td>
+                    	<span class="value">
+                    		<?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.
+                		</span>
+            		</td>
+					<td>
+						<a href="trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=
+							$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=
+							$_GET['idc'];?>&idPr=<?=base64_encode($rowPr['idPr']);?>" 
+							title="Editar Información">
+							<img src="img/edit-inf-icon.png" width="40" height="40" 
+								alt="Editar Información" title="Editar Información"></a></td>
+                    <td>
+                    	<a href="trd-remove-property.php?ms=<?=$_GET['ms'];?>&page=<?=
+                    		$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=
+                    		$_GET['idc'];?>&idPr=<?=base64_encode($rowPr['idPr']);?>" 
+                    		title="Eliminar Inmueble" class="fancybox fancybox.ajax">
+                    		<img src="img/delete-icon.png" width="40" height="40" 
+                    			alt="Eliminar Inmueble" title="Eliminar Vehículo"></a></td>
 				</tr>
 <?php
 			$cont += 1;
 		}
+
 		$rsPr->free();
 ?>
 			</tbody>
 		</table>
 		
-		<!--<div class="mess-cl">
-        	<span class="bg-fac"></span> <strong>Nota:</strong> Año o Monto requieren aprobación de la Compañia de Seguros
-		</div>-->
 		<input type="button" id="dp-next" name="dp-next" value="Continuar" class="btn-next" >
 		<hr>
 <?php
 	}
 }
 if($nPr < $max_item || $swPr === true){
-    if ($cp === true) {
-?>
-    <div class="form-col">
-        <input type="hidden" id="cp" name="cp" value="<?=md5(1);?>" >
-<?php
-        if ($link->verifyModality($_SESSION['idEF'], 'TRD') === true) {
-?>
-        <label>Modalidad: <span>*</span></label>
-        <div class="content-input">
-            <select id="dp-modality" name="dp-modality" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php
-                foreach ($link->modTRD as $key => $value) {
-                    $modality = explode('|', $value);
-                    if ($dp_modality === $modality[0]) {
-                        echo '<option value="'.base64_encode($modality[0]).'" selected>'.$modality[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($modality[0]).'">'.$modality[1].'</option>';
-                    }
-                }
-?>
-            </select>
-        </div><br />
-<?php
-        }
-?>
-    </div><!--
-    --><div class="form-col">
-        <label>Valor Asegurado (USD): </label>
-        <div class="content-input">
-            <input type="text" id="dp-value-insured" name="dp-value-insured" autocomplete="off" value="<?=$dp_value_insured;?>" class="required number fbin">
-        </div><br>
-    </div>
-<?php
-    } else {
 ?>
     <div class="form-col">
         <label>Departamento: <span>*</span></label>
@@ -285,111 +203,57 @@ if($nPr < $max_item || $swPr === true){
         <div class="content-input">
             <input type="text" id="dp-locality" name="dp-locality" autocomplete="off" value="<?=$dp_locality;?>" class="required text-2 fbin">
         </div><br>
-
-        <label>Dirección: <span>*</span></label>
-        <textarea id="dp-address" name="dp-address" class="required fbin"><?=$dp_address;?></textarea><br>
     </div><!--
 --><div class="form-col">
-        <label>Tipo: <span>*</span></label>
-        <div class="content-input">
-            <select id="dp-type" name="dp-type" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php
-                $arr_type = $link->typeProperty;
-                for ($i = 0; $i  < count($arr_type); $i ++) {
-                    $type = explode('|', $arr_type[$i]);
-                    if ($type[0] === $dp_type) {
-                        echo '<option value="'.base64_encode($type[0]).'" selected>'.$type[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($type[0]).'">'.$type[1].'</option>';
-                    }
-                }
-                ?>
+		<label>Tipo: <span>*</span></label>
+		<div class="content-input">
+			<select id="dp-type" name="dp-type" class="required fbin">
+            	<option value="">Seleccione...</option>
+            	<?php foreach ($link->typeProperty as $key => $value): $selected = ''; ?>
+            		<?php if ($dp_type === $key): $selected = 'selected'; ?>
+            		<?php endif ?>
+            		<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+            	<?php endforeach ?>
             </select>
-        </div><br>
+		</div><br>
+
+		<label>Dirección: <span>*</span></label>
+        <textarea id="dp-address" name="dp-address" class="required fbin"><?=$dp_address;?></textarea><br>
 
         <label>Uso: <span>*</span></label>
         <div class="content-input">
             <select id="dp-use" name="dp-use" class="required fbin">
                 <option value="">Seleccione...</option>
-                <?php
-                $arr_use = $link->useProperty;
-                for($i = 0; $i < count($arr_use); $i++){
-                    $use = explode('|', $arr_use[$i]);
-                    if($use[0] === $dp_use) {
-                        echo '<option value="'.base64_encode($use[0]).'" selected>'.$use[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($use[0]).'">'.$use[1].'</option>';
-                    }
-                }
-
-                $readonly_use = 'readonly';
-                $required_use = 'not-required';
-                if ($dp_use === 'OTH') {
-                    echo '<option value="OTH" selected>OTRO</option>';
-                    $readonly_use = '';
-                    $required_use = 'required';
-                } else {
-                    echo '<option value="OTH">OTRO</option>';
-                }
-                ?>
+                <?php foreach ($link->useProperty as $key => $value): $selected = ''; ?>
+            		<?php if ($dp_use === $key): $selected = 'selected'; ?>
+            		<?php endif ?>
+            		<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+            	<?php endforeach ?>
             </select>
         </div><br>
 
-        <label></label>
-        <div class="content-input">
-            <input type="text" id="dp-use-other" name="dp-use-other" autocomplete="off" value="<?=$dp_use_other;?>" class="<?=$required_use;?> text-2 fbin" <?=$readonly_use;?> >
-        </div><br>
-
-        <label>Estado: <span>*</span></label>
-        <div class="content-input">
-            <select id="dp-state" name="dp-state" class="required fbin">
-                <option value="">Seleccione...</option>
-                <?php
-                $arr_state = $link->stateProperty;
-                for($i = 0; $i < count($arr_state); $i++){
-                    $state = explode('|', $arr_state[$i]);
-                    if($state[0] === $dp_state) {
-                        echo '<option value="'.base64_encode($state[0]).'" selected>'.$state[1].'</option>';
-                    } else {
-                        echo '<option value="'.base64_encode($state[0]).'">'.$state[1].'</option>';
-                    }
-                }
-                ?>
-            </select>
-        </div><br>
+        <label>Valor Asegurado (USD): <span>*</span></label>
         <?php
-        if ($link->verifyModality($_SESSION['idEF'], 'TRD') === true) {
-            ?>
-            <label>Modalidad: <span>*</span></label>
-            <div class="content-input">
-                <select id="dp-modality" name="dp-modality" class="required fbin">
-                    <option value="">Seleccione...</option>
-                    <?php
-                    foreach ($link->modTRD as $key => $value) {
-                        $modality = explode('|', $value);
-                        if ($dp_modality === $modality[0]) {
-                            echo '<option value="'.base64_encode($modality[0]).'" selected>'.$modality[1].'</option>';
-                        } else {
-                            echo '<option value="'.base64_encode($modality[0]).'">'.$modality[1].'</option>';
-                        }
-                    }
-                    ?>
-                </select>
-            </div><br />
-        <?php
+        $display_value = 'display: none;';
+        if($dp_value_insured > $max_amount) {
+            $display_value = 'display: block;';
         }
         ?>
-        <label>Valor Asegurado (USD): </label>
         <div class="content-input">
-            <input type="text" id="dp-value-insured" name="dp-value-insured" autocomplete="off" value="<?=$dp_value_insured;?>" class="required number fbin">
+            <input type="text" id="dp-value-insured" name="dp-value-insured" 
+            	autocomplete="off" value="<?=$dp_value_insured;?>" 
+            	class="required number fbin">
         </div><br>
+
+        <div id="mess-amount" class="au-mess"
+             style=" <?=$display_value;?> ">Inmuebles cuyo valor excedan los <?=$max_amount;?> USD
+            requieren aprobación de la Compañia de Seguros</div>
     </div>
 <?php
-    }
 ?>
 	<br>
 	
+	<input type="hidden" id="max-amount" name="max-amount" value="<?=$max_amount;?>">
     <input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">
 	<input type="hidden" id="page" name="page" value="<?=$_GET['page'];?>">
 	<input type="hidden" id="pr" name="pr" value="<?=base64_encode('TRD|01');?>">
@@ -419,3 +283,63 @@ if (isset($_GET['idc'])) {
 		<img src="img/loading-01.gif" width="35" height="35" />
 	</div>
 </form>
+
+<script type="text/javascript">
+$(document).ready(function(e) {
+	$("#ftr-property").validateForm({
+		action: 'TRD-property-record.php'
+	});
+	
+	$("input[type='text'].fbin, textarea.fbin").keyup(function(e){
+		var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
+		var _val = $(this).prop('value');
+		
+		if($.inArray(e.keyCode, arr_key) < 0 && $(this).hasClass('email') === false){
+			$(this).prop('value',_val.toUpperCase());
+		}
+	});
+	
+	$("#dp-use").change(function(e){
+		var use = $(this).prop('value');
+		if(use === 'OTH'){
+			$("#dp-use-other").removeClass('not-required').addClass('required');
+			$("#dp-use-other").prop("readonly", false).focus();
+		}else{
+			$("#dp-use-other").removeClass('required').addClass('not-required');
+			$("#dp-use-other").prop("readonly", true);
+			$("#dp-use-other").prop("value", '');
+		}
+	});
+
+	$("#dp-value-insured").keyup(function(e){
+		var amount = parseInt($(this).prop('value'));
+		var max_amount = parseInt($("#max-amount").prop('value'));
+		if(isNaN(amount) === true) {
+			$(this).prop('value', '');
+		} else {
+			if(amount > max_amount) {
+				$("#mess-amount").fadeIn();
+			} else {
+				$("#mess-amount").fadeOut();
+			}
+		}
+	});
+	
+<?php
+if (isset($_GET['idc'])) {
+?>
+	$("#dp-cancel").click(function(e){
+		e.preventDefault();
+		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&idc=<?=$_GET['idc'];?>';
+	});
+	
+	$("#dp-next").click(function(e){
+		e.preventDefault();
+		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=base64_encode('TRD|02');?>&idc=<?=$_GET['idc']?>';
+	});
+<?php
+}
+?>
+	
+});
+</script>

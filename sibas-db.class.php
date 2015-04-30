@@ -57,13 +57,13 @@ class SibasDB extends MySQLi
 					0 => 'NAT|Natural', 
 					1 => 'JUR|Jurídico'),
 		$typeProperty = array(
-					0 => 'HOME|Casa', 
-					1 => 'DEPT|Departamento', 
-					2 => 'BLDN|Edificio', 
-					3 => 'LOCL|Local Comercial/Oficina'),
+			'ED' => 'Edificio', 
+			'MC' => 'Muebles y/o Contenido'
+		),
 		$useProperty = array(
-					0 => 'DMC|Domiciliario', 
-					1 => 'COM|Comercial'),
+			'DM' => 'Domiciliario', 
+			'CM' => 'Comercial'
+		),
 		$stateProperty = array(
 					0 => 'FINS|Terminado',
 					1 => 'CONS|En construcción',
