@@ -1,7 +1,8 @@
 <?php
 
 session_start();
-require_once('sibas-db.class.php');
+require __DIR__ . '/classes/Logs.php';
+require_once 'sibas-db.class.php';
 
 class ReportsGeneralAU{
 	private $cx, $sql, $rs, $row, $sqlvh, $rsvh, $rowvh, $pr, 
@@ -312,9 +313,9 @@ class ReportsGeneralAU{
 		;";
 		// echo $this->sql;
 		
-		if(($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))){
+		if (($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))) {
 			$this->err = FALSE;
-		}else{
+		} else {
 			$this->err = TRUE;
 		}
 	}
@@ -431,29 +432,33 @@ class ReportsGeneralAU{
 		order by sac.id_cotizacion desc
 		;";
 		//echo $this->sql;
-		if(($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))){
+		if (($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))) {
 			$this->err = FALSE;
-		}else{
+		} else {
 			$this->err = TRUE;
 		}
 	}
 	
-	public function set_result(){
+	public function set_result() {
 		if($this->xls === TRUE){
 			header("Content-Type:   application/vnd.ms-excel; charset=iso-8859-1");
 			header("Content-Disposition: attachment; filename=".$this->xlsTitle.".xls");
 			header("Pragma: no-cache");
 			header("Expires: 0");
 		}
+
+		$log_msg = 'AU - Rep. / ' . $this->token;
+		
+		$db = new Log($this->cx);
+		$db->postLog($_SESSION['idUser'], $log_msg);
+
 		if ($this->token === 'RG'
             || $this->token === 'RP' 
             || $this->token === 'PA' 
             || $this->token === 'SP' 
             || $this->token === 'AN' 
             || $this->token === 'IM' 
-            || $this->token === 'AP' 
-            //|| $this->token === 'CP'
-        ){
+            || $this->token === 'AP' ) {
 			$this->set_result_au();
 		} elseif ($this->token === 'RQ'
             || $this->token === 'IQ'

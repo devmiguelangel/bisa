@@ -1,8 +1,11 @@
 <?php
-require('sibas-db.class.php');
-require('session.class.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
 
 $arrUSR = array(0 => 0, 1 => 'R', 2 => '');
+$log_msg = 'Login';
 
 if(isset($_POST['l-user']) && isset($_POST['l-pass'])){
 	$link = new SibasDB();
@@ -74,12 +77,16 @@ if(isset($_POST['l-user']) && isset($_POST['l-pass'])){
 					}
 					
 					if ((boolean)$rowUSR['cw'] === false) {
-						$arrUSR[1] = 'index.php?ms='.md5('MS_COMP').'&page='.md5('P_change_pass').
-							'&user='.base64_encode($rowUSR['id_usuario']).'&url='.base64_encode($arrUSR[1]).
-							'&c-p='.md5('true');
+						$arrUSR[1] = 'index.php?ms=' . md5('MS_COMP').'&page=' . md5('P_change_pass').
+							'&user=' . base64_encode($rowUSR['id_usuario']).'&url=' . base64_encode($arrUSR[1]).
+							'&c-p=' . md5('true');
 					}
 					
 					$arrUSR[2] = 'Bienvenido';
+
+					$db = new Log($link);
+					$db->postLog($_SESSION['idUser'], $log_msg);
+
 				} else {
 					$arrUSR[2] = 'La Contraseña es incorrecta';
 					}

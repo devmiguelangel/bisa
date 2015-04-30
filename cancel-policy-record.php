@@ -1,8 +1,12 @@
 <?php
-require('sibas-db.class.php');
-require('PHPMailer/class.phpmailer.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'PHPMailer/class.phpmailer.php';
 
 $arrTR = array(0 => 0, 1 => 'R', 2 => '');
+$log_msg = '';
+
 if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs']) && isset($_GET['pr'])){
 	$link = new SibasDB();
 	$ide = $link->real_escape_string(trim(base64_decode($_GET['fp-ide'])));
@@ -50,8 +54,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs']) &&
 		inner join
 	'.$tableCot.' as tbl2 ON (tbl2.id_cotizacion = tbl1.id_cotizacion)
 	set tbl1.anulado = true, tbl1.and_usuario = "'.$user.'", 
-		tbl1.motivo_anulado = "'.$obs.'", tbl1.fecha_anulado = curdate(),
-		tbl2.id_pr_extra = null
+		tbl1.motivo_anulado = "'.$obs.'", tbl1.fecha_anulado = curdate()
 	where tbl1.id_emision = "'.$ide.'" 
 	;';
 	
@@ -117,20 +120,26 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs']) &&
 			$mail->Body = $body;
 			$mail->AltBody = $body;
 			
-			if($mail->send()){
+			if ($mail->send()) {
 				$arrTR[0] = 1;
 				$arrTR[2] = 'La Póliza fue anulada exitosamente';
-			}else {
+
+				$log_msg = $pr . ' - Anulacion Em. ' . $rowEm['no_emision'];
+		
+				$db = new Log($link);
+				$db->postLog(base64_encode($user), $log_msg);
+
+			} else {
 				$arrTR[2] = 'La Póliza no pudo ser anulada !';
 			}
-		}else {
+		} else {
 			$arrTR[2] = 'La Póliza no pudo ser anulada |';
 		}
-	}else{
+	} else {
 		$arrTR[2] = 'La Póliza no pudo ser anulada';
 	}
 	echo json_encode($arrTR);
-}else{
+} else {
 	$arrTR[2] = 'La Póliza no puede ser anulada';
 	echo json_encode($arrTR);
 }

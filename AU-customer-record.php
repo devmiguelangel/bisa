@@ -1,7 +1,15 @@
 <?php
-require('sibas-db.class.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
+
+$session = new Session();
+$session->getSessionCookie();
+$token = $session->check_session();
 
 $arrAU = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo registrar el Cliente');
+$log_msg = '';
 
 if (isset($_POST['dc-token']) && isset($_POST['dc-idc']) 
 		&& isset($_POST['ms']) && isset($_POST['page']) 
@@ -9,9 +17,28 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 	
 	if ($_POST['pr'] === base64_encode('AU|03')){
 		$link = new SibasDB();
+
+		$record = 0;
 		
 		$idc = $link->real_escape_string(trim(base64_decode($_POST['dc-idc'])));
 		$idef = $link->real_escape_string(trim(base64_decode($_POST['id-ef'])));
+
+		$sql = 'select 
+			sac.no_cotizacion 
+		from 
+			s_au_cot_cabecera as sac
+		where 
+			sac.id_cotizacion = "' . $idc . '"
+		limit 0, 1
+		;';
+
+		if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+			if ($rs->num_rows === 1) {
+				$row = $rs->fetch_array(MYSQLI_ASSOC);
+				$rs->free();
+				$record = $row['no_cotizacion'];
+			}
+		}
 		
 		$idClient = 0;
 		$flag = false;
@@ -28,7 +55,6 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		if ($di_type_term === 'M') {
 			$di_term = 12;
 		}
-		
 		
 		$dc_type_client = $link->real_escape_string(trim($_POST['dc-type-client']));
 		$dc_name = $link->real_escape_string(trim($_POST['dc-name']));
@@ -177,6 +203,12 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
 						. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 					$arrAU[2] = 'Cliente registrado con Exito';
+
+					$log_msg = 'AU - Cot. ' . $record . ' / Record Client';
+
+					$db = new Log($link);
+					$db->postLog($_SESSION['idUser'], $log_msg);
+
 				} else {
 					$arrAU[2] = 'No se pudo registrar los datos del Seguro Solicitado';
 				}

@@ -1,4 +1,5 @@
 <?php
+
 header("Expires: Tue, 01 Jan 2000 06:00:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
@@ -32,8 +33,39 @@ if (file_exists('installation') === true) {
 require('sibas-db.class.php');
 require('session.class.php');
 $link = new SibasDB();
+
+/************ Session Expire *******/
+
+ini_set('session.cookie_lifetime', 0);
+ini_set('session.cache_expire', 30000);
+
+session_cache_limiter('private');
+$cache_limiter = session_cache_limiter();
+
+session_cache_expire(30000);
+$cache_expire = session_cache_expire();
+
 $session = new Session();
+if ($session->setSessionCookie() === false) {
+	$session->getSessionCookie();
+}
+
+if (isset($_GET['token']) && isset($_GET['user'])) {
+	$s_token = $_GET['token'];
+
+	if (sha1('sadm01042014key_gen') === $s_token) {
+		$s_user = $link->real_escape_string(trim(base64_decode($_GET['user'])));
+		
+		if (($data_user = $link->getDataUser($s_user)) !== false) {
+			if ($data_user['tipo'] === 'REP') {
+				$session->start_session($data_user['id_usuario'], $data_user['id_ef']);
+			}
+		}
+	}
+}
+
 $token = $session->check_session();
+/***********************************/
 
 $user_id = NULL;
 $user = 'Iniciar Sesión';

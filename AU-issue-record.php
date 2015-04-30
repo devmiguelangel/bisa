@@ -1,13 +1,18 @@
 <?php
-require('sibas-db.class.php');
-require('session.class.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
 
 $session = new Session();
+$session->getSessionCookie();
 $token = $session->check_session();
 
 $arrAU = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo registrar la Póliza');
+$log_msg = '';
 
-if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type-client']) && isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr']) && isset($_POST['cia'])){
+if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type-client']) 
+		&& isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr']) && isset($_POST['cia'])){
 	
 	if($_POST['pr'] === base64_encode('AU|05') && $token === TRUE){
 		$link = new SibasDB();
@@ -17,6 +22,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		$PRIMA = 0;
 		
 		$swMo = false;
+		$record = 0;
 		
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));
@@ -357,12 +363,18 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							if($k < $nVh) { $sqlVh .= ', '; } elseif($k === $nVh) { $sqlVh .= ';'; };
 						}
 						
-						if($link->query($sqlVh) === TRUE){
+						if ($link->query($sqlVh)){
 							$swReg = TRUE;
 							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
 								. '&pr=' . $pr . '&ide=' . base64_encode($ide) 
 								. '&flag=' . md5('i-read') . '&cia=' . base64_encode($idcia);
 							$arrAU[2] = 'La Póliza fue registrada con exito !';
+
+							$log_msg = 'AU - Em. ' . $record . ' / Record Certificate Client, Vehicles';
+
+							$db = new Log($link);
+							$db->postLog($_SESSION['idUser'], $log_msg);
+
 						} else {
 							$arrAU[2] = 'Los Vehículos no pudieron ser registrados';
 						}
@@ -373,6 +385,23 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arrAU[2] = 'El Prestatario no pudo ser registrado'; 
 				}
 			}elseif($sw === 3) {	// ACTUALIZAR POLIZA
+				$sql = 'select 
+					sae.no_emision
+				from 
+					s_au_em_cabecera sae
+				where 
+					sae.id_emision = "' . $ide . '"
+				limit 0, 1
+				;';
+
+				if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+					if ($rs->num_rows === 1) {
+						$row = $rs->fetch_array(MYSQLI_ASSOC);
+						$rs->free();
+						$record = $row['no_emision'];
+					}
+				}
+
 				$sqlCl = 'UPDATE s_cliente 
 					SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
 						nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
@@ -426,6 +455,11 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 								$swReg = TRUE;
 								$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&ide='.base64_encode($ide).'&flag='.md5('i-read').'&cia='.base64_encode($idcia).$target;
 								$arrAU[2] = 'La Póliza fue actualizada correctamente !';
+
+								$log_msg = 'AU - Em. ' . $record . ' / Update Certificate Client, Vehicles';
+
+								$db = new Log($link);
+								$db->postLog($_SESSION['idUser'], $log_msg);
 							} else {
 								$arrAU[2] = 'Los datos de los Vehículos no fueron actualizados';
 							}

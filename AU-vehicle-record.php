@@ -1,11 +1,15 @@
 <?php
 
-require('sibas-db.class.php');
-require('session.class.php');
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
 
 $session = new Session();
+$session->getSessionCookie();
 $token = $session->check_session();
+
 $arrAU = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo procesar el Vehículo');
+$log_msg = '';
 
 $link = new SibasDB();
 
@@ -109,6 +113,7 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 		if($swMo === false){
 			if($dv_year_other < $year_min){
 				if($max_value === 1){
+					$record = 0;
 					$sql = '';
 					
 					if ($idc === NULL) {
@@ -128,6 +133,23 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 							$token = true;
 						}
 					} else {
+						$sql = 'select 
+							sac.no_cotizacion 
+						from 
+							s_au_cot_cabecera as sac
+						where 
+							sac.id_cotizacion = "' . $idc . '"
+						limit 0, 1
+						;';
+
+						if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+							if ($rs->num_rows === 1) {
+								$row = $rs->fetch_array(MYSQLI_ASSOC);
+								$rs->free();
+								$record = $row['no_cotizacion'];
+							}
+						}
+
 						$token = true;
 					}
 					
@@ -157,7 +179,13 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' 
 								. $page . '&pr=' . $pr . '&idc=' . base64_encode($idc);
 							$arrAU[2] = 'Vehículo registrado con Exito';
-						}else {
+
+							$log_msg = 'AU - Cot. ' . $record . ' / Record Vehicle';
+
+							$db = new Log($link);
+							$db->postLog($_SESSION['idUser'], $log_msg);
+
+						} else {
 							$arrAU[2] = 'No se pudo registrar el Vehículo';
 						}
 					} elseif ($token) {
@@ -185,12 +213,18 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
                         	and sdd.id_vehiculo = "' . $idVh . '" 
                         ;';
 
-						if($link->query($sql) === TRUE){
+						if ($link->query($sql)){
 							$arrAU[0] = 1;
 							$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
 								. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 							$arrAU[2] = 'Los Datos se actualizaron correctamente';
-						}else {
+
+							$log_msg = 'AU - Cot. ' . $record . ' / Update Vehicle';
+
+							$db = new Log($link);
+							$db->postLog($_SESSION['idUser'], $log_msg);
+
+						} else {
 							$arrAU[2] = 'No se pudo actualizar los datos';
 						}
 					}
