@@ -62,7 +62,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
                         <tr>
                           <td style="width:100%; font-size:70%; text-align:center; font-weight:bold;
-                            border: 1px solid #FFFF00;">
+                            border: 0px solid #FFFF00;">
                             FORMULARIO DE SOLICITUD DE SEGURO DE AUTOMOTOR<br>
                             PARA ENTIDADES FINANCIERAS
                           </td>
@@ -647,6 +647,9 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial;">
+                <tr><td style="width:100%; text-align:right;" colspan="2">
+                 <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/> 
+                </td></tr>
                 <tr><td style="width:100%; font-weight:bold; text-align:left;" colspan="2">
                  COBERTURAS Y CLAUSULAS ADICIONALES
                 </td></tr>

@@ -1270,27 +1270,34 @@ class CertificateQuery extends CertificateHtml {
 			  auec.id_cliente,
 			  auec.no_operacion,
 			  auec.prefijo,
-			  auec.ini_vigencia,
-			  auec.fin_vigencia,
-			  auec.id_forma_pago,
+			  auec.ini_vigencia as fecha_iniv,
+			  (@fecf:=date_add(auec.ini_vigencia,
+			        interval @newanio year)) as fecha_finv,
+			  datediff(@fecf, auec.ini_vigencia) as plazo_dias,
+			  auec.fin_vigencia as fecha_finv,
 			  auec.plazo,
 			  auec.tipo_plazo,
 			  auec.fecha_creacion,
 			  auec.id_usuario,
 			  auec.anulado,
+			  auec.emitir, 
 			  auec.fecha_anulado,
 			  auec.fecha_emision,
 			  auec.id_compania,
 			  auec.id_poliza,
 			  auec.no_copia,
 			  auec.facultativo,
+			  auec.motivo_facultativo,
+			  auec.aprobado,
+			  auec.rechazado,
 			  auec.prima_total,
 			  sclie.tipo as cl_tipo,
 			  case sclie.tipo
 				when 0 then 'Natural'
 				when 1 then 'Juridico'
 			  end tipo_cliente,
-			  sclie.razon_social as cl_razon_social, 
+			  sclie.razon_social as cl_razon_social,
+			  sclie.direccion_laboral, 
 			  sclie.paterno,
 			  sclie.materno,
 			  sclie.nombre,
@@ -1303,31 +1310,33 @@ class CertificateQuery extends CertificateHtml {
 			  sclie.telefono_oficina,
 			  sclie.telefono_celular,
 			  sclie.ci,
+			  sd.codigo as extension,
+			  sclie.complemento,
+			  sclie.email,
 			  sef.nombre as ef_nombre,
 			  sef.logo as logo_ef,
 			  sc.nombre as compania,
 			  sc.logo as logo_cia,
 			  su.nombre as u_nombre,
 			  su.email as u_email,
-			  sd.departamento,
-              aucot.no_cotizacion,
-			  (case auec.no_copia
-				  when 0 then 'ORIGINAL'
-				  else 'COPIA No. '
-			  end) as text_copia,
-			  (case auec.no_copia
-				  when 0 then ''
-				  else (auec.no_copia + 1)
-			  end) as num_copia,
-			  auec.emitir  
+			  sdu.departamento as u_departamento,
+              aucot.no_cotizacion 
 			from
 			  s_au_em_cabecera as auec
-			  inner join s_cliente as sclie on (sclie.id_cliente=auec.id_cliente)
-			  inner join s_entidad_financiera as sef on (sef.id_ef=auec.id_ef)
-			  inner join s_compania as sc on (sc.id_compania=auec.id_compania)
-			  inner join s_usuario as su on (su.id_usuario=auec.id_usuario)
-			  inner join s_au_cot_cabecera as aucot on (aucot.id_cotizacion=auec.id_cotizacion)
-			  inner join s_departamento as sd on (sd.id_depto=su.id_depto)
+				  inner join
+			  s_cliente as sclie ON (sclie.id_cliente = auec.id_cliente)
+				  inner join
+              s_departamento as sd on (sd.id_depto = sclie.extension)
+				  inner join
+			  s_entidad_financiera as sef ON (sef.id_ef = auec.id_ef)
+				  inner join
+			  s_compania as sc ON (sc.id_compania = auec.id_compania)
+				  inner join
+			  s_usuario as su ON (su.id_usuario = auec.id_usuario)
+				  inner join
+			  s_au_cot_cabecera as aucot ON (aucot.id_cotizacion = auec.id_cotizacion)
+				  inner join
+			  s_departamento as sdu ON (sdu.id_depto = su.id_depto)
 			where
 			  auec.id_emision='".$this->ide."';";
 		//echo $this->sqlPo;
@@ -1348,15 +1357,8 @@ class CertificateQuery extends CertificateHtml {
 						emd.id_modelo,
 						emd.anio,
 						emd.placa,
-						case emd.uso
-							when 'PB' then 'x-'
-							when 'PR' then '-x'
-						end as uso_vehiculo,
-						case emd.traccion
-							when '4x2' then 'x--'
-							when '4x4' then '-x-'
-							when 'VHP' then '--x'
-						end as traccion,
+						emd.uso,
+						emd.traccion,
 						emd.km,
 						emd.color,
 						emd.motor,
@@ -1369,19 +1371,7 @@ class CertificateQuery extends CertificateHtml {
 						emd.facultativo,
 						emd.motivo_facultativo,
 						emd.aprobado,
-						case tipv.vehiculo
-							when 'Automóvil' then 'x----------'
-							when 'Camioneta' then '-x---------'
-							when 'Minibus' then '--x--------'
-							when 'Colectivo' then '---x-------'
-							when 'Vagoneta' then '----x------'
-							when 'Camión' then '-----x-----'
-							when 'Motocicleta Quadratrack' then '------x----'
-							when 'Omnibus' then '-------x---'
-							when 'Jeep' then '--------x--'
-							when 'Tractocamión' then '---------x-'
-							when 'Micro Bus (9 a 25)' then '----------x'
-						end as tipo_vechiculo,
+						tipv.vehiculo as tipo_vechiculo,
 						aumr.marca,
 						aumod.modelo,
 						auf.aprobado as vh_aprobado,
