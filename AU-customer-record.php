@@ -48,13 +48,10 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		}
 		
 		$di_date_inception = date('Y-m-d');
-		$di_method_payment = 'null';
+		$di_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 		$di_warranty = $link->real_escape_string(trim($_POST['di-warranty']));
 		$di_term = 1;
-		$di_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-		if ($di_type_term === 'M') {
-			$di_term = 12;
-		}
+		$di_type_term = 'Y';
 		
 		$dc_type_client = $link->real_escape_string(trim($_POST['dc-type-client']));
 		$dc_name = $link->real_escape_string(trim($_POST['dc-name']));
@@ -192,7 +189,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					garantia = "' . $di_warranty . '", 
 					ini_vigencia = "' . $di_date_inception . '", 
 					fin_vigencia = "' . $di_date_end . '", 
-					id_forma_pago = ' . $di_method_payment . ',
+					forma_pago = "' . $di_method_payment . '",
 					plazo = "' . $di_term . '", 
 					tipo_plazo = "' . $di_type_term . '"
 				where 

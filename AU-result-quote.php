@@ -11,7 +11,8 @@ $sqlCia = 'select
 	scia.logo as cia_logo,
 	sac.garantia as c_garantia,
 	sac.plazo as c_plazo,
-	sac.tipo_plazo as c_tipo_plazo
+	sac.tipo_plazo as c_tipo_plazo,
+	sac.forma_pago as c_forma_pago
 from
 	s_au_cot_cabecera as sac
 		inner join
@@ -67,7 +68,7 @@ if (($rsCia = $link->query($sqlCia, MYSQLI_STORE_RESULT)) !== false) {
         <span class="rq-tasa">
 			Prima: <br>
 			<span class="value">USD <?=number_format($primaT,2,'.',',');?> </span><br>
-            <?= $link->typeTerm[$rowCia['c_tipo_plazo']] ;?>
+            <?= $link->methodPayment[$rowCia['c_forma_pago']] ;?>
 		</span>
 
 		<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=

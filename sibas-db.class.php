@@ -14,6 +14,10 @@ class SibasDB extends MySQLi
 			'Y' => 'Anual', 
 			'M' => 'Mensual'
 		),
+		$methodPayment = array(
+			'CO' => 'Al Contado', 
+			'DA' => 'Débito Automatico'
+		),
 		$gender = array(
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),

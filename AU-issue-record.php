@@ -74,12 +74,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$dcr_date_begin = $link->real_escape_string(trim(base64_decode($_POST['di-date-inception'])));
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
 			$dcr_term = 1;
-			$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-			if ($dcr_type_term === 'M') {
-				$dcr_term = 12;
-			}
-			$methodPayment = '';
-			$dcr_method_payment = 'null';
+			$dcr_type_term = 'Y';
+			
+			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 			$codeMethodPayment = '';
 			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
 			$dcr_policy = 'null';
@@ -291,7 +288,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					(id_emision, no_emision, id_ef, id_cotizacion, 
 						certificado_provisional, garantia, tipo, 
 						id_cliente, no_operacion, prefijo, ini_vigencia, 
-						fin_vigencia, id_forma_pago, plazo, tipo_plazo, 
+						fin_vigencia, forma_pago, plazo, tipo_plazo, 
 						factura_nombre, factura_nit, fecha_creacion, 
 						id_usuario, anulado, and_usuario, fecha_anulado, 
 						motivo_anulado, emitir, fecha_emision, id_compania, 
@@ -302,7 +299,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", '.$cp.', 
 						"'.$dcr_warranty.'", '.(int)$cl_type_client.', "'.$idcl.'", 
 						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
-						'.$dcr_method_payment.', '.$dcr_term.', "'.$dcr_type_term.'", 
+						"'.$dcr_method_payment.'", '.$dcr_term.', "'.$dcr_type_term.'", 
 						"'.$bl_name.'", "'.$bl_nit.'", curdate(), 
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
@@ -419,7 +416,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				if($link->query($sqlCl) === TRUE) {
 					$sql = 'UPDATE s_au_em_cabecera 
 						SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
-						fin_vigencia = "'.$dcr_date_end.'", id_forma_pago = '.$dcr_method_payment.', plazo = '.$dcr_term.', 
+						fin_vigencia = "'.$dcr_date_end.'", forma_pago = "'.$dcr_method_payment.'", plazo = '.$dcr_term.', 
 						tipo_plazo = "'.$dcr_type_term.'", factura_nombre = "'.$bl_name.'", factura_nit =  "'.$bl_nit.'", 
 						id_poliza = '.$dcr_policy.', no_copia = 0, facultativo = '.(int)$_FAC.', 
 						motivo_facultativo = "'.$_FAC_REASON.'", prima_total = '.$PRIMA.', leido = FALSE

@@ -18,39 +18,36 @@ if(isset($_POST['dc-token']) && isset($_POST['dc-idc']) && isset($_POST['ms']) &
 			$idClient = $link->real_escape_string(trim(base64_decode($_POST['dc-idCl'])));
 		}
 		
-		$di_date_inception = $link->real_escape_string(trim($_POST['di-date-inception']));
-		$di_term = (int)$link->real_escape_string(trim($_POST['di-term']));
-		$di_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
+		$di_date_inception = date('Y-m-d');
+		$di_term = 1;
+		$di_type_term = Y;
 		$di_method_payment = $link->real_escape_string(trim(base64_decode($_POST['di-method-payment'])));
-		$di_warranty = $link->real_escape_string(trim($_POST['di-warranty']));
-		if ($di_warranty === md5('1')) { $di_warranty = TRUE; }
-		elseif ($di_warranty === md5('0')) { $di_warranty = FALSE; }
-		else { $di_warranty = FALSE; }
+		$di_warranty = (int)$link->real_escape_string(trim($_POST['di-warranty']));
 		
 		$dc_type_client = $link->real_escape_string(trim($_POST['dc-type-client']));
 		$dc_name = $link->real_escape_string(trim($_POST['dc-name']));
 		$dc_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
 		$dc_lnpatern = $link->real_escape_string(trim($_POST['dc-ln-patern']));
 		$dc_lnmatern = $link->real_escape_string(trim($_POST['dc-ln-matern']));
-		$dc_lnmarried = $link->real_escape_string(trim($_POST['dc-ln-married']));
+		$dc_lnmarried = '';
 		$dc_doc_id = $link->real_escape_string(trim($_POST['dc-doc-id']));
 		$dc_nit = $link->real_escape_string(trim($_POST['dc-nit']));
 		$dc_comp = $link->real_escape_string(trim($_POST['dc-comp']));
 		$dc_ext = $link->real_escape_string(trim($_POST['dc-ext']));
 		$dc_depto = $link->real_escape_string(trim($_POST['dc-depto']));
 		$dc_birth = $link->real_escape_string(trim($_POST['dc-date-birth']));
-		$dc_place = $link->real_escape_string(trim($_POST['dc-place-res']));
-		$dc_gender = $link->real_escape_string(trim($_POST['dc-gender']));
+		$dc_place = 'null';
+		$dc_gender = '';
 		$dc_phone_1 = $link->real_escape_string(trim($_POST['dc-phone-1']));
 		$dc_phone_2 = $link->real_escape_string(trim($_POST['dc-phone-2']));
 		$dc_email = $link->real_escape_string(trim($_POST['dc-email']));
-		$dc_avc = $link->real_escape_string(trim($_POST['dc-avc']));
+		$dc_avc = '';
 		$dc_address = $link->real_escape_string(trim($_POST['dc-address']));
-		$dc_nd = $link->real_escape_string(trim($_POST['dc-nhome']));
-		$dc_locality = $link->real_escape_string(trim($_POST['dc-locality']));
+		$dc_nd = '';
+		$dc_locality = '';
 		$dc_dir_office = $link->real_escape_string(trim($_POST['dc-address-work']));
-		$dc_occupation = $link->real_escape_string(trim(base64_decode($_POST['dc-occupation'])));
-		$dc_desc_occ = $link->real_escape_string(trim($_POST['dc-desc-occ']));
+		$dc_occupation = 'null';
+		$dc_desc_occ = '';
 		$dc_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
 		$dc_company_email = $link->real_escape_string(trim($_POST['dc-company-email']));
 		$dc_company_phone_office = $link->real_escape_string(trim($_POST['dc-company-phone-office']));
@@ -60,8 +57,6 @@ if(isset($_POST['dc-token']) && isset($_POST['dc-idc']) && isset($_POST['ms']) &
 		$dc_company_locality = $link->real_escape_string(trim($_POST['dc-company-locality']));
 		
 		$dni = $ext = $email = $phone_office = $avc = $address = $nhome = $locality = '';
-		
-		if($dc_gender === 'M') { $dc_lnmarried = ''; }
 		
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));

@@ -19,6 +19,18 @@ $(document).ready(function(e) {
 		radioClass: 'iradio_square-red',
 		increaseArea: '20%' // optional
 	});
+
+	$('input').on('ifClicked', function(e){
+		var type = $(this).prop('value');
+
+		if (type == 1) {
+			$('#di-method-payment option[value="DA"]').prop('selected', true);
+			$('#di-method-payment option:not(:selected)').prop('disabled', true);
+			$('#di-method-payment').trigger('change');
+		} else {
+			$('#di-method-payment option:not(:selected)').prop('disabled', false);
+		}
+	});
 	
 	$("input[type='text'].fbin, textarea.fbin").keyup(function(e){
 		var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
@@ -436,9 +448,9 @@ if ($rsDep->data_seek(0) === TRUE) {
     
     <label>Modalidad de Pago: <span>*</span></label>
 	<div class="content-input" style="width:150px;">
-		<select id="di-type-term" name="di-type-term" class="required fbin" style="width:133px;">
+		<select id="di-method-payment" name="di-method-payment" class="required fbin" style="width:133px;">
 			<option value="">Seleccione...</option>
-		<?php foreach ($link->typeTerm as $key => $value): ?>
+		<?php foreach ($link->methodPayment as $key => $value): ?>
 			<option value="<?= $key ;?>"><?= $value ;?></option>
 		<?php endforeach ?>
 		</select>

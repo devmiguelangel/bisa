@@ -72,6 +72,7 @@ switch($sw){
 			sac.fin_vigencia as c_fin_vigencia,
 			sac.plazo as c_plazo,
 			sac.tipo_plazo as c_tipo_plazo,
+			sac.forma_pago as c_forma_pago,
 			sac.prima_total as c_prima_total,
 			scl.tipo as cl_tipo_cliente,
 			scl.id_cliente as idcl,
@@ -155,6 +156,7 @@ if($sw !== 1){
 		sae.fin_vigencia as c_fin_vigencia,
 		sae.plazo as c_plazo,
 		sae.tipo_plazo as c_tipo_plazo,
+		sae.forma_pago as c_forma_pago,
 		sae.prima_total as c_prima_total,
 		sae.no_operacion as c_no_operacion,
 	    sae.id_poliza as c_poliza,
@@ -287,6 +289,7 @@ if($rs->data_seek(0) === TRUE){
 	$row = $rs->fetch_array(MYSQLI_ASSOC);
 	$cr_term = $row['c_plazo'];
 	$cr_type_term = $row['c_tipo_plazo'];
+	$cr_method_payment = $row['c_forma_pago'];
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
 	
@@ -809,11 +812,11 @@ for($i = 0; $i < count($arr_traction); $i++){
         
 		<label>Modalidad de Pago: <span>*</span></label>
 		<div class="content-input">
-			<select id="di-type-term" name="di-type-term" 
+			<select id="di-method-payment" name="di-method-payment" 
 				class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
 				<option value="">Seleccione...</option>
-				<?php foreach ($link->typeTerm as $key => $value): $selected = ''; ?>
-					<?php if ($key === $cr_type_term): $selected = 'selected'; ?>
+				<?php foreach ($link->methodPayment as $key => $value): $selected = ''; ?>
+					<?php if ($key === $cr_method_payment): $selected = 'selected'; ?>
 					<?php endif ?>
 					<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
 				<?php endforeach ?>
