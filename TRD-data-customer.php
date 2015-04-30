@@ -19,6 +19,18 @@ $(document).ready(function(e) {
 		radioClass: 'iradio_square-red',
 		increaseArea: '20%' // optional
 	});
+
+	$('input').on('ifClicked', function(e){
+		var type = $(this).prop('value');
+
+		if (type == 1) {
+			$('#di-method-payment option[value="DA"]').prop('selected', true);
+			$('#di-method-payment option:not(:selected)').prop('disabled', true);
+			$('#di-method-payment').trigger('change');
+		} else {
+			$('#di-method-payment option:not(:selected)').prop('disabled', false);
+		}
+	});
 	
 	$("input[type='text'].fbin, textarea.fbin").keyup(function(e){
 		var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
@@ -35,18 +47,30 @@ $(document).ready(function(e) {
 			$("#ftr-sc").slideDown();
 			$("#form-person, #form-company").hide();
 			switch(type){
-				case 'NAT':
-					$("#dsc-type-client").prop('value', 'NAT');
-					$("#form-person").slideDown();
-					$("#form-person").find('.field-person').addClass('required').removeClass('not-required');
-					$("#form-company").find('.field-company').addClass('not-required').removeClass('required');
-					break;
-				case 'JUR':
-					$("#dsc-type-client").prop('value', 'JUR');
-					$("#form-company").slideDown();
-					$("#form-company").find('.field-company').addClass('required').removeClass('not-required');
-					$("#form-person").find('.field-person').addClass('not-required').removeClass('required');
-					break;
+			case 'NAT':
+				$("#dsc-type-client").prop('value', 'NAT');
+				$("#form-person").slideDown();
+				$("#form-person").find('.field-person')
+					.addClass('required')
+					.removeClass('not-required');
+				$("#form-company").find('.field-company')
+					.addClass('not-required')
+					.removeClass('required');
+				$("#form-company").find('input[type="text"], textarea')
+					.prop('value', '');
+				break;
+			case 'JUR':
+				$("#dsc-type-client").prop('value', 'JUR');
+				$("#form-company").slideDown();
+				$("#form-company").find('.field-company')
+					.addClass('required')
+					.removeClass('not-required');
+				$("#form-person").find('.field-person')
+					.addClass('not-required')
+					.removeClass('required');
+				$("#form-person").find('input[type="text"], textarea')
+					.prop('value', '');
+				break;
 			}
 		}else{
 			$("#form-person, #form-company").hide();
