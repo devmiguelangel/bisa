@@ -1,5 +1,7 @@
 <?php
-require_once('sibas-db.class.php');
+
+require_once 'sibas-db.class.php';
+
 $link = new SibasDB();
 $idc = $link->real_escape_string(trim(base64_decode($_GET['idc'])));
 
@@ -74,8 +76,10 @@ if (($rsCia = $link->query($sqlCia, MYSQLI_STORE_RESULT)) !== false) {
 		<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
 			base64_encode($rowCia['idcia']);?>&pr=<?=
 			base64_encode('AU');?>&type=<?=base64_encode('PRINT');?>" 
-			class="fancybox fancybox.ajax btn-see-slip">Ver Slip de Cotización</a>
-		<?php if ($token === true): ?>
+			class="fancybox fancybox.ajax btn-see-slip">
+			Ver Solicitud
+		</a>
+		<?php if ($token): ?>
 		<a href="au-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=
 			base64_encode('AU|04');?>&idc=<?=$_GET['idc'];?>&flag=<?=
 			md5('i-new');?>&cia=<?=base64_encode($rowCia['idcia']);?>" 

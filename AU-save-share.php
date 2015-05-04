@@ -1,10 +1,12 @@
 <?php
+
 require_once('sibas-db.class.php');
+
 $link = new SibasDB();
 $idc = $link->real_escape_string(trim(base64_decode($_GET['idc'])));
 $cia = $link->real_escape_string(trim(base64_decode($_GET['cia'])));
 $cp = false;
-$cpLnk = $cpSql = '';
+
 $url = 'au-quote.php?ms=' . $_GET['ms']
     . '&page=' . $_GET['page'] . '&pr=' . base64_encode('AU|05')
     . '&idc=' . base64_encode($idc)

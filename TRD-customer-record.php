@@ -102,20 +102,20 @@ if(isset($_POST['dc-token']) && isset($_POST['dc-idc']) && isset($_POST['ms']) &
 		$swAge = 0;
 		if ($dc_type_client === FALSE) {
 			$sqlAge = 'SELECT 
-					COUNT(ssh.id_home) as token,
-					ssh.edad_max,
-					ssh.edad_min,
-					(TIMESTAMPDIFF(year,
-						"' . $dc_birth . '",
-						curdate()) between ssh.edad_min and ssh.edad_max) as flag
-				from
-					s_sgc_home as ssh
-						inner join s_entidad_financiera as sef ON (sef.id_ef = ssh.id_ef)
-				where
-					ssh.producto = "TRD"
-						and sef.id_ef = "'.$idef.'"
-						and sef.activado = true
-				;';
+				COUNT(ssh.id_home) as token,
+				ssh.edad_max,
+				ssh.edad_min,
+				(TIMESTAMPDIFF(year,
+					"' . $dc_birth . '",
+					curdate()) between ssh.edad_min and ssh.edad_max) as flag
+			from
+				s_sgc_home as ssh
+					inner join s_entidad_financiera as sef ON (sef.id_ef = ssh.id_ef)
+			where
+				ssh.producto = "TRD"
+					and sef.id_ef = "'.$idef.'"
+					and sef.activado = true
+			;';
 			
 			$rsAge = $link->query($sqlAge,MYSQLI_STORE_RESULT);
 			$rowAge = $rsAge->fetch_array(MYSQLI_ASSOC);
@@ -202,23 +202,19 @@ if(isset($_POST['dc-token']) && isset($_POST['dc-idc']) && isset($_POST['ms']) &
 
 					$db = new Log($link);
 					$db->postLog($_SESSION['idUser'], $log_msg);
-
-					var_dump($arrTR);
-					exit();
 				} else {
 					$arrTR[2] = 'No se pudo registrar los datos del Seguro Solicitado';
 				}
 			}else {
 				$arrTR[2] = 'No se pudo registrar el Cliente';
 			}
-		}else{
-			$arrTR[2] = 'La Fecha de Nacimiento no esta en el rango permitido de Edades [ '.$rowAge['edad_min'].' - '.$rowAge['edad_max'].' ]';
+		} else {
+			$arrTR[2] = 'La Fecha de Nacimiento no esta en el rango permitido de Edades [ ' 
+				. $rowAge['edad_min'] . ' - ' . $rowAge['edad_max'] . ' ]';
 		}
-		echo json_encode($arrTR);
-	}else{
-		echo json_encode($arrTR);
 	}
-}else{
-	echo json_encode($arrTR);
 }
+
+echo json_encode($arrTR);
+
 ?>

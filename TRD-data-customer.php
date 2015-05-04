@@ -134,42 +134,39 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 	$display_fsc = 'display: block;';
 	
 	$sqlSc = 'select 
-			scl.id_cliente,
-			scl.tipo as cl_tipo,
-			scl.razon_social as cl_razon_social,
-			scl.nombre as cl_nombre,
-			scl.paterno as cl_paterno,
-			scl.materno as cl_materno,
-			scl.ap_casada as cl_ap_casada,
-			scl.ci as cl_dni,
-			scl.complemento as cl_complemento,
-			scl.extension as cl_extension,
-			scl.fecha_nacimiento as cl_fecha_nacimiento,
-			scl.lugar_residencia as cl_lugar_residencia,
-			scl.telefono_domicilio as cl_tel_domicilio,
-			scl.telefono_celular as cl_tel_celular,
-			scl.telefono_oficina as cl_tel_oficina,
-			scl.email as cl_email,
-			scl.genero as cl_genero,
-			scl.avenida as cl_avc,
-			scl.direccion as cl_direccion,
-		    scl.no_domicilio as cl_no_domicilio,
-		    scl.localidad as cl_localidad,
-		    scl.direccion_laboral as cl_direccion_laboral,
-		    scl.id_ocupacion as cl_ocupacion,
-		    scl.desc_ocupacion as cl_desc_ocupacion
-		from
-			s_trd_cot_cliente as scl
-				inner join
-			s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
-		where
-			scl.ci = "'.$dni.'"
-				and scl.tipo = '.$type_client.'
-				and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
-				and sef.activado = true
-		limit 0 , 1
-		;';
-	//echo $sqlSc;
+		scl.id_cliente,
+		scl.tipo as cl_tipo,
+		scl.razon_social as cl_razon_social,
+		scl.nombre as cl_nombre,
+		scl.paterno as cl_paterno,
+		scl.materno as cl_materno,
+		scl.ap_casada as cl_ap_casada,
+		scl.ci as cl_dni,
+		scl.complemento as cl_complemento,
+		scl.extension as cl_extension,
+		scl.fecha_nacimiento as cl_fecha_nacimiento,
+		scl.direccion_domicilio as cl_direccion_domicilio,
+	    scl.direccion_laboral as cl_direccion_laboral,
+	    scl.actividad as cl_actividad,
+		scl.ejecutivo as cl_ejecutivo,
+		scl.cargo as cl_cargo,
+		scl.telefono_domicilio as cl_tel_domicilio,
+		scl.telefono_celular as cl_tel_celular,
+		scl.telefono_oficina as cl_tel_oficina,
+		scl.email as cl_email,
+		scl.genero as cl_genero
+	from
+		s_trd_cot_cliente as scl
+			inner join
+		s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
+	where
+		scl.ci = "' . $dni . '"
+			and scl.tipo = ' . $type_client . '
+			and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
+			and sef.activado = true
+	limit 0 , 1
+	;';
+	// echo $sqlSc;
 	if(($rsSc = $link->query($sqlSc,MYSQLI_STORE_RESULT))){
 		if($rsSc->num_rows === 1){
 			$rowSc = $rsSc->fetch_array(MYSQLI_ASSOC);

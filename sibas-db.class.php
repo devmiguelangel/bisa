@@ -1439,56 +1439,35 @@ class SibasDB extends MySQLi
 		}
 	}
 	
-	public function get_tasa_trd($cia, $idef, $idc, $payment, $year)
+	public function getTasaTrd($idc)
 	{
+		$data = array();
+
 		$this->sql = 'select 
-		    strc.id_cotizacion as idc,
-		    strd.id_inmueble as idIn,
-		    (if("'.$payment.'" != "PC",
-		        (case
-		            when '.$year.' = 1 then st.tasa_anio
-		            when '.$year.' > 1 then st.tasa_restante
-		        end),
-		        st.tasa_estandar)) as i_tasa,
-		    (strd.valor_asegurado * (if("'.$payment.'" != "PC",
-		        (case
-		            when '.$year.' = 1 then st.tasa_anio
-		            when '.$year.' > 1 then st.tasa_restante
-		        end),
-		        st.tasa_estandar))) / 100 as i_prima
+			std.id_inmueble as id_tr,
+		    st.id as tr_id,
+		    st.tasa as tr_tasa,
+			(std.valor_asegurado * st.tasa) / 100 as tr_prima
 		from
-		    s_trd_cot_cabecera as strc
-		        inner join
-		    s_trd_cot_detalle as strd ON (strd.id_cotizacion = strc.id_cotizacion)
-		        inner join
-		    s_entidad_financiera as sef ON (sef.id_ef = strc.id_ef)
-		        inner join
-		    s_ef_compania as sec ON (sec.id_ef = sef.id_ef)
-		        inner join
-		    s_compania as scia ON (scia.id_compania = sec.id_compania)
-		        inner join
-		    s_tasa_trd as st ON (st.id_ef_cia = sec.id_ef_cia)
-		        inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = strc.id_forma_pago)
+			s_trd_cot_cabecera as stc
+				inner join
+			s_trd_cot_detalle as std ON (std.id_cotizacion = stc.id_cotizacion)
+				left join
+		    s_trd_tasa as st ON (st.activado = true)
 		where
-		    strc.id_cotizacion = "'.$idc.'"
-		        and sef.id_ef = "'.$idef.'"
-		        and sef.activado = true
-		        and scia.id_compania = "'.$cia.'"
-		        and scia.activado = true
-		        and sec.producto = "TRD"
-		order by strd.id_inmueble asc
+			stc.id_cotizacion = "' . $idc . '"
+		    	and st.activado = true
+	   	limit 0, 1
 		;';
-		//echo $this->sql;
-		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))) {
+		
+		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if($this->rs->num_rows > 0) {
-				return $this->rs;
-			} else {
-				return FALSE;
+				$data[] = $this->rs->fetch_array(MYSQLI_ASSOC);
+				$this->rs->free();
 			}
-		} else {
-			return FALSE;
 		}
+
+		return $data;
 	}
 	
 	public function get_tasa_year_trd($cia, $idef, $payment, $year)
