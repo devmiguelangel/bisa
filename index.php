@@ -138,8 +138,12 @@ if($token === TRUE){
 			break;
 		case md5('P_fac'):
 			$seguro = 'TRD';
-			//require('FAC-AU-records.inc.php');
-			echo '<meta http-equiv="refresh" content="0;url=index.php" >';
+			if ($user_type === 'FAC') {
+				$seguro = 'TRD';
+				require('FAC-TRD-records.inc.php');
+			} else {
+				echo '<meta http-equiv="refresh" content="0;url=index.php" >';
+			}
 			break;
 		case md5('P_app_imp'):	//ARPOBADAS IMPLANTE
 			if ($user_type === 'IMP') {

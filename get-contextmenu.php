@@ -193,25 +193,49 @@ if(isset($_GET['ide'])){
 				    stre.no_emision as r_no_emision,
 				    stre.id_compania,
 				    su.usuario,
-				    if((stre.emitir = 0 and stre.aprobado = 0)
-				            or stre.facultativo = 1,
-				        'P',
-				        'F') as estado,
+				    if(strf.aprobado is null,
+				        if(strp.id_pendiente is not null,
+				            case strp.respuesta
+				                when 1 then 'S'
+				                when 0 then 'O'
+				            end,
+				            if((stre.emitir = 0 and stre.aprobado = 1)
+				                    or stre.facultativo = 1,
+				                'P',
+				                'F')),
+				        case strf.aprobado
+				            when 'SI' then 'A'
+				            when 'NO' then 'R'
+				        end) as estado,
+				    case
+				        when sds.codigo = 'ED' then 'E'
+				        when sds.codigo != 'ED' then 'NE'
+				        else null
+				    end as observacion,
+				    sds.id_estado,
+				    sds.estado as estado_pendiente,
+					sds.codigo as estado_codigo,
 				    if(stre.anulado = 1,
-				        1,
-				        if(stre.emitir = 1, 2, 3)) as estado_banco,
-				    null as observacion,
-				    stre.facultativo as estado_facultativo,
+						1,
+						if(stre.emitir = 1, 2, 3)) as estado_banco,
+					stre.facultativo as estado_facultativo,
 				    stre.leido,
 				    stre.apr_usuario as a_usuario,
 					stre.certificado_provisional as cp
 				from
 				    s_trd_em_cabecera as stre
+				    	left join
+				    s_trm_facultativo as strf ON (strf.id_emision = stre.id_emision)
+				        left join
+				    s_trm_pendiente as strp ON (strp.id_emision = stre.id_emision)
+				        left join
+				    s_estado as sds ON (sds.id_estado = strp.id_estado)
 				        inner join
 				    s_usuario as su ON (su.id_usuario = stre.id_usuario)
-				where stre.id_emision = '".$ide."'
+				where stre.id_emision = '" . $ide . "'
 				limit 0, 1
 				;";
+				echo $sql;
 				break;
 			case 'TRM':
 				$sql = "select 

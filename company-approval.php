@@ -143,12 +143,6 @@ if(isset($_GET['pr']) && isset($_GET['ide'])){
 			$rs->free();
 			
 			$cp = (boolean)$row['cp'];
-		
-			if ($cp === true) {
-				$category = 'CP';
-			} else {
-				$category = 'CE';
-			}
 			
 			if(isset($_GET['send']) && isset($_GET['fca-reason'])){
 				$arrDE = array(0 => 0, 1 => 'R', 2 => '');

@@ -16,9 +16,10 @@ $(document).ready(function(e) {
 		$(this).addClass('tab-home-active-'+sel);
 		
 		$.ajax({
-			url:'FAC-'+pr+'-result.inc.php',
+			url:'FAC-' + pr + '-result.inc.php',
 			type:'GET',
-			data:'fde=&fde-nc=&fde-user=&fde-client=&fde-dni=&fde-comp=&fde-ext=&fde-date-b=&fde-date-e=&fde-id-user='+user+'&fde-type-user='+type_user+'&token=<?=md5('2');?>&fde-ef[]='+ef,
+			data:'fde=&fde-nc=&fde-user=&fde-client=&fde-dni=&fde-comp=&fde-ext=&fde-date-b=&fde-date-e=&fde-id-user=' 
+				+ user + '&fde-type-user=' + type_user + '&token=<?=md5('2');?>&fde-ef[]=' + ef,
 			//dataType:"json",
 			async:true,
 			cache:false,
@@ -96,10 +97,11 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 				$_pr_aux = $k;
 			}
 		}
-		if ($rowMenu['producto'] !== 'TRD' && $rowMenu['producto'] !== 'TH') {
+		if ($rowMenu['producto'] !== 'TH') {
 ?>
 			<td style="width: 220px;">
-                <a href="#" class="tab-home tab-home-active-<?=$k;?>" id="tab-<?=$k;?>" rel="<?=$rowMenu['producto'];?>" data-sel="<?=$k;?>"><?=$rowMenu['producto_nombre'];?></a>
+                <a href="#" class="tab-home tab-home-active-<?=$k;?>" id="tab-<?=$k;?>" 
+                	rel="<?=$rowMenu['producto'];?>" data-sel="<?=$k;?>"><?=$rowMenu['producto_nombre'];?></a>
             </td>
 <?php
 		}
@@ -110,7 +112,8 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
             	<input type="hidden" id="pid" name="pid" value="1" />
                 <input type="hidden" id="fde-ef" name="fde-ef" value="<?=$_SESSION['idEF'];?>">
                 <input type="hidden" id="fde-idUser" name="fde-idUser" value="<?=$_SESSION['idUser'];?>">
-                <input type="hidden" id="fde-type-user" name="fde-type-user" value="<?=base64_encode($_TYPE_USER['u_tipo_codigo']);?>" />
+                <input type="hidden" id="fde-type-user" name="fde-type-user" 
+                	value="<?=base64_encode($_TYPE_USER['u_tipo_codigo']);?>" />
                 <input type="hidden" id="max" value="<?=$max;?>" >
 			</td>
         </tr>

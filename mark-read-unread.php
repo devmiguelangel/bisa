@@ -24,28 +24,32 @@ if(isset($_GET['ide']) && isset($_GET['idvh']) && isset($_GET['flag']) && isset(
 		$txtMark = 'El Registro se Marco como <br> <strong>No Leído</strong>';
 	}
 	
-	
 	$sql = '';
 	switch ($fwd) {
-		case 'DE':
-			$sql = 'UPDATE s_de_em_cabecera 
-				SET leido = '.$flag.'
-				WHERE id_emision = "'.$ide.'"
-				;';
-			break;
-		case 'AU':
-			$sql = 'UPDATE s_au_em_cabecera as sae
-				INNER JOIN s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
-				SET sae.leido = FALSE, sad.leido = '.$flag.'
-				WHERE sae.id_emision = "'.$ide.'" and sad.id_vehiculo = "'.$idVh.'" ;';
-			break;
-		case 'TRM':
-			$sql = 'UPDATE s_trm_em_cabecera as stre
-				SET stre.leido = '.$flag.'
-				WHERE stre.id_emision = "'.$ide.'" ;';
-			break;
+	case 'DE':
+		$sql = 'UPDATE s_de_em_cabecera 
+			SET leido = '.$flag.'
+			WHERE id_emision = "'.$ide.'"
+			;';
+		break;
+	case 'AU':
+		$sql = 'UPDATE s_au_em_cabecera as sae
+			INNER JOIN s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
+			SET sae.leido = FALSE, sad.leido = '.$flag.'
+			WHERE sae.id_emision = "'.$ide.'" and sad.id_vehiculo = "'.$idVh.'" ;';
+		break;
+	case 'TRD':
+		$sql = 'UPDATE s_trd_em_cabecera as strd
+			SET strd.leido = '.$flag.'
+			WHERE strd.id_emision = "'.$ide.'" ;';
+		break;	
+	case 'TRM':
+		$sql = 'UPDATE s_trm_em_cabecera as stre
+			SET stre.leido = '.$flag.'
+			WHERE stre.id_emision = "'.$ide.'" ;';
+		break;
 	}
-	
+
 	if($link->query($sql) === TRUE) {
 		echo $txtMark.'<br><br>Por favor Espere...';
 	} else {

@@ -351,7 +351,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 			}
 			
 			if ($user_type === 'FAC' || $user_type === 'ROOT') {
-				if ($rowMenu['producto'] !== 'TRD' && $rowMenu['producto'] !== 'TH') {
+				if ($rowMenu['producto'] !== 'TH') {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_fac');?>" class="link-pr">
 						Registros Facultativos
