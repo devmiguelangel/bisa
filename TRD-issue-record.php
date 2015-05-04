@@ -1,13 +1,18 @@
 <?php
-require('sibas-db.class.php');
-require('session.class.php');
+
+require __DIR__ . '/classes/Logs.php';
+require 'sibas-db.class.php';
+require 'session.class.php';
 
 $session = new Session();
+$session->getSessionCookie();
 $token = $session->check_session();
 
 $arrTR = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo registrar la Póliza');
+$log_msg = '';
 
-if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type-client']) && isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr']) && isset($_POST['cia'])){
+if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type-client']) 
+		&& isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr']) && isset($_POST['cia'])){
 	
 	if($_POST['pr'] === base64_encode('TRD|05') && $token === TRUE){
 		$link = new SibasDB();
@@ -15,8 +20,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		$_FAC = FALSE;
 		$_FAC_REASON = '';
 		$TASA = $PRIMA = 0;
+
 		$swMo = false;
-		
+		$record = 0;
+
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));
 		$pr = $link->real_escape_string(trim($_POST['pr']));
@@ -60,15 +67,17 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$idcia = $link->real_escape_string(trim(base64_decode($_POST['cia'])));
 			$dcr_amount = 0;
 			$dcr_warranty = (int)$link->real_escape_string(trim(base64_decode($_POST['di-warranty'])));
+			$approved = 1;
+			if ($dcr_warranty === 1) {
+				$approved = 0;
+			}
 			$dcr_date_begin = $link->real_escape_string(trim(base64_decode($_POST['di-date-inception'])));
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
-			$dcr_term = $link->real_escape_string(trim($_POST['di-term']));
-			$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
-			$methodPayment = $link->real_escape_string(trim($_POST['di-method-payment']));
-			$methodPayment = explode('|', $methodPayment);
-			$dcr_method_payment = $link->real_escape_string(trim(base64_decode($methodPayment[0])));
-			$codeMethodPayment = $link->real_escape_string(trim(base64_decode($methodPayment[1])));
-			
+			$dcr_term = 1;
+			$dcr_type_term = 'Y';
+
+			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
+			$codeMethodPayment = '';
 			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
 			$dcr_policy = 'null';
 			if (isset($_POST['di-policy'])) {
@@ -94,6 +103,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$cl_date_birth = $cl_gender = $cl_place_res = $cl_locality = $cl_phone_home = $cl_phone_cel = $cl_avc = 
 			$cl_address_home = $cl_nhome = $cl_occupation = $cl_desc_occ = $cl_address_work = $cl_phone_office = 
 			$cl_email = $cl_company_name = $cl_attached = '';
+			$cl_place_res = 'null';
+			$cl_occupation = 'null';
 			
 			if(isset($_POST['dc-idcl'])) {
 				$idcl = $link->real_escape_string(trim(base64_decode($_POST['dc-idcl'])));
@@ -103,26 +114,22 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_name = $link->real_escape_string(trim($_POST['dc-name']));
 				$cl_patern = $link->real_escape_string(trim($_POST['dc-ln-patern']));
 				$cl_matern = $link->real_escape_string(trim($_POST['dc-ln-matern']));
-				$cl_married = $link->real_escape_string(trim($_POST['dc-ln-married']));
+				$cl_married = '';
 				$cl_ci = $link->real_escape_string(trim($_POST['dc-doc-id']));
 				$cl_comp = $link->real_escape_string(trim($_POST['dc-comp']));
 				$cl_ext = $link->real_escape_string(trim($_POST['dc-ext']));
-				$cl_gender = $link->real_escape_string(trim($_POST['dc-gender']));
+				$cl_gender = '';
 				$cl_date_birth = $link->real_escape_string(trim($_POST['dc-date-birth']));
-				$cl_place_res = $link->real_escape_string(trim($_POST['dc-place-res']));
-				$cl_locality = $link->real_escape_string(trim($_POST['dc-locality']));
+				$cl_locality = '';
 				$cl_phone_home = $link->real_escape_string(trim($_POST['dc-phone-1']));
 				$cl_phone_cel = $link->real_escape_string(trim($_POST['dc-phone-2']));
 				$cl_email = $link->real_escape_string(trim($_POST['dc-email']));
-				$cl_avc = $link->real_escape_string(trim($_POST['dc-avc']));
+				$cl_avc = '';
 				$cl_address_home = $link->real_escape_string(trim($_POST['dc-address-home']));
-				$cl_nhome = $link->real_escape_string(trim($_POST['dc-nhome']));
-				$cl_occupation = $link->real_escape_string(trim(base64_decode($_POST['dc-occupation'])));
-				$cl_occupation = '"'.$cl_occupation.'"';
-				$cl_desc_occ = $link->real_escape_string(trim($_POST['dc-desc-occ']));
+				$cl_nhome = '';
+				$cl_desc_occ = '';
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
-				if ($cl_gender === 'M') { $cl_married = ''; }
 				$cl_dni = $cl_ci;
 			}else{
 				$cl_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
@@ -130,11 +137,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_ext = $link->real_escape_string(trim($_POST['dc-depto']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-company-phone-office']));
 				$cl_email = $link->real_escape_string(trim($_POST['dc-company-email']));
-				$cl_avc = $link->real_escape_string(trim($_POST['dc-company-avc']));
 				$cl_address_home = $link->real_escape_string(trim($_POST['dc-company-address-home']));
-				$cl_nhome = $link->real_escape_string(trim($_POST['dc-company-nhome']));
-				$cl_occupation = 'NULL';
-				$cl_place_res = $cl_ext;
+				$cl_address_work = $link->real_escape_string(trim($_POST['dc-company-address-work']));
 				$cl_date_birth = date('Y-m-d', time());
 				$cl_dni = $cl_nit;
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
@@ -178,22 +182,11 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_pr[$k]['zone'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-zone']));
 					$arr_pr[$k]['locality'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-locality']));
 					$arr_pr[$k]['address'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-address']));
-					$arr_pr[$k]['type'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-type'])));
+					$arr_pr[$k]['type'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-type']));
 					$arr_pr[$k]['use'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-use']));
 					$arr_pr[$k]['use-other'] = '';
-					if($arr_pr[$k]['use'] === 'OTH'){
-						$arr_pr[$k]['use-other'] = $link->real_escape_string(trim($_POST['dp-'.$k.'-use-other']));
-					}else {
-						$arr_pr[$k]['use'] = base64_decode($arr_pr[$k]['use']);
-					}
-					$arr_pr[$k]['state'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-state'])));
+					$arr_pr[$k]['state'] = '';
 					$arr_pr[$k]['modality'] = 'null';
-					if (isset($_POST['dp-'.$k.'-modality'])) {
-						$swMo = true;
-						$arr_pr[$k]['modality'] = '"' 
-							. $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-modality']))) . '"';
-					}
-					
 					$arr_pr[$k]['value-insured'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-value-insured'])));
 					$arr_pr[$k]['rate'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-rate'])));
 					$arr_pr[$k]['premium'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-premium'])));
@@ -203,11 +196,12 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_pr[$k]['reason'] = '';
 					$arr_pr[$k]['approved'] = TRUE;
 					
-					/*if($arr_pr[$k]['value-insured'] > $max_amount){
+					if($arr_pr[$k]['value-insured'] > $max_amount){
 						$arr_pr[$k]['FAC'] = TRUE;
 						$_FAC = TRUE;
-						$arr_pr[$k]['reason'] .= '| El valor asegurado del Inmueble excede el máximo valor permitido. Valor permitido: '.number_format($max_amount, 2, '.', ',').' USD';
-					}*/
+						$arr_pr[$k]['reason'] .= '| El valor asegurado del Inmueble excede el máximo valor permitido. Valor permitido: ' 
+							. number_format($max_amount, 2, '.', ',') . ' USD';
+					}
 					
 					if($arr_pr[$k]['FAC'] === TRUE) { $arr_pr[$k]['approved'] = FALSE; }
 					
@@ -215,87 +209,106 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$PRIMA += $arr_pr[$k]['premium'];
 					$TASA = $arr_pr[$k]['rate'];
 				}
-			}else {
+			} else {
 				$arrTR[2] = 'Los Inmuebles no pueden ser Registrados';
 			}
 			
 			$swReg = FALSE;
 			$sql = $sqlCl = '';
 			if($sw === 1) {
-				if($swCl === FALSE) {	// REGISTRAR POLIZA
+				if($swCl === false) {	// REGISTRAR POLIZA
 					$sqlCl = 'INSERT INTO s_cliente 
-					(`id_cliente`, `id_ef`, `tipo`, `razon_social`, `paterno`, `materno`, `nombre`, `ap_casada`, `fecha_nacimiento`, `lugar_nacimiento`, `ci`, `extension`, `complemento`, `tipo_documento`, `estado_civil`, `ci_archivo`, `lugar_residencia`, `localidad`, `avenida`, `direccion`, `no_domicilio`, `direccion_laboral`, `pais`, `id_ocupacion`, `desc_ocupacion`, `telefono_domicilio`, `telefono_oficina`, `telefono_celular`, `email`, `peso`, `estatura`, `genero`, `edad`, `mano`) 
-					VALUES ("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", '.(int)$cl_type_client.', "'.$cl_company_name.'", 
-						"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", "'.$cl_married.'", "'.$cl_date_birth.'", "", 
-						"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", "", "'.$cl_attached.'", '.$cl_place_res.', 
-						"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", "'.$cl_nhome.'", "'.$cl_address_work.'", 
-						"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", "'.$cl_phone_home.'", "'.$cl_phone_office.'", 
-						"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
-						TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "") ;';
+					(id_cliente, id_ef, tipo, razon_social, paterno, materno, nombre, 
+						ap_casada, fecha_nacimiento, lugar_nacimiento, ci, extension, 
+						complemento, tipo_documento, estado_civil, ci_archivo, 
+						lugar_residencia, localidad, avenida, direccion, no_domicilio, 
+						direccion_laboral, pais, id_ocupacion, desc_ocupacion, 
+						telefono_domicilio, telefono_oficina, telefono_celular, email, 
+						peso, estatura, genero, edad, mano) 
+					VALUES 
+					("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
+							'.(int)$cl_type_client.', "'.$cl_company_name.'", 
+							"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", 
+							"'.$cl_married.'", "'.$cl_date_birth.'", "", 
+							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", "", 
+							"'.$cl_attached.'", '.$cl_place_res.', 
+							"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", 
+							"'.$cl_nhome.'", "'.$cl_address_work.'", 
+							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", 
+							"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
+							"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
+							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "") ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
-					SET `razon_social` = "'.$cl_company_name.'", `paterno` = "'.$cl_patern.'", `materno` = "'.$cl_matern.'", 
-						`nombre` = "'.$cl_name.'", `ap_casada` = "'.$cl_married.'", `fecha_nacimiento` = "'.$cl_date_birth.'", 
-						`extension` = '.$cl_ext.', `complemento` = "'.$cl_comp.'", `ci_archivo` = "'.$cl_attached.'", 
-						`lugar_residencia` = '.$cl_place_res.', `localidad` = "'.$cl_locality.'", `avenida` = "'.$cl_avc.'", 
-						`direccion` = "'.$cl_address_home.'", `no_domicilio` = "'.$cl_nhome.'", 
-						`direccion_laboral` = "'.$cl_address_work.'", `id_ocupacion` = '.$cl_occupation.', 
-						`desc_ocupacion` = "'.$cl_desc_occ.'", `telefono_domicilio` = "'.$cl_phone_home.'", 
-						`telefono_oficina` = "'.$cl_phone_office.'", `telefono_celular` = "'.$cl_phone_cel.'", 
-						`email` = "'.$cl_email.'", `genero` = "'.$cl_gender.'", 
-						`edad` = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
-					WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
+					SET razon_social = "'.$cl_company_name.'", 
+						paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+						nombre = "'.$cl_name.'", ap_casada = "'.$cl_married.'", 
+						fecha_nacimiento = "'.$cl_date_birth.'", 
+						extension = '.$cl_ext.', complemento = "'.$cl_comp.'", 
+						ci_archivo = "'.$cl_attached.'", 
+						lugar_residencia = '.$cl_place_res.', 
+						localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
+						direccion = "'.$cl_address_home.'", 
+						no_domicilio = "'.$cl_nhome.'", 
+						direccion_laboral = "'.$cl_address_work.'", 
+						id_ocupacion = '.$cl_occupation.', 
+						desc_ocupacion = "'.$cl_desc_occ.'", 
+						telefono_domicilio = "'.$cl_phone_home.'", 
+						telefono_oficina = "'.$cl_phone_office.'", 
+						telefono_celular = "'.$cl_phone_cel.'", 
+						email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
+						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+					WHERE id_cliente = "'.$idcl.'" 
+						and id_ef = "'.base64_decode($_SESSION['idEF']).'"
 						and tipo = '.(int)$cl_type_client.' ;';
 				}
 					
-				if($link->query($sqlCl) === TRUE) {
+				if($link->query($sqlCl)) {
 					$record = $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 1, 'TRD');
 					
 					$sql = 'insert into s_trd_em_cabecera 
-					(`id_emision`, `no_emision`, `id_ef`, `id_cotizacion`, 
-					`certificado_provisional`, `garantia`, `tipo`, `id_cliente`, 
-					`no_operacion`, `prefijo`, `ini_vigencia`, `fin_vigencia`, 
-					`id_forma_pago`, `plazo`, `tipo_plazo`, `factura_nombre`, 
-					`factura_nit`, `fecha_creacion`, `id_usuario`, `anulado`, 
-					`and_usuario`, `fecha_anulado`, `motivo_anulado`, `emitir`, 
-					`fecha_emision`, `id_compania`, `id_poliza`, `no_copia`, 
-					`facultativo`, `motivo_facultativo`, `tasa`, `prima_total`, 
-					`leido`) 
+					(id_emision, no_emision, id_ef, id_cotizacion, 
+						certificado_provisional, garantia, tipo, id_cliente, 
+						no_operacion, prefijo, ini_vigencia, fin_vigencia, 
+						forma_pago, plazo, tipo_plazo, factura_nombre, 
+						factura_nit, fecha_creacion, id_usuario, anulado, 
+						and_usuario, fecha_anulado, motivo_anulado, emitir, 
+						fecha_emision, id_compania, id_poliza, no_copia, 
+						facultativo, motivo_facultativo, tasa, prima_total, 
+						leido) 
 					values ("'.$ide.'", '.$record.', 
-					"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", 
-					'.$cp.', '.$dcr_warranty.', '.(int)$cl_type_client.', 
-					"'.$idcl.'", "'.$dcr_opp.'", "TRD", "'.$dcr_date_begin.'", 
-					"'.$dcr_date_end.'", "'.$dcr_method_payment.'", '.$dcr_term.', 
-					"'.$dcr_type_term.'", "'.$bl_name.'", "'.$bl_nit.'", 
-					curdate(), "'.base64_decode($_SESSION['idUser']).'", 0, 
-					"'.base64_decode($_SESSION['idUser']).'", "", "", FALSE, 
-					"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
-					"'.$_FAC_REASON.'", '.$TASA.', '.$PRIMA.', FALSE ) ;';
+						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", 
+						'.$cp.', "'.$dcr_warranty.'", '.(int)$cl_type_client.', 
+						"'.$idcl.'", "'.$dcr_opp.'", "TRD", "'.$dcr_date_begin.'", 
+						"'.$dcr_date_end.'", "'.$dcr_method_payment.'", '.$dcr_term.', 
+						"'.$dcr_type_term.'", "'.$bl_name.'", "'.$bl_nit.'", 
+						curdate(), "'.base64_decode($_SESSION['idUser']).'", 0, 
+						"'.base64_decode($_SESSION['idUser']).'", "", "", FALSE, 
+						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
+						"'.$_FAC_REASON.'", '.$TASA.', '.$PRIMA.', FALSE ) ;';
 					
-					if($link->query($sql) === TRUE) {
+					if($link->query($sql)) {
 						$auxPrefix = null;
 						
 						$sqlPr = 'insert into s_trd_em_detalle 
-						(`id_inmueble`, `id_emision`, `no_detalle`, 
-						`prefijo`, `prefix`, `tipo_in`, 
-						`uso`, `uso_otro`, `estado`, `departamento`, 
-						`zona`, `localidad`, `direccion`,`modalidad`, 
-						`valor_asegurado`, `tasa`, `prima`, 
-						`facultativo`, `motivo_facultativo`, 
-						`aprobado`, `leido`, `in_archivo`) VALUES ';
+						(id_inmueble, id_emision, no_detalle, 
+							prefijo, prefix, tipo_in, 
+							uso, uso_otro, estado, departamento, 
+							zona, localidad, direccion,modalidad, 
+							valor_asegurado, tasa, prima, 
+							facultativo, motivo_facultativo, 
+							aprobado, leido, in_archivo) VALUES ';
 						
+						$record_det = $record;
+
 						for($k = 1; $k <= $nPr; $k++) {
-							if ($swMo === true) {
-								$link->getPrefixPolicyBanecoTRD(trim($arr_pr[$k]['modality'], '"'), $codeMethodPayment, $prefix);
-							} else {
-								$prefix[0] = 'TRD';
-								$prefix[1] = '';
-							}
+							$prefix[0] = 'TRD';
+							$prefix[1] = '';
 							
 							if ($auxPrefix === $prefix[0]) {
-								$record += 1;
+								$record_det += 1;
 							} else {
-								$record = $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 2, $prefix[0]);
+								$record_det = $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 2, $prefix[0]);
 							}
 							
 							$auxPrefix = $prefix[0];
@@ -307,7 +320,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							$arrPrefix = '"' . $link->real_escape_string(json_encode($arrPrefix)) . '"';
 							
 							$sqlPr .= '("'.$arr_pr[$k]['idpr'].'", "'.$ide.'",
-							'.$record.', "'.$prefix[0].'", '.$arrPrefix.', 
+							'.$record_det.', "'.$prefix[0].'", '.$arrPrefix.', 
 							"'.$arr_pr[$k]['type'].'", "'.$arr_pr[$k]['use'].'", 
 							"'.$arr_pr[$k]['use-other'].'", "'.$arr_pr[$k]['state'].'", 
 							'.$arr_pr[$k]['depto'].', "'.$arr_pr[$k]['zone'].'", 
@@ -318,15 +331,21 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							'.(int)$arr_pr[$k]['approved'].', FALSE, 
 							"'.$arr_pr[$k]['attached'].'") ';
 							
-							$record += 1;
-							
 							if($k < $nPr) { $sqlPr .= ', '; } elseif($k === $nPr) { $sqlPr .= ';'; };
 						}
 						
 						if($link->query($sqlPr) === TRUE){
 							$swReg = TRUE;
-							$arrTR[1] = 'trd-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&ide='.base64_encode($ide).'&flag='.md5('i-read').'&cia='.base64_encode($idcia).'';
+							$arrTR[1] = 'trd-quote.php?ms=' . $ms . '&page=' . $page 
+								. '&pr=' . $pr . '&ide=' . base64_encode($ide) 
+								. '&flag=' . md5('i-read') . '&cia=' . base64_encode($idcia);
 							$arrTR[2] = 'La Póliza fue registrada con exito !';
+
+							$log_msg = 'TRD - Em. ' . $record . ' / Record Certificate Client, Properties';
+
+							$db = new Log($link);
+							$db->postLog($_SESSION['idUser'], $log_msg);
+							
 						} else {
 							$arrTR[2] = 'Los Inmuebles no pudieron ser registrados';
 						}
@@ -335,41 +354,58 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					}
 				} else { $arrTR[2] = 'El Prestatario no pudo ser registrado'; }
 			}elseif($sw === 3) {	// ACTUALIZAR POLIZA
+				$sql = 'select 
+					sae.no_emision
+				from 
+					s_trd_em_cabecera sae
+				where 
+					sae.id_emision = "' . $ide . '"
+				limit 0, 1
+				;';
+
+				if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+					if ($rs->num_rows === 1) {
+						$row = $rs->fetch_array(MYSQLI_ASSOC);
+						$rs->free();
+						$record = $row['no_emision'];
+					}
+				}
+				
 				$sqlCl = 'UPDATE s_cliente 
-					SET `razon_social` = "'.$cl_company_name.'", `paterno` = "'.$cl_patern.'", `materno` = "'.$cl_matern.'", 
-						`nombre` = "'.$cl_name.'", `fecha_nacimiento` = "'.$cl_date_birth.'", 
-						`extension` = '.$cl_ext.', `complemento` = "'.$cl_comp.'", `ci_archivo` = "'.$cl_attached.'", 
-						`lugar_residencia` = '.$cl_place_res.', `localidad` = "'.$cl_locality.'", `avenida` = "'.$cl_avc.'", 
-						`direccion` = "'.$cl_address_home.'", `no_domicilio` = "'.$cl_nhome.'", 
-						`direccion_laboral` = "'.$cl_address_work.'", `id_ocupacion` = '.$cl_occupation.', 
-						`desc_ocupacion` = "'.$cl_desc_occ.'", `telefono_domicilio` = "'.$cl_phone_home.'", 
-						`telefono_oficina` = "'.$cl_phone_office.'", `telefono_celular` = "'.$cl_phone_cel.'", 
-						`email` = "'.$cl_email.'", `genero` = "'.$cl_gender.'", 
-						`edad` = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
-					WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
-						and tipo = '.(int)$cl_type_client.' ;';
-					
-				if($link->query($sqlCl) === TRUE) {
+				SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+					nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
+					extension = '.$cl_ext.', complemento = "'.$cl_comp.'", ci_archivo = "'.$cl_attached.'", 
+					lugar_residencia = '.$cl_place_res.', localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
+					direccion = "'.$cl_address_home.'", no_domicilio = "'.$cl_nhome.'", 
+					direccion_laboral = "'.$cl_address_work.'", id_ocupacion = '.$cl_occupation.', 
+					desc_ocupacion = "'.$cl_desc_occ.'", telefono_domicilio = "'.$cl_phone_home.'", 
+					telefono_oficina = "'.$cl_phone_office.'", telefono_celular = "'.$cl_phone_cel.'", 
+					email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
+					edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+				WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
+					and tipo = '.(int)$cl_type_client.' ;';
+				
+				if($link->query($sqlCl)) {
 					$sql = 'UPDATE s_trd_em_cabecera
-						SET `no_operacion` = "'.$dcr_opp.'", `ini_vigencia` = "'.$dcr_date_begin.'", 
-						`fin_vigencia` = "'.$dcr_date_end.'", `id_forma_pago` = "'.$dcr_method_payment.'", `plazo` = '.$dcr_term.', 
-						`tipo_plazo` = "'.$dcr_type_term.'", `factura_nombre` = "'.$bl_name.'", `factura_nit` = "'.$bl_nit.'", 
-						`id_poliza` = '.$dcr_policy.', `no_copia` = 0, `facultativo` = '.(int)$_FAC.', 
-						`motivo_facultativo` = "'.$_FAC_REASON.'", `tasa` = '.$TASA.', `prima_total` = '.$PRIMA.', `leido` = FALSE
-						WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
+					SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
+						fin_vigencia = "'.$dcr_date_end.'", forma_pago = "'.$dcr_method_payment.'", plazo = '.$dcr_term.', 
+						tipo_plazo = "'.$dcr_type_term.'", factura_nombre = "'.$bl_name.'", factura_nit = "'.$bl_nit.'", 
+						id_poliza = '.$dcr_policy.', no_copia = 0, facultativo = '.(int)$_FAC.', 
+						motivo_facultativo = "'.$_FAC_REASON.'", tasa = '.$TASA.', prima_total = '.$PRIMA.', leido = FALSE
+					WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
 					
-					if($link->query($sql) === TRUE) {
+					if($link->query($sql)) {
 						$sqlPr = '';
 						for($k = 1; $k <= $nPr; $k++) {//
 							$sqlPr .= 'update s_trd_em_detalle
-							set `tipo_in` = "'.$arr_pr[$k]['type'].'", `uso` = "'.$arr_pr[$k]['use'].'",
-								`uso_otro` = "'.$arr_pr[$k]['use-other'].'", `estado` = "'.$arr_pr[$k]['state'].'",
-								`departamento` = '.$arr_pr[$k]['depto'].', `zona` = "'.$arr_pr[$k]['zone'].'",
-								`localidad` = "'.$arr_pr[$k]['locality'].'", `direccion` = "'.$arr_pr[$k]['address'].'",
-								`modalidad` = '.$arr_pr[$k]['modality'].', `valor_asegurado` = '.$arr_pr[$k]['value-insured'].', 
-								`tasa` = '.$arr_pr[$k]['rate'].', `prima` = '.$arr_pr[$k]['premium'].', 
-								`facultativo` = '.(int)$arr_pr[$k]['FAC'].', `motivo_facultativo` = "'.$arr_pr[$k]['reason'].'", 
-								`aprobado` = '.(int)$arr_pr[$k]['approved'].' 
+							set tipo_in = "'.$arr_pr[$k]['type'].'", uso = "'.$arr_pr[$k]['use'].'",
+								uso_otro = "'.$arr_pr[$k]['use-other'].'", estado = "'.$arr_pr[$k]['state'].'",
+								departamento = '.$arr_pr[$k]['depto'].', zona = "'.$arr_pr[$k]['zone'].'",
+								localidad = "'.$arr_pr[$k]['locality'].'", direccion = "'.$arr_pr[$k]['address'].'",
+								modalidad = '.$arr_pr[$k]['modality'].', valor_asegurado = '.$arr_pr[$k]['value-insured'].', 
+								tasa = '.$arr_pr[$k]['rate'].', prima = '.$arr_pr[$k]['premium'].', 
+								facultativo = '.(int)$arr_pr[$k]['FAC'].', motivo_facultativo = "'.$arr_pr[$k]['reason'].'", 
+								aprobado = '.(int)$arr_pr[$k]['approved'].' 
 							where id_inmueble = "'.$arr_pr[$k]['idpr'].'" and id_emision = "'.$ide.'" ;';
 						}
 						
@@ -384,6 +420,12 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 								$swReg = TRUE;
 								$arrTR[1] = 'trd-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&ide='.base64_encode($ide).'&flag='.md5('i-read').'&cia='.base64_encode($idcia).$target;
 								$arrTR[2] = 'La Póliza fue actualizada correctamente !';
+
+								$log_msg = 'TRD - Em. ' . $record . ' / Update Certificate Client, Properties';
+
+								$db = new Log($link);
+								$db->postLog($_SESSION['idUser'], $log_msg);
+
 							} else {
 								$arrTR[2] = 'Los datos de los Inmuebles no fueron actualizados';
 							}
@@ -406,14 +448,13 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		}else {
 			$arrTR[2] = 'La Póliza no puede ser registrada';
 		}
-		
-		echo json_encode($arrTR);
 	}else{
 		$arrTR[2] = 'La Póliza no puede ser registrada.';
-		echo json_encode($arrTR);
 	}
 }else{
 	$arrTR[2] = 'La Póliza no puede ser registrada. |';
-	echo json_encode($arrTR);
 }
+
+echo json_encode($arrTR);
+
 ?>

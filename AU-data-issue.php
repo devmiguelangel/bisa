@@ -15,11 +15,6 @@ if (($rowAU = $link->get_max_amount_optional($_SESSION['idEF'], 'AU')) !== FALSE
 }
 
 $cp = false;
-if (isset($_GET['cp'])) {
-    if (md5(1) === $_GET['cp']) {
-        $cp = true;
-    }
-}
 
 $flag = $_GET['flag'];
 $action = '';
@@ -151,6 +146,7 @@ if($sw !== 1){
         sef.id_ef,
         sef.nombre as ef_nombre,
 		sae.certificado_provisional as cp,
+		sae.garantia as c_garantia,
 		sae.no_emision,
 		sae.ini_vigencia as c_ini_vigencia,
 		sae.fin_vigencia as c_fin_vigencia,
@@ -262,7 +258,7 @@ function validarRealf(dat){
 <a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
 	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
 	base64_encode('AU');?>" class="fancybox fancybox.ajax btn-see-slip">
-	Ver Slip Cotización
+	Ver Solicitud
 </a>
 
 <form id="fde-issue" name="fde-issue" action="" method="post" 
@@ -964,28 +960,6 @@ $(document).ready(function(e) {
 	$("#dc-edit").click(function(e){
 		e.preventDefault();
 		location.href = 'au-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&ide=<?=base64_encode($ide);?>&flag=<?=md5('i-edit');?>&cia=<?=$_GET['cia'].$target;?>';
-	});
-	
-	$(".dv-make").change(function(e){
-		var make = $(this).prop('value');
-		var idef = $("#idef").prop('value');
-		var rel = $(this).attr('data-rel');
-		var model = '';
-		
-		$('#dv-'+rel+'-model').slideUp();
-		$.getJSON('au-get-model.php', {make: make, idef: idef}, function(data){
-			if(data[0] === true){
-				$('#dv-'+rel+'-model').find('option').remove();
-				for(var i = 1; i < data.length; i++){
-					model = data[i].split('|');
-					$("<option value='"+model[0]+"'>"+model[1]+"</option>").appendTo('#dv-'+rel+'-model');
-				}
-				//$("#dv-model-other").removeClass('required');
-				//$("#dv-model-other").addClass('not-required');
-			}else
-				alert('Error: ');
-			$('#dv-'+rel+'-model').slideDown();
-		});
 	});
 <?php
 switch($sw){

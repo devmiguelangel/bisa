@@ -1,4 +1,5 @@
 <?php
+
 require_once('sibas-db.class.php');
 $link = new SibasDB();
 $ide = 0;
@@ -15,11 +16,6 @@ if (($rowTR = $link->get_max_amount_optional($_SESSION['idEF'], 'TRD')) !== FALS
 }
 
 $cp = false;
-if (isset($_GET['cp'])) {
-    if (md5(1) === $_GET['cp']) {
-        $cp = true;
-    }
-}
 
 $flag = $_GET['flag'];
 $action = '';
@@ -65,12 +61,12 @@ switch($sw){
 		$sql = 'select 
 		    strc.id_cotizacion as idc,
 		    sef.id_ef as idef,
+		    sef.nombre as ef_nombre,
 		    strc.certificado_provisional as cp,
 		    strc.garantia as c_garantia,
 		    strc.ini_vigencia as c_ini_vigencia,
 		    strc.fin_vigencia as c_fin_vigencia,
-		    sfp.id_forma_pago,
-		    sfp.codigo as c_forma_pago,
+		    strc.forma_pago as c_forma_pago,
 		    strc.plazo as c_plazo,
 		    strc.tipo_plazo as c_tipo_plazo,
 		    strc.prima_total as c_prima_total,
@@ -97,19 +93,16 @@ switch($sw){
 		    scl.fecha_nacimiento as cl_fecha_nacimiento,
 		    scl.complemento as cl_complemento,
 		    scl.genero as cl_genero,
+		    scl.direccion_domicilio as cl_direccion_domicilio,
+		    scl.direccion_laboral as cl_direccion_laboral,
 		    scl.telefono_domicilio as cl_tel_domicilio,
 		    scl.telefono_celular as cl_tel_celular,
 		    scl.telefono_oficina as cl_tel_oficina,
 		    scl.email as cl_email,
-		    scl.lugar_residencia as cl_lugar_residencia,
-		    scl.localidad as cl_localidad,
-		    scl.avenida as cl_avc,
-		    scl.direccion as cl_direccion,
-		    scl.no_domicilio as cl_no_domicilio,
-		    scl.direccion_laboral as cl_direccion_laboral,
-		    scl.id_ocupacion as cl_ocupacion,
-		    scl.desc_ocupacion as cl_desc_ocupacion,
-		    scl.edad as cl_edad,
+		    "" as cl_lugar_residencia,
+		    "" as cl_localidad,
+		    "" as cl_ocupacion,
+		    "" as cl_desc_ocupacion,
 		    "" as cl_adjunto,
 		    strd.id_inmueble as idpr,
 		    strd.tipo_in as pr_tipo,
@@ -122,6 +115,8 @@ switch($sw){
 		    strd.direccion as pr_direccion,
 		    strd.modalidad as pr_modalidad,
 		    strd.valor_asegurado as pr_valor_asegurado,
+		    strd.tasa as pr_tasa,
+			strd.prima as pr_prima,
 		    "" as pr_adjunto
 		from
 		    s_trd_cot_cabecera as strc
@@ -131,31 +126,29 @@ switch($sw){
 		    s_trd_cot_detalle as strd ON (strd.id_cotizacion = strc.id_cotizacion)
 		        inner join
 		    s_entidad_financiera as sef ON (sef.id_ef = strc.id_ef)
-		        inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = strc.id_forma_pago)
 		where
-		    strc.id_cotizacion = "'.$idc.'"
-		        and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
+		    strc.id_cotizacion = "' . $idc . '"
+		        and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
 		        and sef.activado = true
 		order by strd.id_inmueble asc
 		;';
-		
 		break;
 }
 
 if($sw !== 1){
 	$sql = 'select 
 	    stre.id_emision as ide,
-	    sef.id_ef as idef,
 	    stre.id_cotizacion as idc,
+	    sef.id_ef as idef,
+	    sef.nombre as ef_nombre,
 	    stre.certificado_provisional as cp,
+	    stre.garantia as c_garantia,
 	    stre.no_emision,
 	    stre.ini_vigencia as c_ini_vigencia,
 	    stre.fin_vigencia as c_fin_vigencia,
-	    sfp.id_forma_pago,
-	    sfp.codigo as c_forma_pago,
 	    stre.plazo as c_plazo,
 	    stre.tipo_plazo as c_tipo_plazo,
+	    stre.forma_pago as c_forma_pago,
 	    stre.prima_total as c_prima_total,
 	    stre.no_operacion as c_no_operacion,
 	    stre.id_poliza as c_poliza,
@@ -179,7 +172,7 @@ if($sw !== 1){
 	    scl.telefono_oficina as cl_tel_oficina,
 	    scl.email as cl_email,
 	    scl.avenida as cl_avc,
-	    scl.direccion as cl_direccion,
+	    scl.direccion as cl_direccion_domicilio,
 	    scl.no_domicilio as cl_no_domicilio,
 	    scl.lugar_residencia as cl_lugar_residencia,
 	    scl.localidad as cl_localidad,
@@ -200,7 +193,8 @@ if($sw !== 1){
 	    strd.valor_asegurado as pr_valor_asegurado,
 	    "" as pr_adjunto,
 	    strd.tasa as pr_tasa,
-    	strd.prima as pr_prima
+    	strd.prima as pr_prima,
+    	stre.aprobado
 	from
 	    s_trd_em_cabecera as stre
 	        inner join
@@ -209,8 +203,6 @@ if($sw !== 1){
 	    s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision)
 	        inner join
 	    s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
-	        inner join
-	    s_forma_pago as sfp ON (sfp.id_forma_pago = stre.id_forma_pago)
 	where
 	    stre.id_emision = "'.$ide.'"
 	        and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
@@ -218,7 +210,7 @@ if($sw !== 1){
 	order by strd.id_inmueble asc
 	;';
 }
-//echo $sql;
+// echo $sql;
 $rs = $link->query($sql,MYSQLI_STORE_RESULT);
 $nPr = $rs->num_rows;
 if($nPr > 0 && $nPr <= $max_item){
@@ -254,8 +246,14 @@ function validarRealf(dat){
 }
 </script>
 <h3 id="issue-title"><?=$title;?></h3>
-<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('TRD');?>" class="fancybox fancybox.ajax btn-see-slip">Ver Slip Cotización</a>
-<form id="fde-issue" name="fde-issue" action="" method="post" class="form-quote form-customer" enctype="multipart/form-data">
+<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
+	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
+	base64_encode('TRD');?>" class="fancybox fancybox.ajax btn-see-slip">
+	Ver Solicitud
+</a>
+
+<form id="fde-issue" name="fde-issue" action="" method="post" 
+	class="form-quote form-customer" enctype="multipart/form-data">
 <?php
 $cont = 0;
 
@@ -278,6 +276,7 @@ if($rs->data_seek(0) === TRUE){
 	$row = $rs->fetch_array(MYSQLI_ASSOC);
 	$cr_term = $row['c_plazo'];
 	$cr_type_term = $row['c_tipo_plazo'];
+	$cr_method_payment = $row['c_forma_pago'];
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
 	
@@ -296,8 +295,6 @@ if($rs->data_seek(0) === TRUE){
 		$cr_policy = $row['c_poliza'];
 		$mFC = $row['c_motivo_facultativo'];
 		
-		if($cl_type_client === 0) { $cl_dir_office = $row['cl_direccion_laboral']; }
-		
 		if($sw === 2 || $sw === 3){
 			if((boolean)$row['c_facultativo'] === TRUE) {
 				$FC = TRUE;
@@ -312,47 +309,55 @@ if($rs->data_seek(0) === TRUE){
 	<h4>Datos del Prestatario</h4>
 <?php
 if($sw > 1){
-	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" value="'.base64_encode($row['idcl']).'" class="required">';
+	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" value="' 
+		. base64_encode($row['idcl']) . '" class="required">';
 }
 ?>
-    <input type="hidden" id="dc-type-client" name="dc-type-client" value="<?=base64_encode($cl_type_client);?>">
+    <input type="hidden" id="dc-type-client" name="dc-type-client" 
+    	value="<?=base64_encode($cl_type_client);?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
+            <label>Nombres: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-name" name="dc-name" 
+                	autocomplete="off" value="<?=$row['cl_nombre'];?>" 
+                	class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+            </div><br>
+            
             <label>Apellido Paterno: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-ln-patern" name="dc-ln-patern" autocomplete="off" value="<?=$row['cl_paterno'];?>" class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+                <input type="text" id="dc-ln-patern" name="dc-ln-patern" 
+                	autocomplete="off" value="<?=$row['cl_paterno'];?>" 
+                	class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
             </div><br>
             
             <label>Apellido Materno: </label>
             <div class="content-input">
-                <input type="text" id="dc-ln-matern" name="dc-ln-matern" autocomplete="off" value="<?=$row['cl_materno'];?>" class="text fbin" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Nombres: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-name" name="dc-name" autocomplete="off" value="<?=$row['cl_nombre'];?>" class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Apellido de Casada: </label>
-            <div class="content-input">
-                <input type="text" id="dc-ln-married" name="dc-ln-married" autocomplete="off" value="<?=$row['cl_ap_casada'];?>" class="not-required text fbin" <?=$read_new;?>>
+                <input type="text" id="dc-ln-matern" name="dc-ln-matern" 
+                	autocomplete="off" value="<?=$row['cl_materno'];?>" 
+                	class="text fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Documento de Identidad: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-doc-id" name="dc-doc-id" autocomplete="off" value="<?=$row['cl_dni'];?>" class="<?=$read_nat;?> dni fbin field-person" <?=$read_new.$read_edit;?>>
+                <input type="text" id="dc-doc-id" name="dc-doc-id" 
+                	autocomplete="off" value="<?=$row['cl_dni'];?>" 
+                	class="<?=$read_nat;?> dni fbin field-person" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Complemento: </label>
             <div class="content-input">
-                <input type="text" id="dc-comp" name="dc-comp" autocomplete="off" value="<?=$row['cl_complemento'];?>" class="not-required dni fbin" style="width:60px;" <?=$read_new;?>>
+                <input type="text" id="dc-comp" name="dc-comp" 
+                	autocomplete="off" value="<?=$row['cl_complemento'];?>" 
+                	class="not-required dni fbin" style="width:60px;" <?=$read_new;?>>
             </div><br>
             
             <label>Extensión: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-ext" name="dc-ext" class="<?=$read_nat;?> fbin field-person <?=$read_new.$read_edit;?>" <?=$read_new;?> >
+                <select id="dc-ext" name="dc-ext" class="<?=$read_nat;?> fbin 
+                	field-person <?=$read_new.$read_edit;?>" <?=$read_new;?> >
                     <option value="">Seleccione...</option>
 <?php
 $rsDep = null;
@@ -374,122 +379,52 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
-            <label>Género: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-gender" name="dc-gender" class="<?=$read_nat;?> fbin field-person <?=$read_new;?>" <?=$read_new;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_gender = $link->gender;
-for($i = 0; $i < count($arr_gender); $i++){
-	$gender = explode('|',$arr_gender[$i]);
-	if($gender[0] === $row['cl_genero']) {
-		echo '<option value="'.$gender[0].'" selected>'.$gender[1].'</option>';
-	} else {
-		echo '<option value="'.$gender[0].'">'.$gender[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
             
             <label>Fecha de Nacimiento: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-date-birth" name="dc-date-birth" autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" class="<?=$read_nat;?> fbin date field-person" readonly style="cursor:pointer;" <?=$read_new;?>>
-            </div><br>
-            
-            <label>Lugar de Residencia: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-place-res" name="dc-place-res" class="<?=$read_new.' '.$read_nat;?> fbin " <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-if ($rsDep->data_seek(0) === TRUE) {
-	while($rowDep = $rsDep->fetch_array(MYSQLI_ASSOC)){
-		if((boolean)$rowDep['tipo_dp'] === TRUE){
-			if($rowDep['id_depto'] === $row['cl_lugar_residencia']) {
-				echo '<option value="'.$rowDep['id_depto'].'" selected>'.$rowDep['departamento'].'</option>';
-			} else {
-				echo '<option value="'.$rowDep['id_depto'].'">'.$rowDep['departamento'].'</option>';
-			}
-		}
-	}
-}
-?>
-                </select>
-            </div><br>
-            <label>Localidad: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-locality" name="dc-locality" autocomplete="off" value="<?=$row['cl_localidad'];?>" class="<?=$read_nat;?> text-2 fbin" <?=$read_new.' '.$read_save;?>>
+                <input type="text" id="dc-date-birth" name="dc-date-birth" 
+                	autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" 
+                	class="<?=$read_nat;?> fbin date field-person" readonly 
+                	style="cursor:pointer;" <?=$read_new;?>>
             </div><br>
             
             <label>Teléfono de domicilio: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-phone-1" name="dc-phone-1" autocomplete="off" value="<?=$row['cl_tel_domicilio'];?>" class="<?=$read_nat;?> phone fbin" <?=$read_new;?>>
+                <input type="text" id="dc-phone-1" name="dc-phone-1" 
+                	autocomplete="off" value="<?=$row['cl_tel_domicilio'];?>" 
+                	class="<?=$read_nat;?> phone fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Teléfono celular: </label>
             <div class="content-input">
-                <input type="text" id="dc-phone-2" name="dc-phone-2" autocomplete="off" value="<?=$row['cl_tel_celular'];?>" class="not-required phone fbin" <?=$read_new;?>>
+                <input type="text" id="dc-phone-2" name="dc-phone-2" 
+                	autocomplete="off" value="<?=$row['cl_tel_celular'];?>" 
+                	class="not-required phone fbin" <?=$read_new;?>>
             </div><br>
             
             <label>Email: </label>
 			<div class="content-input">
-				<input type="text" id="dc-email" name="dc-email" autocomplete="off" value="<?=$row['cl_email'];?>" class="not-required email fbin" <?=$read_new;?>>
+				<input type="text" id="dc-email" name="dc-email" 
+					autocomplete="off" value="<?=$row['cl_email'];?>" 
+					class="not-required email fbin" <?=$read_new;?>>
 			</div><br>
         </div><!--
         --><div class="form-col">
-			<label>Avenida o Calle: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-avc" name="dc-avc" class="<?=$read_new.' '.$read_nat;?> fbin <?=$read_save;?>" <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_AC = $link->avc;
-for($i = 0; $i < count($arr_AC); $i++){
-	$AC = explode('|',$arr_AC[$i]);
-	if($AC[0] === $row['cl_avc']) {
-		echo '<option value="'.$AC[0].'" selected>'.$AC[1].'</option>';
-	}else {
-		echo '<option value="'.$AC[0].'">'.$AC[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
-            
-            <label>Dirección domicilio: <span>*</span></label><br>
-            <textarea id="dc-address-home" name="dc-address-home" class="<?=$read_nat;?> fbin" <?=$read_new.' '.$read_save;?>><?=$row['cl_direccion'];?></textarea><br>
-            
-            <label>Número de domicilio: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-nhome" name="dc-nhome" autocomplete="off" value="<?=$row['cl_no_domicilio'];?>" class="<?=$read_nat;?> number fbin" <?=$read_new.' '.$read_save;?>>
-            </div><br>
-            
-            <label>Ocupación: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-occupation" name="dc-occupation" class="<?=$read_new.' '.$read_nat;?> fbin " <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'TRD')) !== FALSE) {
-	while($rowOcc = $rsOcc->fetch_array(MYSQLI_ASSOC)){
-		if($rowOcc['id_ocupacion'] === $row['cl_ocupacion']) {
-			echo '<option value="'.base64_encode($rowOcc['id_ocupacion']).'" selected>'.$rowOcc['ocupacion'].'</option>';
-		} else {
-			echo '<option value="'.base64_encode($rowOcc['id_ocupacion']).'">'.$rowOcc['ocupacion'].'</option>';
-		}
-	}
-}
-?>
-                </select>
-            </div><br>
-            
-            <label style="width:auto;">Descripción Ocupación: <span>*</span></label><br>
-            <textarea id="dc-desc-occ" name="dc-desc-occ" class="<?=$read_nat;?> fbin" <?=$read_new.' '.$read_save;?> ><?=$row['cl_desc_ocupacion'];?></textarea><br>
+			<label>Dirección domicilio: <span>*</span></label><br>
+            <textarea id="dc-address-home" name="dc-address-home" 
+            	class="<?=$read_nat;?> fbin" <?=$read_new . ' ' 
+            	. $read_save;?>><?=$row['cl_direccion_domicilio'];?></textarea><br>
             
             <label>Dirección laboral: <span>*</span></label><br>
-            <textarea id="dc-address-work" name="dc-address-work" class="<?=$read_nat;?> fbin" <?=$read_new.' '.$read_save;?>><?=$row['cl_direccion_laboral'];?></textarea><br>
+            <textarea id="dc-address-work" name="dc-address-work" 
+            	class="<?=$read_nat;?> fbin" <?=$read_new . ' ' 
+            	. $read_save;?>><?=$row['cl_direccion_laboral'];?></textarea><br>
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
-                <input type="text" id="dc-phone-office" name="dc-phone-office" autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" class="not-required phone fbin" <?=$read_new.' '.$read_save;?>>
+                <input type="text" id="dc-phone-office" name="dc-phone-office" 
+                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
+                	class="not-required phone fbin" <?=$read_new . ' ' . $read_save;?>>
             </div><br>
         </div><br>
     </div>
@@ -499,17 +434,22 @@ if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'TRD')) !== FALSE) {
     	<div class="form-col">
             <label style="width:auto;">Nombre o Razón Social: <span>*</span></label><br>
             <div class="content-input">
-                <textarea id="dc-company-name" name="dc-company-name" class="<?=$read_jur;?> fbin field-company" <?=$read_new;?>><?=$row['cl_razon_social'];?></textarea><br>
+                <textarea id="dc-company-name" name="dc-company-name" 
+                	class="<?=$read_jur;?> fbin field-company" <?=$read_new;?>><?=
+                	$row['cl_razon_social'];?></textarea><br>
             </div><br>
             
             <label>NIT: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" value="<?=$row['cl_dni'];?>" class="<?=$read_jur;?> dni fbin field-company" <?=$read_new.$read_edit;?>>
+                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" 
+                	value="<?=$row['cl_dni'];?>" class="<?=$read_jur;?> dni fbin field-company" 
+                	<?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Departamento: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-depto" name="dc-depto" class="<?=$read_jur;?> fbin field-company <?=$read_new.$read_edit;?>" <?=$read_save;?>>
+                <select id="dc-depto" name="dc-depto" class="<?=$read_jur;?> fbin 
+                	field-company <?=$read_new.$read_edit;?>" <?=$read_save;?>>
                     <option value="">Seleccione...</option>
 <?php
 if ($rsDep->data_seek(0) === TRUE) {
@@ -529,40 +469,28 @@ if ($rsDep->data_seek(0) === TRUE) {
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
-                <input type="text" id="dc-company-phone-office" name="dc-company-phone-office" autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" class="not-required phone  fbin" <?=$read_new;?>>
+                <input type="text" id="dc-company-phone-office" name="dc-company-phone-office" 
+                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
+                	class="not-required phone  fbin" <?=$read_new;?>>
             </div><br>
                 
 			<label>Email: </label>
             <div class="content-input">
-                 <input type="text" id="dc-company-email" name="dc-company-email" autocomplete="off" value="<?=$row['cl_email'];?>" class="not-required email fbin" <?=$read_new;?>>
+                 <input type="text" id="dc-company-email" name="dc-company-email" 
+                 	autocomplete="off" value="<?=$row['cl_email'];?>" 
+                 	class="not-required email fbin" <?=$read_new;?>>
             </div><br>
         </div><!--
         --><div class="form-col">
-        	<label>Avenida o Calle: <span>*</span></label>
-            <div class="content-input">
-                <select id="dc-company-avc" name="dc-company-avc" class="<?=$read_new.' '.$read_jur;?> fbin <?=$read_save;?>" <?=$read_save;?>>
-                    <option value="">Seleccione...</option>
-<?php
-$arr_AC = $link->avc;
-for($i = 0; $i < count($arr_AC); $i++){
-	$AC = explode('|',$arr_AC[$i]);
-	if($AC[0] === $row['cl_avc']) {
-		echo '<option value="'.$AC[0].'" selected>'.$AC[1].'</option>';
-	} else {
-		echo '<option value="'.$AC[0].'">'.$AC[1].'</option>';
-	}
-}
-?>
-                </select>
-            </div><br>
-            
-            <label>Dirección domicilio: <span>*</span></label><br>
-			<textarea id="dc-company-address-home" name="dc-company-address-home" class="<?=$read_jur;?> fbin" <?=$read_new.' '.$read_save;?>><?=$row['cl_direccion'];?></textarea><br>
-            
-            <label>Número de domicilio: <span>*</span></label>
-            <div class="content-input">
-                <input type="text" id="dc-company-nhome" name="dc-company-nhome" autocomplete="off" value="<?=$row['cl_no_domicilio'];?>" class="<?=$read_jur;?> number fbin" <?=$read_new.' '.$read_save;?>>
-            </div><br>
+            <label>Dirección domicilio: <span></span></label><br>
+			<textarea id="dc-company-address-home" name="dc-company-address-home" 
+				class="not-required fbin" <?=$read_new . ' ' . $read_save;?>><?=
+					$row['cl_direccion_domicilio'];?></textarea><br>
+
+			<label>Dirección domicilio: <span>*</span></label><br>
+			<textarea id="dc-company-address-work" name="dc-company-address-work" 
+				class="<?=$read_jur;?> fbin" 
+				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
         </div>
     </div>
 <?php
@@ -591,19 +519,23 @@ if($rs->data_seek(0) === TRUE){
             <td>
 <?php
 if($sw > 1){
-	echo '<input type="hidden" id="dp-'.$k.'-idpr" name="dp-'.$k.'-idpr" value="'.base64_encode($rowPr['idpr']).'" class="required">';
+	echo '<input type="hidden" id="dp-' . $k . '-idpr" name="dp-' . $k 
+		. '-idpr" value="' . base64_encode($rowPr['idpr']) . '" class="required">';
 }
 ?>
-            	<select id="dp-<?=$k;?>-depto" name="dp-<?=$k;?>-depto" class="required fbin " <?=$read_save;?>>
+            	<select id="dp-<?=$k;?>-depto" name="dp-<?=$k;?>-depto" 
+            		class="required fbin <?= $read_new . ' ' . $read_edit ;?>" <?=$read_save;?>>
             		<option value="">Seleccione...</option>
 <?php
 if(($rsDp = $link->get_depto()) !== FALSE){
 	while($rowDp = $rsDp->fetch_array(MYSQLI_ASSOC)){
 		if ((boolean)$rowDp['tipo_dp'] === TRUE) {
 			if($rowDp['id_depto'] === $rowPr['pr_departamento']) {
-				echo '<option value="'.base64_encode($rowDp['id_depto']).'" selected>'.$rowDp['departamento'].'</option>';
+				echo '<option value="' . base64_encode($rowDp['id_depto']) . '" selected>' 
+					. $rowDp['departamento'] . '</option>';
 			} else {
-				echo '<option value="'.base64_encode($rowDp['id_depto']).'">'.$rowDp['departamento'].'</option>';
+				echo '<option value="' . base64_encode($rowDp['id_depto']) . '">' 
+					. $rowDp['departamento'] . '</option>';
 			}
 		}
 	}
@@ -612,109 +544,69 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 				</select>
             </td>
             <td>
-            	<textarea id="dp-<?=$k;?>-zone" name="dp-<?=$k;?>-zone" class="required fbin" <?=' '.$read_save;?>><?=$rowPr['pr_zona'];?></textarea>
+            	<textarea id="dp-<?=$k;?>-zone" name="dp-<?=$k;?>-zone" 
+            		class="required fbin" <?=$read_new . ' ' . $read_edit . ' ' 
+            		. $read_save;?>><?=$rowPr['pr_zona'];?></textarea>
             </td>
             <td>
-            	<input type="text" id="dp-<?=$k;?>-locality" name="dp-<?=$k;?>-locality" autocomplete="off" value="<?=$rowPr['pr_localidad'];?>" class="required text-2 fbin " <?=' '.$read_save;?>>
+            	<input type="text" id="dp-<?=$k;?>-locality" name="dp-<?=$k;?>-locality" 
+            		autocomplete="off" value="<?=$rowPr['pr_localidad'];?>" 
+            		class="required text-2 fbin " <?= $read_new . ' ' . $read_edit . ' '.$read_save;?>>
             </td>
             <td colspan="2">
-            	<textarea id="dp-<?=$k;?>-address" name="dp-<?=$k;?>-address" class="required fbin" <?=' '.$read_save;?>><?=$rowPr['pr_direccion'];?></textarea>
+            	<textarea id="dp-<?=$k;?>-address" name="dp-<?=$k;?>-address" 
+            		class="required fbin" <?=$read_new . ' ' . $read_edit . ' ' 
+            		. $read_save;?>><?=$rowPr['pr_direccion'];?></textarea>
             </td>
         </tr>
         <tr class="title-vh" valign="top">
 			<td >Tipo</td>
 			<td >Uso</td>
-			<td >Estado</td>
+			<td ></td>
             <td style="width: 15%;">Valor Asegurado</td>
             <td style="width: 15%;">Prima</td>
         </tr>
         <tr valign="top" class="thead">
         	<td>
-        		<select id="dp-<?=$k;?>-type" name="dp-<?=$k;?>-type" class="required fbin " <?=$read_save;?>>
+        		<select id="dp-<?=$k;?>-type" name="dp-<?=$k;?>-type" 
+        			class="required fbin <?= $read_new . ' ' . $read_edit ;?>" <?=$read_save;?>>
 	            	<option value="">Seleccione...</option>
-<?php
-$arr_type = $link->typeProperty;
-for ($i = 0; $i  < count($arr_type); $i ++) { 
-	$type = explode('|', $arr_type[$i]);
-	if ($type[0] === $rowPr['pr_tipo']) {
-		echo '<option value="'.base64_encode($type[0]).'" selected>'.$type[1].'</option>';
-	} else {
-		echo '<option value="'.base64_encode($type[0]).'">'.$type[1].'</option>';
-	}
-}
-?>
+	            	<?php foreach ($link->typeProperty as $key => $value): $selected = ''; ?>
+	            		<?php if ($rowPr['pr_tipo'] === $key): $selected = 'selected'; ?>
+	            		<?php endif ?>
+						<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
 	            </select>
         	</td>
         	<td>
-            	<select id="dp-<?=$k;?>-use" name="dp-<?=$k;?>-use" class="required fbin dp-use" <?=$read_save;?> data-rel="<?=$k;?>">
+            	<select id="dp-<?=$k;?>-use" name="dp-<?=$k;?>-use" 
+            		class="required fbin dp-use <?= $read_new . ' ' . $read_edit ;?>" <?=$read_save;?> data-rel="<?=$k;?>">
             		<option value="">Seleccione...</option>
-<?php
-$arr_use = $link->useProperty;
-for($i = 0; $i < count($arr_use); $i++){
-	$use = explode('|', $arr_use[$i]);
-	if($use[0] === $rowPr['pr_uso']) {
-		echo '<option value="'.base64_encode($use[0]).'" selected>'.$use[1].'</option>';
-	} else {
-		echo '<option value="'.base64_encode($use[0]).'">'.$use[1].'</option>';
-	}
-}
-
-$display_use = 'display: none;';
-$required_use = 'not-required';
-if ($rowPr['pr_uso'] === 'OTH') {
-	echo '<option value="OTH" selected>OTRO</option>';
-	$display_use = 'display: block;';
-	$required_use = 'required';
-} else {
-	echo '<option value="OTH">OTRO</option>';
-}
-?>
+            		<?php foreach ($link->useProperty as $key => $value): $selected = ''; ?>
+            			<?php if ($rowPr['pr_uso'] === $key): $selected = 'selected'; ?>
+	            		<?php endif ?>
+						<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+            		<?php endforeach ?>
 				</select><br />
-				<input type="text" id="dp-<?=$k;?>-use-other" name="dp-<?=$k;?>-use-other" autocomplete="off" value="<?=$rowPr['pr_uso_otro'];?>" class="<?=$required_use;?> text-2 fbin " <?=' '.$read_save;?> style="margin-top: 2px; <?=$display_use;?>">
             </td>
             <td>
-            	<select id="dp-<?=$k;?>-state" name="dp-<?=$k;?>-state" class="required fbin " <?=$read_save;?>>
-            		<option value="">Seleccione...</option>
-<?php
-$arr_state = $link->stateProperty;
-for($i = 0; $i < count($arr_state); $i++){
-	$state = explode('|', $arr_state[$i]);
-	if($state[0] === $rowPr['pr_estado']) {
-		echo '<option value="'.base64_encode($state[0]).'" selected>'.$state[1].'</option>';
-	} else {
-		echo '<option value="'.base64_encode($state[0]).'">'.$state[1].'</option>';
-	}
-}
-?>
-				</select>
+
             </td>
             <td>
             	<span class="value"><?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.</span>
             </td>
             <td>
 <?php
-if($sw === 1) {
-	if(($rowTasa = $link->get_tasa_year_trd($_GET['cia'], base64_encode($rowPr['idef']), $rowPr['c_forma_pago'], $YEAR_FINAL)) !== FALSE){
-		$TASA = $rowTasa['t_tasa_final'];
-		$PRIMA = ($rowPr['pr_valor_asegurado'] * $TASA) / 100;
-	}
-} else {
 	$TASA = $rowPr['pr_tasa'];
 	$PRIMA = $rowPr['pr_prima'];
-}
 ?>
 				<span class="value value-premium"><?=number_format($PRIMA, 2, '.', ',');?> USD.</span>
-				<input type="hidden" id="dp-<?=$k;?>-value-insured" name="dp-<?=$k;?>-value-insured" value="<?=base64_encode($rowPr['pr_valor_asegurado']);?>" class="required">
-				<input type="hidden" id="dp-<?=$k;?>-rate" name="dp-<?=$k;?>-rate" value="<?=base64_encode($TASA);?>" class="required">
-				<input type="hidden" id="dp-<?=$k;?>-premium" name="dp-<?=$k;?>-premium" value="<?=base64_encode($PRIMA);?>" class="required">
-<?php
-if ($rowPr['pr_modalidad'] !== null) {
-	$swMo = true;
-?>
-				<input type="hidden" id="dp-<?=$k;?>-modality" name="dp-<?=$k;?>-modality" value="<?=base64_encode($rowPr['pr_modalidad']);?>" >
-<?php
-}
-?>
+				<input type="hidden" id="dp-<?=$k;?>-value-insured" name="dp-<?=$k;?>-value-insured" 
+					value="<?=base64_encode($rowPr['pr_valor_asegurado']);?>" class="required">
+				<input type="hidden" id="dp-<?=$k;?>-rate" name="dp-<?=$k;?>-rate" 
+					value="<?=base64_encode($TASA);?>" class="required">
+				<input type="hidden" id="dp-<?=$k;?>-premium" name="dp-<?=$k;?>-premium" 
+					value="<?=base64_encode($PRIMA);?>" class="required">
             </td>
         </tr>
 <?php
@@ -731,62 +623,33 @@ if ($rowPr['pr_modalidad'] !== null) {
         <input type="hidden" id="di-warranty" name="di-warranty" value="<?=base64_encode($row['c_garantia']);?>">
     	<label>Inicio de Vigencia: <span>*</span></label>
         <div class="content-input">
-            <input type="text" id="di-date-inception-1" name="di-date-inception-1" autocomplete="off" value="<?=date('d/m/Y', strtotime($row['c_ini_vigencia']));?>" class="required fbin" readonly style="cursor:pointer;" <?=$read_new.$read_edit;?>>
-            <input type="hidden" id="di-date-inception" name="di-date-inception" value="<?=base64_encode($row['c_ini_vigencia']);?>">
-            <input type="hidden" id="di-end-inception" name="di-end-inception" value="<?=base64_encode($row['c_fin_vigencia']);?>">
+            <input type="text" id="di-date-inception-1" name="di-date-inception-1" 
+            	autocomplete="off" value="<?=date('d/m/Y', strtotime($row['c_ini_vigencia']));?>" 
+            	class="required fbin" readonly style="cursor:pointer;" <?=$read_new.$read_edit;?>>
+            <input type="hidden" id="di-date-inception" name="di-date-inception" 
+            	value="<?=base64_encode($row['c_ini_vigencia']);?>">
+            <input type="hidden" id="di-end-inception" name="di-end-inception" 
+            	value="<?=base64_encode($row['c_fin_vigencia']);?>">
         </div><br>
         
-		<label>Plazo del Crédito: <span>*</span></label>
-		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-term" name="di-term" autocomplete="off" value="<?=$cr_term;?>" style="width:30px;" maxlength="" class="not-required number fbin" <?=$read_new.$read_edit;?>>
-		</div>
-		
-		<label>&nbsp;</label>
+		<label>Modalidad de Pago: <span>*</span></label>
 		<div class="content-input">
-			<select id="di-type-term" name="di-type-term" class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
+			<select id="di-method-payment" name="di-method-payment" 
+				class="required fbin <?=$read_new . $read_edit;?>" <?=$read_save;?>>
 				<option value="">Seleccione...</option>
-<?php
-$arr_term = array(0 => 'Y|Años', 1 => 'M|Meses');
-for($i = 0; $i < count($arr_term); $i++){
-	$term = explode('|',$arr_term[$i]);
-	if($term[0] === $cr_type_term) {
-		echo '<option value="'.$term[0].'" selected>'.$term[1].'</option>';
-	} else {
-		echo '<option value="'.$term[0].'">'.$term[1].'</option>';
-	}
-}
-?>
+				<?php foreach ($link->methodPayment as $key => $value): $selected = ''; ?>
+					<?php if ($key === $cr_method_payment): $selected = 'selected'; ?>
+					<?php endif ?>
+					<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+				<?php endforeach ?>
 			</select>
 		</div><br>
 	</div><!--
 	--><div class="form-col">
-    	<label>Forma de Pago: <span>*</span></label>
-        <div class="content-input">
-            <select id="di-method-payment" name="di-method-payment" class="required fbin <?=$read_new.$read_edit;?>" <?=$read_save;?>>
-	            <option value="">Seleccione...</option>
-<?php
-if(($rsFp = $link->get_method_payment('TRD', $_SESSION['idEF'])) !== FALSE) {
-	while($rowFp = $rsFp->fetch_array(MYSQLI_ASSOC)) {
-		if($rowFp['id_forma_pago'] === $row['id_forma_pago']) {
-			echo '<option value="' 
-				. base64_encode($rowFp['id_forma_pago']) . '|' 
-				. base64_encode($rowFp['codigo']) 
-				. '" selected>'.$rowFp['forma_pago'] . '</option>';
-		} else {
-			echo '<option value="' 
-				. base64_encode($rowFp['id_forma_pago']) . '|' 
-				. base64_encode($rowFp['codigo']) 
-				. '">'.$rowFp['forma_pago'] . '</option>';
-		}
-	}
-}
-?>
-            </select>
-        </div><br>
-    
 		<label>Número de Operación: </label>
 		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-opp" name="di-opp" autocomplete="off" value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
+			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
+				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
 		</div>
 <?php
 if ($swMo === false) {
@@ -887,10 +750,15 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 		if($FC === TRUE && $sw === 2){
 			if(!isset($_GET['target'])) {
 				btnApproval:
-				echo '<a href="company-approval.php?ide='.base64_encode($ide).'&pr='.base64_encode('TRD').'" class="fancybox fancybox.ajax btn-issue">Solicitar aprobación de la Compañia</a> ';
+				echo '<a href="company-approval.php?ide=' . base64_encode($ide) 
+					. '&pr=' . base64_encode('TRD') . '" 
+					class="fancybox fancybox.ajax btn-issue">
+					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
 			goto btnIssue;
+			if ((boolean)$row['aprobado']) {
+			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
 	}
@@ -917,18 +785,6 @@ $(document).ready(function(e) {
 		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&ide=<?=base64_encode($ide);?>&flag=<?=md5('i-edit');?>&cia=<?=$_GET['cia'].$target;?>';
 	});
 	
-	$(".dp-use").change(function(e){
-		var use = $(this).prop('value');
-		var rel = $(this).attr('data-rel');
-		if(use === 'OTH'){
-			$("#dp-"+rel+"-use-other").removeClass('not-required').addClass('required').show();
-			$("#dp-"+rel+"-use-other").prop("readonly", false).focus();
-		}else{
-			$("#dp-"+rel+"-use-other").removeClass('required').addClass('not-required').hide();
-			$("#dp-"+rel+"-use-other").prop("readonly", true);
-			$("#dp-"+rel+"-use-other").prop("value", '');
-		}
-	});
 <?php
 switch($sw){
 	case 1:

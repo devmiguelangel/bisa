@@ -143,7 +143,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_date_birth = date('Y-m-d', time());
 				$cl_dni = $cl_nit;
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
-			}			
+			}
 			
 			// $cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
 			$cl_attached = '';
@@ -215,7 +215,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					if($arr_vh[$k]['value-insured'] > $max_amount){
 						$arr_vh[$k]['FAC'] = TRUE;
 						$_FAC = TRUE;
-						$arr_vh[$k]['reason'] .= '| El valor asegurado del Vehículo excede el máximo valor permitido. Valor permitido: '.number_format($max_amount, 2, '.', ',').' USD';
+						$arr_vh[$k]['reason'] .= '| El valor asegurado del Vehículo excede el máximo valor permitido. Valor permitido: ' 
+							. number_format($max_amount, 2, '.', ',') . ' USD';
 					}
 					
 					if($arr_vh[$k]['FAC'] === TRUE) { $arr_vh[$k]['approved'] = FALSE; }
@@ -311,27 +312,24 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						
 						$sqlVh = 'insert into s_au_em_detalle 
 						(id_vehiculo, id_emision, no_detalle, 
-						prefijo, prefix, id_tipo_vh, categoria,  
-						id_marca, id_modelo, anio, placa, uso, 
-						traccion, km, color, motor, chasis, 
-						cap_ton, no_asiento, modalidad, valor_asegurado, 
-						tasa, prima, facultativo, motivo_facultativo, 
-						aprobado, leido, vh_archivo) 
+							prefijo, prefix, id_tipo_vh, categoria,  
+							id_marca, id_modelo, anio, placa, uso, 
+							traccion, km, color, motor, chasis, 
+							cap_ton, no_asiento, modalidad, valor_asegurado, 
+							tasa, prima, facultativo, motivo_facultativo, 
+							aprobado, leido, vh_archivo) 
 						values ';
 						
+						$record_det = $record;
+
 						for($k = 1; $k <= $nVh; $k++) {
-							if ($swMo === true) {
-								$link->getPrefixPolicyBanecoAU(trim($arr_vh[$k]['modality'], '"'), 
-									$codeMethodPayment, $arr_vh[$k]['use'], $prefix);
-							} else {
-								$prefix[0] = 'AU';
-								$prefix[1] = '';
-							}
+							$prefix[0] = 'AU';
+							$prefix[1] = '';
 							
 							if ($arrPrefix === $prefix[0]) {
-								$record += 1;
+								$record_det += 1;
 							} else {
-								$record = $link->getRegistrationNumber($_SESSION['idEF'], 'AU', 2, $prefix[0]);
+								$record_det = $link->getRegistrationNumber($_SESSION['idEF'], 'AU', 2, $prefix[0]);
 							}
 							
 							$auxPrefix = $prefix[0];
@@ -343,7 +341,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							$arrPrefix = '"' . $link->real_escape_string(json_encode($arrPrefix)) . '"';
 							
 							$sqlVh .= '("'.$arr_vh[$k]['idvh'].'", "'.$ide.'",
-							'.$record.', "'.$prefix[0].'", '.$arrPrefix.', 
+							'.$record_det.', "'.$prefix[0].'", '.$arrPrefix.', 
 							"'.$arr_vh[$k]['type-vehicle'].'", 
 							"'.$arr_vh[$k]['category'].'", "'.$arr_vh[$k]['make'].'", 
 							"'.$arr_vh[$k]['model'].'", '.$arr_vh[$k]['year'].', 
@@ -400,29 +398,29 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				}
 
 				$sqlCl = 'UPDATE s_cliente 
-					SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
-						nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
-						extension = '.$cl_ext.', complemento = "'.$cl_comp.'", ci_archivo = "'.$cl_attached.'", 
-						lugar_residencia = '.$cl_place_res.', localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
-						direccion = "'.$cl_address_home.'", no_domicilio = "'.$cl_nhome.'", 
-						direccion_laboral = "'.$cl_address_work.'", id_ocupacion = '.$cl_occupation.', 
-						desc_ocupacion = "'.$cl_desc_occ.'", telefono_domicilio = "'.$cl_phone_home.'", 
-						telefono_oficina = "'.$cl_phone_office.'", telefono_celular = "'.$cl_phone_cel.'", 
-						email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
-						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
-					WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
-						and tipo = '.(int)$cl_type_client.' ;';
+				SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+					nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
+					extension = '.$cl_ext.', complemento = "'.$cl_comp.'", ci_archivo = "'.$cl_attached.'", 
+					lugar_residencia = '.$cl_place_res.', localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
+					direccion = "'.$cl_address_home.'", no_domicilio = "'.$cl_nhome.'", 
+					direccion_laboral = "'.$cl_address_work.'", id_ocupacion = '.$cl_occupation.', 
+					desc_ocupacion = "'.$cl_desc_occ.'", telefono_domicilio = "'.$cl_phone_home.'", 
+					telefono_oficina = "'.$cl_phone_office.'", telefono_celular = "'.$cl_phone_cel.'", 
+					email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
+					edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+				WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
+					and tipo = '.(int)$cl_type_client.' ;';
 					
-				if($link->query($sqlCl) === TRUE) {
+				if($link->query($sqlCl)) {
 					$sql = 'UPDATE s_au_em_cabecera 
-						SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
+					SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
 						fin_vigencia = "'.$dcr_date_end.'", forma_pago = "'.$dcr_method_payment.'", plazo = '.$dcr_term.', 
 						tipo_plazo = "'.$dcr_type_term.'", factura_nombre = "'.$bl_name.'", factura_nit =  "'.$bl_nit.'", 
 						id_poliza = '.$dcr_policy.', no_copia = 0, facultativo = '.(int)$_FAC.', 
 						motivo_facultativo = "'.$_FAC_REASON.'", prima_total = '.$PRIMA.', leido = FALSE
-						WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
+					WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
 					
-					if($link->query($sql) === TRUE) {
+					if($link->query($sql)) {
 						$sqlVh = '';
 						for($k = 1; $k <= $nVh; $k++) {
 							$sqlVh .= 'update s_au_em_detalle 
@@ -457,6 +455,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 
 								$db = new Log($link);
 								$db->postLog($_SESSION['idUser'], $log_msg);
+
 							} else {
 								$arrAU[2] = 'Los datos de los Vehículos no fueron actualizados';
 							}
@@ -477,14 +476,13 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		}else {
 			$arrAU[2] = 'La Póliza no puede ser registrada';
 		}
-		
-		echo json_encode($arrAU);
 	}else{
 		$arrAU[2] = 'La Póliza no puede ser registrada.';
-		echo json_encode($arrAU);
 	}
 }else{
 	$arrAU[2] = 'La Póliza no puede ser registrada. |';
-	echo json_encode($arrAU);
 }
+
+echo json_encode($arrAU);
+
 ?>
