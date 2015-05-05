@@ -401,7 +401,6 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
             <td <?=$rowSpan;?>><?=$row['cl_complemento'];?></td>
             <td <?=$rowSpan;?>><?=$row['cl_extension'];?></td>
             <td <?=$rowSpan;?>><?=$row['cl_ciudad'];?></td>
-            <td <?=$rowSpan;?>><?=$row['cl_genero'];?></td>
             <td <?=$rowSpan;?>><?=$row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$row['cl_email'];?></td>

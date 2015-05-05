@@ -194,9 +194,6 @@ if($rsEx->data_seek(0) === TRUE){
             <input type="hidden" id="pr" name="pr" value="<?=$rowMenu['producto'];?>">
             <br>
             <div id="accordion" class="accordion">
-<?php
-if ($rowMenu['producto'] !== 'TRD') {
-?>
 				<h5>Pendiente</h5>
                 <div>
                     <label class="lbl-cb"><input type="checkbox" id="frp-pe" name="frp-pe" value="P">&nbsp;Pendiente</label>
@@ -212,41 +209,51 @@ $sqlSt = 'SELECT sst.id_estado, sst.estado
 		ORDER BY sst.id_estado ASC ;';
 $rsSt = $link->query($sqlSt,MYSQLI_STORE_RESULT);
 while($rowSt = $rsSt->fetch_array(MYSQLI_ASSOC)){
-	echo '<label class="lbl-cb"><input type="checkbox" id="frp-estado-'.$rowSt['id_estado'].'" name="frp-estado-'.$rowSt['id_estado'].'" value="'.$rowSt['id_estado'].'">&nbsp;'.$rowSt['estado'].'</label> ';
+	echo '<label class="lbl-cb">
+		<input type="checkbox" id="frp-estado-' . $rowSt['id_estado'] 
+			. '" name="frp-estado-' . $rowSt['id_estado'] 
+			. '" value="' . $rowSt['id_estado'] . '">&nbsp;' 
+			. $rowSt['estado'] . '</label> ';
 }
 $rsSt->free();
 ?>
                 </div>
-<?php
-}
-?>
+
                 <h5>Aprobado</h5>
                 <div>
 <?php
 if ($rowMenu['producto'] === 'DE') {
 ?>
-					<label class="lbl-cb"><input type="checkbox" id="frp-approved-fc" name="frp-approved-fc" value="FC">&nbsp;Free Cover</label>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-nf" name="frp-approved-nf" value="NF">&nbsp;No Free Cover</label>
+					<label class="lbl-cb"><input type="checkbox" id="frp-approved-fc" 
+						name="frp-approved-fc" value="FC">&nbsp;Free Cover</label>
+                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-nf" 
+                    	name="frp-approved-nf" value="NF">&nbsp;No Free Cover</label>
 <?php
 }
 
 if ($rowMenu['producto'] !== 'TRD') {
 ?>
-					<label class="lbl-cb"><input type="checkbox" id="frp-approved-ep" name="frp-approved-ep" value="EP">&nbsp;Extraprima</label>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-np" name="frp-approved-np" value="NP">&nbsp;No Extraprima</label>
+					<label class="lbl-cb"><input type="checkbox" id="frp-approved-ep" 
+						name="frp-approved-ep" value="EP">&nbsp;Extraprima</label>
+                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-np" 
+                    	name="frp-approved-np" value="NP">&nbsp;No Extraprima</label>
 <?php
 }
 ?>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-em" name="frp-approved-em" value="EM">&nbsp;Emitido</label>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-ne" name="frp-approved-ne" value="NE">&nbsp;No Emitido</label>
+                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-em" 
+                    	name="frp-approved-em" value="EM">&nbsp;Emitido</label>
+                    <label class="lbl-cb"><input type="checkbox" id="frp-approved-ne" 
+                    	name="frp-approved-ne" value="NE">&nbsp;No Emitido</label>
                 </div>
                 <h5>Rechazado</h5>
                 <div>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-rejected" name="frp-rejected" value="RE">&nbsp;Rechazado</label>
+                    <label class="lbl-cb"><input type="checkbox" id="frp-rejected" 
+                    	name="frp-rejected" value="RE">&nbsp;Rechazado</label>
                 </div>
                 <h5>Anulado</h5>
                 <div>
-                	<label class="lbl-cb"><input type="checkbox" id="frp-canceled" name="frp-canceled" value="AN">&nbsp;Anulado</label>
+                	<label class="lbl-cb"><input type="checkbox" id="frp-canceled" 
+                		name="frp-canceled" value="AN">&nbsp;Anulado</label>
                 </div>
             </div>
     
@@ -267,16 +274,5 @@ if ($rowMenu['producto'] !== 'TRD') {
 </div>
 <?php
 	}
-	
-	
 }
 ?>
-
-    	<!--<td style="width:20%;">
-        	<a href="#" class="rp-link rp-active" rel="1">Desgravamen</a>
-		</td>
-        <td style="width:20%;"><a href="#" class="rp-link" rel="2">Automotores</a></td>
-        <td style="width:20%;"><a href="#" class="rp-link" rel="3">Todo Riesgo Domiciliario</a></td>
-       -->
-        
-    

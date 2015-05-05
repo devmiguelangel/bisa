@@ -386,7 +386,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
     </li>
 <?php
 if($tokenM === TRUE){
-	if($user_type === 'LOG' || $user_type === 'ROOT'){
+	/*if($user_type === 'LOG' || $user_type === 'ROOT'){
 ?>
 	<li><a href="#">Siniestros</a>
         <ul>
@@ -397,7 +397,7 @@ if($tokenM === TRUE){
     </li>
 <?php
 	}
-}
+*/}
 
 if($tokenM === TRUE){
 	if($user_type === 'ROOT' || $user_type === 'LOG' || $user_type === 'REP'){

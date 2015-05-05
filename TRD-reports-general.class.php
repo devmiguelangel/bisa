@@ -1,7 +1,11 @@
 <?php
-require_once('sibas-db.class.php');
+
+require_once __DIR__ . '/classes/Logs.php';
+require_once 'sibas-db.class.php';
+
 class ReportsGeneralTRD{
-	private $cx, $sql, $rs, $row, $sqlpr, $rspr, $rowpr, $pr, $flag, $token, $nEF, $dataToken, $xls, $xlsTitle;
+	private $cx, $sql, $rs, $row, $sqlpr, $rspr, $rowpr, $pr, 
+		$flag, $token, $nEF, $dataToken, $xls, $xlsTitle;
 	protected $data = array();
 	public $err;
 	
@@ -12,6 +16,9 @@ class ReportsGeneralTRD{
 		$this->xls = $xls;
 		
 		$this->set_variable($data);
+		if (($this->data_user = $this->cx->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) === false) {
+			$this->data_user['u_tipo_codigo'] = '';
+		}
 		$this->get_query_report();
 		
 	}
@@ -60,18 +67,28 @@ class ReportsGeneralTRD{
 	
 	private function get_query_report(){
 		switch($this->flag){
-			case md5('RG'): $this->token = 'RG'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Reporte General'; break;
-			case md5('RP'): $this->token = 'RP'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Reporte Polizas Emitidas'; break;
-			case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Reporte Cotizaciones'; break;
-			
-			case md5('IQ'): $this->token = 'IQ'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Cotizaciones'; break;
-			case md5('PA'): $this->token = 'PA'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Solicitudes Preaprobadas'; break;
-            case md5('SP'): $this->token = 'SP'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Solicitudes Pendientes'; break;
-			case md5('AP'): $this->token = 'AP'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Pólizas Aprobadas'; break;
-			case md5('AN'): $this->token = 'AN'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Pólizas Emitidas'; break;
-			
-			case md5('IM'): $this->token = 'IM'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Preaprobadas'; break;
-			case md5('CP'): $this->token = 'CP'; $this->xlsTitle = 'Todo Riesgo Domiciliario - Certificados Provisionales'; break;
+		case md5('RG'): $this->token = 'RG'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte General'; break;
+		case md5('RP'): $this->token = 'RP'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Polizas Emitidas'; break;
+		case md5('RQ'): $this->token = 'RQ'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Cotizaciones'; break;
+		
+		case md5('IQ'): $this->token = 'IQ'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Cotizaciones'; break;
+		case md5('PA'): $this->token = 'PA'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Solicitudes Preaprobadas'; break;
+        case md5('SP'): $this->token = 'SP'; 
+        	$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Solicitudes Pendientes'; break;
+		case md5('AP'): $this->token = 'AP'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Pólizas Aprobadas'; break;
+		case md5('AN'): $this->token = 'AN'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Pólizas Emitidas'; break;
+		
+		case md5('IM'): $this->token = 'IM'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Preaprobadas'; break;
+		case md5('CP'): $this->token = 'CP'; 
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Certificados Provisionales'; break;
 		}
 		
 		if($this->token === 'RG' 
@@ -110,14 +127,10 @@ class ReportsGeneralTRD{
 		    count(strd.id_emision) as noPr,
 		    stre.prefijo,
 		    stre.no_emision,
+			stre.id_compania,
 		    stre.plazo as r_plazo,
-		    (case stre.tipo_plazo
-		        when 'Y' then 'Años'
-		        when 'M' then 'Meses'
-		        when 'W' then 'Semanas'
-		        when 'D' then 'Días'
-		    end) as r_tipo_plazo,
-		    sfp.forma_pago as r_forma_pago,
+		    stre.tipo_plazo as r_tipo_plazo,
+		    stre.forma_pago as r_forma_pago,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
@@ -164,10 +177,20 @@ class ReportsGeneralTRD{
 		        '') as a_anulado_fecha,
 		    sef.nombre as ef_nombre,
 		    sef.logo as ef_logo,
-		    if((stre.emitir = 0 and stre.aprobado = 0)
-		            or stre.facultativo = 1,
-		        'P',
-		        'F') as estado,
+		    if(strf.aprobado is null,
+		        if(strp.id_pendiente is not null,
+		            case strp.respuesta
+		                when 1 then 'S'
+		                when 0 then 'O'
+		            end,
+		            if((stre.emitir = 0 and stre.aprobado = 1)
+		                    or stre.facultativo = 1,
+		                'P',
+		                'F')),
+		        case strf.aprobado
+		            when 'SI' then 'A'
+		            when 'NO' then 'R'
+		        end) as estado,
 		    if(stre.anulado = 1,
 		        1,
 		        if(stre.emitir = 1, 2, 3)) as estado_banco,
@@ -179,6 +202,10 @@ class ReportsGeneralTRD{
 		    s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision)
 		        inner join
 		    s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
+		    	left join
+		    s_trd_facultativo as strf ON (strf.id_emision = stre.id_emision)
+		        left join
+		    s_trd_pendiente as strp ON (strp.id_emision = stre.id_emision)
 		        inner join
 		    s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
 		        inner join
@@ -191,8 +218,6 @@ class ReportsGeneralTRD{
 		    s_agencia as sag ON (sag.id_agencia = su.id_agencia)
 		        inner join
 		    s_usuario as sua ON (sua.id_usuario = stre.and_usuario)
-		        inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = stre.id_forma_pago)
 		where sef.id_ef = '".$this->data['idef']."'
 	        and stre.no_emision like '%".$this->data['nc']."%'
 	        and (".$this->data['ef'].")
@@ -267,6 +292,16 @@ class ReportsGeneralTRD{
 		} elseif($this->token === 'AN'){
 			$this->sql .= "and stre.emitir = true
 					and stre.anulado like '%".$this->data['r-canceled']."%'
+					and (case '" . $this->data_user['u_tipo_codigo'] . "'
+				        when 'FAC' then true
+				        when
+				            'LOG'
+				        then
+				            if(curdate() = stre.fecha_emision,
+				                true,
+				                false)
+				        else false
+				    end) = true
 					";
 		}/* elseif ($this->token === 'CP') {
 			$this->sql .= "and stre.emitir = true
@@ -280,7 +315,7 @@ class ReportsGeneralTRD{
 		order by stre.id_emision desc
 		;";
 		
-		//echo $this->sql;
+		// echo $this->sql;
 		
 		if(($this->rs = $this->cx->query($this->sql,MYSQLI_STORE_RESULT))){
 			$this->err = FALSE;
@@ -301,13 +336,8 @@ class ReportsGeneralTRD{
 		    count(strc.id_cotizacion) as noPr,
 		    strc.no_cotizacion,
 		    strc.plazo as r_plazo,
-		    (case strc.tipo_plazo
-		        when 'Y' then 'Años'
-		        when 'M' then 'Meses'
-		        when 'W' then 'Semanas'
-		        when 'D' then 'Días'
-		    end) as r_tipo_plazo,
-		    sfp.forma_pago as r_forma_pago,
+		    strc.tipo_plazo as r_tipo_plazo,
+		    strc.forma_pago as r_forma_pago,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
@@ -359,8 +389,6 @@ class ReportsGeneralTRD{
 		    s_departamento as sdepu ON (sdepu.id_depto = su.id_depto)
 		        left join
 		    s_agencia as sag ON (sag.id_agencia = su.id_agencia)
-		        inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = strc.id_forma_pago)
 		where
 		    sef.id_ef = '".$this->data['idef']."'
 		        and strc.no_cotizacion like '".$this->data['nc']."'
@@ -422,6 +450,12 @@ class ReportsGeneralTRD{
 			header("Pragma: no-cache");
 			header("Expires: 0");
 		}
+
+		$log_msg = 'TRD - Rep. / ' . $this->token;
+		
+		$db = new Log($this->cx);
+		$db->postLog($_SESSION['idUser'], $log_msg);
+
 		if($this->token === 'RG' 
            || $this->token === 'RP' 
            || $this->token === 'PA' 
@@ -467,7 +501,6 @@ $(document).ready(function(e) {
             <td>Forma de Pago</td>
             <td>Tipo</td>
             <td>Uso</td>
-            <td>Estado</td>
             <td>Departamento</td>
             <td>Zona</td>
             <td>Ciudad/Localidad</td>
@@ -509,20 +542,9 @@ $(document).ready(function(e) {
 			$this->sqlpr = "select 
 			    stre.id_emision as ide,
 			    strd.id_inmueble as idPr,
-			    (case strd.tipo_in
-			        when 'HOME' then 'Casa'
-			        when 'DEPT' then 'Departamento'
-			        when 'BLDN' then 'Edificio'
-			        when 'LOCL' then 'Local Comercial/Oficina'
-			    end) as pr_tipo,
-			    (case strd.uso
-			        when 'DMC' then 'Domiciliario'
-			        when 'COM' then 'Comercial'
-			        when 'OTH' then strd.uso_otro
-			    end) as pr_uso,
-			    (case strd.estado
-			        when 'FINS' then 'Terminado'
-			    end) as pr_estado,
+			    strd.tipo_in as pr_tipo,
+			    strd.uso as pr_uso,
+			    strd.estado as pr_estado,
 			    sdep.departamento as pr_departamento,
 			    strd.zona as pr_zona,
 			    strd.localidad as pr_localidad,
@@ -580,11 +602,12 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_plazo'].' '.htmlentities($this->row['r_tipo_plazo'], ENT_QUOTES, 'UTF-8');?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_forma_pago'];?></td>
-            <td><?=$this->rowpr['pr_tipo'];?></td>
-            <td><?=$this->rowpr['pr_uso'];?></td>
-            <td><?=$this->rowpr['pr_estado'];?></td>
+            <td <?=$rowSpan;?>>
+            	<?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?>
+            </td>
+            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
+            <td><?= $this->cx->typeProperty[$this->rowpr['pr_tipo']] ;?></td>
+            <td><?= $this->cx->useProperty[$this->rowpr['pr_uso']] ;?></td>
             <td><?=$this->rowpr['pr_departamento'];?></td>
             <td><?=$this->rowpr['pr_zona'];?></td>
             <td><?=$this->rowpr['pr_localidad'];?></td>
@@ -660,7 +683,6 @@ $(document).ready(function(e) {
             <td>Forma de Pago</td>
             <td>Tipo</td>
             <td>Uso</td>
-            <td>Estado</td>
             <td>Departamento</td>
             <td>Zona</td>
             <td>Ciudad/Localidad</td>
@@ -697,20 +719,9 @@ $(document).ready(function(e) {
 			
 			$this->sqlpr = "select strc.id_cotizacion as idc,
 			    strd.id_inmueble as idPr,
-			    (case strd.tipo_in
-			        when 'HOME' then 'Casa'
-			        when 'DEPT' then 'Departamento'
-			        when 'BLDN' then 'Edificio'
-			        when 'LOCL' then 'Local Comercial/Oficina'
-			    end) as pr_tipo,
-			    (case strd.uso
-			        when 'DMC' then 'Domiciliario'
-			        when 'COM' then 'Comercial'
-			        when 'OTH' then strd.uso_otro
-			    end) as pr_uso,
-			    (case strd.estado
-			        when 'FINS' then 'Terminado'
-			    end) as pr_estado,
+			    strd.tipo_in as pr_tipo,
+			    strd.uso as pr_uso,
+			    strd.estado as pr_estado,
 			    sdep.departamento as pr_departamento,
 			    strd.zona as pr_zona,
 			    strd.localidad as pr_localidad,
@@ -751,10 +762,10 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_plazo'].' '.htmlentities($this->row['r_tipo_plazo'], ENT_QUOTES, 'UTF-8');?></td>
-            <td <?=$rowSpan;?>><?=$this->row['r_forma_pago'];?></td>
-            <td><?=$this->rowpr['pr_tipo'];?></td>
-            <td><?=$this->rowpr['pr_uso'];?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
+            <td><?= $this->cx->typeProperty[$this->rowpr['pr_tipo']] ;?></td>
+            <td><?= $this->cx->useProperty[$this->rowpr['pr_uso']] ;?></td>
             <td><?=$this->rowpr['pr_estado'];?></td>
             <td><?=$this->rowpr['pr_departamento'];?></td>
             <td><?=$this->rowpr['pr_zona'];?></td>

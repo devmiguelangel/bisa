@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-require __DIR__ . '/classes/Logs.php';
+require_once __DIR__ . '/classes/Logs.php';
 require_once 'sibas-db.class.php';
 
 class ReportsGeneralAU{
@@ -70,18 +70,18 @@ class ReportsGeneralAU{
 	
 	private function get_query_report(){
 		switch($this->flag){
-			case md5('RG'): $this->token = 'RG'; $this->xlsTitle = 'Automotores - Reporte General'; break;
-			case md5('RP'): $this->token = 'RP'; $this->xlsTitle = 'Automotores - Reporte Polizas Emitidas'; break;
-			case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Automotores - Reporte Cotizaciones'; break;
-			
-			case md5('IQ'): $this->token = 'IQ'; $this->xlsTitle = 'Automotores - Cotizaciones'; break;
-			case md5('PA'): $this->token = 'PA'; $this->xlsTitle = 'Automotores - Solicitudes Preaprobadas'; break;
-            case md5('SP'): $this->token = 'SP'; $this->xlsTitle = 'Automotores - Solicitudes Pendientes'; break;
-			case md5('AP'): $this->token = 'AP'; $this->xlsTitle = 'Automotores - Pólizas Aprobadas'; break;
-			case md5('AN'): $this->token = 'AN'; $this->xlsTitle = 'Automotores - Pólizas Emitidas'; break;
-			
-			case md5('IM'): $this->token = 'IM'; $this->xlsTitle = 'Automotores - Preaprobadas'; break;
-			case md5('CP'): $this->token = 'CP'; $this->xlsTitle = 'Automotores - Certificados Provisionales'; break;
+		case md5('RG'): $this->token = 'RG'; $this->xlsTitle = 'Automotores - Reporte General'; break;
+		case md5('RP'): $this->token = 'RP'; $this->xlsTitle = 'Automotores - Reporte Polizas Emitidas'; break;
+		case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Automotores - Reporte Cotizaciones'; break;
+		
+		case md5('IQ'): $this->token = 'IQ'; $this->xlsTitle = 'Automotores - Cotizaciones'; break;
+		case md5('PA'): $this->token = 'PA'; $this->xlsTitle = 'Automotores - Solicitudes Preaprobadas'; break;
+        case md5('SP'): $this->token = 'SP'; $this->xlsTitle = 'Automotores - Solicitudes Pendientes'; break;
+		case md5('AP'): $this->token = 'AP'; $this->xlsTitle = 'Automotores - Pólizas Aprobadas'; break;
+		case md5('AN'): $this->token = 'AN'; $this->xlsTitle = 'Automotores - Pólizas Emitidas'; break;
+		
+		case md5('IM'): $this->token = 'IM'; $this->xlsTitle = 'Automotores - Preaprobadas'; break;
+		case md5('CP'): $this->token = 'CP'; $this->xlsTitle = 'Automotores - Certificados Provisionales'; break;
 		}
 		
 		if ($this->token === 'RG'
@@ -130,7 +130,7 @@ class ReportsGeneralAU{
 		    sae.no_emision,
 		    sae.plazo as r_plazo,
 			sae.tipo_plazo as r_tipo_plazo,
-			'' as r_forma_pago,
+			sae.forma_pago as r_forma_pago,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
