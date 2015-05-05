@@ -3,8 +3,8 @@ require_once('sibas-db.class.php');
 require('PHPMailer/class.phpmailer.php');
 
 class FACEmailAU{
-	private $sql, $rs, $row, $sqlc, $rsc, $rowc, $ide, $idVh, $flag, $body, $emailCC;
-	public $cx, $err;
+	private $sql, $rs, $sqlc, $rsc, $rowc, $ide, $idVh, $flag, $body, $emailCC;
+	public $cx, $err, $row;
 	
 	public function FACEmailAU($flag = FALSE){
 		$this->cx = new SibasDB();

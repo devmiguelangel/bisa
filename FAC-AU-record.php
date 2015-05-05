@@ -1,8 +1,13 @@
 <?php
+
+require __DIR__ . '/classes/Logs.php';
 require('fac-au-email.class.php');
 
 $arrAU = array(0 => 0, 1 => 'R', 2 => '');
-if(isset($_GET['fp-ide']) && isset($_GET['fp-idvh']) && isset($_GET['fp-approved']) && isset($_GET['fp-rate']) && isset($_GET['fp-final-rate']) && isset($_GET['fp-state']) && isset($_GET['fp-observation']) && isset($_GET['ms']) && isset($_GET['page'])){
+if(isset($_GET['fp-ide']) && isset($_GET['fp-idvh']) && isset($_GET['fp-approved']) 
+		&& isset($_GET['fp-rate']) && isset($_GET['fp-final-rate']) 
+		&& isset($_GET['fp-state']) && isset($_GET['fp-observation']) 
+		&& isset($_GET['ms']) && isset($_GET['page'])){
 	$smail = new FACEmailAU();
 	$link = $smail->cx;
 	$swF = FALSE;
@@ -119,15 +124,27 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-idvh']) && isset($_GET['fp-approved
 			SET sae.leido = FALSE, sad.leido = FALSE, sad.aprobado = '.$_AP.' 
 			WHERE sae.id_emision = "'.$ide.'" AND sad.id_vehiculo = "'.$idVh.'" ;';
 		
-		if($link->query($sqlm) === TRUE){
+		if($link->query($sqlm)){
+			$log_msg = '';
+
 			$arrAU[0] = 1;
 			$arrAU[1] = 'index.php?ms='.$_GET['ms'].'&page='.$_GET['page'].'&fwd='.md5('forwardFAC');
 			$arrAU[2] = 'El caso facultativo se proceso correctamente';
-			if($smail->send_mail_fac($ide, $idVh, $pr_email) === TRUE){
+			
+			if ($smail->send_mail_fac($ide, $idVh, $pr_email)) {
 				$arrAU[2] .= '<br>y se envió el Correo Electronico';
-			}else{
+				
+				$log_msg = 'AU - Em. ' . $smail->row['no_emision'] 
+					. ' / Fac. Process (' . $pr_approved . ') / C-E';
+			} else {
 				$arrAU[2] .= '<br>pero no se envió el Correo Electronico';
+				$log_msg = 'AU - Em. ' . $smail->row['no_emision'] 
+					. ' / Fac. Process (' . $pr_approved . ') / S-E';
 			}
+
+			$db = new Log($link);
+			$db->postLog(base64_encode($user), $log_msg);
+
 		}else {
 			$arrAU[2] = 'El caso facultativo se proceso correctamente pero no se marco como leído';
 		}

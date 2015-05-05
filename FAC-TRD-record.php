@@ -1,7 +1,9 @@
 <?php
+
+require __DIR__ . '/classes/Logs.php';
 require('fac-trd-email.class.php');
 
-$arrAU = array(0 => 0, 1 => 'R', 2 => '');
+$arrTR = array(0 => 0, 1 => 'R', 2 => '');
 if(isset($_GET['fp-ide']) && isset($_GET['fp-approved']) && isset($_GET['fp-rate']) 
 		&& isset($_GET['fp-final-rate']) && isset($_GET['fp-state']) 
 		&& isset($_GET['fp-observation']) && isset($_GET['ms']) && isset($_GET['page'])){
@@ -125,23 +127,36 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-approved']) && isset($_GET['fp-rate
 			SET stre.leido = false 
 			WHERE stre.id_emision = "'.$ide.'" ;';
 		
-		if($link->query($sqlm) === TRUE){
-			$arrAU[0] = 1;
-			$arrAU[1] = 'index.php?ms='.$_GET['ms'].'&page='.$_GET['page'].'&fwd='.md5('forwardFAC');
-			$arrAU[2] = 'El caso facultativo se proceso correctamente';
-			if($smail->send_mail_fac($ide, $pr_email) === TRUE){
-				$arrAU[2] .= '<br>y se envió el Correo Electronico';
-			}else{
-				$arrAU[2] .= '<br>pero no se envió el Correo Electronico';
+		if($link->query($sqlm)){
+			$log_msg = '';
+
+			$arrTR[0] = 1;
+			$arrTR[1] = 'index.php?ms='.$_GET['ms'].'&page='.$_GET['page'].'&fwd='.md5('forwardFAC');
+			$arrTR[2] = 'El caso facultativo se proceso correctamente';
+
+			if ($smail->send_mail_fac($ide, $pr_email)) {
+				$arrTR[2] .= '<br>y se envió el Correo Electronico';
+
+				$log_msg = 'TRD - Em. ' . $smail->row['no_emision'] 
+					. ' / Fac. Process (' . $pr_approved . ') / C-E';
+			} else {
+				$arrTR[2] .= '<br>pero no se envió el Correo Electronico';
+
+				$log_msg = 'TRD - Em. ' . $smail->row['no_emision'] 
+					. ' / Fac. Process (' . $pr_approved . ') / C-E';
 			}
+
+			$db = new Log($link);
+			$db->postLog(base64_encode($user), $log_msg);
+
 		}else {
-			$arrAU[2] = 'El caso facultativo se proceso correctamente pero no se marco como leído';
+			$arrTR[2] = 'El caso facultativo se proceso correctamente pero no se marco como leído';
 		}
 	}else {
-		$arrAU[2] = 'No se pudo procesar el caso facultativo';
+		$arrTR[2] = 'No se pudo procesar el caso facultativo';
 	}
 }
 
-echo json_encode($arrAU);
+echo json_encode($arrTR);
 
 ?>
