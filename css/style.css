@@ -1676,7 +1676,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#196994', end
 	width: 200px;
 	height:auto;
 	min-height:150px;
-	padding:8px 5px;
+	padding: 3px 3px;
 	border: 1px solid #999;
 	background: #FFFFFF;
 
@@ -1696,7 +1696,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#196994', end
 	width:160px;
 	height:auto;
 	margin:5px auto;
-	padding:10px 10px;
+	padding:6px 10px;
 	background:#5D5D5D;
 	border-radius:5px;
 	text-decoration:none;
