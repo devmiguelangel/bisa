@@ -225,9 +225,9 @@ if(isset($_GET['ide'])){
 				from
 				    s_trd_em_cabecera as stre
 				    	left join
-				    s_trm_facultativo as strf ON (strf.id_emision = stre.id_emision)
+				    s_trd_facultativo as strf ON (strf.id_emision = stre.id_emision)
 				        left join
-				    s_trm_pendiente as strp ON (strp.id_emision = stre.id_emision)
+				    s_trd_pendiente as strp ON (strp.id_emision = stre.id_emision)
 				        left join
 				    s_estado as sds ON (sds.id_estado = strp.id_estado)
 				        inner join
@@ -235,7 +235,7 @@ if(isset($_GET['ide'])){
 				where stre.id_emision = '" . $ide . "'
 				limit 0, 1
 				;";
-				echo $sql;
+				// echo $sql;
 				break;
 			case 'TRM':
 				$sql = "select 

@@ -30,25 +30,31 @@ if(isset($_POST['ide']) && isset($_POST['pr'])){
 	
 	$sql = '';
 	switch($pr){
-		case 'DE':
-			$sql = 'UPDATE s_de_em_cabecera 
-				SET emitir = TRUE, fecha_emision = curdate()
-				WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
-				;';
-			break;
-		case 'AU':
-			$sql = 'UPDATE s_au_em_cabecera 
-				SET emitir = TRUE, fecha_emision = curdate()
-				WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
-				;';
-			
-			break;
-		case 'TRM':
-			$sql = 'UPDATE s_trm_em_cabecera 
-				SET emitir = TRUE, fecha_emision = curdate()
-				WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
-				;';
-			break;
+	case 'DE':
+		$sql = 'UPDATE s_de_em_cabecera 
+			SET emitir = TRUE, fecha_emision = curdate()
+			WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
+			;';
+		break;
+	case 'AU':
+		$sql = 'UPDATE s_au_em_cabecera 
+			SET emitir = TRUE, fecha_emision = curdate()
+			WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
+			;';
+		
+		break;
+	case 'TRD':
+		$sql = 'UPDATE s_trd_em_cabecera 
+			SET emitir = TRUE, fecha_emision = curdate()
+			WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
+			;';
+		break;
+	case 'TRM':
+		$sql = 'UPDATE s_trm_em_cabecera 
+			SET emitir = TRUE, fecha_emision = curdate()
+			WHERE id_emision = "'.$ide.'" and aprobado = true and rechazado = false
+			;';
+		break;
 	}
 	
 	if($link->query($sql) === TRUE){
