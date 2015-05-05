@@ -27,10 +27,14 @@ $type = base64_encode('PRINT');
 $category = NULL;
 $pr = base64_encode($product);
 
-$titleSlip = 'Slip de Cotización';
+$titleSlip = 'Formulario de Solicitud';
 $titleSlip2 = '';
 $titleCert = 'Certificado';
 $titleCert2 = '';
+$titleCert3 = 'Formulario de Autorización';
+$titleCert4 = 'Formulario UIF';
+$titleCert5 = 'Anexo de Subrogación';
+$titleCert6 = 'Carta Sudamericana';
 
 if($token === TRUE){
 	$sqlIs = '';
@@ -60,7 +64,8 @@ if($token === TRUE){
 					sae.prefijo,
 					sae.no_emision,
 					sae.id_compania,
-					sae.certificado_provisional as cp
+					sae.certificado_provisional as cp,
+					sae.garantia
 				from s_au_em_cabecera as sae
 					inner join s_au_cot_cabecera as sac on (sac.id_cotizacion = sae.id_cotizacion)
 				where sae.id_emision = "'.$ide.'"
@@ -73,7 +78,8 @@ if($token === TRUE){
 					stre.prefijo,
 					stre.no_emision,
 					stre.id_compania,
-					stre.certificado_provisional as cp
+					stre.certificado_provisional as cp,
+					stre.garantia
 				from s_trd_em_cabecera as stre
 					inner join s_trd_cot_cabecera as strc on (strc.id_cotizacion = stre.id_cotizacion)
 				where stre.id_emision = "'.$ide.'"
@@ -94,7 +100,7 @@ if($token === TRUE){
 			break;
 	}
 	
-	$rsIs = $link->query($sqlIs,MYSQLI_STORE_RESULT);
+	$rsIs = $link->query($sqlIs, MYSQLI_STORE_RESULT);
 	if($rsIs->num_rows === 1){
 		$rowIs = $rsIs->fetch_array(MYSQLI_ASSOC);
 		$ide = base64_encode($rowIs['ide']);
@@ -113,26 +119,37 @@ if($token === TRUE){
 ?>
 <h3 id="issue-title">Póliza <?=$rowIs['prefijo'] . '-' . $rowIs['no_emision'];?></h3>
 
-<a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" class="fancybox fancybox.ajax view-detail">Ver <?=$titleSlip;?></a>
-<?php
-		if ($product === 'DE' && $rowIs['modalidad'] === null) {
-?>
-<a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>&category=<?=base64_encode('PES');?>" class="fancybox fancybox.ajax view-detail">Ver <?=$titleSlip2;?></a>
-<?php
-		}
-?>
+<a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=
+	base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleSlip;?></a>
 
-<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=$pr;?>&category=<?=$category;?>" class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert;?></a>
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=$category;?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('FAT');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert3;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('UIF');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert4;?></a>
+
+<?php if ((boolean)$rowIs['garantia']): ?>
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('ASR');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert5;?></a>
+<?php endif ?>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('CRT');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
+
 <?php
-		if ($product === 'DE' && $rowIs['modalidad'] === null) {
-?>
-<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=$pr;?>&category=<?=base64_encode('PEC');?>" class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert2;?></a>
-<?php
-		}
-	}else{
+	} else {
 		echo 'Usted no puede visualizar los Cetificados';
 	}
-}else{
+} else {
 	include('index-content.inc.php');
 }
 ?>

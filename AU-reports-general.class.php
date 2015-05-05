@@ -333,6 +333,7 @@ class ReportsGeneralAU{
 		    sac.no_cotizacion,
 		    sac.plazo as r_plazo,
 		    sac.tipo_plazo as r_tipo_plazo,
+		    sac.forma_pago as r_forma_pago,
 		    (case scl.tipo
 		        when 0 then 'NATURAL'
 		        when 1 then 'JURIDICO'
@@ -699,7 +700,7 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
             <td><?=$this->rowvh['v_modelo'];?></td>
@@ -876,7 +877,7 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
-            <td <?=$rowSpan;?>><?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?></td>
+            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
             <td><?=$this->rowvh['v_modelo'];?></td>

@@ -32,6 +32,10 @@ if(isset($_GET['ide'])){
 	
 	$titleCert = 'Certificado';
 	$titleCert2 = '';
+	$titleCert3 = 'Formulario de Autorización';
+	$titleCert4 = 'Formulario UIF';
+	$titleCert5 = 'Anexo de Subrogación';
+	$titleCert6 = 'Carta Sudamericana';
 	
 	$arr_state = array('txt' => '', 'txt_bank' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 	$menu = '<ul class="cxt-menu">';
@@ -149,7 +153,8 @@ if(isset($_GET['ide'])){
 					sae.facultativo as estado_facultativo,
 				    sad.leido,
 				    sae.apr_usuario as a_usuario,
-					sae.certificado_provisional as cp
+					sae.certificado_provisional as cp,
+					sae.garantia
 				from
 				    s_au_em_detalle as sad
 				        inner join
@@ -221,7 +226,8 @@ if(isset($_GET['ide'])){
 					stre.facultativo as estado_facultativo,
 				    stre.leido,
 				    stre.apr_usuario as a_usuario,
-					stre.certificado_provisional as cp
+					stre.certificado_provisional as cp,
+					stre.garantia
 				from
 				    s_trd_em_cabecera as stre
 				    	left join
@@ -373,6 +379,28 @@ if(isset($_GET['ide'])){
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . $category 
 				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert . '</a></li>';
+
+			$menu .= '<li><a href="certificate-detail.php?ide=' 
+				. base64_encode($ide) . '&pr=' . base64_encode($product) 
+				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('FAT') 
+				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert3 . '</a></li>';
+
+			$menu .= '<li><a href="certificate-detail.php?ide=' 
+				. base64_encode($ide) . '&pr=' . base64_encode($product) 
+				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('UIF') 
+				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert4 . '</a></li>';
+
+			if ((boolean)$row['garantia']) {
+				$menu .= '<li><a href="certificate-detail.php?ide=' 
+					. base64_encode($ide) . '&pr=' . base64_encode($product) 
+					. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('ASR') 
+					. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert5 . '</a></li>';
+			}
+
+			$menu .= '<li><a href="certificate-detail.php?ide=' 
+				. base64_encode($ide) . '&pr=' . base64_encode($product) 
+				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('CRT') 
+				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert6 . '</a></li>';
 			
 			if ($product === 'DE' && $modality === false) {
 				$menu .= '<li><a href="certificate-detail.php?ide=' . base64_encode($ide) 
@@ -386,7 +414,7 @@ if(isset($_GET['ide'])){
 			$menu .= '<li><a href="certificate-detail.php?idc=' 
 				. base64_encode($idc) . '&cia=' . base64_encode($row['id_compania']) 
 				. '&pr=' . base64_encode($product) . '&type=' . base64_encode('PRINT') 
-				. '" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Ver Formulario de Solicitud</a></li>';
 		}
 		
 	} else {
@@ -472,7 +500,7 @@ if(isset($_GET['ide'])){
 			$menu .= '<li><a href="certificate-detail.php?idc=' . base64_encode($idc) 
 				. '&cia=' . base64_encode($row['id_compania']) . '&pr=' 
 				. base64_encode($product) . '&type=' . base64_encode('PRINT') 
-				. '" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Ver Formulario de Solicitud</a></li>';
 		}
 	}
 	

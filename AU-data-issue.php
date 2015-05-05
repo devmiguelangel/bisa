@@ -421,18 +421,18 @@ if ($rsDep->data_seek(0) === TRUE) {
             <label>Dirección domicilio: <span>*</span></label><br>
             <textarea id="dc-address-home" name="dc-address-home" 
             	class="<?=$read_nat;?> fbin" 
-            	<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
+            	<?=$read_save . ' ' . $read_new;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
             
             <label>Dirección laboral: <span></span></label><br>
             <textarea id="dc-address-work" name="dc-address-work" 
             	class="not-required fbin" 
-            	<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
+            	<?=$read_save . ' ' . $read_new;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
             
             <label>Teléfono oficina: </label>
             <div class="content-input">
                 <input type="text" id="dc-phone-office" name="dc-phone-office" 
                 	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
-                	class="not-required phone fbin" <?=$read_save;?>>
+                	class="not-required phone fbin" <?=$read_save . ' ' . $read_new;?>>
             </div><br>
         </div><br>
     </div>
@@ -494,12 +494,12 @@ if ($rsDep->data_seek(0) === TRUE) {
         	<label>Dirección domicilio: <span></span></label><br>
 			<textarea id="dc-company-address-home" name="dc-company-address-home" 
 				class="not-required fbin" 
-				<?=$read_save;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
+				<?=$read_save . ' ' . $read_new;?>><?= $row['cl_direccion_domicilio'] ;?></textarea><br>
 
         	<label>Dirección laboral: <span>*</span></label><br>
 			<textarea id="dc-company-address-work" name="dc-company-address-work" 
 				class="<?=$read_jur;?> fbin" 
-				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
+				<?=$read_save . ' ' . $read_new;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
         </div>
     </div>
 <?php
@@ -717,27 +717,27 @@ for($i = 0; $i < count($arr_traction); $i++){
         	<td>
             	<input type="text" id="dv-<?=$k;?>-color" name="dv-<?=$k;?>-color" 
             		autocomplete="off" value="<?=$rowVh['vh_color'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?>>
+            		class="required text-2 fbin" <?=$read_save . ' ' . $read_new . ' ' . $read_edit;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-motor" name="dv-<?=$k;?>-motor" 
             		autocomplete="off" value="<?=$rowVh['vh_motor'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?>>
+            		class="required text-2 fbin" <?=$read_save . ' ' . $read_new . ' ' . $read_edit;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-chassis" name="dv-<?=$k;?>-chassis" 
             		autocomplete="off" value="<?=$rowVh['vh_chasis'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?>>
+            		class="required text-2 fbin" <?=$read_save . ' ' . $read_new . ' ' . $read_edit;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-capton" name="dv-<?=$k;?>-capton" 
             		autocomplete="off" value="<?=$rowVh['vh_cap_ton'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?>>
+            		class="required text-2 fbin" <?=$read_save . ' ' . $read_edit;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-nseat" name="dv-<?=$k;?>-nseat" 
             		autocomplete="off" value="<?=$rowVh['vh_no_asiento'];?>" 
-            		class="required number fbin" <?=$read_save;?>>
+            		class="required number fbin" <?=$read_save . ' ' . $read_new . ' ' . $read_edit;?>>
             </td>
             <td>	
             	<span class="value">
