@@ -9,8 +9,6 @@ if(isset($_GET['pr'])){
 include('header.inc.php');
 ?>
 <script type="text/javascript">
-if(history.forward(1)){location.replace(history.forward(1))}
-
 $(document).ready(function(e) {
     $(".fancybox").fancybox({
 		
