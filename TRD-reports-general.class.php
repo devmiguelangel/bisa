@@ -771,7 +771,6 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
             <td><?= $this->cx->typeProperty[$this->rowpr['pr_tipo']] ;?></td>
             <td><?= $this->cx->useProperty[$this->rowpr['pr_uso']] ;?></td>
-            <td><?=$this->rowpr['pr_estado'];?></td>
             <td><?=$this->rowpr['pr_departamento'];?></td>
             <td><?=$this->rowpr['pr_zona'];?></td>
             <td><?=$this->rowpr['pr_localidad'];?></td>
