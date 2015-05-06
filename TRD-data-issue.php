@@ -115,6 +115,7 @@ switch($sw){
 		    strd.direccion as pr_direccion,
 		    strd.modalidad as pr_modalidad,
 		    strd.valor_asegurado as pr_valor_asegurado,
+		    strd.valor_contenido as pr_valor_contenido,
 		    strd.tasa as pr_tasa,
 			strd.prima as pr_prima,
 		    "" as pr_adjunto
@@ -191,6 +192,7 @@ if($sw !== 1){
 	    strd.direccion as pr_direccion,
 	    strd.modalidad as pr_modalidad,
 	    strd.valor_asegurado as pr_valor_asegurado,
+	    strd.valor_contenido as pr_valor_contenido,
 	    "" as pr_adjunto,
 	    strd.tasa as pr_tasa,
     	strd.prima as pr_prima,
@@ -562,8 +564,8 @@ if(($rsDp = $link->get_depto()) !== FALSE){
         <tr class="title-vh" valign="top">
 			<td >Tipo</td>
 			<td >Uso</td>
-			<td ></td>
-            <td style="width: 15%;">Valor Asegurado</td>
+			<td style="width: 15%;">Valor Asegurado</td>
+            <td style="width: 15%;">Valor Muebles y/o contenido</td>
             <td style="width: 15%;">Prima</td>
         </tr>
         <tr valign="top" class="thead">
@@ -590,10 +592,10 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 				</select><br />
             </td>
             <td>
-
+            	<span class="value"><?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.</span>
             </td>
             <td>
-            	<span class="value"><?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.</span>
+            	<span class="value"><?=number_format($rowPr['pr_valor_contenido'], 2, '.', ',');?> USD.</span>
             </td>
             <td>
 <?php
@@ -603,6 +605,8 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 				<span class="value value-premium"><?=number_format($PRIMA, 2, '.', ',');?> USD.</span>
 				<input type="hidden" id="dp-<?=$k;?>-value-insured" name="dp-<?=$k;?>-value-insured" 
 					value="<?=base64_encode($rowPr['pr_valor_asegurado']);?>" class="required">
+				<input type="hidden" id="dp-<?=$k;?>-value-content" name="dp-<?=$k;?>-value-content" 
+					value="<?=base64_encode($rowPr['pr_valor_contenido']);?>" class="required">
 				<input type="hidden" id="dp-<?=$k;?>-rate" name="dp-<?=$k;?>-rate" 
 					value="<?=base64_encode($TASA);?>" class="required">
 				<input type="hidden" id="dp-<?=$k;?>-premium" name="dp-<?=$k;?>-premium" 

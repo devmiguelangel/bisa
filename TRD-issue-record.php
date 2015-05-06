@@ -187,7 +187,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_pr[$k]['use-other'] = '';
 					$arr_pr[$k]['state'] = '';
 					$arr_pr[$k]['modality'] = 'null';
-					$arr_pr[$k]['value-insured'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-value-insured'])));
+					$arr_pr[$k]['value-insured'] 
+						= $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-value-insured'])));
+					$arr_pr[$k]['value-content'] 
+						= $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-value-content'])));
 					$arr_pr[$k]['rate'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-rate'])));
 					$arr_pr[$k]['premium'] = $link->real_escape_string(trim(base64_decode($_POST['dp-'.$k.'-premium'])));
 					$arr_pr[$k]['attached'] = '';
@@ -196,10 +199,11 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_pr[$k]['reason'] = '';
 					$arr_pr[$k]['approved'] = TRUE;
 					
-					if($arr_pr[$k]['value-insured'] > $max_amount){
+					if(($arr_pr[$k]['value-insured'] + $arr_pr[$k]['value-content']) > $max_amount){
 						$arr_pr[$k]['FAC'] = TRUE;
 						$_FAC = TRUE;
-						$arr_pr[$k]['reason'] .= '| El valor asegurado del Inmueble excede el máximo valor permitido. Valor permitido: ' 
+						$arr_pr[$k]['reason'] .= '| El valor asegurado del Inmueble excede el ' 
+							. 'máximo valor permitido. Valor permitido: ' 
 							. number_format($max_amount, 2, '.', ',') . ' USD';
 					}
 					
@@ -295,8 +299,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							prefijo, prefix, tipo_in, 
 							uso, uso_otro, estado, departamento, 
 							zona, localidad, direccion,modalidad, 
-							valor_asegurado, tasa, prima, 
-							facultativo, motivo_facultativo, 
+							valor_asegurado, valor_contenido, tasa, 
+							prima, facultativo, motivo_facultativo, 
 							aprobado, leido, in_archivo) VALUES ';
 						
 						$record_det = $record;
@@ -325,7 +329,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							"'.$arr_pr[$k]['use-other'].'", "'.$arr_pr[$k]['state'].'", 
 							'.$arr_pr[$k]['depto'].', "'.$arr_pr[$k]['zone'].'", 
 							"'.$arr_pr[$k]['locality'].'", "'.$arr_pr[$k]['address'].'",
-							'.$arr_pr[$k]['modality'].', '.$arr_pr[$k]['value-insured'].', 
+							'.$arr_pr[$k]['modality'].', "'.$arr_pr[$k]['value-insured'].'", 
+							"'.$arr_pr[$k]['value-content'].'",
 							'.$arr_pr[$k]['rate'].', '.$arr_pr[$k]['premium'].', 
 							'.(int)$arr_pr[$k]['FAC'].', "'.$arr_pr[$k]['reason'].'", 
 							'.(int)$arr_pr[$k]['approved'].', FALSE, 
@@ -402,7 +407,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 								uso_otro = "'.$arr_pr[$k]['use-other'].'", estado = "'.$arr_pr[$k]['state'].'",
 								departamento = '.$arr_pr[$k]['depto'].', zona = "'.$arr_pr[$k]['zone'].'",
 								localidad = "'.$arr_pr[$k]['locality'].'", direccion = "'.$arr_pr[$k]['address'].'",
-								modalidad = '.$arr_pr[$k]['modality'].', valor_asegurado = '.$arr_pr[$k]['value-insured'].', 
+								modalidad = '.$arr_pr[$k]['modality'].', valor_asegurado = "'.$arr_pr[$k]['value-insured'].'",
+								valor_contenido = "'.$arr_pr[$k]['value-content'].'", 
 								tasa = '.$arr_pr[$k]['rate'].', prima = '.$arr_pr[$k]['premium'].', 
 								facultativo = '.(int)$arr_pr[$k]['FAC'].', motivo_facultativo = "'.$arr_pr[$k]['reason'].'", 
 								aprobado = '.(int)$arr_pr[$k]['approved'].' 

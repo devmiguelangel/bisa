@@ -68,14 +68,16 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
 
 		$dp_modality = 'null';
 		$dp_value_insured = $link->real_escape_string(trim($_POST['dp-value-insured']));
+		$dp_value_content = $link->real_escape_string(trim($_POST['dp-value-content']));
+		$amount_total = ($dp_value_insured + $dp_value_content);
 
-		if($dp_value_insured > $max_amount){
+		if($amount_total > $max_amount){
 			$_FAC = TRUE;
 			$reason .= '| El valor asegurado del Inmueble excede el máximo valor 
 				permitido. Valor permitido: ' . number_format($max_amount, 2, '.', ',') . ' USD';
 		}
 
-		$max_value = $link->get_cumulus($dp_value_insured, 'USD', base64_encode($idef), 'TRD');
+		$max_value = $link->get_cumulus($amount_total, 'USD', base64_encode($idef), 'TRD');
 		
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));
@@ -126,12 +128,15 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
                 (id_inmueble, id_cotizacion, tipo_in,
 	                uso, uso_otro, estado, departamento,
 	                zona, localidad, direccion, modalidad,
-	                valor_asegurado)
+	                valor_asegurado, valor_contenido,
+	                facultativo, motivo_facultativo)
                 values
                 ("' . $idPr . '", "' . $idc . '", "' . $dp_type . '",
 	                "' . $dp_use . '", "' . $dp_use_other . '", "' . $dp_state . '",
 	                "' . $dp_depto . '", "' . $dp_zone . '", "' . $dp_locality . '",
-	                "' . $dp_address . '", ' . $dp_modality . ', ' . $dp_value_insured . ') ;';
+	                "' . $dp_address . '", ' . $dp_modality . ', 
+	                "' . $dp_value_insured . '", "' . $dp_value_content . '",
+	                "' . (int)$_FAC . '", "' . $reason . '") ;';
 				
 				if($link->query($sql) === TRUE){
 					$arrTR[0] = 1;
@@ -144,28 +149,24 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
 					$db = new Log($link);
 					$db->postLog($_SESSION['idUser'], $log_msg);
 				} else {
-					$arrTR[2] = 'No se pudo registrar el Inmueble';
+					$arrTR[2] = 'No se pudo registrar el Inmueble' . $sql;
 				}
 			} elseif ($token === true) {
-                if ($cp === false) {
-                    $sql = 'update s_trd_cot_detalle
-                    set tipo_in = "'.$dp_type.'",
-                        uso = "'.$dp_use.'",
-                        uso_otro = "'.$dp_use_other.'",
-                        estado = "'.$dp_state.'",
-                        departamento = '.$dp_depto.',
-                        zona = "'.$dp_zone.'",
-                        localidad = "'.$dp_locality.'",
-                        direccion = "'.$dp_address.'",
-                        modalidad = '.$dp_modality.',
-                        valor_asegurado = '.$dp_value_insured.'
-                    where id_inmueble = "'.$idPr.'" ;';
-                } else {
-                    $sql = 'update s_trd_cot_detalle
-                    set modalidad = '.$dp_modality.',
-                        valor_asegurado = '.$dp_value_insured.'
-                    where id_inmueble = "'.$idPr.'" ;';
-                }
+                $sql = 'update s_trd_cot_detalle
+                set tipo_in = "'.$dp_type.'",
+                    uso = "'.$dp_use.'",
+                    uso_otro = "'.$dp_use_other.'",
+                    estado = "'.$dp_state.'",
+                    departamento = '.$dp_depto.',
+                    zona = "'.$dp_zone.'",
+                    localidad = "'.$dp_locality.'",
+                    direccion = "'.$dp_address.'",
+                    modalidad = '.$dp_modality.',
+                    valor_asegurado = "'.$dp_value_insured.'",
+                    valor_contenido = "'.$dp_value_content.'",
+                    facultativo = "' . (int)$_FAC . '",
+                    motivo_facultativo = "' . $reason . '"
+                where id_inmueble = "'.$idPr.'" ;';
 				
 				if($link->query($sql) === TRUE){
 					$arrTR[0] = 1;

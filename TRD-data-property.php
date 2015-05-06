@@ -12,7 +12,7 @@ if (($rowTR = $link->get_max_amount_optional($_SESSION['idEF'], 'TRD')) !== FALS
 $swPr = false;
 
 $dp_type = $dp_use = $dp_use_other = $dp_state = $dp_depto = $dp_zone = 
-$dp_locality = $dp_address = $dp_modality = $dp_value_insured = '';
+$dp_locality = $dp_address = $dp_modality = $dp_value_insured = $dp_value_content = '';
 
 $title_btn = 'Agregar Inmueble';
 
@@ -33,7 +33,8 @@ if(isset($_GET['idPr'])){
 	    strd.uso_otro as pr_uso_otro,
 	    strd.estado as pr_estado,
 	    strd.modalidad as pr_modalidad,
-	    strd.valor_asegurado as pr_valor_asegurado
+	    strd.valor_asegurado as pr_valor_asegurado,
+	    strd.valor_contenido as pr_valor_contenido
 	from
 	    s_trd_cot_detalle as strd
 	        inner join
@@ -63,6 +64,7 @@ if(isset($_GET['idPr'])){
 		$dp_address = $rowUp['pr_direccion'];
 		$dp_modality = $rowUp['pr_modalidad'];
 		$dp_value_insured = (int)$rowUp['pr_valor_asegurado'];
+		$dp_value_content = (int)$rowUp['pr_valor_contenido'];
 	}
 }
 ?>
@@ -79,7 +81,9 @@ if($swPr === false && isset($_GET['idc'])){
 	    strd.zona as pr_zona,
 	    strd.localidad as pr_localidad,
 	    strd.direccion as pr_direccion,
-	    strd.valor_asegurado as pr_valor_asegurado
+	    strd.valor_asegurado as pr_valor_asegurado,
+	    strd.valor_contenido as pr_valor_contenido,
+	    strd.facultativo as pr_facultativo
 	from
 	    s_trd_cot_detalle as strd
 	        inner join
@@ -119,6 +123,7 @@ if($swPr === FALSE){
 					<td style="width:10%;">Ciudad/Localidad</td>
 					<td style="width:15%;">Dirección</td>
                     <td style="width:9%;">Valor Asegurado USD.</td>
+                    <td style="width:9%;">Valor Muebles y/o contenido USD.</td>
 					<td style="width:6%;"></td>
                     <td style="width:6%;"></td>
 				</tr>
@@ -128,8 +133,9 @@ if($swPr === FALSE){
 		$cont = 1;
 		while($rowPr = $rsPr->fetch_array(MYSQLI_ASSOC)){
 			$bgFac = '';
-			/*if((boolean)$rowPr['v_facultativo'] === TRUE)
-				$bgFac = 'background:#FFE6D9;';*/
+			if((boolean)$rowPr['pr_facultativo']) {
+				$bgFac = 'background:#FFE6D9;';
+			}
 ?>
 				<tr style=" <?=$bgFac;?> ">
 					<td style="font-weight:bold;"><?=$cont;?></td>
@@ -142,6 +148,11 @@ if($swPr === FALSE){
                     <td>
                     	<span class="value">
                     		<?=number_format($rowPr['pr_valor_asegurado'], 2, '.', ',');?> USD.
+                		</span>
+            		</td>
+            		<td>
+                    	<span class="value">
+                    		<?=number_format($rowPr['pr_valor_contenido'], 2, '.', ',');?> USD.
                 		</span>
             		</td>
 					<td>
@@ -235,19 +246,26 @@ if($nPr < $max_item || $swPr === true){
         <label>Valor Asegurado (USD): <span>*</span></label>
         <?php
         $display_value = 'display: none;';
-        if($dp_value_insured > $max_amount) {
+        if(($dp_value_insured + $dp_value_content) > $max_amount) {
             $display_value = 'display: block;';
         }
         ?>
         <div class="content-input">
             <input type="text" id="dp-value-insured" name="dp-value-insured" 
             	autocomplete="off" value="<?=$dp_value_insured;?>" 
-            	class="required number fbin">
+            	class="required number fbin value_insured">
+        </div><br>
+
+        <label>Valor Muebles y/o contenido (USD): <span>*</span></label>
+		<div class="content-input">
+            <input type="text" id="dp-value-content" name="dp-value-content" 
+            	autocomplete="off" value="<?=$dp_value_content;?>" 
+            	class="required number fbin value_insured">
         </div><br>
 
         <div id="mess-amount" class="au-mess"
-             style=" <?=$display_value;?> ">Inmuebles cuyo valor excedan los <?=$max_amount;?> USD
-            requieren aprobación de la Compañia de Seguros</div>
+             style=" <?=$display_value;?> ">Inmuebles cuyo valor excedan los 
+             	<?=$max_amount;?> USD requieren aprobación de la Compañia de Seguros</div>
     </div>
 <?php
 ?>
@@ -311,17 +329,25 @@ $(document).ready(function(e) {
 		}
 	});
 
-	$("#dp-value-insured").keyup(function(e){
-		var amount = parseInt($(this).prop('value'));
+	$(".value_insured").keyup(function(e){
+		var amount = parseInt($('#dp-value-insured').prop('value'));
+		var amount_content = parseInt($('#dp-value-content').prop('value'));
 		var max_amount = parseInt($("#max-amount").prop('value'));
-		if(isNaN(amount) === true) {
-			$(this).prop('value', '');
+		
+		if (isNaN(amount)) {
+			amount = 0;
+			$('#dp-value-insured').prop('value', '');
+		}
+
+		if (isNaN(amount_content)) {
+			amount_content = 0;
+			$('#dp-value-content').prop('value', '');
+		}
+
+		if((amount + amount_content) > max_amount) {
+			$("#mess-amount").fadeIn();
 		} else {
-			if(amount > max_amount) {
-				$("#mess-amount").fadeIn();
-			} else {
-				$("#mess-amount").fadeOut();
-			}
+			$("#mess-amount").fadeOut();
 		}
 	});
 	

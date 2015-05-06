@@ -506,6 +506,7 @@ $(document).ready(function(e) {
             <td>Ciudad/Localidad</td>
             <td><?=htmlentities('Dirección', ENT_QUOTES, 'UTF-8');?></td>
             <td>Valor Asegurado</td>
+            <td>Valor Muebles y/o contenido</td>
             <td>Creado Por</td>
             <td>Sucursal Registro</td>
             <td>Agencia</td>
@@ -550,6 +551,7 @@ $(document).ready(function(e) {
 			    strd.localidad as pr_localidad,
 			    strd.direccion as pr_direccion,
 			    strd.valor_asegurado as pr_valor_asegurado,
+			    strd.valor_contenido as pr_valor_contenido,
 			    '' as pr_adjunto,
 			    strd.tasa as pr_tasa,
 			    strd.prima as pr_prima
@@ -613,6 +615,7 @@ $(document).ready(function(e) {
             <td><?=$this->rowpr['pr_localidad'];?></td>
             <td><?=$this->rowpr['pr_direccion'];?></td>
             <td><?=number_format($this->rowpr['pr_valor_asegurado'],2,'.',',');?> USD</td>
+            <td><?=number_format($this->rowpr['pr_valor_contenido'],2,'.',',');?> USD</td>
             <td><?=htmlentities($this->row['u_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['u_sucursal'];?></td>
             <td><?=htmlentities($this->row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
@@ -688,6 +691,7 @@ $(document).ready(function(e) {
             <td>Ciudad/Localidad</td>
             <td><?=htmlentities('Dirección', ENT_QUOTES, 'UTF-8');?></td>
             <td>Valor Asegurado</td>
+            <td>Valor Contenido</td>
             <td>Creado Por</td>
             <td>Fecha de Ingreso</td>
             <td>Sucursal Registro</td>
@@ -726,7 +730,8 @@ $(document).ready(function(e) {
 			    strd.zona as pr_zona,
 			    strd.localidad as pr_localidad,
 			    strd.direccion as pr_direccion,
-			    strd.valor_asegurado as pr_valor_asegurado
+			    strd.valor_asegurado as pr_valor_asegurado,
+			    strd.valor_contenido as pr_valor_contenido
 			from
 			    s_trd_cot_detalle as strd
 			        inner join
@@ -772,11 +777,11 @@ $(document).ready(function(e) {
             <td><?=$this->rowpr['pr_localidad'];?></td>
             <td><?=$this->rowpr['pr_direccion'];?></td>
             <td><?=number_format($this->rowpr['pr_valor_asegurado'],2,'.',',');?> USD.</td>
+            <td><?=number_format($this->rowpr['pr_valor_contenido'],2,'.',',');?> USD.</td>
             <td><?=htmlentities($this->row['u_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['fecha_ingreso'];?></td>
             <td><?=$this->row['u_sucursal'];?></td>
             <td><?=htmlentities($this->row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td><a href="detalle-cotizacion/detalle-certificado.php?idcotiza=<?=base64_encode($this->row['idc']);?>&cat=<?=base64_encode('DE');?>&type=PRINT" class="fancybox fancybox.ajax observation">Ver Slip de Cotización</a></td>-->
         </tr>
 <?php
 					}

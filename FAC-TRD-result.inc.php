@@ -74,6 +74,7 @@ if($token === 1){
             <td>Dirección</td>
             <td>Uso</td>
             <td>Valor Asegurado</td>
+            <td>Valor Muebles y/o contenido</td>
             <td>Creado Por</td>
             <td>Sucursal Registro</td>
             <td>Agencia</td>
@@ -302,7 +303,8 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 			    strd.zona as pr_zona, 
 			    strd.localidad as pr_localidad, 
 			    strd.direccion as pr_direccion,
-			    strd.valor_asegurado as pr_valor_asegurado
+			    strd.valor_asegurado as pr_valor_asegurado,
+			    strd.valor_contenido as pr_valor_contenido
 			from
 			    s_trd_em_cabecera as stre
 			        inner join
@@ -377,6 +379,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
             <td><?= $rowMt['pr_direccion'] ;?></td>
             <td><?= $link->useProperty[$rowMt['pr_uso']] ;?></td>
             <td><?=number_format($rowMt['pr_valor_asegurado'], 2, '.', ',');?> USD.</td>
+            <td><?=number_format($rowMt['pr_valor_contenido'], 2, '.', ',');?> USD.</td>
             <td><?=$row['u_nombre'];?></td>
             <td><?=$row['u_sucursal'];?></td>
             <td><?=htmlentities($row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
