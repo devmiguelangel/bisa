@@ -22,6 +22,18 @@ class CertificateQuery extends CertificateHtml {
 		case 'PEC':		//	Certificado Producto Extra
 			$this->get_query_pec();
 			break;
+		case 'FAT':   //Formulario de Autorización
+		    $this->get_query_ce();
+			break;
+		case 'UIF':   //Formulario de UIF
+		    $this->get_query_ce();		
+			break;
+		case 'ASR':  //Formulario Anexo de Subrogación
+		    $this->get_query_ce();		
+			break;
+		case 'CRT':  //Formulario Carta Sudamericana
+		    $this->get_query_ce();		
+			break;		
 		}
 		
 		if ($this->error === FALSE) {
@@ -1267,6 +1279,7 @@ class CertificateQuery extends CertificateHtml {
 			  auec.no_emision,
 			  auec.id_ef as idef,
 			  auec.id_cotizacion,
+			  aucot.no_cotizacion,
 			  auec.id_cliente,
 			  auec.no_operacion,
 			  auec.prefijo,
@@ -1291,6 +1304,8 @@ class CertificateQuery extends CertificateHtml {
 			  auec.aprobado,
 			  auec.rechazado,
 			  auec.prima_total,
+			  auec.garantia,
+			  auec.no_copia,
 			  sclie.tipo as cl_tipo,
 			  case sclie.tipo
 				when 0 then 'Natural'
@@ -1313,6 +1328,8 @@ class CertificateQuery extends CertificateHtml {
 			  sd.codigo as extension,
 			  sclie.complemento,
 			  sclie.email,
+			  sclie.pais,
+			  sclie.fecha_nacimiento,
 			  sef.nombre as ef_nombre,
 			  sef.logo as logo_ef,
 			  sc.nombre as compania,
@@ -1376,7 +1393,7 @@ class CertificateQuery extends CertificateHtml {
 						aumod.modelo,
 						auf.aprobado as vh_aprobado,
 						auf.tasa_recargo as vh_tasa_recargo,
-						auf.porcentaje_recargo as vh_porcentaje,
+						auf.porcentaje_recargo as vh_porcentaje_recargo,
 						auf.tasa_actual as vh_tasa_actual,
 						auf.tasa_final as vh_tasa_final,
 						auf.observacion as vh_observacion
@@ -1398,7 +1415,17 @@ class CertificateQuery extends CertificateHtml {
 				//echo $this->sqlDt;
 				if (($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT))) {
 					if ($this->rsDt->num_rows > 0) {
-						$this->error = FALSE;
+						if((boolean)$this->rowPo['emitir']===true && (boolean)$this->rowPo['anulado']===false){
+							$this->rowPo['no_copia']+=1;
+							$update = "UPDATE s_au_em_cabecera SET no_copia=".$this->rowPo['no_copia']." where id_emision='".$this->rowPo['id_emision']."';";
+							if($this->cx->query($update)===TRUE){
+							    $this->error = FALSE;
+							}else{
+								$this->error = TRUE;
+							}
+						}else{
+							$this->error = FALSE;
+						}
 					} else { $this->error = TRUE; }
 				} else { $this->error = TRUE; }
 			} else { $this->error = TRUE; }
@@ -1408,109 +1435,116 @@ class CertificateQuery extends CertificateHtml {
 	//SLIP COTIZACION TODO RIESGO DOMICILIARIO
 	private function set_query_trd_sc(){
 		$this->sqlPo="select 
-						trdc.id_cotizacion,
-						trdc.no_cotizacion,
-						trdc.id_ef as idef,
-						trdc.id_cliente,
-						trdc.ini_vigencia,
-						trdc.fin_vigencia,
-						trdc.plazo,
-						trdc.tipo_plazo,
-						@plazo:=(case trdc.tipo_plazo
-							when 'Y' then 'Años'
-							when 'D' then 'Dias'
-							when 'M' then 'Meses'
-							when 'W' then 'Semanas'
-						end ) as tipo_plazo_text,
-						concat(trdc.plazo,' ',@plazo) as tip_plazo_text,
-						trdc.fecha_creacion,
-						trdc.id_usuario,
-						trdc.prima_total,
-						sc.nombre as compania,
-						sc.logo as logo_cia,
-						ef.nombre as ef_nombre,
-						ef.logo as logo_ef,
-						su.nombre as u_nombre,
-						su.email as u_email,
-						sfp.forma_pago,
-						sfp.codigo as fmp_code,
-						case trdclt.tipo
-							when 0 then 'Natural'
-							when 1 then 'Juridico'
-						end as tipo_cliente,
-						trdclt.razon_social,
-						trdclt.paterno,
-						trdclt.materno,
-						trdclt.nombre,
-						trdclt.ap_casada,
-						trdclt.ci, 
-						trdclt.avenida,
-						trdclt.direccion,
-						trdclt.no_domicilio,
-						trdclt.localidad,
-						trdclt.telefono_domicilio,
-						trdclt.telefono_oficina,
-						trdclt.telefono_celular,
-						trdclt.desc_ocupacion,
-						trdclt.direccion_laboral,
-						socu.ocupacion
-					from
-						s_trd_cot_cabecera as trdc
-							inner join
-						s_entidad_financiera as ef ON (ef.id_ef = trdc.id_ef)
-							inner join
-						s_ef_compania as sefc ON (sefc.id_ef = ef.id_ef
-							and sefc.producto = '".$this->product."')
-							inner join
-						s_compania as sc ON (sc.id_compania = sefc.id_compania)
-							inner join
-						s_usuario as su ON (su.id_usuario = trdc.id_usuario)
-							inner join
-						s_forma_pago as sfp ON (sfp.id_forma_pago = trdc.id_forma_pago)
-							inner join
-						s_trd_cot_cliente as trdclt ON (trdclt.id_cliente = trdc.id_cliente)
-							left join
-						s_ocupacion as socu ON (socu.id_ocupacion = trdclt.id_ocupacion
-							and socu.producto = '".$this->product."')
-					where
-						trdc.id_cotizacion = '".$this->idc."'
-							and sc.id_compania = '".$this->idcia."';";
+				trdc.id_cotizacion,
+				trdc.no_cotizacion,
+				trdc.id_ef as idef,
+				trdc.id_cliente,
+				trdc.garantia,
+				trdc.tipo,
+				trdc.ini_vigencia,
+				trdc.fin_vigencia,
+				trdc.forma_pago,
+				trdc.plazo,
+				trdc.tipo_plazo,
+				@plazo:=(case trdc.tipo_plazo
+					when 'Y' then 'Año(s)'
+					when 'D' then 'Dias'
+					when 'M' then 'Meses'
+					when 'W' then 'Semanas'
+				end) as tipo_plazo_text,
+				concat(trdc.plazo, ' ', @plazo) as tip_plazo_text,
+				trdc.fecha_creacion,
+				trdc.id_usuario,
+				trdc.prima_total,
+				sc.nombre as compania,
+				sc.logo as logo_cia,
+				ef.nombre as ef_nombre,
+				ef.logo as logo_ef,
+				su.nombre as u_nombre,
+				su.email as u_email,
+				sdu.departamento as u_departamento,
+				(case trdclt.tipo
+					when 0 then 'Natural'
+					when 1 then 'Juridico'
+				end) as tipo_cliente,
+				trdclt.razon_social,
+				trdclt.paterno,
+				trdclt.materno,
+				trdclt.nombre,
+				trdclt.ap_casada,
+				trdclt.fecha_nacimiento,
+				trdclt.ci,
+				sde.codigo as extension,
+				trdclt.complemento,
+				(case trdclt.tipo
+					when 0 then concat(trdclt.ci,'',trdclt.complemento,' ',sde.codigo)
+					when 1 then trdclt.ci
+				end) as ci_nit,
+				trdclt.avenida,
+				trdclt.direccion_domicilio,
+				trdclt.localidad,
+				trdclt.telefono_domicilio,
+				trdclt.telefono_oficina,
+				trdclt.telefono_celular,
+				trdclt.email,
+				trdclt.actividad,
+				trdclt.desc_ocupacion,
+				trdclt.direccion_laboral,
+				socu.ocupacion
+			from
+				s_trd_cot_cabecera as trdc
+					inner join
+				s_entidad_financiera as ef ON (ef.id_ef = trdc.id_ef)
+					inner join
+				s_ef_compania as sefc ON (sefc.id_ef = ef.id_ef
+					and sefc.producto = '".$this->product."')
+					inner join
+				s_compania as sc ON (sc.id_compania = sefc.id_compania)
+					inner join
+				s_usuario as su ON (su.id_usuario = trdc.id_usuario)
+					inner join
+				s_departamento as sdu ON (sdu.id_depto = su.id_depto)
+					inner join
+				s_trd_cot_cliente as trdclt ON (trdclt.id_cliente = trdc.id_cliente)
+					inner join
+				s_departamento as sde on (sde.id_depto = trdclt.extension)
+					left join
+				s_ocupacion as socu ON (socu.id_ocupacion = trdclt.id_ocupacion
+					and socu.producto = '".$this->product."')
+			where
+				trdc.id_cotizacion = '".$this->idc."'
+					and sc.id_compania = '".$this->idcia."';";
 		//echo $this->sqlPo;
 		if($this->rsPo=$this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){
 			if($this->rsPo->num_rows === 1){
 				$this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
 				$this->rsPo->free();
-				
-				$this->sqlDt="select
-								trdd.id_inmueble,
-								trdd.id_cotizacion,
-								case trdd.tipo_in
-								  when 'HOME' then 'Casa' 
-								  when 'DEPT' then 'Departamento' 
-								  when 'BLDN' then 'Edificio' 
-								  when 'LOCL' then 'Local Comercial/Oficina'
-								end as tipo_inmueble, 
-								case trdd.uso
-								   when 'COM' then 'Comercial'
-								   when 'DMC' then 'Domiciliario'
-								   when 'OTH' then 'Otros'
-								end as uso_inmueble,
-								trdd.uso_otro,
-								case trdd.estado
-								   when 'FINS' then 'Terminado'
-								   when 'CONS' then 'En construcción'
-								   when 'PRAR' then 'En proceso de remodelación, ampliación o refacción'
-								end as estado_inmueble,
-								trdd.zona,
-								trdd.localidad,
-								trdd.direccion,
-								trdd.valor_asegurado,
-								sd.departamento
-							  from
-								s_trd_cot_detalle  as trdd
-								inner join s_departamento as sd on (sd.id_depto=trdd.departamento)
-							  where
-								trdd.id_cotizacion='".$this->idc."';";
+				$this->sqlDt="select 
+						trdd.id_inmueble,
+						trdd.id_cotizacion,
+						case trdd.tipo_in
+							when 'ED' then 'Edificio'
+							when 'MC' then 'Mueble o Contenido'
+						end as tipo_inmueble,
+						case trdd.uso
+							when 'CM' then 'Comercial'
+							when 'DM' then 'Domiciliario'
+						end as uso_inmueble,
+						trdd.uso_otro,
+						trdd.zona,
+						trdd.localidad,
+						trdd.direccion,
+						trdd.valor_asegurado,
+						trdd.tasa,
+						trdd.prima,
+						sd.departamento
+					from
+						s_trd_cot_detalle as trdd
+							inner join
+						s_departamento as sd ON (sd.id_depto = trdd.departamento)
+					where
+						trdd.id_cotizacion = '".$this->idc."';";
+				//echo $this->sqlDt;				
 				if($this->rsDt=$this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT)){
 					if($this->rsDt->num_rows > 0){
 				       $this->error=FALSE;	
@@ -1530,103 +1564,142 @@ class CertificateQuery extends CertificateHtml {
 	
 	//CERTIFICADO EMISIION TODO RIESGO DOMICILIARIO
 	private function set_query_trd_em () {		// Todo Riesgo Domiciliario
-		$this->sqlPo = 'select 
-			stre.id_emision,
-			strc.id_cotizacion as idc,
-			sef.id_ef as idef,
-			sef.nombre as ef_nombre,
-			sef.logo as ef_logo,
-			sh.producto as ef_producto,
-			scia.nombre as cia_nombre,
-			scia.logo as cia_logo,
-			stre.no_emision,
-			strc.no_cotizacion,
-			stre.prefijo,
-			stre.emitir,
-			stre.fecha_emision,
-			su.nombre as u_nombre,
-			su.email as u_email,
-			sdeu.departamento as u_depto,
-			scl.tipo as cl_tipo,
-			scl.razon_social as cl_razon_social,
-			scl.paterno as cl_paterno,
-			scl.materno as cl_materno,
-			scl.nombre as cl_nombre,
-			scl.ap_casada as cl_ap_casada,
-			(case scl.tipo
-				when 0 then concat(scl.ci, scl.complemento, " ", sdep.codigo)
-				when 1 then scl.ci
-			end) as cl_ci,
-			"" as expedido,
-			(case scl.avenida
-				when "AV" then "Avenida"
-				when "CA" then "Calle"
-			end) as cl_avc,
-			scl.direccion as cl_direccion,
-			scl.no_domicilio as cl_no_domicilio,
-			scl.localidad as cl_localidad,
-			scl.telefono_domicilio as cl_tel_domicilio,
-			scl.telefono_oficina as cl_tel_oficina,
-			scl.telefono_celular as cl_tel_celular,
-			sfp.forma_pago,
-			stre.tasa,
-			stre.prima_total
-		from
-			s_trd_em_cabecera as stre
-				inner join
-			s_trd_cot_cabecera as strc ON (strc.id_cotizacion = stre.id_cotizacion)
-				inner join
-			s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
-				inner join
-			s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
-				inner join
-			s_compania as scia ON (scia.id_compania = stre.id_compania)
-				inner join
-			s_usuario as su ON (su.id_usuario = stre.id_usuario)
-				inner join
-			s_sgc_home as sh ON (sh.id_ef = sef.id_ef)
-				inner join
-		    s_forma_pago as sfp ON (sfp.id_forma_pago = stre.id_forma_pago)
-				inner join 
-			s_departamento as sdep ON (sdep.id_depto = scl.extension)
-				inner join 
-			s_departamento as sdeu ON (sdeu.id_depto = su.id_depto)
-		where
-		    stre.id_emision = "'.$this->ide.'"
-		        and sh.producto = "'.$this->product.'"
-		;';
-		
+		$this->sqlPo = "select 
+				stre.id_emision,
+				strc.id_cotizacion as idc,
+				sef.id_ef as idef,
+				sef.nombre as ef_nombre,
+				sef.logo as ef_logo,
+				scia.nombre as cia_nombre,
+				scia.logo as cia_logo,
+				stre.no_emision,
+				strc.no_cotizacion,
+				strc.garantia,
+				stre.prefijo,
+				stre.ini_vigencia,
+				stre.fin_vigencia,
+				stre.forma_pago,
+				@plazo:=(case stre.tipo_plazo
+					when 'Y' then 'Años'
+					when 'D' then 'Dias'
+					when 'M' then 'Meses'
+					when 'W' then 'Semanas'
+				end) as tipo_plazo_text,
+				concat(stre.plazo, ' ', @plazo) as tip_plazo_text,
+				stre.fecha_creacion,
+				stre.anulado,    
+				stre.fecha_anulado,
+				stre.emitir,
+				stre.fecha_emision,
+				stre.facultativo,
+				stre.motivo_facultativo,
+				stre.tasa,
+				stre.prima_total,
+				stre.aprobado,
+				stre.rechazado,
+				stre.no_copia,
+				trdf.aprobado as f_aprobado,
+				trdf.tasa_recargo as f_tasa_recargo,
+				trdf.porcentaje_recargo as f_porcentaje_recargo,
+				trdf.tasa_actual as f_tasa_actual,
+				trdf.tasa_final as f_tasa_final,
+				trdf.observacion as f_observacion,
+				su.nombre as u_nombre,
+				su.email as u_email,
+				sdeu.departamento as u_depto,
+				(case scl.tipo
+					when 0 then 'Natural'
+					when 1 then 'Juridico'
+				end) as tipo_cliente,
+				scl.tipo as cl_tipo,
+				scl.razon_social as cl_razon_social,
+				scl.paterno as cl_paterno,
+				scl.materno as cl_materno,
+				scl.nombre as cl_nombre,
+				scl.ap_casada as cl_ap_casada,
+				scl.ci as cl_ci,
+				sdep.codigo as cl_extension,
+				scl.complemento as cl_complemento,
+				scl.direccion as cl_direccion,
+				scl.direccion_laboral as cl_direccion_laboral,
+				scl.localidad as cl_localidad,
+				scl.telefono_domicilio as cl_tel_domicilio,
+				scl.telefono_oficina as cl_tel_oficina,
+				scl.telefono_celular as cl_tel_celular,
+				scl.fecha_nacimiento as cl_fecha_nacimiento,
+				scl.pais as cl_pais
+			from
+				s_trd_em_cabecera as stre
+					inner join
+				s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
+					inner join
+				s_ef_compania as efcia on (efcia.id_ef = sef.id_ef and efcia.producto = '".$this->product."')
+					inner join
+				s_compania as scia ON (scia.id_compania = efcia.id_compania)
+					inner join
+				s_usuario as su ON (su.id_usuario = stre.id_usuario)        
+					inner join
+				s_departamento as sdeu ON (sdeu.id_depto = su.id_depto)        
+					inner join
+				s_trd_cot_cabecera as strc ON (strc.id_cotizacion = stre.id_cotizacion)
+					inner join
+				s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
+					inner join
+				s_departamento as sdep ON (sdep.id_depto = scl.extension)
+					left join
+				s_trd_facultativo as trdf on (trdf.id_emision=stre.id_emision)
+			where
+				stre.id_emision = '".$this->ide."';";
+		//echo $this->sqlPo;
 		if (($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT))) {
 			if ($this->rsPo->num_rows === 1) {
 				$this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
 				$this->rsPo->free();
 				
-				$this->sqlDt = 'select 
-					strd.id_inmueble as idPr,
-					strd.no_detalle,
-					strd.prefijo,
-					strd.prefix,
-					strd.tipo_in as pr_tipo,
-					strd.uso as pr_uso,
-					strd.estado as pr_estado,
-					sdep.departamento as pr_departamento,
-					strd.zona as pr_zona,
-					strd.direccion as pr_direccion,
-					strd.valor_asegurado as pr_valor_asegurado
-				from
-					s_trd_em_detalle as strd
-						inner join
-					s_trd_em_cabecera as stre ON (stre.id_emision = strd.id_emision)
-						inner join
-					s_departamento as sdep ON (sdep.id_depto = strd.departamento)
-				where
-					stre.id_emision = "'.$this->rowPo['id_emision'].'"
-				order by strd.id_inmueble asc
-				;';
+				$this->sqlDt = "select 
+						strd.id_inmueble,
+						strd.no_detalle,
+						strd.prefijo,
+						strd.prefix,
+						(case strd.tipo_in
+						  when 'ED' then 'Edificio'
+						  when 'MC' then 'Mueble o Contenido'
+						 end) as pr_tipo_inmueble,
+						(case strd.uso
+						  when 'CM' then 'Comercial'
+						  when 'DM' then 'Domicilio'
+						 end) as pr_uso_inmueble,
+						sdep.departamento as pr_departamento,
+						strd.zona as pr_zona,
+						strd.localidad as pr_localidad, 
+						strd.direccion as pr_direccion,
+						strd.valor_asegurado as pr_valor_asegurado,
+						strd.prima as pr_prima,
+						strd.tasa as pr_tasa
+					from
+						s_trd_em_detalle as strd
+							inner join
+						s_trd_em_cabecera as stre ON (stre.id_emision = strd.id_emision)
+							inner join
+						s_departamento as sdep ON (sdep.id_depto = strd.departamento)
+					where
+						stre.id_emision = '".$this->rowPo['id_emision']."'
+					order by strd.id_inmueble asc;";
 				//echo $this->sqlDt;
 				if (($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT))) {
 					if ($this->rsDt->num_rows > 0) {
-						$this->error = FALSE;
+						if((boolean)$this->rowPo['emitir']===true && (boolean)$this->rowPo['anulado']===false){
+							$this->rowPo['no_copia']+=1;
+							$update = "UPDATE s_trd_em_cabecera SET no_copia=".$this->rowPo['no_copia']." where id_emision='".$this->rowPo['id_emision']."';";
+							if($this->cx->query($update)===TRUE){
+							    $this->error = FALSE;
+							}else{
+								$this->error = TRUE;
+							}
+						}else{
+							$this->error = FALSE;
+						}
+						
 					} else { $this->error = TRUE; }
 				} else { $this->error = TRUE; }
 			} else { $this->error = TRUE; }

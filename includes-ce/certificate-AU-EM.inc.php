@@ -1,5 +1,5 @@
 <?php
-function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '') {
+function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '', $type) {
 		
 	ob_start();
 ?>
@@ -8,7 +8,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 	  <div id="main-c" style="width: 775px; font-weight: normal; font-size: 12px; 
       font-family: Arial, Helvetica, sans-serif; color: #000000;">
 <?php
-     $j = 1;
+     $j = 0;
      $num_titulares=$rsDt->num_rows;
 			
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
@@ -22,6 +22,10 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 			 $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
 			 $cliente_direccion = $row['direccion'].' '.$row['no_domicilio'];
 			 $cliente_fono = $row['telefono_domicilio'].' '.$row['telefono_celular'];
+		 }
+		 $j += 1;
+		 if($row['no_copia']>0){
+			 if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
 		 }
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
@@ -48,10 +52,11 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      </table>
                   </td>
                   <td style="width:20%; text-align:right;">
-                     <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/> 
+                     <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
                   </td>
               </tr>
-            </table>          
+            </table>
+            <div style="text-align:right; font-size:64%;"><?=$text;?></div>          
         </div>
         <div style="width: 775px; border: 0px solid #FFFF00;">
             <table 
@@ -685,6 +690,84 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                 </tr>    
             </table>
+            <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
+<?php
+             $queryVar = 'set @anulado = "Polizas Anuladas: ";';
+             if($link->query($queryVar,MYSQLI_STORE_RESULT)){
+                 $canceled="select 
+                                max(@anulado:=concat(@anulado, prefijo, '-', no_emision, ', ')) as cert_canceled
+                            from
+                                s_au_em_cabecera
+                            where
+                                anulado = 1
+                                    and id_cotizacion = '".$row['id_cotizacion']."';";
+                 if($resp = $link->query($canceled,MYSQLI_STORE_RESULT)){
+                     $regis = $resp->fetch_array(MYSQLI_ASSOC);
+                     echo '<span style="font-size:8px;">'.trim($regis['cert_canceled'],', ').'</span>';
+                 }else{
+                     echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;
+                 }
+             }else{
+               echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;   
+             }
+?>
+            </div>
+            <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
+<?php
+			    if((boolean)$rowDt['facultativo']===true){
+				   if((boolean)$rowDt['vh_aprobado']===true){
+?>
+                      <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 8px; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">
+                            <tr>
+                                <td colspan="7" style="width:100%; text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">Caso Facultativo</td>
+                            </tr>
+                            <tr>
+                                
+                                <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Aprobado</td>
+                                <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa de Recargo</td>
+                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Porcentaje de Recargo</td>
+                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Actual</td>
+                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Final</td>
+                                <td style="width:69%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Observaciones</td>
+                            </tr>
+                            <tr>
+                                
+                                <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_aprobado']);?></td>
+                                <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_tasa_recargo']);?></td>
+                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_porcentaje_recargo'];?> %</td>
+                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_actual'];?> %</td>
+                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_final'];?> %</td>
+                                <td style="width:69%; text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['motivo_facultativo'];?> |<br /><?=$rowDt['vh_observacion'];?></td>
+                            </tr>
+                       </table>
+<?php
+				   }else{	 
+?> 
+                      <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 9px; border-collapse: collapse; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">         
+                           <tr>
+                            <td  style="text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">
+                              Caso Facultativo
+                            </td>
+                           </tr>
+                           <tr>
+                            <td style="text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">
+                              Observaciones
+                            </td>
+                           </tr>
+                           <tr>
+                            <td style="text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;">
+							  <?=$rowDt['motivo_facultativo'];?>
+                            </td>
+                           </tr>
+                      </table>
+<?php
+				   }
+				}
+?>    
+            </div>  
+<?php
+     if($type!=='MAIL' && (boolean)$row['emitir']===true && (boolean)$row['anulado']===false){
+?>            
             <br>   
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
@@ -711,350 +794,374 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                 <td style="width:30%;">&nbsp;</td>
                </tr>
             </table>
+<?php
+	 }
+?>            
+            
             <div style="font-size: 70%; text-align:center; margin-top:20px;">  
                 • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 • La Paz – Bolivia.<br> 
 • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de Pensiones Valores y Seguros.     
-            </div>      	
+            </div>
+                	
         </div>            
-        
-        <page><div style="page-break-before: always;">&nbsp;</div></page>
-        
-        <div style="width: 775px; border: 0px solid #FFFF00;">
-            <table 
-                cellpadding="0" cellspacing="0" border="0" 
-                style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">
-                <tr>
-                  <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
-                  border:0px solid #333;" valign="top">
-                    <div style="text-align: center; font-weight:bold;">
-                       CLAUSULA DE AUTO REEMPLAZO<br>
-                       Código ASFI: 109-910502-2007 12 311-2046<br>
-                       R.A. 436/2010
-                    </div>
-                    <b>PÓLIZA Nro.:</b>	
-                    <br><br>
-                    <b>LUGAR Y FECHA:</b>
-                    <br><br>
-                    De acuerdo a la prima adicional acordada, queda entendido y convenido mediante la presente Cláusula que en caso de siniestro y si la reparación del vehículo excede 10 días calendario, la Compañía proporcionará al Asegurado un vehículo compacto por un plazo máximo de 10 días calendario en exceso de los primeros 10 días calendario de reparación, siempre que se cumplan las siguientes condiciones:
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
-                       padding-bottom:3px;">
-                      <tr>
-                        <td style="width:2%;" valign="top">&bull;</td>
-                        <td style="width:98%;">Que el siniestro se encuentre cubierto por la póliza principal.</td>
-                      </tr>
-                      <tr>
-                        <td style="width:2%;" valign="top">&bull;</td>
-                        <td style="width:98%;">Que se cuente con todos los repuestos necesarios para iniciar la 
-                        reparación.</td>
-                      </tr>
-                      <tr>
-                        <td style="width:2%;" valign="top">&bull;</td>
-                        <td style="width:98%;">Que no se haya concluido la reparación del vehículo asegurado.</td>
-                      </tr>
-                      <tr>
-                        <td style="width:2%;" valign="top">&bull;</td>
-                        <td style="width:98%;">El Asegurado tiene la obligación de cumplir con las obligaciones 
-                        establecidas en el Contrato con la Empresa de Alquiler del vehículo otorgado. </td>
-                      </tr>
-                    </table>
-                    Todos los demás términos y condiciones de la Póliza se mantienen sin variación alguna.
-                    <table 
-                        cellpadding="0" cellspacing="0" border="0" 
-                        style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
-                        padding-top:8px; padding-bottom:8px;">
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          BISA SEGUROS Y REASEGUROS S.A.
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; border-bottom: 1px solid #333;">
-                          <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          FIRMAS AUTORIZADAS
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                    </table>
-                    <div style="text-align: center; font-weight:bold;">
-                       ANEXO PARA EL ROBO DE LLANTAS, PARTES, EQUIPOS DE MÚSICA Y OTRAS PIEZAS<br>
-                       CÓDIGOAPS:109-910502-2007 12 311 2052<br>
-                       R.A. 136/11<br>
-                    </div>
-                    <b>PÓLIZA NRO.:</b>	
-                    <br><br>
-                    <b>LUGAR Y FECHA:</b>	
-                    <br><br>
-                    Queda entendido y convenido mediante el presente Anexo, que no obstante lo estipulado en contrario
-                    en la Póliza a que este Anexo se refiere, la responsabilidad de la Compañía por el robo de las 
-                    piezas detalladas abajo, se limita de acuerdo a lo siguiente:
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
-                       padding-bottom:3px;">
-                      <tr>
-                        <td style="width:75%; font-weight:bold; text-align:center; border-left:1px solid #333;
-                          border-top:1px solid #333; border-right:1px solid #333; border-bottom: 1px solid #333;">
-                          Descripción de pieza cubierta:
-                        </td>
-                        <td style="width:25%; font-weight:bold; text-align:center;
-                          border-top:1px solid #333; border-right:1px solid #333; border-bottom: 1px solid #333;">
-                          Hasta un máximo como límite total anual:
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333; ">
-                          Llanta con aro y/o accesorios
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom: 1px solid #333;">
-                          $us. 700.00
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Llanta de auxilio con aro y/ accesorios
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;">
-                          $us. 700.00
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">Equipo de música y/o sus accesorios como ser: amplificador, 
-                          ecualizador, parlantes de todo tipo, CD, MP3, DVD, y otros (excluye el robo del control 
-                          remoto)
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          $us. 350.00
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Mascarilla desmontable del equipo de música
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Equipo integrado de TV-pantalla-video-DVD
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Sistema de navegación GPS
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Juego de halógenos y/o rompenieblas (instalado como accesorio)
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Deflectores de viento
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
-                          border-right:1px solid #333;">
-                          Cola de pato
-                        </td>
-                        <td style="width:25%; text-align:center; border-right:1px solid #333;
-                          border-bottom:1px solid #333;" valign="top">
-                          Sin cobertura
-                        </td>
-                      </tr>
-                    </table>
-                    Los equipos o componentes que normalmente no forman parte de un vehículo automotor, como ser, pero
-                    no limitado a: computadoras, equipos de radio comunicación, equipos científicos, equipos de 
-                    servicio de cualquier naturaleza, teléfonos celulares, deberán ser expresamente declarados y 
-                    valorados, sujetos al pago de una prima adicional, caso contrario, quedan expresamente excluidos 
-                    de las coberturas de las pólizas.<br> 
-
-                    Los equipos arriba detallados para tener cobertura, deberán encontrase sujetos o fijados al 
-                    vehículo.<br>
-                    Todos los demás términos y condiciones quedan sin alteración alguna.
-                    <table 
-                        cellpadding="0" cellspacing="0" border="0" 
-                        style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
-                        padding-top:8px; padding-bottom:8px;">
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          BISA SEGUROS Y REASEGUROS S.A.
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; border-bottom: 1px solid #333;">
-                           <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          FIRMAS AUTORIZADAS
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                    </table>
-
-                  </td>
-                  <td style="width:50%; font-size:100%; text-align: justify; padding-left:5px; 
-                    border:0px solid #333;" valign="top">
-                    <div style="text-align: right; border:0px solid #FFFF00; margin-bottom:10px;">
-                      <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/> 
-                    </div>
-                    <div style="text-align: center; font-weight:bold;">
-                       ANEXO PARA VEHÍCULOS CON ANTIGÜEDAD MAYOR A 15 AÑOS Y PARA VEHÍCULOS TRANSFORMADOS 
-                       (TRANSFORMERS)<br><br>
-
-                       CÓDIGO SPVS No. 109-910502-2007 12 311 - 2015<br>
-                       R.A. 014/08
-                    </div>
-                    <b>PÓLIZA NRO.:</b>	
-                    <br><br>
-                    <b>LUGAR Y FECHA:</b>	
-                    <br><br>
-                    Se acuerda y establece mediante el presente Anexo, que en caso de siniestro que se encuentre 
-                    cubierto por la póliza, laCompañía tendrá el derecho de reparar, reponer o indemnizar en dinero 
-                    por los daños que se hubieran producido.
-                    <br><br> 
-                    Queda asimismo entendido y convenido que en caso de no encontrarse en el mercado local partes y/o 
-                    piezas que fueran necesarias para reparación, la responsabilidad de obtener los repuestos será del
-                    Asegurado, el cual además deberá obtener el consentimiento previo de Bisa Seguros y Reaseguros S. 
-                    A. sobre el precio de los mismos.
-                    <br><br> 
-                    En ningún caso Bisa Seguros y Reaseguros S. A. pagará por la reparación o reposición de piezas un 
-                    monto mayor al que tendría que pagar por la reparación o reposición de piezas de un vehículo 
-                    similar, cuyos repuestos puedan encontrarse en el mercado.
-                    <br><br>
-                    La Compañía se reserva el derecho de reemplazar las piezas robadas o dañadas con piezas que no 
-                    sean  originales o genuinas las mismas que podrán ser obtenidas en un mercado alternativo o 
-                    seminuevas o que sean fabricadas localmente. 
-                    <br><br>
-                    Todos los demás términos y condiciones de la póliza quedan sin alteración alguna.
-                    <table 
-                        cellpadding="0" cellspacing="0" border="0" 
-                        style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
-                        padding-top:8px; padding-bottom:8px;">
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          BISA SEGUROS Y REASEGUROS S.A.
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; border-bottom: 1px solid #333;">
-                          <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          FIRMAS AUTORIZADAS
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                    </table>
-                    <div style="text-align: center; font-weight:bold;">
-                       CLAUSULA DE COBERTURA PARA FLETE AÉREO
-                       <br><br>
-                       CÓDIGO SPVS No. 109-910502-2007 12 311 - 2017<br>
-                       R.A. 014/08
-                    </div>
-                    <b>PÓLIZA NRO.:</b>	
-                    <br><br>
-                    <b>LUGAR Y FECHA:</b>	
-                    <br><br>
-                    Queda entendido y convenido que, en adición a los términos, exclusiones, Cláusulas y Condiciones 
-                    contenidos en la Póliza o a ella anexados, este seguro se extiende a cubrir los gastos 
-                    adicionales por concepto de flete aéreo para la importación de partes o piezas, siempre y cuando 
-                    dichos gastos se hayan generado en conexión con cualquier pérdida de o daño indemnizable a los 
-                    objetos asegurados bajo esta Póliza.
-                    <br><br>
-                    Deducible:   20% de los gastos extras indemnizables, mínimo para cada evento.
-                    <table 
-                        cellpadding="0" cellspacing="0" border="0" 
-                        style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
-                        padding-top:8px; padding-bottom:8px;">
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          BISA SEGUROS Y REASEGUROS S.A.
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; border-bottom: 1px solid #333;">
-                          <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                       <tr>
-                        <td style="width:20%;">&nbsp;</td>
-                        <td style="width:60%; text-align:center;">
-                          FIRMAS AUTORIZADAS
-                        </td>
-                        <td style="width:20%;">&nbsp;</td>
-                       </tr>
-                    </table>
-                  </td>
-                </tr>  
-            </table>
-            <div style="font-size: 70%; text-align:center; margin-top:90px;">  
-                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928                • La Paz – Bolivia.<br> 
-                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
-                Pensiones Valores y Seguros.     
-            </div>     
-        </div>
 <?php
+        if($type!=='MAIL' && (boolean)$row['emitir']===true && (boolean)$row['anulado']===false){
+?>        
+            <page><div style="page-break-before: always;">&nbsp;</div></page>
+            
+            <div style="width: 775px; border: 0px solid #FFFF00;">
+                <table 
+                    cellpadding="0" cellspacing="0" border="0" 
+                    style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">
+                    <tr>
+                      <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
+                      border:0px solid #333;" valign="top">
+                        <div style="text-align: center; font-weight:bold;">
+                           CLAUSULA DE AUTO REEMPLAZO<br>
+                           Código ASFI: 109-910502-2007 12 311-2046<br>
+                           R.A. 436/2010
+                        </div>
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <br><br>
+                        <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>
+                        <br><br>
+                        De acuerdo a la prima adicional acordada, queda entendido y convenido mediante la presente Cláusula que en caso de siniestro y si la reparación del vehículo excede 10 días calendario, la Compañía proporcionará al Asegurado un vehículo compacto por un plazo máximo de 10 días calendario en exceso de los primeros 10 días calendario de reparación, siempre que se cumplan las siguientes condiciones:
+                        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                           padding-bottom:3px;">
+                          <tr>
+                            <td style="width:2%;" valign="top">&bull;</td>
+                            <td style="width:98%;">Que el siniestro se encuentre cubierto por la póliza principal.</td>
+                          </tr>
+                          <tr>
+                            <td style="width:2%;" valign="top">&bull;</td>
+                            <td style="width:98%;">Que se cuente con todos los repuestos necesarios para iniciar la 
+                            reparación.</td>
+                          </tr>
+                          <tr>
+                            <td style="width:2%;" valign="top">&bull;</td>
+                            <td style="width:98%;">Que no se haya concluido la reparación del vehículo asegurado.</td>
+                          </tr>
+                          <tr>
+                            <td style="width:2%;" valign="top">&bull;</td>
+                            <td style="width:98%;">El Asegurado tiene la obligación de cumplir con las obligaciones 
+                            establecidas en el Contrato con la Empresa de Alquiler del vehículo otorgado. </td>
+                          </tr>
+                        </table>
+                        Todos los demás términos y condiciones de la Póliza se mantienen sin variación alguna.
+                        <table 
+                            cellpadding="0" cellspacing="0" border="0" 
+                            style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
+                            padding-top:8px; padding-bottom:8px;">
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              BISA SEGUROS Y REASEGUROS S.A.
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; border-bottom: 1px solid #333;">
+                              <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              FIRMAS AUTORIZADAS
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                        </table>
+                        <div style="text-align: center; font-weight:bold;">
+                           ANEXO PARA EL ROBO DE LLANTAS, PARTES, EQUIPOS DE MÚSICA Y OTRAS PIEZAS<br>
+                           CÓDIGOAPS:109-910502-2007 12 311 2052<br>
+                           R.A. 136/11<br>
+                        </div>
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <br><br>
+                        <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>
+                        <br><br>
+                        Queda entendido y convenido mediante el presente Anexo, que no obstante lo estipulado en contrario
+                        en la Póliza a que este Anexo se refiere, la responsabilidad de la Compañía por el robo de las 
+                        piezas detalladas abajo, se limita de acuerdo a lo siguiente:
+                        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                           padding-bottom:3px;">
+                          <tr>
+                            <td style="width:75%; font-weight:bold; text-align:center; border-left:1px solid #333;
+                              border-top:1px solid #333; border-right:1px solid #333; border-bottom: 1px solid #333;">
+                              Descripción de pieza cubierta:
+                            </td>
+                            <td style="width:25%; font-weight:bold; text-align:center;
+                              border-top:1px solid #333; border-right:1px solid #333; border-bottom: 1px solid #333;">
+                              Hasta un máximo como límite total anual:
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333; ">
+                              Llanta con aro y/o accesorios
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom: 1px solid #333;">
+                              $us. 700.00
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Llanta de auxilio con aro y/ accesorios
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;">
+                              $us. 700.00
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">Equipo de música y/o sus accesorios como ser: amplificador, 
+                              ecualizador, parlantes de todo tipo, CD, MP3, DVD, y otros (excluye el robo del control 
+                              remoto)
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              $us. 350.00
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Mascarilla desmontable del equipo de música
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Equipo integrado de TV-pantalla-video-DVD
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Sistema de navegación GPS
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Juego de halógenos y/o rompenieblas (instalado como accesorio)
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Deflectores de viento
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:75%; border-left:1px solid #333; border-bottom: 1px solid #333; 
+                              border-right:1px solid #333;">
+                              Cola de pato
+                            </td>
+                            <td style="width:25%; text-align:center; border-right:1px solid #333;
+                              border-bottom:1px solid #333;" valign="top">
+                              Sin cobertura
+                            </td>
+                          </tr>
+                        </table>
+                        Los equipos o componentes que normalmente no forman parte de un vehículo automotor, como ser, pero
+                        no limitado a: computadoras, equipos de radio comunicación, equipos científicos, equipos de 
+                        servicio de cualquier naturaleza, teléfonos celulares, deberán ser expresamente declarados y 
+                        valorados, sujetos al pago de una prima adicional, caso contrario, quedan expresamente excluidos 
+                        de las coberturas de las pólizas.<br> 
+    
+                        Los equipos arriba detallados para tener cobertura, deberán encontrase sujetos o fijados al 
+                        vehículo.<br>
+                        Todos los demás términos y condiciones quedan sin alteración alguna.
+                        <table 
+                            cellpadding="0" cellspacing="0" border="0" 
+                            style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
+                            padding-top:8px; padding-bottom:8px;">
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              BISA SEGUROS Y REASEGUROS S.A.
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; border-bottom: 1px solid #333;">
+                               <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              FIRMAS AUTORIZADAS
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                        </table>
+    
+                      </td>
+                      <td style="width:50%; font-size:100%; text-align: justify; padding-left:5px; 
+                        border:0px solid #333;" valign="top">
+                        <div style="text-align: right; border:0px solid #FFFF00; margin-bottom:10px;">
+                          <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/> 
+                        </div>
+                        <div style="text-align: center; font-weight:bold;">
+                           ANEXO PARA VEHÍCULOS CON ANTIGÜEDAD MAYOR A 15 AÑOS Y PARA VEHÍCULOS TRANSFORMADOS 
+                           (TRANSFORMERS)<br><br>
+    
+                           CÓDIGO SPVS No. 109-910502-2007 12 311 - 2015<br>
+                           R.A. 014/08
+                        </div>
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <br><br>
+                        <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>	
+                        <br><br>
+                        Se acuerda y establece mediante el presente Anexo, que en caso de siniestro que se encuentre 
+                        cubierto por la póliza, laCompañía tendrá el derecho de reparar, reponer o indemnizar en dinero 
+                        por los daños que se hubieran producido.
+                        <br><br> 
+                        Queda asimismo entendido y convenido que en caso de no encontrarse en el mercado local partes y/o 
+                        piezas que fueran necesarias para reparación, la responsabilidad de obtener los repuestos será del
+                        Asegurado, el cual además deberá obtener el consentimiento previo de Bisa Seguros y Reaseguros S. 
+                        A. sobre el precio de los mismos.
+                        <br><br> 
+                        En ningún caso Bisa Seguros y Reaseguros S. A. pagará por la reparación o reposición de piezas un 
+                        monto mayor al que tendría que pagar por la reparación o reposición de piezas de un vehículo 
+                        similar, cuyos repuestos puedan encontrarse en el mercado.
+                        <br><br>
+                        La Compañía se reserva el derecho de reemplazar las piezas robadas o dañadas con piezas que no 
+                        sean  originales o genuinas las mismas que podrán ser obtenidas en un mercado alternativo o 
+                        seminuevas o que sean fabricadas localmente. 
+                        <br><br>
+                        Todos los demás términos y condiciones de la póliza quedan sin alteración alguna.
+                        <table 
+                            cellpadding="0" cellspacing="0" border="0" 
+                            style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
+                            padding-top:8px; padding-bottom:8px;">
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              BISA SEGUROS Y REASEGUROS S.A.
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; border-bottom: 1px solid #333;">
+                              <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              FIRMAS AUTORIZADAS
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                        </table>
+                        <div style="text-align: center; font-weight:bold;">
+                           CLAUSULA DE COBERTURA PARA FLETE AÉREO
+                           <br><br>
+                           CÓDIGO SPVS No. 109-910502-2007 12 311 - 2017<br>
+                           R.A. 014/08
+                        </div>
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <br><br>
+                        <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>	
+                        <br><br>
+                        Queda entendido y convenido que, en adición a los términos, exclusiones, Cláusulas y Condiciones 
+                        contenidos en la Póliza o a ella anexados, este seguro se extiende a cubrir los gastos 
+                        adicionales por concepto de flete aéreo para la importación de partes o piezas, siempre y cuando 
+                        dichos gastos se hayan generado en conexión con cualquier pérdida de o daño indemnizable a los 
+                        objetos asegurados bajo esta Póliza.
+                        <br><br>
+                        Deducible:   20% de los gastos extras indemnizables, mínimo para cada evento.
+                        <table 
+                            cellpadding="0" cellspacing="0" border="0" 
+                            style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
+                            padding-top:8px; padding-bottom:8px;">
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              BISA SEGUROS Y REASEGUROS S.A.
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; border-bottom: 1px solid #333;">
+                              <img src="<?=$url;?>img/firmas_bisa.png" height="90"/>
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                           <tr>
+                            <td style="width:20%;">&nbsp;</td>
+                            <td style="width:60%; text-align:center;">
+                              FIRMAS AUTORIZADAS
+                            </td>
+                            <td style="width:20%;">&nbsp;</td>
+                           </tr>
+                        </table>
+                      </td>
+                    </tr>  
+                </table>
+                <div style="font-size: 70%; text-align:center; margin-top:90px;">  
+                    • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928                • La Paz – Bolivia.<br> 
+                    • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                    Pensiones Valores y Seguros.     
+                </div>     
+            </div>
+<?php
+		}
 	    if($num_titulares <> $j)
 		   echo "<page><div style='page-break-before: always;'>&nbsp;</div></page>";
-	   $j++;
+	   
 	 
 	 }
+	if ($fac === TRUE) {
+        $url .= 'index.php?ms='.md5('MS_AU').'&page='.md5('P_fac').'&ide='.base64_encode($row['id_emision']).'';
+?>        
+       <br/>
+       <div style="width:500px; height:auto; padding:10px 15px; font-size:11px; font-weight:bold; text-align:left;">
+          No. de Slip de Cotizaci&oacute;n: <?=$row['no_cotizacion'];?>
+       </div><br>
+       <div style="width:500px; height:auto; padding:10px 15px; border:1px solid #FF2D2D; background:#FF5E5E; color:#FFF; font-size:10px; font-weight:bold; text-align:justify;">
+          Observaciones en la solicitud del seguro:<br><br><?=$reason;?>
+       </div>
+       <div style="width:500px; height:auto; padding:10px 15px; font-size:11px; font-weight:bold; text-align:left;">
+          Para procesar la solicitud ingrese al siguiente link con sus credenciales de usuario:<br>
+          <a href="<?=$url;?>" target="_blank">Procesar caso facultativo</a>
+       </div> 
+<?php
+	}
 ?>        
         
       </div>

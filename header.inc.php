@@ -206,6 +206,9 @@ $(document).ready(function(e) {
 		sidebarMenu();
 	else if(browser[2] >= 10)
 		sidebarMenu();*/
+	$(".fancybox").fancybox({
+		
+	});
 });
 </script>
 <!--[if gte IE 9]>

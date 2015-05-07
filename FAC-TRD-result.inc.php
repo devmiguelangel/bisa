@@ -37,14 +37,6 @@ $(document).ready(function(e) {
 	$(".row").reportCxt({
 		product: 'TRD'
 	});
-	
-	$(".fde-process").fancybox({
-		
-	});
-	
-	$(".observation").fancybox({
-		
-	});
 });
 </script>
 <input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">

@@ -1,374 +1,1071 @@
 <?php
 function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '') {
-	$conexion = $link;
 	
-	$fontSize = 'font-size: 80%;';
-	$fontsizeh2 = 'font-size: 80%';
-	$width_ct = 'width: 700px;';
-	$width_ct2 = 'width: 695px;';
-	$marginUl = 'margin: 0 0 0 20px; padding: 0;';
-	$marginUl2 = 'margin: 0 0 0 0; padding: 0;';
-		
-	//$imagen = getimagesize($url.'images/'.$row['logo_cia']);
-	$dir_cia = $url.'images/'.$row['logo_cia'];
-	$dir_logo = $url.'images/'.$row['logo_ef'];   
-	//$ancho = $imagen[0];            
-    //$alto = $imagen[1];
 	
 	ob_start();
 ?>
-<div id="container-main" style="<?=$width_ct;?> height: auto; padding: 5px;">
-   <div id="container-cert" style="<?=$width_ct2;?> font-weight: normal; font-size: 80%; font-family: Arial, Helvetica, sans-serif; color: #000000;">
-   
-     <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-         <tr>
-           <td style="width:34%;">
-              <img src="<?=$dir_logo;?>" height="75"/>
-           </td>
-           <td style="width:32%;"></td>
-           <td style="width:34%; text-align:right;">
-              <img src="<?=$dir_cia;?>" height="75"/>
-           </td>
-         </tr>
-         <tr><td colspan="3">&nbsp;</td></tr>
-         <tr>
-           <td style="width:34%;">SLIP DE COTIZACIÓN<br/>Cotizacion No <?=$row['no_cotizacion'];?></td>
-           <td style="width:32%;"></td> 
-           <td style="width:34%; text-align:right;">Cotización válida hasta el: 05-12-2013</td>
-         </tr>
-     </table><br/>
-     <div style="width: auto;	height: auto; text-align: left; margin: 7px 0; padding: 0; font-weight: bold; <?=$fontsizeh2;?>">Datos del Titular</div>
-	 <?php
-      if($row['tipo_cliente']=='Natural'){ 
-	 ?>
-        <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-             <tr style="font-weight:bold;">
-               <td style="width:25%; text-align:center; font-weight:bold;">Apellido Paterno</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Apellido Materno</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Nombres</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Apellido de Casada</td>
-             </tr>
-             <tr>
-               <td style="width:25%; text-align:center;"><?=$row['paterno'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['materno'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['nombre'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['ap_casada'];?></td>
-             </tr>
-              <tr style="font-weight:bold;">
-               <td style="width:25%; text-align:center; font-weight:bold;">Calle o Avenida</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Dirección</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Numero</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Ciudad o localidad</td>
-             </tr>
-             <tr>
-               <td style="width:25%; text-align:center;"><?=$row['avenida'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['direccion'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['no_domicilio'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['localidad'];?></td>
-             </tr>
-             <tr style="font-weight:bold;">
-               <td style="width:25%; text-align:center; font-weight:bold;">Telefono Domicilio</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Telefono Oficina</td>
-               <td style="width:50%; text-align:center; font-weight:bold;" colspan="2">Telefono Celular</td>
-             </tr>
-             <tr>
-               <td style="width:25%; text-align:center;"><?=$row['telefono_domicilio'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['telefono_oficina'];?></td>
-               <td style="width:50%; text-align:center;" colspan="2"><?=$row['telefono_celular'];?></td>
-             </tr>
-             <tr style="font-weight:bold;">
-               <td style="width:25%; text-align:center; font-weight:bold;">Direccion laboral</td>
-               <td style="width:25%; text-align:center; font-weight:bold;">Descripción ocupación</td>
-               <td style="width:50%; text-align:center; font-weight:bold;" colspan="2">Ocupación</td>
-             </tr>
-             <tr>
-               <td style="width:25%; text-align:center;"><?=$row['direccion_laboral'];?></td>
-               <td style="width:25%; text-align:center;"><?=$row['desc_ocupacion'];?></td>
-               <td style="width:50%; text-align:center;" colspan="2"><?=$row['ocupacion'];?></td>
-             </tr>
-          </table><br/>		
-     <?php
-	  }elseif($row['tipo_cliente']=='Juridico'){
-	 ?>
-          <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-             <tr style="font-weight:bold;">
-               <td style="width:50%; text-align:center; font-weight:bold;">Nombre o Razón Social</td>
-               <td style="width:50%; text-align:center; font-weight:bold;">NIT</td>
-               
-             </tr>
-             <tr>
-               <td style="width:50%; text-align:center;"><?=$row['razon_social'];?></td>
-               <td style="width:50%; text-align:center;"><?=$row['ci'];?></td>
-               
-             </tr>
-              <tr style="font-weight:bold;">
-               <td style="width:50%; text-align:center; font-weight:bold;">Telefono Oficina</td>
-               <td style="width:50%; text-align:center; font-weight:bold;">Direccion Laboral</td>
-               
-             </tr>
-             <tr>
-               <td style="width:50%; text-align:center;"><?=$row['telefono_oficina'];?></td>
-               <td style="width:50%; text-align:center;"><?=$row['direccion_laboral'];?></td>
-               
-             </tr>
-          </table><br/>		
-     <?php
-	  }
-	 ?>
-     
-     <div style="width: auto; height: auto; text-align: left; margin: 7px 0; padding: 0; font-weight: bold; <?=$fontsizeh2;?>">Interés Asegurado - Ubicación del Riesgo</div>
-        <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-            <?php
-              while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){	  
-			?>
+   <div id="container-c" style="width: 785px; height: auto; 
+    border: 0px solid #0081C2; padding: 5px;">
+	  <div id="main-c" style="width: 775px; font-weight: normal; font-size: 12px; 
+      font-family: Arial, Helvetica, sans-serif; color: #000000;">
+<?php
+   $j = 1;
+   $num_titulares=$rsDt->num_rows;
+			
+   while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
+	    if($row['tipo_cliente']==='Juridico'){
+		   $razon_social = $row['razon_social'];
+		   $actividad = $row['actividad'];
+		   $nit_ci = $row['ci_nit'];
+		   $cliente = $razon_social;
+		   
+		   $ap_paterno = '';
+		   $ap_materno = '';
+		   $nombre = '';
+		   $direccion_domicilio = '';
+		   $direccion_laboral = $row['direccion_laboral'];
+		   $fono_celular = $row['telefono_celular'];
+		   $fono_domicilio = '';
+		   $fono_oficina = $row['telefono_oficina'];
+		   $nit_ci = $row['ci_nit'];
+		   $email = $row['email'];
+		   
+	   }elseif($row['tipo_cliente']==='Natural'){
+		   $ap_paterno = $row['paterno'];
+		   $ap_materno = $row['materno'];
+		   $nombre = $row['nombre'];
+		   $direccion_domicilio = $row['direccion_domicilio'];
+		   $direccion_laboral = $row['direccion_laboral'];
+		   $fono_celular = $row['telefono_celular'];
+		   $fono_domicilio = $row['telefono_domicilio'];
+		   $fono_oficina = $row['telefono_oficina'];
+		   $nit_ci = $row['ci_nit'];
+		   $email = $row['email'];
+		   $cliente = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
+		   
+		   $razon_social = '';
+		   $actividad = '';
+		   
+	   }
+?>
+        <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-family: Arial;">
                 <tr>
-                 <td style="width:25%; text-align:center;"><b>Tipo Inmueble</b></td>
-                 <td style="width:25%; text-align:center;"><b>Uso Inmueble</b></td>
-                 <td style="width:25%; text-align:center;"><b>Estado Inmueble</b></td>
-                 <td style="width:25%; text-align:center;"><b>Valor Asegurado (USD)</b></td>
+                  <td style="width:100%; text-align:right;">
+                     <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
+                  </td> 
                 </tr>
                 <tr>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['tipo_inmueble'];?></td>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['uso_inmueble'];?></td>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['estado_inmueble'];?></td>
-                 <td style="width:25%; text-align:center;"><?=number_format($rowDt['valor_asegurado'],2,".",",");?></td>
+                  <td style="width:100%; font-weight:bold; text-align:center; font-size: 80%;">
+                     SOLICITUD DE SEGURO DE TODO RIESGO DAÑOS A LA PROPIEDAD<br>
+                     CODIGO SPVS No.: 109-910101-2006 07 252 - 3001<br>
+                     R.A. 740/06<br>
+
+                  </td> 
+                </tr>
+            </table>     
+        </div>
+        <br/>
+        
+        <div style="width: 775px; border: 0px solid #FFFF00;">
+			<span style="font-weight:bold; font-size:80%;">
+          INFORMACION GENERAL:</span> 
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
+                padding-top:4px; padding-bottom:3px;">
+                <tr> 
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                        <tr>
+                          <td style="width:25%;">Nombre o Razón Social del Solicitante:  </td>
+                          <td style="border-bottom: 1px solid #333; width:75%;">
+                              &nbsp;<?=$razon_social;?>
+                          </td>
+                        </tr>
+                     </table>
+                  </td>      
                 </tr>
                 <tr>
-                 <td style="width:25%; text-align:center;"><b>Departamento</b></td>
-                 <td style="width:25%; text-align:center;"><b>Zona</b></td>
-                 <td style="width:25%; text-align:center;"><b>Ciudad o Localidad</b></td>
-                 <td style="width:25%; text-align:center;"><b>Dirección</b></td> 
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                        <tr>
+                          <td style="width:18%;">Nombre Persona  Particular:</td>
+                          <td style="border-bottom: 1px solid #333; width:26%; text-align:center;">
+                              &nbsp;<?=$ap_paterno;?>
+                          </td>
+                          <td style="width:2%;">&nbsp;</td>
+                          <td style="border-bottom: 1px solid #333; width:26%; text-align:center;">
+                              &nbsp;<?=$ap_materno;?>
+                          </td>
+                          <td style="width:2%;">&nbsp;</td>
+                          <td style="border-bottom: 1px solid #333; width:26%; text-align:center;">
+                              &nbsp;<?=$nombre;?>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:18%;"></td>
+                          <td style="width:26%; text-align:center;">
+                              APELLIDO PATERNO      
+                          </td>
+                          <td style="width:2%;">&nbsp;</td>
+                          <td style="width:26%; text-align:center;">
+                              APELLIDO MATERNO                             
+                          </td>
+                          <td style="width:2%;">&nbsp;</td>
+                          <td style="width:26%; text-align:center;">
+                              NOMBRES
+                          </td>
+                        </tr>
+                      </table>                                  
+                  </td>
                 </tr>
                 <tr> 
-                 <td style="width:25%; text-align:center;"><?=$rowDt['departamento'];?></td>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['zona'];?></td>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['localidad'];?></td>
-                 <td style="width:25%; text-align:center;"><?=$rowDt['direccion'];?></td>
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                        <tr>
+                          <td style="width:11%;">Domicilio Legal:   </td>
+                          <td style="border-bottom: 1px solid #333; width:89%;">
+                              &nbsp;<?=$direccion_domicilio;?>
+                          </td>
+                        </tr>
+                     </table>
+                  </td>      
+                </tr>   
+                <tr>
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                        <tr>
+                          <td style="width:15%;">Dirección de Cobranza: </td>
+                          <td style="width:43%; border-bottom: 1px solid #333;">
+                              &nbsp;<?=$direccion_laboral;?>
+                          </td>
+                          <td style="width:6%;">NIT/C.I.</td>
+                          <td style="width:36%; border-bottom: 1px solid #333;">
+                              &nbsp;<?=$nit_ci;?>
+                          </td>
+                        </tr>
+                      </table> 
+                  </td>              
+                </tr>
+                <tr>
+                  <td style="width:100%; padding-bottom:4px;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width: 7%;">Teléfonos: </td>
+                           <td style="width: 67%; border-bottom: 1px solid #333;">
+                             &nbsp;<?=$fono_domicilio.' '.$fono_oficina;?>
+                           </td>
+                           <td style="width: 6%;">Celular: </td>
+                           <td style="width: 20%; border-bottom: 1px solid #333;">
+                             &nbsp;<?=$fono_celular;?>
+                           </td>
+                         </tr>
+                      </table> 
+                  </td> 
+                </tr>
+                <tr>
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                          <td style="width:5%;">Email: </td>
+                          <td style="width:27%; border-bottom: 1px solid #333;">
+                             &nbsp;<?=$email;?>
+                          </td>
+                           <td style="width:20%;">Actividad y/o Giro del Negocio: </td>
+                          <td style="width:48%; border-bottom: 1px solid #333;">
+                            &nbsp;<?=$actividad;?>
+                          </td> 
+                         </tr> 
+                      </table>
+                  </td>     
                 </tr> 
-            <?php
-			  }
-			?>
-        </table><br/>
-     
-     <div style="width: auto; height: auto; text-align: left; margin: 7px 0; padding: 0; font-weight: bold; <?=$fontsizeh2;?>">Datos de Solicitud</div>
-     <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-         <tr>
-           <td style="width:50%; text-align:right;"><b>Compañía de Seguros:</b></td>
-           <td style="width:50%;"><?=$row['compania'];?></td>
-         </tr>
-         <tr>
-           <td style="width:50%; text-align:right;"><b>Seguro a contratar:</b></td>
-           <td style="width:50%;">Todo Riesgo Domiciliario</td>
-         </tr>
-         <tr>
-           <td style="width:50%; text-align:right;"><b>Periodo de contratacion:</b></td>
-           <td style="width:50%;"><?=$row['tip_plazo_text'];?></td>
-         </tr>
-         <tr>
-           <td style="width:50%; text-align:right;"><b>Inicio de vigencia:</b></td>
-           <td style="width:50%;"><?=$row['ini_vigencia'];?></td>
-         </tr>
-         <tr>
-           <td style="width:50%; text-align:right;"><b>Fin de vigencia:</b></td>
-           <td style="width:50%;"><?=$row['fin_vigencia'];?></td>
-         </tr>
-      </table><br/>
-                  
-       <div style="width: 100%; height: auto; margin: 7px 0; <?=$fontSize;?> text-align:justify;">
-            
-            <b>Tasas:</b><br/>
-
-            <ol style="<?=$marginUl;?> list-style-type:upper-alpha;">
-                <li>0.8%o (por mil) anual para inmuebles terminados.</li>
-            </ol>
-            
-            <b>FORMA DE PAGO:</b><br/><br/>
-            De acuerdo a la periodicidad de pago establecida en el contrato de cr&eacute;dito, la fecha de vencimiento de la prima de seguro ser&aacute; la misma fecha de vencimiento del pago de cuotas del cr&eacute;dito<br/><br/>
-          
-            <b>CONDICION DE ADHESION AL SEGURO:</b><br/><br/>
-El Asegurado se adhiere voluntariamente a los t&eacute;rminos establecidos en la presente P&oacute;liza de Seguro Todo Riesgo de Da&ntilde;os a la Propiedad y declara conocer y estar de acuerdo con las condiciones del contrato de seguro. Asimismo, acepta la obligaci&oacute;n de pago de prima para mantener vigente la cobertura de la p&oacute;liza. La falta de pago de primas dar&aacute; lugar a la suspensi&oacute;n inmediata de la cobertura.<br/><br/>
-
-            <b>COBERTURAS:</b><br/><br/>
-Todo Riesgo de Da&ntilde;os a la Propiedad incluyendo cl&aacute;usula de terremoto, temblor, erupciones volc&aacute;nicas y movimientos s&iacute;smicos al igual que el incendio resultante de estos; incluyendo da&ntilde;os para cubrir p&eacute;rdidas y da&ntilde;os directos ocasionados por derrumbe, deslizamiento y asentamiento, cl&aacute;usula para cubrir p&eacute;rdidas y da&ntilde;os por corrimiento de tierra, cl&aacute;usula para cubrir p&eacute;rdidas y/o da&ntilde;os directos ocasionados por ca&iacute;da de rocas, seguro para motines y/o huelgas y/o conmoci&oacute;n civil y/o vandalismo, sabotaje y terrorismo LPO437, hasta el valor asegurado en la p&oacute;liza, que es igual al saldo deudor del cliente al momento del siniestro. Para valores asegurados superiores a $us. 4.000.000,00 se deber&aacute; consultar a la compa&ntilde;&iacute;a.<br/>
-		Robo con violencia al contenido hasta el 10% del valor comercial del inmueble, solo para la alternativa (a) del Valor Asegurado..<br/><br/>
-		Cl&aacute;usula de robo con violencia a primer riesgo al contenido hasta el 10% del valor comercial del inmueble.<br/><br/>
-        <b>DEDUCIBLES:</b><br/>
-        <ol style="<?=$marginUl;?> list-style-type:upper-alpha;">			
-         <li>Terrorismo y Riesgos Pol&iacute;ticos: 1% del valor del reclamo, m&iacute;nimo de $us. 100,00</li>
-         <li>Dem&aacute;s riesgos: $us. 50,00</li>
-        </ol><br/>
+                <tr>
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                          <td style="width:20%;">Ubicación(es) de (los) Riesgo(s): </td>
+                          <td style="width:80%; border-bottom: 1px solid #333;">
+                             &nbsp;<?=$rowDt['localidad'].' '.$rowDt['zona'].' '.$rowDt['direccion'];?>
+                          </td>
+                         </tr>
+                         <tr>
+                           <td style="width:100%; border-bottom: 1px solid #333;" colspan="2">&nbsp;</td>
+                         </tr> 
+                    </table>
+                  </td>     
+                </tr> 
+            </table>
+            <br>
+            <span style="font-size:80%;">INFORMACIÓN SOBRE BIENES PATRIMONIALES Y VALORES DE PROPIEDAD DEL SOLICITANTE Y BIENES DE TERCEROS BAJO CUSTODIA CONTROL Y RESPONSABILIDAD DEL ASEGURADO. (Esta sección debe ser completada considerando todas las ubicaciones que se quieran asegurar.</span>
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
+                padding-top:2px; padding-bottom:3px;">
+                <tr>
+                  <td rowspan="2" style="width:55%; text-align:center; font-weight:bold; border-left: 1px solid #333;
+                    border-top: 1px solid #333; border-right: 1px solid #333;">
+                    Clasificación de Bienes y valores
+                  </td>
+                  <td colspan="3" style="width:45%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Especificar según corresponda en cada rubro
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Valor de adquisición
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Valor Residual
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Valor de Reemplazo
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                     Rubro 1: Edificios incluyendo instalaciones fijas y permanentes (excluyendo el valor del terreno)
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;"></td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                     Rubro 2: Activos fijos en general no clasificados en otros rubros
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;"></td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                     Rubro 3: Maquinaria y equipos electromecánicos en general (fijos o móviles)
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                     Rubro 4: Existencias de herramientas eléctricas y mecánicas, repuestos y accesorios.
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 5: Equipos Electrónicos o digitales en general  (fijos o móviles)
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 6: Existencias de materias primas y/o productos en proceso y/o productos terminados (Establecer el monto estimado máximo previsto de concentración en una sola ubicación)
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 7: Cuadros, pinturas y objetos de arte
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 8: Libros, textos y otros materiales de biblioteca
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 9: Avisos luminosos, paneles publicitarios y otros similares
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 10: Dinero y/o valores (Monto máximo de concentración previsto en una sola ubicación)
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 11: Bienes de terceros bajo custodia, responsabilidad y control de la Empresa.
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    Rubro 12:  Otros bienes a declarar
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+                <tr>
+                  <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
+                    border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                    Rubro 13: Otros bienes a declarar
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                    NO APLICA
+                  </td>
+                  <td style="width:15%; text-align:center; border-top: 1px solid #333;
+                    border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                    NO APLICA
+                    </td>
+                </tr>
+            </table><br>    
+            <span style="font-size:80%; font-weight:bold;">Descripción de colindancias:</span>
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
+                padding-top:4px; padding-bottom:3px;">
+                <tr> 
+                  <td style="width:100%; padding-bottom:2px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                        <tr>
+                          <td style="width:5%;">Norte: </td>
+                          <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
+                              
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:5%;">Sur: </td>
+                          <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
+                              
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:5%;">Este: </td>
+                          <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
+                              
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:5%;">Oeste: </td>
+                          <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
+                              
+                          </td>
+                        </tr>
+                     </table>
+                  </td>      
+                </tr>
+                <tr>
+                  <td style="width:100%; padding-bottom:4px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                        <tr>
+                          <td style="width:13%;">Período del Seguro: </td>
+                          <td style="width:27%; border-bottom: 1px solid #333; text-align:center;">
+                              <?=$row['tip_plazo_text'];?>
+                          </td>
+                          <td style="width:5%;">Desde: </td>
+                          <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
+                              <?=$row['ini_vigencia'];?>
+                          </td>
+                          <td style="width:5%;">Hasta: </td>
+                          <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
+                              <?=$row['fin_vigencia'];?>
+                          </td>
+                        </tr>
+                      </table>                                  
+                  </td>
+                </tr>   
+            </table>
+            <br>
+            <span style="font-weight:bold; font-size:80%;">Requiere este Seguro subrogación de Derechos:   </span> 
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
+                padding-top:4px; padding-bottom:6px;">
+               <tr>
+                  <td style="width:18%; text-align:left;">Detallar Nombres y montos: </td>
+                  <td style="width:82%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                     
+                  </td>
+               </tr>
+               <tr><td style="width:100%; border-bottom: 1px solid #333;" colspan="2">&nbsp;</td></tr>
+            </table>     
+            <br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
+                • La Paz – Bolivia.<br> 
+                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                Pensiones Valores y Seguros
+            </div>  	
+        </div>            
         
-        <b>CLAUSULAS APLICABLES:</b><br/>
-        <ol style="<?=$marginUl;?> list-style-type:upper-alpha;">		
-        <li>Anexo para cubrir colapso de techos y paredes</li>
-          <li>Cl&aacute;usula de Gastos extraordinarios, hasta el 20% del Valor Asegurado</li>
-          <li>Cl&aacute;usula de Reemplazo</li>
-          <li>Cl&aacute;usula de anticipo del 50% del Siniestro </li>
-          <li>Cl&aacute;usula de Elegibilidad de Ajustadores</li>
-          <li>Cl&aacute;usula de Honorarios de Arquitectos, Ingenieros y Top&oacute;grafos, hasta el 20% del Valor Asegurado</li>
-          <li>Cl&aacute;usula de Rehabilitaci&oacute;n Autom&aacute;tica de la Suma Asegurada, aclarando que se encuentra sujeta al pago de la extra prima correspondiente</li>
-          <li>Cl&aacute;usula de Remoci&oacute;n de Escombros </li>
-          <li>Anexo de Flete A&eacute;reo</li>
-          <li>Cl&aacute;usula de Rescisi&oacute;n del Contrato a Prorrata </li>
-          <li>Anexo de Ampliaci&oacute;n de Aviso de Siniestro a 15 d&iacute;as  </li>
-          <li>Da&ntilde;os por incendio y/o rayo directo o indirecto en aparatos electr&oacute;nicos</li>
-          <li>Cl&aacute;usula de Terremoto, temblor y erupciones volc&aacute;nicas</li>
-          <li>Cl&aacute;usula de Seguro para Motines y/o Huelgas y/o Conmoci&oacute;n Civil y/o Da&ntilde;o Malicioso y/o Vandalismo, Sabotaje y Terrorismo (LPO437)</li>
-          <li>Cl&aacute;usula de Robo con violencia a primer riesgo</li>
-          <li>Cl&aacute;usula de Derrumbe y/o Deslizamiento</li>
-          <li>Cl&aacute;usula de Hundimiento</li>
-          <li>Cl&aacute;usula de Gastos de Investigaci&oacute;n y Salvamento</li>
-          <li>Cl&aacute;usula de Definici&oacute;n de Evento</li>
-          <li>Cl&aacute;usula de Errores y Omisiones</li>
-          <li>Cl&aacute;usula de Subrogaci&oacute;n</li>
-          <li>Anexo de Renovaci&oacute;n Autom&aacute;tica, hasta finalizar el cr&eacute;dito</li>
-        </ol><br/> <!---->
+        <page><div style="page-break-before: always;">&nbsp;</div></page>
+        
+        <div style="width: 775px; border: 0px solid #FFFF00;"> 
+            <div style="text-align:right; margin-bottom:5px;">
+               <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
+            </div>
+            <table 
+               cellpadding="0" cellspacing="0" border="0" 
+               style="width: 100%; height: auto; font-size: 80%; font-family: Arial;">
+               <tr>
+                 <td style="width:100%; text-align:justify;">
+                   <b>Mercaderías:</b><br><br>
+                   Favor presentar un breve detalle de tipo de mercadería a ser asegurada, lugares de almacenamiento y sistemas de seguridad:<br> 
+                   NO APLICA
+                 </td>
+               </tr>
+               <tr>
+                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                     
+                  </td>
+               </tr>
+            </table>
+            <br>
+            <table 
+               cellpadding="0" cellspacing="0" border="0" 
+               style="width: 100%; height: auto; font-size: 80%; font-family: Arial;">
+               <tr>
+                 <td style="width:100%; text-align:center; font-weight:bold;">
+                   INFORMACIÓN SOBRE GRADOS DE SENSIBILIDAD DEL NEGOCIO
+                 </td>
+               </tr>
+               <tr>
+                  <td style="width:100%;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                         margin-top:9px; margin-bottom:0px;">
+                         <tr>
+                           <td style="width: 2%;" valign="top">1.</td>
+                           <td style="width: 98%; text-align:left;">
+                             En caso de destrucción total cuál es el tiempo estimado (meses)  para reemplazar:
+                             <table cellpadding="0" cellspacing="0" border="0" style="width: 70%; font-size:100%;
+                                margin-top:4px; margin-bottom:4px;">
+                                 <tr>
+                                   <td style="width: 2%;">a)</td>
+                                   <td style="width: 34%;">
+                                      Edificios
+                                   </td>
+                                   <td style="width: 34%;">
+                                      NO APLICA
+                                   </td>
+                                 </tr>
+                                 <tr><td colspan="3" style="width:70%;">&nbsp;</td></tr>
+                                 <tr>
+                                   <td style="width: 2%;">b)</td>
+                                   <td style="width: 34%;">
+                                      Maquinaria y equipo       
+                                   </td>
+                                   <td style="width: 34%;">
+                                      NO APLICA
+                                   </td>
+                                 </tr>
+                                 <tr><td colspan="3" style="width:70%;">&nbsp;</td></tr>
+                                 <tr>
+                                   <td style="width: 2%;">c)</td>
+                                   <td style="width: 34%;">
+                                      Materias primas                     
+                                   </td>
+                                   <td style="width: 34%;">
+                                      NO APLICA
+                                   </td>
+                                 </tr>
+                             </table>       
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:2%; padding-top:9px;" valign="top">2.</td>
+                           <td style="width:98%; text-align:left; padding-top:9px;">
+                             ¿Qué materiales, máquinas o equipos son difíciles de reemplazar?
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:100%;" colspan="2">
+                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                 <tr>
+                                   <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
+                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                      
+                                   </td>
+                                 </tr>
+                               </table>    
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:2%; padding-top:9px;" valign="top">3.</td>
+                           <td style="width:98%; text-align:left; padding-top:9px;">
+                             ¿Si es así, que tiempo demoraría en obtenerlos?
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:100%;" colspan="2">
+                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                 <tr>
+                                   <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
+                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                      
+                                   </td>
+                                 </tr>
+                               </table>    
+                           </td>
+                         </tr>
+                      </table> 
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%; text-align:center; font-weight:bold; padding-top:10px;">
+                    INFORMACIÓN SOBRE PERSONAL DE LA EMPRESA 
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width:50%; text-align:center; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Clasificación de Empleados
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Nro. De Empleados
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Monto estimado anual de planillas
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Empleados fijos
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Empleados Eventuales
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Obreros
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             Totales Consolidados
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                     </table>      
+                  </td>
+               </tr>
+               <tr><td style="width:100%; height:20px;">&nbsp;</td></tr>
+               <tr>
+                  <td style="width:100%; text-align:center; font-weight:bold;">
+                    INFORMACIÓN SOBRE MOVIMIENTO DE DINERO EN EFECTIVO Y/O VALORES
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width:50%; text-align:center; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Clasificación de Empleados
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Nro. De Empleados
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Monto estimado anual de planillas
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Monto Normal transportado diariamente
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Monto En exceso del anterior transportado eventualmente en el año
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Monto normal en efectivo, valores o cheques concentrados en los locales diariamente
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:50%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             Montos adicionales al importe normal que eventualmente se encuentran en los locales
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                     </table>      
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%; padding-top:9px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width:2%;" valign="top">1.</td>
+                           <td style="width:98%; text-align:left;">
+                             Quienes se encargan de realizar las remesas de dinero en efectivo, valores o cheques en la empresa (Indicar si existen niveles de control):
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:100%;" colspan="2">
+                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                 <tr>
+                                   <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
+                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                      
+                                   </td>
+                                 </tr>
+                               </table>    
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:2%; padding-top:9px;" valign="top">2.</td>
+                           <td style="width:98%; text-align:left; padding-top:9px;">
+                             Informar sobre cantidad, ubicación, marcas y dimensiones de cajas fuertes o bóvedas de la Empresa:
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:100%;" colspan="2">
+                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                 <tr>
+                                   <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
+                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                      
+                                   </td>
+                                 </tr>
+                               </table>    
+                           </td>
+                         </tr>
+                      </table> 
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%; text-align:center; font-weight:bold; padding-top:10px;">
+                    HISTORIA DE PÉRDIDAS<br> 
+                    Indicar detalle de pérdidas importantes durante los últimos tres (3) años (bajo cobertura de seguro o no):
+
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width:100%;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width:36%; text-align:center; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             Año
+                           </td>
+                           <td style="width:32%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Descripción del suceso o pérdida
+                           </td>
+                           <td style="width:32%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Importe de la pérdida
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:36%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333;">
+                             NO APLICA 
+                           </td>
+                           <td style="width:32%; text-align:left; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:32%; text-align:left; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                         </tr>
+                         <tr>
+                           <td style="width:36%; text-align:left; border-left: 1px solid #333;
+                             border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             
+                           </td>
+                           <td style="width:32%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             
+                           </td>
+                           <td style="width:32%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             
+                           </td>
+                         </tr>
+                     </table>      
+                  </td>
+               </tr>
+               
+            </table>
+            <br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
+                • La Paz – Bolivia.<br> 
+                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                Pensiones Valores y Seguros
+            </div>      
         </div>
         
-        <div style="page-break-before: always;">&nbsp;</div>
+        <page><div style="page-break-before: always;">&nbsp;</div></page>
         
-        <div style="width: 700px; height: auto; margin: 7px 0; text-align:justify; <?=$fontSize;?>">
+        <div style="width: 775px; border: 0px solid #FFFF00;">
+            <div style="text-align:right; margin-bottom:10px;">
+               <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
+            </div>
             
-            <b>CONDICIONES GENERALES Y EXCLUSIONES:</b><br/><br/>
-    De acuerdo al Condicionado General de Seguros y Reaseguros Credinform International S.A., para seguro Todo Riesgo de Da&ntilde;os a la Propiedad.<br/><br/>
-    
-            <b>PROCEDIMIENTO EN CASO DE P&Eacute;RDIDA:</b><br/><br/>
-            
-            <ol style="<?=$marginUl;?> list-style-type:lower-alpha;">
-                <li>Notificar el siniestro por escrito a la Compa&ntilde;&iacute;a,</li> 
-                <li>Tomar todas las acciones dentro de sus medios para minimizar la p&eacute;rdida o da&ntilde;o.</li>
-                <li>Denunciar el hecho a la polic&iacute;a en caso de incendio, robo, sospecha
-                 de robo o acto malintencionado o malicioso o de car&aacute;cter pol&iacute;tico.</li>
-                <li>Conservar las partes afectadas y tenerlas disponibles para la
-                    inspecci&oacute;n de los representantes de la Compa&ntilde;&iacute;a.</li>
-                <li>Preparar una declaraci&oacute;n firmada acerca del siniestro que contenga
-                un detalle, dentro de lo razonablemente posible, acerca de sus
-                causas, los &iacute;tems o partes afectadas y su valorizaci&oacute;n.</li>
-                <li>Detalles de cualquier otro Seguro que pudiera existir.</li>
-                <li>El Asegurado deber&aacute;, a su propia costa, proporcionar a la Compa&ntilde;&iacute;a
-                cuando &eacute;sta se lo solicite, todos los detalles, planos, duplicados,
-                copias, documentos, pruebas e informaci&oacute;n con relaci&oacute;n al siniestro, 
-                as&iacute; como acerca de su origen y de las causas y circunstancias del da&ntilde;o.</li>
-                <li>El Asegurado no est&aacute; facultado para abandonar ning&uacute;n bien siniestrado a la Compa&ntilde;&iacute;a, sea que &eacute;sta haya tomado posesi&oacute;n de &eacute;l o no.</li>
-                <li>En todo caso de siniestro, la Compa&ntilde;&iacute;a se reserva el derecho de reponer los objetos destruidos o averiados, en lugar de pagar la indemnizaci&oacute;n reclamada si as&iacute; lo creyere conveniente; y debe tener entendido que despu&eacute;s que se indemnice, de uno u otro modo, el importe del siniestro, la suma asegurada sufrir&aacute; la correspondiente reducci&oacute;n.</li>
-                <li>Las p&eacute;rdidas ser&aacute;n satisfechas en la moneda en que se haya efectuado el Seguro, lo m&aacute;s tarde, sesenta d&iacute;as despu&eacute;s de liquidado el da&ntilde;o.</li>
-                <li>En caso de una p&eacute;rdida parcial, la suma asegurada quedar&aacute; reducida en el mismo importe que la indemnizaci&oacute;n pagada, en este caso, el Asegurado puede mantener completo el Seguro original con el pago de una prima proporcional al monto de indemnizaci&oacute;n recibida por el tiempo que reste por transcurrir el Seguro.</li> 
-                </ol><br/>
-               
-                <b>IMPORTANTE:</b><br/><br/>
-               <ol style="<?=$marginUl;?> list-style-type:disc;">
-					<li>La responsabilidad indemnizatoria de la Compa&ntilde;&iacute;a est&aacute; limitada como m&aacute;ximo al Valor Total Asegurado o declarado, el cual no puede ser superior a USD. 4.000.000,00 para Todo Riesgo de Da&ntilde;os a la Propiedad y 10% del valor asegurado del inmueble para robo con violencia al contenido, hasta un m&aacute;ximo de $us 10.000 (solo para la alternativa (a) del Valor Asegurado) &oacute; sus equivalentes en Moneda Nacional (Bolivianos)</li>				
-					 <li><b>Los siguientes riesgos deben ser consultados individualmente a la compa&ntilde;&iacute;a</b>
-						<ul style="<?=$marginUl2;?>">
-						<li>Riesgos Industriales y maquinaria, maquinaria para productos en l&iacute;nea</li>
-						<li>Textileras</li>
-						<li>Fabricas de pl&aacute;stico, plastoformo, polietileno, papel, cart&oacute;n, albog&oacute;n </li>
-						<li>Restaurant, discotecas y karaokes</li>
-						<li>Ferias, exposici&oacute;n y eventos</li>
-						<li>Sustancias inflamables y pinturas</li>
-						<li>Industrias qu&iacute;micas  y farmac&eacute;uticas, laboratorios. </li>
-						</ul>
-					</li>
-				</ol><br/><br/>
-             <!--
-			 <?php   
-              if($filaVig[4]=='terminado'){
-		     ?>		 
-		       <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; <?=$fontSize;?>">
-				  <tr>
-                    <td colspan="2">
-                     <b>Requisitos para la emisi&oacute;n del seguro - Todo Riesgo</b>
-                    </td>
-                  </tr>
-			      <?php
-                  if($filaVig[3]=='domiciliario'){
-				  ?>	  
-				    <tr>
-                     <td>
-					   Formulario de inventariaci&oacute;n de contenido&nbsp;
-				       <a href="archivo/formulario_inventariacion.pdf" target="_blank">Ver Formulario</a>
-                     </td>
-					 <td>
-                       Si corresponde
-                     </td>
-                    </tr>
-		   	      <?php
-                  }elseif($filaVig[3]=='comercial'){
-				  ?>	  
-			        <tr>
-                      <td>
-					    Formulario de inventariaci&oacute;n de contenido
-                      </td>
-					  <td>
-                        Si corresponde
-                      </td>
-                    </tr>
-			      <?php 
-                   }		 
-				  ?>
-		          <tr>
-                    <td>
-				     Formulario de actualizacion de datos del cliente&nbsp;
-				     <a href="archivo/formulario_ident_cliente.pdf" target="_blank">Ver Formulario</a>
-                    </td>
-				    <td>
-                      Obligatorio
-                    </td>
-                  </tr>	   
-			      <tr>
-                    <td>
-                     Carta de nombramiento
-                    </td>
-				    <td>
-                     Obligatorio
-                    </td>
-                  </tr>
-				  <tr>
-                    <td>
-                     Fotocopia de CI o NIT o Fundaempresa
-                    </td>
-				    <td>
-                     Obligatorio
-                    </td>
-                  </tr>
-				  <tr>
-                    <td>
-				     Aval&uacute;o
-                    </td>
-				  <td>
-                    Obligatorio
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
+                padding-top:4px; padding-bottom:3px;">
+                <tr>
+                  <td style="width:100%; text-align:left; font-weight:bold;">
+                     Forma de Pago Propuesto:
                   </td>
-                 </tr>
-			   </table>
-		     <?php 
-              }
-             ?>
-             -->   
-        
-             <table border="0" cellpadding="0" cellspacing="0" style="width: 700px; <?=$fontSize;?>">
-             <tr>
-               <td style="text-align:center; width:33%;"><?=$row['nombre'].' '.$row['paterno'].' '.$row['materno']?></td>
-               <td style="text-align:center; width:34%;"><?=$row['ci']?></td>
-               <td style="text-align:center; width:33%;"><?=date('d-m-Y');?></td>
-             </tr> 
-             <tr>
-               <td style="text-align:center; width:33%;"><b>Firma del Titular Asegurado</b></td>
-               <td style="text-align:center; width:34%;"><b>C.I.</b></td>
-               <td style="text-align:center; width:33%;"><b>Fecha de Solicitud</b></td>
-             </tr>
-           </table>
-        </div> 
-        
-       
-       <div style="width: 100%; height: auto; margin: 7px 0; text-align:justify;">
-       
-         
-       </div>
-       	
+                </tr>
+                <tr><td style="width:100%;">&nbsp;</td></tr>
+                <tr>
+                  <td style="width:100%; text-align:left; font-weight:bold;">
+                     Al Contado:
+                  </td>
+                </tr>
+                <tr><td style="width:100%;">&nbsp;</td></tr>
+                <tr>
+                  <td style="width:100%; padding-bottom:30px;">
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr>
+                           <td style="width:8%; text-align:left; font-weight:bold;">Al Crédito: </td>
+                           <td style="width:15%;">&nbsp;
+                             
+                           </td>
+                           <td style="width:10%; text-align:left; font-weight:bold;">Nro de Cuotas: </td>
+                           <td style="width:25%; border-bottom: 1px solid #333;">&nbsp;</td>
+                           <td style="width:42%;">&nbsp;</td>
+                         </tr>
+                     </table>      
+                  </td>
+                </tr>
+                <tr> 
+                  <td style="width:100%; padding-bottom:4px; text-align:justify;">
+                     Este documento conjuntamente con los detalles presentados por la Empresa Solicitante se constituirá en la Declaración hecha por el Asegurado para la contratación de la póliza y forma parte integrante de la misma.<br><br>
+
+La cobertura de la presente solicitud correrá una vez  la Compañía Aseguradora efectúe el análisis del Riesgo y emita la Póliza correspondiente, de acuerdo a las declaraciones de la solicitud.<br><br>
+
+El solicitante que suscribe será responsable de la exactitud de la información en la presente Solicitud y se compromete a efectuar el pago de las primas correspondientes, una vez emitida la Póliza.<br><br>
+
+El solicitante deberá proporcionar adjunto a la presente Solicitud, los respectivos inventarios valorizados de los activos fijos cubiertos.
+
+                     <br><br><br><br>
+                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                         <tr> 
+                          <td style="width:13%;">LUGAR Y FECHA: </td>
+                          <td style="width:37%; border-bottom: 1px solid #333;">
+                             &nbsp;<?=$row['u_departamento'] .' '. get_date_format_trd($row['fecha_creacion']);?>
+                          </td>
+                          <td style="width:50%;"></td>  
+                         </tr> 
+                     </table>
+                  </td>      
+                </tr>
+            </table>
+            <br><br><br><br><br><br>
+            <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 80%; font-family: Arial;">
+               <tr>
+                <td style="width:25%;"></td>
+                <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
+                  
+                </td>
+                <td style="width:25%;"></td> 
+               </tr>
+               <tr>
+                <td style="width:25%;"></td>
+                <td style="width:50%; text-align:center; font-weight:bold;">
+                  FIRMA DEL CLIENTE
+                </td>
+                <td style="width:25%;"></td> 
+               </tr>  
+            </table>
+        </div>
+      
+<?php
+   }
+?>          
+      </div>
    </div>
-</div>
 <?php
 	$html = ob_get_clean();
 	return $html;
+}
+
+function get_date_format_trd($fecha){
+	$date = date_create($fecha);
+	
+	$day = date_format($date, 'd');
+	$month = date_format($date, 'F');
+	$year = date_format($date, 'Y');
+	
+	return $day.' de '.get_month_espanol_trd($month).' de '.$year;
+}
+
+function get_month_espanol_trd($month){
+	switch ($month) {
+		case 'January':
+			return 'Enero';
+			break;
+		case 'February':
+			return 'Febrero';
+			break;
+		case 'March':
+			return 'Marzo';
+			break;
+		case 'April':
+			return 'Abril';
+			break;
+		case 'May':
+			return 'Mayo';
+			break;
+		case 'June':
+			return 'Junio';
+			break;
+		case 'July':
+			return 'Julio';
+			break;
+		case 'August':
+			return 'Agosto';
+			break;
+		case 'September':
+			return 'Septiembre';
+			break;
+		case 'October':
+			return 'Octubre';
+			break;
+		case 'November':
+			return 'Noviembre';
+			break;
+		case 'December':
+			return 'Diciembre';
+			break;
+	}
 }
 ?>

@@ -1,40 +1,23 @@
 <?php
 require('includes-ce/certificate-DE-EM.inc.php');
-//require('includes-ce/certificate-DE-EM-APS.inc.php');
-require('includes-ce/certificate-DE-EM-MO.inc.php');
 require('includes-ce/certificate-AU-EM.inc.php');
-require('includes-ce/certificate-AU-EM-MO.inc.php');
-require('includes-ce/certificate-AU-MO-AUPRM.inc.php');
-require('includes-ce/certificate-AU-MO-AUPBM.inc.php');
-require('includes-ce/certificate-AU-MO-AUPRU.inc.php');
-require('includes-ce/certificate-AU-MO-AUPBU.inc.php');
-require('includes-ce/certificate-AU-MO-AULU.inc.php');
 require('includes-ce/certificate-TRD-EM.inc.php');
-require('includes-ce/certificate-TRD-EM-MO.inc.php');
-require('includes-ce/certificate-TRD-MO-TRDM.inc.php');
-require('includes-ce/certificate-TRD-MO-TRDU.inc.php');
-require('includes-ce/certificate-TRD-MO-INCM.inc.php');
-require('includes-ce/certificate-TRD-MO-INCU.inc.php');
-require('includes-ce/certificate-TRD-MO-CAR.inc.php');
-require('includes-ce/certificate-TRM-EM.inc.php');
-require('includes-ce/certificate-TRM-EM-MO.inc.php');
-require('includes-ce/certificate-THC-EM-MO.inc.php');
-require('includes-ce/certificate-THD-EM-MO.inc.php');
 
-require('includes-ce/certificate-DE-EM-PEC.inc.php');
-
-require('includes-ce/certificate-DE-SC.inc.php');
-require('includes-ce/certificate-DE-SC-MO.inc.php');
 require('includes-ce/certificate-AU-SC.inc.php');
 require('includes-ce/certificate-TRD-SC.inc.php');
-require('includes-ce/certificate-TRM-SC.inc.php');
 
-require('includes-ce/certificate-DE-PES.inc.php');
+require('includes-ce/formulario-autorizacion-AU.inc.php');
+require('includes-ce/formulario-autorizacion-TRD.inc.php');
 
-require('includes-ce/certificate-DE-CP.inc.php');
-require('includes-ce/certificate-AU-CP.inc.php');
-require('includes-ce/certificate-TRD-CP.inc.php');
-require('includes-ce/certificate-TRM-CP.inc.php');
+require('includes-ce/formulario-UIF-AU.inc.php');
+require('includes-ce/formulario-UIF-TRD.inc.php');
+
+require('includes-ce/formulario-ASR-AU.inc.php');
+require('includes-ce/formulario-ASR-TRD.inc.php');
+
+require('includes-ce/formulario-CRT-AU.inc.php');
+require('includes-ce/formulario-CRT-TRD.inc.php');
+
 
 /**
  * 
@@ -74,15 +57,18 @@ class CertificateHtml{
 		case 'CE':		//	Certificado
 			$this->html = $this->get_html_ce();
 			break;
-		case 'CP':		//	Certificado Provisional
-			$this->html = $this->get_html_cp();
+		case 'FAT':    //formulario autorizacion
+		    $this->html = $this->get_html_fat();
 			break;
-		case 'PES':		//	Slip Producto Extra
-			$this->html = $this->get_html_pes();
+		case 'UIF':  //Formulario UIF
+		    $this->html = $this->get_html_uif();		
 			break;
-		case 'PEC':		//	Slip de Cotización
-			$this->html = $this->get_html_pec();
+		case 'ASR':  //Formulario Anexo de  Subrogacion
+		    $this->html = $this->get_html_asr();
 			break;
+		case 'CRT':  //Carta de Sudamericana
+		    $this->html = $this->get_html_crt();
+			break;	
 		}
 	}
 	
@@ -103,17 +89,8 @@ class CertificateHtml{
 		    break;
 		} 
 	}
-	
-	//SLIP PRODUCTO EXTRA
-	private function get_html_pes(){
-		switch ($this->product){
-		case 'DE':
-		    return $this->set_html_de_pes();
-		    break;
-		} 
-	}
-	
-	//	CERTIFICADOS EMISION
+			
+	//CERTIFICADOS EMISION
 	private function get_html_ce() {
 		switch ($this->product) {
 		case 'DE':
@@ -134,31 +111,52 @@ class CertificateHtml{
 		}
 	}
 	
-	//	CERTIFICADOS EMISION PRODUCTO EXTRA
-	private function get_html_pec(){
+	//FORMULARIOS DE AUTORIZACION
+	private function get_html_fat(){
 		switch ($this->product){
-		case 'DE':
-		    return $this->set_html_de_em_pec();
+		case 'AU':
+		    return $this->set_html_au_fat();
 		    break;
+		case 'TRD':
+		    return $this->set_html_trd_fat();
+		    break;	
 		} 
 	}
 	
-	//CERTIFICADOS PROVISIONALES
-	private function get_html_cp(){
+	//FORMULARIOS DE IDENTIFICACION UIF
+	private function get_html_uif(){
 		switch ($this->product){
-	    case 'DE':
-			return $this->set_html_de_cp();
-			break;
-	    case 'AU':
-			return $this->set_html_au_cp();
-			break;
+		case 'AU':
+		    return $this->set_html_au_uif();
+		    break;
 		case 'TRD':
-			return $this->set_html_trd_cp();
-			break;
-		case 'TRM':
-			return $this->set_html_trm_cp();
-			break;
-		}	
+		    return $this->set_html_trd_uif();
+		    break;	
+		} 
+	}
+	
+	//FORMULARIOS ANEXO DE SUBROGACION
+	private function get_html_asr(){
+		switch ($this->product){
+		case 'AU':
+		    return $this->set_html_au_asr();
+		    break;
+		case 'TRD':
+		    return $this->set_html_trd_asr();
+		    break;	
+		} 
+	}
+	
+	//CARTA SUDAMERICANA
+	private function get_html_crt(){
+		switch ($this->product){
+		case 'AU':
+		    return $this->set_html_au_crt();
+		    break;
+		case 'TRD':
+		    return $this->set_html_trd_crt();
+		    break;	
+		} 
 	}
 	
 	//SLIP DE COTIZACIONES
@@ -186,13 +184,7 @@ class CertificateHtml{
 	    return trm_sc_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 	    						$this->implant, $this->fac, $this->reason);	
 	}
-	
-	//SLIP PRODUCTO EXTRA
-	private function set_html_de_pes(){ //DESGRAVAMEN SLIP
-		return de_pes_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-								$this->implant, $this->fac, $this->reason);
-	}
-	
+			
 	//CERTIFICADOS EMISIONES
 	private function set_html_de_em() {	//	Desgravamen
 		if ($this->modality === false) {
@@ -217,20 +209,20 @@ class CertificateHtml{
 	private function set_html_au_em() {	//	Automotores
 		if ($this->modality === false) {
 			return au_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
+									$this->implant, $this->fac, $this->reason, $this->type);
 		} else {
 			return au_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
+									$this->implant, $this->fac, $this->reason, $this->type);
 		}
 	}
 	
 	private function set_html_trd_em() {	//	Todo Riesgo Domiciliario
 		if ($this->modality === false) {
 			return trd_em_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
+									$this->implant, $this->fac, $this->reason, $this->type);
 		} else {
 			return trd_em_certificate_mo($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
+									$this->implant, $this->fac, $this->reason, $this->type);
 		}
 	}
 	
@@ -258,31 +250,44 @@ class CertificateHtml{
 			}
 		}
 	}
-	
-	//CERTIFICADOS PROVISIONALES
-	private function set_html_de_cp(){		//Desgravamen
-	  return de_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-	  						$this->implant, $this->fac, $this->reason);	
+			
+	//FORMULARIOS DE AUTORIZACION
+	private function set_html_au_fat() { //Automotores
+		return au_formulario_autorizacion($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
-	
-	private function set_html_au_cp(){ 		//Automotores
-	  return au_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-	  						$this->implant, $this->fac, $this->reason);	
-	}
-	
-	private function set_html_trd_cp() {	//	Todo Riesgo Domiciliario
-		return trd_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	private function set_html_trd_fat() { //Todo Riesgo Domiciliario
+		return trd_formulario_autorizacion($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 								$this->implant, $this->fac, $this->reason);
 	}
 	
-	private function set_html_trm_cp() {	//Todo Riesgo Equipo Movil
-		return trm_cp_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	//FORMULARIOS DE IDENTIFICACION UIF
+	private function set_html_au_uif() { //Automotores
+		return au_formulario_uif($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
+	}
+	private function set_html_trd_uif() { //Todo Riesgo Domiciliario
+		return trd_formulario_uif($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 								$this->implant, $this->fac, $this->reason);
 	}
 	
-	//CERTIFICADOS EMISIONES PRODUCTO EXTRA
-	private function set_html_de_em_pec() {	//	Desgravamen
-		return de_em_pec_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+	//FORMULARIOS ANEXO DE SUBROGACION
+	private function set_html_au_asr() { //Automotores
+		return au_formulario_asr($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
+	}
+	private function set_html_trd_asr() { //Todo Riesgo Domiciliario
+		return trd_formulario_asr($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
+	}
+	
+	//CARTA DE SUDAMERICANA
+	private function set_html_au_crt() { //Automotores
+		return au_formulario_crt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
+	}
+	private function set_html_trd_crt() { //Todo Riesgo Domiciliario
+		return trd_formulario_crt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 								$this->implant, $this->fac, $this->reason);
 	}
 	
