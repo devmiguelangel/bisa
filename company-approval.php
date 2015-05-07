@@ -9,7 +9,7 @@ if(isset($_GET['pr']) && isset($_GET['ide'])){
 	$pr = $link->real_escape_string(trim(base64_decode($_GET['pr'])));
 	
 	$cp = false;
-	$category = NULL;
+	$category = 'CE';
 	
 	$sql = '';
 	$sqlUp = '';
@@ -137,6 +137,7 @@ if(isset($_GET['pr']) && isset($_GET['ide'])){
 			break;
 	}
 	// echo $sql;
+
 	if(($rs = $link->query($sql,MYSQLI_STORE_RESULT))){
 		if($rs->num_rows === 1){
 			$row = $rs->fetch_array(MYSQLI_ASSOC);
@@ -151,7 +152,8 @@ if(isset($_GET['pr']) && isset($_GET['ide'])){
 				
 				if ($link->query($sqlUp) === TRUE && $link->affected_rows > 0) {
 					$ce = new CertificateSibas($ide, NULL, NULL, $pr, 'MAIL', $category, 1, 0, FALSE, TRUE, $reason);
-					if ($ce->Output() === TRUE) {
+					
+					if ($ce->Output()) {
 						$arrDE[0] = 1;
 						$arrDE[1] = 'index.php';
 						$arrDE[2] = 'La Solicitud fue enviada correctamente';
