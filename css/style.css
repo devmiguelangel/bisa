@@ -341,7 +341,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', end
 	background: -ms-linear-gradient(top,  #ffffff 8%,#cccccc 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #ffffff 8%,#cccccc 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#cccccc',GradientType=0 ); /* IE6-8 */
-	z-index:2000;
+	z-index: 200;
 }
 
 #main-menu li ul li{
@@ -515,7 +515,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', end
 	/*left:20% !important;*/
 	left:0 !important;
 	right:0 !important;
-	z-index:1000 !important;
+	z-index: 100 !important;
 }
 
 /* ===========================BANNER============================ */
@@ -2163,7 +2163,26 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbdbdb', end
 .form-contact .btn-next{ background:#0072BC; font-family:'league_gothicregular', Helvetica, sans-serif; font-size:170%; font-weight:normal; }
 .form-contact .btn-next:hover{ background:#008080; }
 
-/* ===========================TOOLTIP============================ */
+/* ===========================Alert============================ */
+.alert{
+	/*border-radius: 5px;*/
+	background: #fffaa5;
+	border: 2px solid #f7f151;
+	border-radius: 6px;
+	color: #565656;
+	display: none;
+	font-size: 70%;
+	font-weight: bold;
+	height: auto;
+	padding: 5px 10px;
+	position: fixed;
+	right: 15px;
+	text-align: center;
+	bottom: 20px;
+	width: 290px;
+	z-index: 300;
+}
+
 /* ===========================HEADER============================ */
 /* ===========================HEADER============================ */
 /* ===========================HEADER============================ */

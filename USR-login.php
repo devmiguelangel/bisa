@@ -86,6 +86,7 @@ if (isset($_POST['l-user']) && isset($_POST['l-pass'])) {
 					}
 					
 					$arrUSR[2] = 'Bienvenido';
+					putIntent($link, $rowUSR, 0);
 
 					$db = new Log($link);
 					$db->postLog($_SESSION['idUser'], $log_msg);
@@ -125,9 +126,12 @@ function crypt_blowfish_bycarluys($password, $digito = 7) {
 	return crypt($password, $salt);
 }
 
-function putIntent($link, $data) {
+function putIntent($link, $data, $intent = null) {
 	$active = (int)$data['activado'];
-	$intent = (int)$data['intent'] + 1;
+	
+	if (is_null($intent)) {
+		$intent = (int)$data['intent'] + 1;
+	}
 
 	if ($intent >= 3 && $active === 1) {
 		$active = 0;

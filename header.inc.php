@@ -209,6 +209,12 @@ $(document).ready(function(e) {
 	$(".fancybox").fancybox({
 		
 	});
+
+	$('.alert').fadeTo(2000, 0.9, function(){
+		setTimeout(function () {
+			$('.alert').fadeTo('slow', 0);
+		}, 60000)
+	});
 });
 </script>
 <!--[if gte IE 9]>
@@ -229,6 +235,18 @@ $(document).ready(function(e) {
 
 <body>
 <header>
+	<?php if ($token): $data = [] ?>
+		<?php if ($link->getResetPassword($_SESSION['idUser'], $data)): ?>
+			<?php if ($data['mess']): ?>
+			<div class="alert">
+				Señor usuario en <?= $data['days'] ;?> día(s) se vence el plazo para 
+				renovar su contraseña. <br>
+				Cambie su contraseña en el menu Opciones de Usuario
+			</div>
+			<?php elseif ($data['action']): header('Location: logout.php') ?>
+			<?php endif ?>
+		<?php endif ?>
+	<?php endif ?>
 	<div id="container-logo">
 		<div id="logo-client" class="logo-01">
         	<img src="images/<?=$HOST_CLIENT['cliente_logo'];?>" align="left">
@@ -256,7 +274,13 @@ if (!isset($_GET['c-p'])) {
 ?>
 		<!--
 		--><ul id="user-menu">
-			<li><a href="#"><span class="login-icon"></span><span class="login-txt"><?=$user;?><br><span><?=$user_name;?></span></span></a>
+			<li>
+				<a href="#">
+					<span class="login-icon"></span>
+					<span class="login-txt"><?=$user;?><br>
+						<span><?=$user_name;?></span>
+					</span>
+				</a>
 				<ul>
 <?php
 	if($tokenM === FALSE){
