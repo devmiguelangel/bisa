@@ -32,8 +32,10 @@
 	}
 	
 	$.validator.passwordRating = function(password, username) {
-		if (!password || password.length < 8)
+		if (!password || password.length < 6)
 			return rating(0, "too-short");
+		if (!password || password.length > 10)
+			return rating(0, "too-long");
 		if (username && password.toLowerCase().match(username.toLowerCase()))
 			return rating(0, "similar-to-username");
 		if (SAME.test(password)) {
@@ -46,9 +48,9 @@
 			digits = DIGITS.test(password),
 			special = SPECIAL.test(password);
 		
-		if (lower && upper && digit || lower && digits || upper && digits || special)
+		if (lower && upper && digits || lower && digits || upper && digits || special)
 			return rating(4, "strong");
-		if (lower && upper || lower && digit || upper && digit)
+		if (lower && upper && digit || lower && digit || upper && digit)
 			return rating(3, "good");
 		return rating(2, "weak");
 	}
@@ -56,6 +58,7 @@
 	$.validator.passwordRating.messages = {
 		"similar-to-username": "Demasiado parecido a la contraseña actual",
 		"too-short": "Demasiado corto",
+		"too-long": "Demasiado largo",
 		"very-weak": "Muy débil",
 		"weak": "Débil",
 		"good": "Bueno",

@@ -1,5 +1,7 @@
 <?php
+
 require_once('sibas-db.class.php');
+
 if (isset($_GET['user']) && isset($_GET['url'])) {
 	$link = new SibasDB();
 	$idUser = base64_decode($_GET['user']);
@@ -9,17 +11,27 @@ if (isset($_GET['user']) && isset($_GET['url'])) {
 		su.id_usuario as idUser,
 		su.usuario as u_usuario,
 		su.nombre as u_nombre,
-		su.password as u_password
+		su.password as u_password,
+		su.email
 	from
 		s_usuario as su
 	where
-		su.id_usuario = "'.$idUser.'"
+		su.id_usuario = "' . $idUser . '"
+	limit 0, 1
 	;';
 	
 	if (($rs = $link->query($sql, MYSQLI_STORE_RESULT))) {
 		if ($rs->num_rows === 1) {
 			$row = $rs->fetch_array(MYSQLI_ASSOC);
 			$rs->free();
+
+			$exit = 'logout.php';
+
+			if (isset($_GET['token'])) {
+				if ($_GET['token'] === md5('key001')) {
+					$exit = 'index.php';
+				}
+			}
 			
 			
 ?>
@@ -103,7 +115,6 @@ $(document).ready(function(e) {
 					$(imgLoading).slideUp();
 				},
 				success: function(data){
-					//alert(data);
 					$(nameLoading + " img:last").after('<span class="loading-text">'+data[2]+'</span>');
 					
 					setTimeout(function() {
@@ -126,6 +137,11 @@ $(document).ready(function(e) {
 			// set &nbsp; as text for IE
 			label.html("&nbsp;").addClass("checked");
 		}
+	});
+
+	$('#dc-exit').click(function(e){
+		e.preventDefault();
+		location.href = '<?=$exit;?>';
 	});
 	
 });
@@ -155,24 +171,29 @@ function verify_current_password(_user, _val) {
 }
 </script>
 <h3>Cambiar contraseña</h3>
-<form id="f-change-pass" name="f-change-pass" action="" method="post" class="form-quote form-customer" action="" >
-	<div style="width:60%; margin:0 auto; padding:10px 15px; border:1px solid #CCC; border-radius:10px; box-shadow:0px 0px 10px #999;">
+<form id="f-change-pass" name="f-change-pass" action="" method="post" 
+	class="form-quote form-customer" action="" >
+	<div style="width:60%; margin:0 auto; padding:10px 15px; border:1px solid #CCC; 
+		border-radius:10px; box-shadow:0px 0px 10px #999;">
     	<label>Usuario: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-            <input type="text" id="cp_user" name="cp_user" autocomplete="off" value="<?=$row['u_usuario'];?>" class="required text fbin" readonly>
+            <input type="text" id="cp_user" name="cp_user" autocomplete="off" 
+            	value="<?=$row['u_usuario'];?>" class="required text fbin" readonly>
             <span class="resp"></span>
         </div><br>
         
         <label>Contraseña actual: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-            <input type="password" id="cp_current_password" name="cp_current_password" autocomplete="off" value="" class="fbin">
+            <input type="password" id="cp_current_password" name="cp_current_password" 
+            	autocomplete="off" value="" class="fbin">
             <span class="resp" style="background-image: url(img/pass-ok.png);" id="pass-ok"></span>
             <span class="resp" style="background-image: url(img/pass-err.png);" id="pass-err"></span>
         </div><br>
         
         <label>Contraseña nueva: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-            <input type="password" id="cp_new_password" name="cp_new_password" autocomplete="off" value="" class="fbin">
+            <input type="password" id="cp_new_password" name="cp_new_password" 
+            	autocomplete="off" value="" class="fbin">
             <div class="password-meter">
                 <div class="password-meter-message"> </div>
                 <div class="password-meter-bg">
@@ -183,9 +204,17 @@ function verify_current_password(_user, _val) {
         
         <label>Confirma la nueva contraseña: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-			<input type="password" id="cp_confirm_password" name="cp_confirm_password" autocomplete="off" value="" class="fbin">
+			<input type="password" id="cp_confirm_password" 
+				name="cp_confirm_password" autocomplete="off" value="" class="fbin">
         </div><br>
         
+        <label>Correo electrónico: <span>*</span></label>
+        <div class="content-input" style="width:auto;">
+			<input type="text" id="cp_email" name="cp_email" 
+				autocomplete="off" value="<?=$row['email'];?>" 
+				class="required email fbin">
+        </div><br>
+
         <div class="loading">
             <img src="img/loading-01.gif" width="35" height="35" />
         </div>
@@ -193,6 +222,10 @@ function verify_current_password(_user, _val) {
 		<input type="hidden" id="user" name="user" value="<?=base64_encode($row['idUser']);?>" >
         <input type="hidden" id="url" name="url" value="<?=$url;?>">
 		<input type="submit" id="dc-customer" name="dc-customer" value="Cambiar contraseña" class="btn-next" >
+		
+		<input type="button" id="dc-exit" name="dc-exit" value="Salir" 
+			class="btn-search-cs" style="display: block; margin: 0 auto; width: 70px; font-size: 90%;" >
+
     </div>
 </form>
 <?php

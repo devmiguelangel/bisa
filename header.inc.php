@@ -264,8 +264,12 @@ if (!isset($_GET['c-p'])) {
 	}else{
 ?>
 					<li><a href="index.php">Inicio</a></li>
-					<li><a href="index.php">Opciones de Usuario</a></li>
-					<li><a href="index.php">Telefono de Agencia</a></li>
+					<li><a href="index.php?ms=<?= md5('MS_COMP') ;?>&page=<?= 
+						md5('P_change_pass') ;?>&user=<?= 
+						$_SESSION['idUser'] ;?>&url=<?= 
+						base64_encode('index.php') ;?>&c-p=<?= 
+						md5('true') ;?>&token=<?= md5('key001') ;?>">
+						Opciones de Usuario</a></li>
 					<li><a href="logout.php">Salir</a></li>
 <?php
 	}
