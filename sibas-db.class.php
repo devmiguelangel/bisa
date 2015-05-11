@@ -161,16 +161,16 @@ class SibasDB extends MySQLi
 		    s_entidad_financiera as sef ON (sef.id_ef = seu.id_ef)
 		        inner join
 		    s_usuario_tipo as sut ON (sut.id_tipo = su.id_tipo)
-				inner join
+				left join
 			s_departamento as sdep ON (sdep.id_depto = su.id_depto)
 		where
-		    su.id_usuario = "'.base64_decode($idUser).'"
+		    su.id_usuario = "' . base64_decode($idUser) . '"
 		        and su.activado = true
-		        and sef.id_ef = "'.base64_decode($idef).'"
+		        and sef.id_ef = "' . base64_decode($idef) . '"
 		        and sef.activado = true
         limit 0, 1
 		;';
-		//echo $this->sql;
+		// echo $this->sql;
 		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))){
 			if($this->rs->num_rows > 0) {
 				$this->row = $this->rs->fetch_array(MYSQLI_ASSOC);

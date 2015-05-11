@@ -382,6 +382,12 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					</a></li>
 <?php
 				}
+			} elseif ($user_type === 'PA') {
+?>
+				<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_app_ok');?>" class="link-pr">
+					Solicitudes Preaprobadas
+				</a></li>
+<?php
 			}
 			
 			if ($user_type === 'FAC' || $user_type === 'ROOT') {
