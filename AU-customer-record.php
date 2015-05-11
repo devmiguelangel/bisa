@@ -168,7 +168,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					complemento, genero, direccion_domicilio, direccion_laboral,
 					actividad, ejecutivo, cargo, 
 					telefono_domicilio, telefono_oficina, 
-					telefono_celular, email) 
+					telefono_celular, email, created_at) 
 				values 
 				("' . $idClient . '", "' . $idef . '", ' . (int)$dc_type_client . ', 
 					"' . $dc_company_name . '", "' . $dc_lnpatern . '", 
@@ -179,7 +179,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					"' . $dc_address_work . '", "' . $dc_activity . '", 
 					"' . $dc_executive . '", "' . $dc_position . '", 
 					"' . $dc_phone_1 . '", "' . $dc_phone_office . '", 
-					"' . $dc_phone_2 . '", "' . $dc_email . '") ;';
+					"' . $dc_phone_2 . '", "' . $dc_email . '", now()) ;';
 			}
 			
 			if ($link->query($sql)){

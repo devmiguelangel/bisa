@@ -122,11 +122,12 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 						
 						$sql = 'insert into s_au_cot_cabecera 
 						(id_cotizacion, no_cotizacion, id_ef, 
-							certificado_provisional, fecha_creacion, id_usuario)
+							certificado_provisional, fecha_creacion, id_usuario, created_at)
 						values
 						("' . $idc . '", "' . $record . '", 
 							"' . base64_decode($_SESSION['idEF']) . '", 
-							false, curdate(), "' . base64_decode($_SESSION['idUser']) . '")
+							false, curdate(), "' . base64_decode($_SESSION['idUser']) . '",
+							now())
 						;';
 						
 						if ($link->query($sql)) {
@@ -161,7 +162,8 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 	                        plaza, id_marca, id_modelo, motor, anio, 
 	                        placa, no_asiento, cilindrada, chasis, 
 	                        uso, traccion, color, km, modalidad, 
-	                        valor_asegurado, facultativo, motivo_facultativo)
+	                        valor_asegurado, facultativo, 
+	                        motivo_facultativo, created_at)
                         values
                         ("' . $idVh . '", "' . $idc . '", 
                         	"' . $dv_type_vehicle . '", "' . $dv_plaza . '", 
@@ -172,7 +174,7 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
 	                        "' . $dv_use . '", "' . $dv_traction . '", 
 	                        "' . $dv_color . '", "", ' . $dv_modality . ', 
 	                        "' . $dv_value_insured . '", "' . (int)$_FAC . '", 
-	                        "' . $reason . '") ;';
+	                        "' . $reason . '", now()) ;';
 						
 						if($link->query($sql)){
 							$arrAU[0] = 1;

@@ -92,10 +92,12 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
 				
 				$sql = 'insert into s_trd_cot_cabecera 
 				(id_cotizacion, no_cotizacion, id_ef, 
-					certificado_provisional, fecha_creacion, id_usuario)
+					certificado_provisional, fecha_creacion, 
+					id_usuario, created_at)
 				values
 				("' . $idc . '", "' . $record . '", "' . base64_decode($_SESSION['idEF']) . '", 
-					false, curdate(), "' . base64_decode($_SESSION['idUser']) . '") ;';
+					false, curdate(), "' . base64_decode($_SESSION['idUser']) . '",
+					now()) ;';
 				
 				if ($link->query($sql)) {
 					$token = true;
@@ -129,14 +131,14 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
 	                uso, uso_otro, estado, departamento,
 	                zona, localidad, direccion, modalidad,
 	                valor_asegurado, valor_contenido,
-	                facultativo, motivo_facultativo)
+	                facultativo, motivo_facultativo, created_at)
                 values
                 ("' . $idPr . '", "' . $idc . '", "' . $dp_type . '",
 	                "' . $dp_use . '", "' . $dp_use_other . '", "' . $dp_state . '",
 	                "' . $dp_depto . '", "' . $dp_zone . '", "' . $dp_locality . '",
 	                "' . $dp_address . '", ' . $dp_modality . ', 
 	                "' . $dp_value_insured . '", "' . $dp_value_content . '",
-	                "' . (int)$_FAC . '", "' . $reason . '") ;';
+	                "' . (int)$_FAC . '", "' . $reason . '", now()) ;';
 				
 				if($link->query($sql) === TRUE){
 					$arrTR[0] = 1;

@@ -243,7 +243,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						ci_archivo, lugar_residencia, localidad, avenida, direccion, 
 						no_domicilio, direccion_laboral, pais, id_ocupacion, 
 						desc_ocupacion, telefono_domicilio, telefono_oficina, 
-						telefono_celular, email, peso, estatura, genero, edad, mano) 
+						telefono_celular, email, peso, estatura, genero, edad, 
+						mano, created_at) 
 					VALUES 
 						("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
 							'.(int)$cl_type_client.', "'.$cl_company_name.'", 
@@ -256,7 +257,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", 
 							"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
 							"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
-							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "") ;';
+							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "", now()) ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
 					SET razon_social = "'.$cl_company_name.'", 
@@ -294,7 +295,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						id_usuario, anulado, and_usuario, fecha_anulado, 
 						motivo_anulado, emitir, fecha_emision, id_compania, 
 						id_poliza, no_copia, facultativo, motivo_facultativo, 
-						prima_total, leido, aprobado) 
+						prima_total, leido, aprobado, created_at) 
 					values 
 					("'.$ide.'", '.$record.', 
 						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", '.$cp.', 
@@ -305,7 +306,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
 						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
-						"' . $_FAC_REASON . '", ' . $PRIMA . ', false, "' . $approved . '") ;';
+						"' . $_FAC_REASON . '", ' . $PRIMA . ', false, 
+						"' . $approved . '", now()) ;';
 					
 					if($link->query($sql) === TRUE) {
 						$auxPrefix = null;
@@ -317,7 +319,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							traccion, km, color, motor, chasis, 
 							cap_ton, no_asiento, modalidad, valor_asegurado, 
 							tasa, prima, facultativo, motivo_facultativo, 
-							aprobado, leido, vh_archivo) 
+							aprobado, leido, vh_archivo, created_at) 
 						values ';
 						
 						$record_det = $record;
@@ -353,7 +355,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							'.$arr_vh[$k]['value-insured'].', '.$arr_vh[$k]['rate'].', 
 							'.$arr_vh[$k]['premium'].', '.(int)$arr_vh[$k]['FAC'].', 
 							"'.$arr_vh[$k]['reason'].'", '.(int)$arr_vh[$k]['approved'].', 
-							false, "'.$arr_vh[$k]['attached'].'") ';
+							false, "'.$arr_vh[$k]['attached'].'", now()) ';
 							
 							if($k < $nVh) { $sqlVh .= ', '; } elseif($k === $nVh) { $sqlVh .= ';'; };
 						}

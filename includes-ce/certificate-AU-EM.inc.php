@@ -10,7 +10,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 <?php
      $j = 0;
      $num_titulares=$rsDt->num_rows;
-			
+	 $text = '';		
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
 		 if($row['tipo_cliente']=='Juridico'){
 			 $cliente_nombre = $row['cl_razon_social'];

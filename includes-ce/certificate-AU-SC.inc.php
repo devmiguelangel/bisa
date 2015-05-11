@@ -20,6 +20,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		   $ejecutivo = $row['ejecutivo'];
 		   $cargo = $row['cargo'];
 		   $nit_ci = $row['nit'];
+		   $cliente = $razon_social;
 		   
 		   $ap_paterno = '';
 		   $ap_materno = '';
@@ -34,6 +35,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		   $fono_celular = $row['telefono_celular'];
 		   $fono_domicilio = $row['telefono_domicilio'];
 		   $nit_ci = $row['ci'];
+		   $cliente = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
 		   
 		   $razon_social = '';
 		   $actividad = '';
@@ -78,6 +80,11 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   <td style="width:20%; text-align:right;">
                      <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
                   </td>
+              </tr>
+              <tr>
+                <td style="width:100%; text-align:right; font-size:65%; padding-right:12px; padding-top:3px;" colspan="3">
+                 Solicitud No <?=$row['no_cotizacion'];?>
+                </td>
               </tr>
             </table>      
          </div>
@@ -532,7 +539,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                       </td>
                                       <td style="width:33%; border-top:1px solid #333; border-right:1px solid #333;
                                          border-bottom: 1px solid #333;">&nbsp;
-                                         
+                                         <?=number_format(($vh['v_prima']/12), 2, '.', ',');?>
                                       </td>   
                                    </tr>
                                </table>
@@ -889,7 +896,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      NOMBRE DEL CLIENTE: 
                   </td>
                   <td style="width:29%; border-bottom:1px solid #333;">&nbsp;
-                     <?=$row['nombre'].' '.$row['paterno'].' '.$row['materno'];?>
+                     <?=$cliente;?>
                   </td>
                   <td style="width:55%;">&nbsp;</td>
                 </tr>
@@ -899,7 +906,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      No. CI: 
                   </td>
                   <td style="width:29%; border-bottom:1px solid #333;">&nbsp;
-                     <?=$row['ci'];?>
+                     <?=$nit_ci;?>
                   </td>
                   <td style="width:55%;">&nbsp;</td>
                 </tr>  

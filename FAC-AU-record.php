@@ -78,10 +78,14 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-idvh']) && isset($_GET['fp-approved
 		$idF = uniqid('@S#2$2013',true);
 	
 		$sqlF = 'INSERT INTO s_au_facultativo 
-		(`id_facultativo`, `id_emision`, `id_vehiculo`, `aprobado`, `tasa_recargo`, `porcentaje_recargo`, `tasa_actual`, `tasa_final`, `observacion`, `pro_usuario`, `fecha_creacion`, `recordatorio`, `fecha_recordatorio`) 
+		(`id_facultativo`, `id_emision`, `id_vehiculo`, `aprobado`, `tasa_recargo`, 
+			`porcentaje_recargo`, `tasa_actual`, `tasa_final`, `observacion`, 
+			`pro_usuario`, `fecha_creacion`, `recordatorio`, `fecha_recordatorio`,
+			created_at) 
 		VALUES 
-		("'.$idF.'", "'.$ide.'", "'.$idVh.'", "'.$pr_approved.'", "'.$pr_rate.'", '.$_PR.', '.$_CR.', '.$_FR.', "'.$_OB.'", 
-			"'.$user.'", curdate(), 0, "");';
+		("'.$idF.'", "'.$ide.'", "'.$idVh.'", "'.$pr_approved.'", 
+			"'.$pr_rate.'", '.$_PR.', '.$_CR.', '.$_FR.', "'.$_OB.'", 
+			"'.$user.'", curdate(), 0, "", now());';
 		
 		if($link->query($sqlF) === TRUE)
 			$swF = TRUE;
@@ -98,9 +102,12 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-idvh']) && isset($_GET['fp-approved
 			if((int)$rowSearch['token'] === 0){
 				$idP = uniqid('@S#2$2013',true);
 				$sqlP = 'INSERT INTO s_au_pendiente 
-					(`id_pendiente`, `id_emision`, `id_vehiculo`, `id_estado`, `observacion`, `pro_usuario`, `fecha_creacion`, `respuesta`, `obs_respuesta`, `fecha_respuesta`)
+					(`id_pendiente`, `id_emision`, `id_vehiculo`, `id_estado`, 
+						`observacion`, `pro_usuario`, `fecha_creacion`, `respuesta`, 
+						`obs_respuesta`, `fecha_respuesta`, created_at)
 					VALUES
-					("'.$idP.'", "'.$ide.'", "'.$idVh.'", '.$state[0].', "'.$_OB.'", "'.$user.'", curdate(), 0, "", "") ;';
+					("'.$idP.'", "'.$ide.'", "'.$idVh.'", '.$state[0].', "'.$_OB.'", 
+						"'.$user.'", curdate(), 0, "", "", now()) ;';
 			}elseif((int)$rowSearch['token'] > 0){
 				$sqlP = 'UPDATE s_au_pendiente 
 					SET `id_estado` = '.$pr_state[0].', `observacion` = "'.$_OB.'", `pro_usuario` = "'.$user.'", 

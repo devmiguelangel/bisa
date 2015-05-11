@@ -78,10 +78,10 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-approved']) && isset($_GET['fp-rate
 		$sqlF = 'INSERT INTO s_trd_facultativo
 			(id_facultativo, id_emision, aprobado, tasa_recargo, porcentaje_recargo, 
 			tasa_actual, tasa_final, observacion, pro_usuario, fecha_creacion, 
-			recordatorio, fecha_recordatorio)
+			recordatorio, fecha_recordatorio, created_at)
 			VALUES
 			("'.$idF.'", "'.$ide.'", "'.$pr_approved.'", "'.$pr_rate.'", '.$_PR.', 
-			'.$_CR.', '.$_FR.', "'.$_OB.'", "'.$user.'", curdate(), 0, "") ;';
+			'.$_CR.', '.$_FR.', "'.$_OB.'", "'.$user.'", curdate(), 0, "", now()) ;';
 		
 		if($link->query($sqlF) === TRUE) {
 			$swF = TRUE;
@@ -100,10 +100,11 @@ if(isset($_GET['fp-ide']) && isset($_GET['fp-approved']) && isset($_GET['fp-rate
 				$idP = uniqid('@S#4$2013',true);
 				$sqlP = 'INSERT INTO s_trd_pendiente 
 					(id_pendiente, id_emision, id_estado, observacion, 
-					pro_usuario, fecha_creacion, respuesta, obs_respuesta, fecha_respuesta)
-					VALUES
+					pro_usuario, fecha_creacion, respuesta, obs_respuesta, 
+					fecha_respuesta, created_at)
+				VALUES
 					("'.$idP.'", "'.$ide.'", '.$state[0].', "'.$_OB.'", 
-					"'.$user.'", curdate(), 0, "", "") ;';
+					"'.$user.'", curdate(), 0, "", "", now()) ;';
 			
 			}elseif((int)$rowSearch['token'] > 0){
 				$sqlP = 'UPDATE s_trd_pendiente 
