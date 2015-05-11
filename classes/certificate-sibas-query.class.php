@@ -1415,7 +1415,7 @@ class CertificateQuery extends CertificateHtml {
 				//echo $this->sqlDt;
 				if (($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT))) {
 					if ($this->rsDt->num_rows > 0) {
-						if((boolean)$this->rowPo['emitir']===true && (boolean)$this->rowPo['anulado']===false){
+						if(($this->type!=='MAIL') && ((boolean)$this->rowPo['emitir']===true) && ((boolean)$this->rowPo['anulado']===false)){
 							$this->rowPo['no_copia']+=1;
 							$update = "UPDATE s_au_em_cabecera SET no_copia=".$this->rowPo['no_copia']." where id_emision='".$this->rowPo['id_emision']."';";
 							if($this->cx->query($update)===TRUE){
@@ -1688,7 +1688,7 @@ class CertificateQuery extends CertificateHtml {
 				//echo $this->sqlDt;
 				if (($this->rsDt = $this->cx->query($this->sqlDt, MYSQLI_STORE_RESULT))) {
 					if ($this->rsDt->num_rows > 0) {
-						if((boolean)$this->rowPo['emitir']===true && (boolean)$this->rowPo['anulado']===false){
+						if(($this->type!=='MAIL') && ((boolean)$this->rowPo['emitir']===true) && ((boolean)$this->rowPo['anulado']===false)){
 							$this->rowPo['no_copia']+=1;
 							$update = "UPDATE s_trd_em_cabecera SET no_copia=".$this->rowPo['no_copia']." where id_emision='".$this->rowPo['id_emision']."';";
 							if($this->cx->query($update)===TRUE){

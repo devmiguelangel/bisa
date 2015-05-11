@@ -6,13 +6,15 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 if(isset($_POST['ide']) && isset($_POST['pr'])){
-	require('sibas-db.class.php');
-	require('classes/certificate-sibas.class.php');
+	require __DIR__ . '/classes/Logs.php';
+	require 'sibas-db.class.php';
+	require 'classes/certificate-sibas.class.php';
 	session_start();
 	
 	$link = new SibasDB();
 	
 	$arrIs = array (0 => 'LA PÓLIZA NO PUEDE SER EMITIDA', 1 => '#');
+	$record = 0;
 	
 	$ide = $link->real_escape_string(trim(base64_decode($_POST['ide'])));
 	$pr = $link->real_escape_string(trim(base64_decode($_POST['pr'])));
@@ -68,12 +70,20 @@ if(isset($_POST['ide']) && isset($_POST['pr'])){
 		$ce->host = $arr_host;
 						
 		if ($ce->Output() === TRUE) {
+			$record = $ce->no_certificate;
+
 			$arrIs[0] = 'LA PÓLIZA FUE EMITIDA CON EXITO !<br>Por favor espere...';
 			$arrIs[1] = $url;
 		} else {
 			$arrIs[0] = 'LA PÓLIZA FUE EMITIDA CON EXITO';
 		}
-	}else{
+
+		$log_msg =  $pr . ' - Em. ' . $record . ' / Emision Fac.';
+
+		$db = new Log($link);
+		$db->postLog($_SESSION['idUser'], $log_msg);
+
+	} else {
 		$arrIs[0] = 'ERROR: LA PÓLIZA NO PUDO SER EMITIDA';
 	}
 	

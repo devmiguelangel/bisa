@@ -8,7 +8,7 @@ require_once('certificate-sibas-query.class.php');
  */
 class CertificateSibas extends CertificateQuery{
 	private $title, $subject, $formatPdf, $namePdf, $linkExtra = '';
-	public $host = NULL, $address = NULL, $mod = NULL;
+	public $host = NULL, $address = NULL, $mod = NULL, $no_certificate;
 	
 	public function __construct($ide, $idc, $idcia, $product, $type, 
 		$category, $page, $nCopy, $implant, $fac = FALSE, $reason = '') {
@@ -54,6 +54,8 @@ class CertificateSibas extends CertificateQuery{
 		$this->subject = '';
 		
 		if ($this->error === FALSE) {
+			$this->no_certificate = $this->rowPo['no_emision'];
+			
 			if ($this->implant === TRUE) {
 				$this->subject = 'Solicitud de aprobacion: Poliza No. '
 					. $this->rowPo['prefijo'] . '-' . $this->rowPo['no_emision'];

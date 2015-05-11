@@ -483,8 +483,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$encrip_pass=crypt_blowfish_bycarluys($_POST['txtPassword']);
 			$histories = setHistoryPassword($history_password, $encrip_pass);
 			$histories = $conexion->real_escape_string($histories); 
-			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, date_password, history_password, id_agencia, fono_agencia, fecha_creacion) "
-			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".date('Y-m-d H:i:s')."', '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate())";
+			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
+			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 			//echo $insert;
 			if($conexion->query($insert)===TRUE){
 				//INSERTAMOS LA ENTIDAD FINANCIERA
