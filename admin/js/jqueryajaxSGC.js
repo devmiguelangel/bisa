@@ -425,7 +425,7 @@ $(function(){
 	  });
 	
 	//VERIFICAMOS SI EL PASWORD NUEVO INGRESADO EXISTE EN LA DB
-	  $('input[name="txtPassNuevo"]').blur(function(e){
+	  $('input[name="txtPassNuevo"]').keyup(function(e){
 			 var nuevo_pass = $('input[name="txtPassNuevo"]').val();	
              var idusuario = $("#idusuario").val(); 
 			 //alert(nuevo_pass);
@@ -464,7 +464,7 @@ $(function(){
 	  });
 	
 	//CONFIRMAR CONTRASENIA
-	$('#txtPassword2').blur(function(e){
+	$('#txtPassword2').keyup(function(e){
 		   var password_repite = $("#txtPassword2").val();							 
 		   var password_nuevo = $("#txtPassword").val();
 		   //alert(password_repite);
@@ -484,7 +484,7 @@ $(function(){
 	
 	
 	//VERIFICACION PASSWORD ACTUAL
-	$('#txtPassActual').blur(function(e){
+	$('#txtPassActual').keyup(function(e){
 		 var password_actual=$("#txtPassActual").val();
 		 var idusuario=$("#idusuario").val();
 		 //alert(password_actual);
@@ -554,7 +554,7 @@ $(function(){
 	
 	
 	//VERIFICAR NUEVO PASSWORD REPETIR
-	$('#txtPassRepite').blur(function(e){
+	$('#txtPassRepite').keyup(function(e){
 		   var password_repite = $("#txtPassRepite").val();							 
 		   var password_nuevo = $('input[name="txtPassNuevo"]').val();
 		   //alert(password_nuevo);

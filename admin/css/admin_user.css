@@ -22,12 +22,12 @@ a.eliminar_modelo:hover{
 /*CAMBIAR PASSWORD */
 a.privacidad{
 	display:block;
-	background:url(../images/privacy.gif) 0 0 no-repeat;
-	width:15px;
-	height:15px;
+	background:url(../images/privacy1.png) 0 0 no-repeat;
+	width:16px;
+	height:16px;
 }
 a.privacidad:hover{
-	background:url(../images/privacy2.gif) 0 0 no-repeat;
+	background:url(../images/privacy2.png) 0 0 no-repeat;
 }
 
 /*RESETEAR PASSWORD */
@@ -115,6 +115,24 @@ a.ad_incre:hover{
 	background:url(../images/ad_incre2.png) 0 0 no-repeat;
 }
 
+/*DESBLOQUEAR POR INTENTOS FALLIDOS */
+a.locked{
+	display:block;
+	background:url(../images/locked.png) 0 0 no-repeat;
+	width:16px;
+	height:16px;
+}
+a.locked:hover{
+	background:url(../images/unlocked.png) 0 0 no-repeat;
+}
+
+/*DESBLOQUEADO ESTATIC*/
+a.unlocked{
+	display:block;
+	background:url(../images/unlocked.png) 0 0 no-repeat;
+	width:16px;
+	height:16px;
+}
 /*ADICIONAR PREGUNTA 
 a.add-question{
 	display:block;

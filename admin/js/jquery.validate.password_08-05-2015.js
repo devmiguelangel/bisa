@@ -32,13 +32,15 @@
 	}
 	
 	$.validator.passwordRating = function(password, username) {
-		//alert(password.length);
 		if (!password || password.length < 6)
 			return rating(0, "too-short");
+		if (!password || password.length > 10)
+			return rating(0, "too-long");	
 		if (username && password.toLowerCase().match(username.toLowerCase()))
 			return rating(0, "similar-to-username");
-		if (SAME.test(password))
+		if (SAME.test(password)){
 			return rating(1, "very-weak");
+		}
 		
 		var lower = LOWER.test(password),
 			upper = UPPER.test(uncapitalize(password)),
@@ -69,7 +71,6 @@
 			username = $(typeof usernameField != "boolean" ? usernameField : []);
 		//alert(password);	
 		var rating = $.validator.passwordRating(password, username.val());
-		//alert(rating);
 		// update message for this field
 		
 		var meter = $(".password-meter", element.form);

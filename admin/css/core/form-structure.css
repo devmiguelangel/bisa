@@ -308,7 +308,7 @@ form.da-form .da-form-col-8-8
 
 .da-form .da-form-item .formNote
 {
-	display:block;
+	display:normal;
 	color:#555555;
 	font-size:11px;
 	margin-bottom:1px;

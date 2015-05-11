@@ -872,7 +872,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<li><a href="?l=tipocambio&var=tcm" lang="es">Tipo de Cambio Moneda</a></li>
 							</ul>
 						</li>';
-			   }
+			   }/*
 			   if($desgravamen){    //DESGRAVAMEN
 				   if($link_page=='des_producto' or $link_page=='des_preguntas' or 
 				      $link_page=='des_tasas' or $link_page=='des_datos' or 
@@ -916,7 +916,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<li><a href="?l=vg_preguntas&var=vg&list_compania=v&producto='.base64_encode('VG').'" lang="es">Administrar preguntas</a></li>
 							</ul>
 						</li>';
-			   }
+			   }*/
 			   if($autos){          //AUTOMOTORES
 				   if($link_page=='au_tipovehiculo' or $link_page=='au_tasas' or 
 				      $link_page=='au_marca_modelo' or $link_page=='au_montos' or 
@@ -965,7 +965,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<li><a href="?l=tr_formapago&var=trd&producto='.base64_encode('TRD').'" lang="es">Administrar Forma de Pago</a></li>
 							</ul>
 						</li>';
-			   }
+			   }/*
 			   if($triesgoeqm){     //TODORIESGO EQUIPO MOVIL
 				   if($link_page=='trem_tasas' or $link_page=='trem_montos' or
 				       $link_page=='trem_contenido' or $link_page=='trem_ocupacion' or
@@ -1010,7 +1010,7 @@ function main_navegation($link_page,$id_usuario_sesion,$tipo_sesion,$usuario_ses
 								<li><a href="?l=th_contenido&var=th" lang="es">Administrar contenido</a></li>
 							</ul>
 						</li>';
-			   }
+			   }*/
 			   /*if($poliza){
 				   if($link_page=='des_poliza'){
 					   $data='class="active"'; $close=''; 

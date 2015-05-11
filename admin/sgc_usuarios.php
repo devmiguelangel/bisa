@@ -182,10 +182,11 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		   var vec = valor.split('|');
 		   var id_usuario = vec[0];
 		   var text = vec[1];
+		   var intent = vec[2];
 		   jConfirm("Esta seguro de "+text+" al usuario?", ""+text+" usuario", function(r) {
 				//alert(r);
 				if(r) {
-						var dataString ='id_usuario='+id_usuario+'&text='+text+'&opcion=enabled_disabled_user';
+						var dataString ='id_usuario='+id_usuario+'&text='+text+'&intent='+intent+'&opcion=enabled_disabled_user';
 						$.ajax({
 							   async: true,
 							   cache: false,
@@ -251,6 +252,7 @@ $selectUs="select
 				when 1 then 'activo'
 				when 0 then 'inactivo'
 			  end as activado,
+			  su.intent,
 			  ust.tipo,
 			  ust.codigo,
 			  dep.departamento,
@@ -323,13 +325,19 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 											echo'';
 										 }
 								echo'>
-										<td>'.$regi['entidad'].'</td>
+										<td ';
+										 if($regi['activado']=='inactivo'){
+											echo'style="background:#FD2F18; color:#ffffff;"';
+										 }else{
+											echo'';
+										 }
+								echo'>'.$regi['entidad'].'</td>
 										<td>'.$regi['tipo'].'</td>
 										<td>'.$regi['usuario'].'</td>
 										<td>'.$regi['nombre_usuario'].'</td>
 										<td>'.$regi['email'].'</td>';
 								   echo'<td>';
-											if($regi['codigo']!='REP'){
+											if(($regi['codigo']!='REP') && ($regi['codigo']!='PA')){
 											  echo $regi['departamento'];
 											}else{
 												if(!empty($regi['departamento'])){
@@ -341,7 +349,7 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 								   echo'</td>';
 								   echo'<td>';
 										   if($regi['codigo']!='IMP'){
-											  if($regi['codigo']!='REP'){
+											  if(($regi['codigo']!='REP') && ($regi['codigo']!='PA')){
 											      echo $regi['agencia'];
 											  }else{
 												  if(!empty($regi['agencia'])){
@@ -375,11 +383,20 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 											<li><a href="?l=usuarios&idusuario='.base64_encode($regi['id_usuario']).'&editar=v" class="edit da-tooltip-s" title="Editar"></a></li>
 											<li><a href="?l=usuarios&idusuario='.base64_encode($regi['id_usuario']).'&cpass=v" class="privacidad da-tooltip-s" title="Cambiar Contrase&ntilde;a"></a></li>';
 											if($tipo_user==md5('ROOT')){
-											   echo'<li><a href="?l=usuarios&idusuario='.base64_encode($regi['id_usuario']).'&reset=v" class="resetear da-tooltip-s" title="Resetear Contrase&ntilde;a"></a></li>';
-											   if($regi['activado']=='activo'){
-												  echo'<li><a href="#" class="darbaja da-tooltip-s activar_user" id="'.base64_encode($regi['id_usuario']).'|dar baja" title="dar baja"></a></li>';
-											   }elseif($regi['activado']=='inactivo'){
-												  echo'<li><a href="#" class="daralta da-tooltip-s activar_user" id="'.base64_encode($regi['id_usuario']).'|dar alta" title="dar alta"></a></li>';
+											   echo'<li style="margin-left:2px;"><a href="?l=usuarios&idusuario='.base64_encode($regi['id_usuario']).'&reset=v" class="resetear da-tooltip-s" title="Resetear Contrase&ntilde;a"></a></li>';
+											   if($regi['intent']!=3){
+												   if($regi['activado']=='activo'){
+													  echo'<li style="margin-left:2px;"><a href="#" class="darbaja da-tooltip-s activar_user" id="'.base64_encode($regi['id_usuario']).'|dar baja|'.$regi['intent'].'" title="dar baja"></a></li>';
+												   }elseif($regi['activado']=='inactivo'){
+													  echo'<li style="margin-left:2px;"><a href="#" class="daralta da-tooltip-s activar_user" id="'.base64_encode($regi['id_usuario']).'|dar alta|'.$regi['intent'].'" title="dar alta"></a></li>';
+												   }
+											   }
+											   if($regi['intent']==3){
+												  if($regi['activado']=='inactivo'){
+												      echo'<li style="margin-left:2px;"><a href="#" class="locked da-tooltip-s activar_user" id="'.base64_encode($regi['id_usuario']).'|desbloquear|'.$regi['intent'].'" title="desbloquear"></a></li>';
+											      }/*else{
+													  echo'<li style="margin-left:2px;"><a href="#" class="unlocked da-tooltip-s activar_user" title="Desbloqueado"></a></li>';  
+												  }*/   
 											   }
 											}
 
@@ -433,12 +450,14 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 
 	//VEMOS SI EL USUARIO YA HIZO CLICK EN GUARDAR
 	if(isset($_POST['accionUsuarios'])) {
-
-
+        
+          
 		if($errFlag) {
 			//MOSTRAMOS EL FORMULARIO CON LOS ERRORES
 			mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr);
 		} else {
+			
+			
 			//GUARDAMOS EL NUEVO USUARIO EN LA BASE DE DATOS
 
 			//IMPLEMENTAMOS SEGURIDAD
@@ -448,7 +467,7 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$id_tipo = $conexion->real_escape_string($vec2[0]);
 			$tipouser_text=$vec2[1];
 			if($tipouser_text!='IMP'){
-				if($tipouser_text=='REP'){
+				if($tipouser_text=='REP' || $tipouser_text=='PA'){
 				   if(!empty($_POST['departamento'])){
 						$depto_regional = $_POST['departamento'];
 					}else{
@@ -486,9 +505,12 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$prefijo='@S#1$2013';
             $id_unico='';
             $id_unico=uniqid($prefijo,true);
-
+            $history_password = array();
 			//encriptamos el password del usuario
 			$encrip_pass=crypt_blowfish_bycarluys($_POST['txtPassword']);
+			//echo $encrip_pass;
+			$histories = setHistoryPassword($history_password, $encrip_pass);
+			$histories = $conexion->real_escape_string($histories); 
 
 			if($tipouser_text!='FAC' and $tipouser_text!='IMP'){
 			        $identidadf = $conexion->real_escape_string($_POST['identidadf']);
@@ -500,29 +522,30 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 					}
 
 					//INSERTAMOS LOS DATOS DEL USUARIO
-					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, id_agencia, fono_agencia, cargo, fecha_creacion) "
-					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, ".$id_agencia.", '".$fono_agencia."', '".$cargo."', curdate())";
-			        //echo $insert_us;
-					if($conexion->query($insert_us) === TRUE){ $resultado=TRUE; }else{ $resultado=FALSE; }
-					//INSERTAMOS LA ENTIDAD FINANCIERA
-					$prefijo2='@S#1$2013';
-					$id_unico2='';
-					$id_unico2=uniqid($prefijo2,true);
-					$insert_ef = "INSERT INTO s_ef_usuario(id_eu, usuario, id_usuario, id_ef) VALUES('".$id_unico2."', '".$usuario."', '".$id_unico."', '".$identidadf."');";
-					if($conexion->query($insert_ef) === TRUE){ $resultado=TRUE;}else{ $resultado=FALSE;}
+					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, date_password, history_password, id_agencia, fono_agencia, fecha_creacion) "
+					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".date('Y-m-d H:i:s')."', '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate())";
+			        echo $insert_us;
+					if($conexion->query($insert_us) === TRUE){ 
+					    $resultado=TRUE; 
+						$prefijo2='@S#1$2013';
+						$id_unico2='';
+						$id_unico2=uniqid($prefijo2,true);
+						$insert_ef = "INSERT INTO s_ef_usuario(id_eu, usuario, id_usuario, id_ef) VALUES('".$id_unico2."', '".$usuario."', '".$id_unico."', '".$identidadf."');";
+						if($conexion->query($insert_ef) === TRUE){ 
+						   $resultado=TRUE;
+						}else{ 
+						   $resultado=FALSE;
+						}
+				    }else{ 
+					  $resultado=FALSE; 
+					}
+					
 			}elseif($tipouser_text=='FAC'){
 			    $vecidmultiple=$_POST['idmultiple'];
-				/*$selectAg="select
-							  id_agencia,
-							  agencia
-							from
-							  s_agencia
-							where
-							  id_depto is null and id_ef='".$vecidmultiple[0]."';";
-				  $reg_ag=mysql_fetch_array(mysql_query($selectAg,$conexion));*/
+				
 				//INSERTAMOS LOS DATOS DEL USUARIO
-				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, id_agencia, fono_agencia, cargo, fecha_creacion) "
-					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, null, '".$fono_agencia."', '".$cargo."', curdate())";
+				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, date_password, history_password, id_agencia, fono_agencia, cargo, fecha_creacion) "
+					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".date('Y-m-d H:i:s')."', '".$histories."', null, '".$fono_agencia."', '".$cargo."', curdate())";
 				if($conexion->query($insert_us) === TRUE){ $resultado=TRUE;}else{ $resultado=FALSE;}
 
 				$cant=count($vecidmultiple);
@@ -540,8 +563,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 				$vecidmultiple=$_POST['idmultiple_agency'];
 				$identidadf = $conexion->real_escape_string($_POST['identidadf']);
 				//INSERTAMOS LOS DATOS DEL USUARIO
-				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, id_agencia, fono_agencia, cargo, fecha_creacion) "
-					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, null, '".$fono_agencia."', '".$cargo."', curdate())";
+				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, date_password, history_password, id_agencia, fono_agencia, cargo, fecha_creacion) "
+					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".date('Y-m-d H:i:s')."', '".$histories."', null, '".$fono_agencia."', '".$cargo."', curdate())";
 				//echo $insert_us;
 				if($conexion->query($insert_us) === TRUE){ $resultado=TRUE;}else{ $resultado=FALSE;}
 
@@ -570,8 +593,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 
             //VERIFICAMOS SI HUBO ALGUN ERROR AL INGRESAR EN LA TABLA
 			if($resultado){
-				 //VERIFICAMOS EL TIPO DE USUARIO NO ES [FAC/LOG/REP/IMP]
-				 if($tipouser_text!='FAC' and $tipouser_text!='LOG' and $tipouser_text!='REP' and $tipouser_text!='IMP'){
+				 //VERIFICAMOS EL TIPO DE USUARIO NO ES [FAC/LOG/REP/IMP/PA]
+				 if($tipouser_text!='FAC' and $tipouser_text!='LOG' and $tipouser_text!='REP' and $tipouser_text!='IMP' and $tipouser_text!='PA'){
 						//METEMOS LOS PERMISOS DEL USUARIO A LA TABLA TBLUSUARIOSPERMISOS
 						if(isset($_POST['cbIni'])) {
 							$insert_permiso = "INSERT INTO s_usuario_permiso(id_permiso, id_usuario, pagina) "
@@ -656,13 +679,13 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 							header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
 						}
 				 }else{
-					 $mensaje="Se registro correctamente los datos del usuario ".$usuario;
+					 $mensaje="Se registro correctamente los datos del usuario ".$nombre;
 				     header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
 				 }
 		    } else {
-			    $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".mysql_errno($conexion) . ": " . mysql_error($conexion);
+			    $mensaje="Error en la consulta ".$conexion->errno.": ".$conexion->error;
 				header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
-		    }
+		    }/**/
 
 		}
 	} else {
@@ -864,7 +887,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					   if(departamento!=''){
 						   $('#errordepartamento').hide('slow');
 					   }else{
-						   if(tipousuario!='REP'){
+						   if((tipousuario!='REP') && (tipousuario!='PA')){
 							   sum++;
 							   $('#errordepartamento').show('slow');
 							   $('#errordepartamento').html('seleccione departamento');
@@ -982,11 +1005,11 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				  var vec = variable.split('|');
 				  var tipousuario=vec[1];
 				  //habilitar/dsabilitar msg en permisos checkbox
-				  if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='REP' || tipousuario=='IMP'){
+				  if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='REP' || tipousuario=='IMP' || tipousuario=='PA'){
 					  $('#errorseleccion').hide('slow');
 				  }
 
-				  if(tipousuario=='REP'){
+				  if(tipousuario=='REP' || tipousuario=='PA'){
 					    $('#departamento option').each(function(index) {
 							//var option = $(this).text().toLowerCase();
 							var option = $(this).prop('value');
@@ -1039,7 +1062,34 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				  $('#content-agency').fadeOut('slow');
 			  }
 		   });
-
+           
+		   $('#txtPassword').keyup(function(e){
+			  var text = $(this).prop('value');
+	          if(text.length<6){
+				$('#error_pass').slideDown('slow');
+				$('#error_pass').html('ingrese 6 o mas caracteres');
+				$('#txtPassword2').attr('disabled',true); 
+				$('#btnUsuario').attr('disabled',true); 
+			  }else{
+				  $.post("verificar_password.php",
+					  {pass:text,opcion:"verify_password"},
+					  function(data, textStatus, jqXHR)
+					  {
+							if(data==1){
+							   	$('#error_pass').slideDown('slow');
+				                $('#error_pass').html('No pueden haber caracteres consecutivos repetidos');
+								$('#txtPassword2').attr('disabled',true); 
+				                $('#btnUsuario').attr('disabled',true); 
+							}else{
+								$('#error_pass').slideUp('slow');
+								$('#txtPassword2').attr('disabled',false); 
+								$('#btnUsuario').attr('disabled',false);
+							}
+							   
+					  }); 
+			  }
+		   });
+		   
 
        });
     </script>
@@ -1266,17 +1316,28 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 
 				</div>
 				<div class="da-form-row">
-					<label style="text-align:right;"><b><span lang="es">'.utf8_encode('Contraseña').'</span></b></label>
-					<div class="da-form-item large">
-						<input class="textbox" type="password" name="txtPassword" id="txtPassword" style="width: 200px;" maxlength="15"/>
-						<span class="formNote" style="text-align:right; width:400px;">M&aacute;x. 15 caracteres M&iacute;n. 8 caracteres</span>
-						<div class="password-meter" style="width:199px;">
-							<div class="password-meter-message">&nbsp;</div>
-							<div class="password-meter-bg">
-								<div class="password-meter-bar"></div>
-							</div>
-						</div>
-					</div>
+				    <table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin:0px;">
+					   <tr>
+					     <td style="width:22%; border: 0px solid #0081C2;">
+						   <label style="text-align:right;"><b><span lang="es">'.utf8_encode('Contraseña').'</span></b></label>
+						 </td>
+						 <td style="width:35%; border: 0px solid #0081C2;">
+						   
+						     <input class="textbox" type="password" name="txtPassword" id="txtPassword" style="width: 200px;" maxlength="10"/>
+							 <div class="password-meter" style="width:199px;">
+								<div class="password-meter-message">&nbsp;</div>
+								<div class="password-meter-bg">
+									<div class="password-meter-bar"></div>
+								</div>
+							 </div>
+						 </td>
+						 <td style="width:43%; border: 0px solid #0081C2;">
+						   <div class="da-form-item large" style="margin:0px;">
+						     <span class="formNote">M&aacute;x. 10 caracteres M&iacute;n. 6 caracteres<span class="errorMessage" id="error_pass" style="text-align:left;"></span></span>
+						   </div>
+						 </td>
+					   </tr>
+					</table>
 				</div>
 				<div class="da-form-row">
 					<label style="text-align:right;"><b><span lang="es">'.utf8_encode('Confirmar contraseña').'</span></b></label>
@@ -1719,7 +1780,7 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 					$id_tipo = $conexion->real_escape_string($vec2[0]);
 					$tipouser_text=$vec2[1];
 					if($tipouser_text!='IMP'){
-						 if($tipouser_text!='REP'){
+						 if(($tipouser_text!='REP') && ($tipouser_text!='PA')){
 							 $depto_regional = $_POST['departamento'];
 						 }else{
 							if(!empty($_POST['departamento'])){
@@ -2190,7 +2251,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						   if(departamento!=''){
 							   $('#errordepartamento').hide('slow');
 						   }else{
-							   if(tipousuario!='REP'){
+							   if((tipousuario!='REP') && (tipousuario!='PA')){
 								   sum++;
 								   $('#errordepartamento').show('slow');
 								   $('#errordepartamento').html('seleccione departamento');
@@ -2343,11 +2404,11 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				  var vec = variable.split('|');
 				  var tipousuario=vec[1];
 				  //habilitar/dsabilitar msg en permisos checkbox
-				  if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='REP' || tipousuario=='IMP'){
+				  if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='REP' || tipousuario=='IMP' || tipousuario=='PA'){
 					  $('#errorseleccion').hide('slow');
 				  }
 
-				  if(tipousuario=='REP'){
+				  if((tipousuario=='REP') || (tipousuario=='PA')){
 					    $('#departamento option').each(function(index) {
 							//var option = $(this).text().toLowerCase();
 							var option = $(this).prop('value');
@@ -2564,6 +2625,12 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			   $oficred='disabled';
 
 		   }elseif($fila['codigo']=='REP'){//REPORTES
+			   $opera='disabled';
+			   $admiope='disabled';
+			   $creaus='disabled';
+			   $oficred='disabled';
+
+		   }elseif($fila['codigo']=='PA'){//PREAPROBADAS
 			   $opera='disabled';
 			   $admiope='disabled';
 			   $creaus='disabled';
@@ -2789,7 +2856,7 @@ echo'<div class="da-panel" style="width:650px;">
 										  tipo_dp=1;";
 						$rsdep = $conexion->query($selectDep,MYSQLI_STORE_RESULT);
 						echo'<select name="departamento" id="departamento" class="requerid">';
-						      if($fila['codigo']!='REP'){
+						      if(($fila['codigo']!='REP') && ($fila['codigo']!='PA')){
 							     echo'<option value="" lang="es">Seleccione...</option>';
 							  }else{
 								 echo'<option value="" lang="es">Todos</option>';
@@ -2835,7 +2902,7 @@ echo'<div class="da-panel" style="width:650px;">
 				       </div>
 					</div>';
 					 if($fila['codigo']!='FAC' and $fila['codigo']!='IMP'){
-						 if($fila['codigo']!='REP'){
+						 if(($fila['codigo']!='REP') && ($fila['codigo']!='PA')){
 							  echo'<div class="da-form-row" id="content-agency">';
 								  echo'<label style="text-align:right;"><b><span lang="es">Agencia</span></b></label>
 										<div class="da-form-item small">
@@ -2891,7 +2958,7 @@ echo'<div class="da-panel" style="width:650px;">
 											 $num_reg = $resag->num_rows;
 											  echo'<select name="id_agencia" id="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
 													if($num_reg>0){
-														if($fila['codigo']!='REP')
+														if(($fila['codigo']!='REP') && ($fila['codigo']!='PA'))
 													        echo'<option value="" lang="es">Ninguno</option>';
 														  else
 														     echo'<option value="" lang="es">Todos</option>';
@@ -2904,7 +2971,7 @@ echo'<div class="da-panel" style="width:650px;">
 													  }
 													  $resag->free();
 													}else{
-														if($fila['codigo']!='REP')
+														if(($fila['codigo']!='REP') && ($fila['codigo']!='PA'))
 													       echo'<option value="" lang="es">Ninguno</option>';
 														 else
 														   echo'<option value="" lang="es">Todos</option>';
@@ -3144,23 +3211,47 @@ function cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $co
 				//MOSTRAMOS EL FORMULARIO CON LOS ERRORES
 				mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion);
 			} else {
-                //limpiar entradas
+                $query = 'select 
+							su.id_usuario as idUser,
+							su.usuario as u_usuario,
+							su.nombre as u_nombre,
+							su.password as u_password,
+							su.email as u_email,
+							su.history_password
+						from
+							s_usuario as su
+						where
+							su.id_usuario = "'.$idusuario.'"
+						limit 0, 1;';
+				$result = $conexion->query($query,MYSQLI_STORE_RESULT);
+				$row =  $result->fetch_array(MYSQLI_ASSOC);
+				//limpiar entradas
 				$nuevopass = $conexion->real_escape_string($_POST['txtPassNuevo']);
-				//encriptamos el password
-			    $encrip_pass=crypt_blowfish_bycarluys($nuevopass);
-
-				$update = "UPDATE s_usuario SET password='".$encrip_pass."' "
-				."WHERE id_usuario='".$idusuario."' LIMIT 1";
-
-
-				//MOSTRAMOS LA LISTA DE USUARIOS
-				if($conexion->query($update) === TRUE){
-				   //REALIZAMOS EL CAMBIO DE CONTRASEÑA
-				   $mensaje='Se cambio correctamente la contraseña del usuario '.$_POST['usuario'];
-				   header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
-				} else{
-				   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " . $conexion->error;
-				   header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+				if (getHistoryPassword($row['history_password'], $nuevopass)) {
+					  //encriptamos el password
+					  $encrip_pass=crypt_blowfish_bycarluys($nuevopass);
+	                  $histories = setHistoryPassword($row['history_password'], $encrip_pass);
+					  $histories = $conexion->real_escape_string($histories);
+					  
+					  $update = "UPDATE s_usuario 
+					             SET password='".$encrip_pass."', 
+							         history_password = '" . $histories . "', 
+								     date_password = '" . date('Y-m-d H:i:s') . "'
+								 WHERE id_usuario='".$idusuario."' LIMIT 1";
+	  
+	  
+					  //MOSTRAMOS LA LISTA DE USUARIOS
+					  if($conexion->query($update) === TRUE){
+						 //REALIZAMOS EL CAMBIO DE CONTRASEÑA
+						 $mensaje='Se cambio correctamente la contraseña del usuario '.$_POST['usuario'];
+						 header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
+					  } else{
+						 $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno. ": ".$conexion->error;
+						 header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+					  }
+				}else{
+					$mensaje="La nueva contraseña no puede ser igual a las ultimas 10";
+					header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
 				}
 
 			}
@@ -3180,25 +3271,48 @@ function cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $co
 					//MOSTRAMOS EL FORMULARIO CON LOS ERRORES
 					mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion);
 				} else {
+					$query = 'select 
+								su.id_usuario as idUser,
+								su.usuario as u_usuario,
+								su.nombre as u_nombre,
+								su.password as u_password,
+								su.email as u_email,
+								su.history_password
+							from
+								s_usuario as su
+							where
+								su.id_usuario = "'.$idusuario.'"
+							limit 0, 1;';
+					$result = $conexion->query($query,MYSQLI_STORE_RESULT);
+					$row =  $result->fetch_array(MYSQLI_ASSOC);
 					//limpiar entradas
                     $nuevopass = $conexion->real_escape_string($_POST['txtPassNuevo']);
-					//encriptamos el password
-			        $encrip_pass=crypt_blowfish_bycarluys($nuevopass);
-
-					$update = "UPDATE s_usuario SET password='".$encrip_pass."' "
-					."WHERE id_usuario='".$idusuario."' LIMIT 1";
-
-
-					//MOSTRAMOS LA LISTA DE USUARIOS
-					if($conexion->query($update) === TRUE){
-					   //REALIZAMOS EL CAMBIO DE CONTRASEÑA
-					   $mensaje='Se cambio correctamente la contraseña del usuario '.$_POST['usuario'];
-				       header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
-					} else{
-					   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
-				       header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+					if (getHistoryPassword($row['history_password'], $nuevopass)) {
+						//encriptamos el password
+						$encrip_pass = crypt_blowfish_bycarluys($nuevopass);
+						$histories = setHistoryPassword($row['history_password'], $encrip_pass);
+					    $histories = $conexion->real_escape_string($histories);
+	
+						$update = "UPDATE s_usuario 
+						          SET password='".$encrip_pass."', 
+							          history_password = '" . $histories . "', 
+								      date_password = '" . date('Y-m-d H:i:s') . "' 
+								  WHERE id_usuario='".$idusuario."' LIMIT 1";
+	
+	                    //echo $update;
+						//MOSTRAMOS LA LISTA DE USUARIOS
+						if($conexion->query($update) === TRUE){
+						   //REALIZAMOS EL CAMBIO DE CONTRASEÑA
+						   $mensaje='Se cambio correctamente la contraseña del usuario '.$_POST['usuario'];
+						   header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
+						} else{
+						   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno. ": ".$conexion->error;
+						   header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+						}
+					}else{
+						$mensaje="La nueva contraseña no puede ser igual a las ultimas 10";
+					    header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
 					}
-
 					//MOSTRAMOS LA LISTA DE USUARIOS
 					//header('Location: sgc.php?l=usuarios');
 				}
@@ -3219,16 +3333,50 @@ function mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_ses
   ?>
 
 	<script type="text/javascript">
-       $(function(){
+       $(document).ready(function() {
 		   $('#btnCancelar').click(function(){
 			   $(location).prop('href','index.php?l=usuarios');
 		   });
+		   
+		   $('#txtPassword').keyup(function(e){
+			  var text = $(this).prop('value');
+	          if(text.length<6){
+				$('#error_pass').slideDown('slow');
+				$('#error_pass').html('ingrese 6 o mas caracteres');
+				$('#txtPassRepite').attr('disabled',true); 
+				$('#btn_cambiar_pass').attr('disabled',true); 
+			  }else{
+				  $.post("verificar_password.php",
+					  {pass:text,opcion:"verify_password"},
+					  function(data, textStatus, jqXHR)
+					  {
+							if(data==1){
+							   	$('#error_pass').slideDown('slow');
+				                $('#error_pass').html('No pueden haber caracteres consecutivos repetidos');
+								$('#txtPassRepite').attr('disabled',true); 
+				                $('#btn_cambiar_pass').attr('disabled',true);
+							}else{
+								$('#error_pass').slideUp('slow');
+								$('#txtPassRepite').attr('disabled',false); 
+								$('#btn_cambiar_pass').attr('disabled',false);
+							}
+							   
+					  }); 
+			  }
+		   });
+		   
 	   });
     </script>
 
  <?php
 	$idusuario = base64_decode($_GET['idusuario']);
-	$selectUs="select usuario from s_usuario where id_usuario='".$idusuario."';";
+	$selectUs="select 
+	            usuario,
+				nombre 
+			  from 
+			    s_usuario 
+			  where 
+			   id_usuario='".$idusuario."';";
 	$reus = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 	$regUs = $reus->fetch_array(MYSQLI_ASSOC);
 	$reus->free();
@@ -3256,7 +3404,7 @@ function mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_ses
 				<div class="da-form-row">
 					<label><span lang="es">Usuario</span></label>
 					<div class="da-form-item large">
-						<b>'.$regUs['usuario'].'</b>
+						<b>'.$regUs['nombre'].'</b>
 					</div>
 				</div>
 				<div class="da-form-row">
@@ -3267,18 +3415,29 @@ function mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_ses
 					</div>
 				</div>
 				<div class="da-form-row">
-					<label><span lang="es">'.utf8_encode('Nueva contraseña').'</span></label>
-					<div class="da-form-item large">
-						<input class="textbox" type="password" name="txtPassNuevo" id="txtPassword" style="width: 200px;" maxlength="15" disabled="false"/>
-						<span class="formNote" style="text-align:right; width:400px;" lang="es">'.utf8_encode('Máx. 15 caracteres Mín. 8 caracteres').'</span>
-                        <div id="ver_msg2"><label class="errorMessage" id="erro_pass_nuevo"></label></div>
-						<div class="password-meter" style="width:199px;">
-							<div class="password-meter-message">&nbsp;</div>
-							<div class="password-meter-bg">
-								<div class="password-meter-bar"></div>
-							</div>
-						</div>
-					</div>
+					<table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin:0px;">
+					   <tr>
+					     <td style="width:22%; border: 0px solid #0081C2;">
+						   <label><span lang="es">'.utf8_encode('Nueva contraseña').'</span></label>
+						 </td>
+						 <td style="width:35%; border: 0px solid #0081C2;">
+						   
+						     <input class="textbox" type="password" name="txtPassNuevo" id="txtPassword" style="width: 200px;" maxlength="10"/>
+							 <div class="password-meter" style="width:199px;" id="password-meter">
+								<div class="password-meter-message">&nbsp;</div>
+								<div class="password-meter-bg">
+									<div class="password-meter-bar"></div>
+								</div>
+							 </div>
+						 </td>
+						 <td style="width:43%; border: 0px solid #0081C2;">
+						   <div class="da-form-item large" style="margin:0px;">
+						     <span class="formNote">M&aacute;x. 10 caracteres M&iacute;n. 6 caracteres<span class="errorMessage" id="error_pass" style="text-align:left;"></span></span>
+							 <div id="ver_msg2"><label class="errorMessage" id="erro_pass_nuevo"></label></div>
+						   </div>
+						 </td>
+					   </tr>
+					</table>	
 				</div>
 				<div class="da-form-row">
 					<label><span lang="es">'.utf8_encode('Confirmar contraseña').'</span></label>
@@ -3292,7 +3451,7 @@ function mostrar_cambiar_password($id_usuario_sesion, $tipo_sesion, $usuario_ses
 					<input type="submit" value="Guardar" class="da-button green" name="btn_cambiar_pass" id="btn_cambiar_pass" disabled="false" lang="es"/>
 					<input type="hidden" name="accionCambiar" value="checkdatos"/>
 	                <input type="hidden" name="idusuario" id="idusuario" value="'.$idusuario.'"/>
-					<input type="hidden" name="usuario" id="usuario" value="'.$regUs['usuario'].'"/>
+					<input type="hidden" name="usuario" id="usuario" value="'.$regUs['nombre'].'"/>
 				</div>
 			</form>
 		</div>
@@ -3324,24 +3483,47 @@ function resetear_contrasenia_usuario($id_usuario_sesion, $tipo_sesion, $usuario
 				//MOSTRAMOS EL FORMULARIO CON LOS ERRORES
 				mostrar_resetear_contrasenia($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr);
 			} else {
-
+                $query = 'select 
+							su.id_usuario as idUser,
+							su.usuario as u_usuario,
+							su.nombre as u_nombre,
+							su.password as u_password,
+							su.email as u_email,
+							su.history_password
+						from
+							s_usuario as su
+						where
+							su.id_usuario = "'.$idusuario.'"
+						limit 0, 1;';
+				$result = $conexion->query($query,MYSQLI_STORE_RESULT);
+				$row =  $result->fetch_array(MYSQLI_ASSOC);
 				//limpiar entradas
 				$nuevopass = $conexion->real_escape_string($_POST['txtPassNuevo']);
-				//encriptamos el password
-			    $encrip_pass=crypt_blowfish_bycarluys($nuevopass);
-
-				//date_default_timezone_set('America/La_Paz');
-				$fecChange = date('Y-m-d');
-				$update = "UPDATE s_usuario SET password='".$encrip_pass."', cambio_password=0 WHERE id_usuario='".$idusuario."' LIMIT 1";
-
-
-				if($conexion->query($update) === TRUE){
-				   //SE METIO A TBLHOMENOTICIAS, VAMOS A VER LA NOTICIA NUEVA
-				   $mensaje='Se reseteo correctamente la contrase&ntilde;a del usuario: '.$_POST['usuario'];
-				   header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
-				} else{
-				   $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
-				   header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+				if (getHistoryPassword($row['history_password'], $nuevopass)) {
+					  //encriptamos el password
+					  $encrip_pass=crypt_blowfish_bycarluys($nuevopass);
+	                  $histories = setHistoryPassword($row['history_password'], $encrip_pass);
+					  $histories = $conexion->real_escape_string($histories);
+					  //date_default_timezone_set('America/La_Paz');
+					  $fecChange = date('Y-m-d');
+					  $update = "UPDATE s_usuario 
+					            SET password='".$encrip_pass."', 
+								    cambio_password=0,
+							        history_password = '" . $histories . "', 
+								    date_password = '" . date('Y-m-d H:i:s') . "'  
+								WHERE id_usuario='".$idusuario."' LIMIT 1";
+	  
+					  if($conexion->query($update) === TRUE){
+						 //SE METIO A TBLHOMENOTICIAS, VAMOS A VER LA NOTICIA NUEVA
+						 $mensaje='Se reseteo correctamente la contrase&ntilde;a del usuario: '.$_POST['usuario'];
+						 header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
+					  } else{
+						 $mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno. ": " .$conexion->error;
+						 header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
+					  }
+				}else{
+					$mensaje="La nueva contraseña no puede ser igual a las ultimas 10";
+					header('Location: index.php?l=usuarios_admin&op=2&msg='.$mensaje);
 				}
 			}
 
@@ -3363,16 +3545,44 @@ function mostrar_resetear_contrasenia($id_usuario_sesion, $tipo_sesion, $usuario
  ?>
 
 	<script type="text/javascript">
-       $(function(){
+       $(document).ready(function() {
 		   $('#btnCancelar').click(function(){
 			   $(location).prop('href','index.php?l=usuarios');
 		   });
+		   
+		   $('#txtPassword').keyup(function(e){
+			  var text = $(this).prop('value');
+	          if(text.length<6){
+				$('#error_pass').slideDown('slow');
+				$('#error_pass').html('ingrese 6 o mas caracteres');
+				$('#txtPassRepite').attr('disabled',true); 
+				$('#btn_cambiar_pass').attr('disabled',true); 
+			  }else{
+				  $.post("verificar_password.php",
+					  {pass:text,opcion:"verify_password"},
+					  function(data, textStatus, jqXHR)
+					  {
+							if(data==1){
+							   	$('#error_pass').slideDown('slow');
+				                $('#error_pass').html('No pueden haber caracteres consecutivos repetidos');
+								$('#txtPassRepite').attr('disabled',true); 
+				                $('#btn_cambiar_pass').attr('disabled',true);
+							}else{
+								$('#error_pass').slideUp('slow');
+								$('#txtPassRepite').attr('disabled',false); 
+								$('#btn_cambiar_pass').attr('disabled',false);
+							}
+							   
+					  }); 
+			  }
+		   });
+		   
 	   });
     </script>
 
  <?php
 	$idusuario = base64_decode($_GET['idusuario']);
-	$selectUs="select usuario from s_usuario where id_usuario='".$idusuario."';";
+	$selectUs="select usuario, nombre from s_usuario where id_usuario='".$idusuario."';";
 	$resus = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 	$regUs = $resus->fetch_array(MYSQLI_ASSOC);
 	$resus->free();
@@ -3400,22 +3610,33 @@ function mostrar_resetear_contrasenia($id_usuario_sesion, $tipo_sesion, $usuario
 				<div class="da-form-row">
 					<label><span lang="es">Usuario</span></label>
 					<div class="da-form-item large">
-						<b>'.$regUs['usuario'].'</b>
+						<b>'.$regUs['nombre'].'</b>
 					</div>
 				</div>
 				<div class="da-form-row">
-					<label><span lang="es">'.utf8_encode('Nueva contraseña').'</span></label>
-					<div class="da-form-item large">
-						<input class="textbox" type="password" name="txtPassNuevo" id="txtPassword" style="width: 200px;" maxlength="15"/>
-						<span class="formNote" style="text-align:right; width:400px;" lang="es">'.utf8_encode('Máx. 15 caracteres Mín. 8 caracteres').'</span>
-                        <div id="ver_msg2"><label class="errorMessage" id="erro_pass_nuevo" lang="es"></label></div>
-						<div class="password-meter" style="width:199px;">
-							<div class="password-meter-message" lang="es">&nbsp;</div>
-							<div class="password-meter-bg">
-								<div class="password-meter-bar"></div>
-							</div>
-						</div>
-					</div>
+					<table border="0" cellpadding="0" cellspacing="0" style="width:100%; margin:0px;">
+					   <tr>
+					     <td style="width:22%; border: 0px solid #0081C2;">
+						   <label><span lang="es">'.utf8_encode('Nueva contraseña').'</span></label>
+						 </td>
+						 <td style="width:35%; border: 0px solid #0081C2;">
+						   
+						     <input class="textbox" type="password" name="txtPassNuevo" id="txtPassword" style="width: 200px;" maxlength="10"/>
+							 <div class="password-meter" style="width:199px;" id="password-meter">
+								<div class="password-meter-message">&nbsp;</div>
+								<div class="password-meter-bg">
+									<div class="password-meter-bar"></div>
+								</div>
+							 </div>
+						 </td>
+						 <td style="width:43%; border: 0px solid #0081C2;">
+						   <div class="da-form-item large" style="margin:0px;">
+						     <span class="formNote">M&aacute;x. 10 caracteres M&iacute;n. 6 caracteres<span class="errorMessage" id="error_pass" style="text-align:left;"></span></span>
+							 <div id="ver_msg2"><label class="errorMessage" id="erro_pass_nuevo"></label></div>
+						   </div>
+						 </td>
+					   </tr>
+					</table>	
 				</div>
 				<div class="da-form-row">
 					<label><span lang="es">'.utf8_encode('Confirmar contraseña').'</span></label>
@@ -3429,7 +3650,7 @@ function mostrar_resetear_contrasenia($id_usuario_sesion, $tipo_sesion, $usuario
 					<input type="submit" value="Guardar" class="da-button green" name="btn_cambiar_pass" id="btn_cambiar_pass" disabled="false" lang="es"/>
 					<input type="hidden" name="accionCambiar" value="checkdatos"/>
 	                <input type="hidden" name="idusuario" id="idusuario" value="'.$idusuario.'"/>
-					<input type="hidden" name="usuario" id="usuario" value="'.$regUs['usuario'].'"/>
+					<input type="hidden" name="usuario" id="usuario" value="'.$regUs['nombre'].'"/>
 				</div>
 			</form>
 		</div>
@@ -3493,5 +3714,36 @@ function mostrar_dar_baja_usuario($id_usuario_sesion, $tipo_sesion, $usuario_ses
 		  <input class="da-button gray left" type="submit" name="btnCancelar" value="Cancelar"/>';
 	echo '</td></tr></table></form>';
 	echo'</div>';
+}
+
+function getHistoryPassword($histories, $password) {
+	$histories = json_decode($histories, true);
+
+	if (count($histories) > 0) {
+		foreach ($histories as $key => $history) {
+			if (crypt($password, $history['password']) == $history['password']) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function setHistoryPassword($histories, $password) {
+	$histories = json_decode($histories, true);
+	$no_histories = count($histories);
+
+	if ($no_histories === 10) {
+		$histories = array();
+		$no_histories = 0;
+	}
+
+	$histories[$no_histories + 1] = [
+		'password'  => $password,
+		'ts'		=> date('Y-m-d H:i:s')
+	];
+	
+	return json_encode($histories);
 }
 ?>

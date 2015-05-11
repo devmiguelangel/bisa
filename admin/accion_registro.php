@@ -330,6 +330,8 @@
 	  }elseif($_POST['text']=='dar baja'){
 		  $update = "update s_usuario set activado=0 where id_usuario='".base64_decode($_POST['id_usuario'])."';"; 
 		  
+	  }elseif($_POST['text']=='desbloquear'){
+		  $update = "update s_usuario set activado=1, intent=0 where id_usuario='".base64_decode($_POST['id_usuario'])."';";
 	  }	
 	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
 	  if($conexion->query($update) === TRUE){				

@@ -16,7 +16,7 @@
 	  $res = $conexion->query($select,MYSQLI_STORE_RESULT);
 	  $num_regi = $res->num_rows;
 	  if($_POST['required']=='f'){
-		  if($_POST['tipousuario']!='REP'){
+		  if($_POST['tipousuario']!='REP' && $_POST['tipousuario']!='PA'){
 				if($num_regi>0){$var='<option value="" lang="es">Ninguno</option>';}else{$var='<option value="" lang="es">Ninguno</option>';}
 		  }else{
 			    if($num_regi>0){$var='<option value="" lang="es">Todos</option>';}else{$var='<option value="" lang="es">Todos</option>';}

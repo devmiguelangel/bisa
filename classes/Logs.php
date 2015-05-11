@@ -6,7 +6,7 @@ class Log
 {
 	private $m;
 	private $db;
-	private $db_name = 'test';
+	private $db_name = 'BisaLog';
 	private	$log;
 	private $cx;
 
