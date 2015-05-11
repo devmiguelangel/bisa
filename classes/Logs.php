@@ -1,27 +1,13 @@
 <?php
 
-date_default_timezone_set('America/La_Paz');
-
 class Log
 {
 	private $m;
-	private $db;
-	private $db_name = 'BisaLog';
-	private	$log;
 	private $cx;
 
 	public function __construct($cx)
 	{
 		$this->cx 	= $cx;
-		$this->m 	= new MongoClient();
-		$this->db 	= new MongoDB($this->m, $this->db_name);
-
-		$this->log = $this->db->createCollection(
-			'logs',
-			array(
-				'capped' => true
-			)
-		);
 	}
 
 	public function postLog($user_id, $msg)
@@ -35,19 +21,22 @@ class Log
 			$user_name 	= $data['usuario'];
 		}
 
-		$this->log->insert([
-			'user_id'	=> $user_id,
-			'user_name'	=> $user_name,
-			'ip'		=> $this->getUserIP(),
-			'msg'		=> $msg,
-			'created_at'	=> date('Y-m-d H:i:s'),
-			'ts'		=> new MongoDate()
-		]);
+		$sql = 'insert into logs
+		(id, user_id, user_name, ip, msg)
+		values
+		("' . date('U') . '", "' . $user_id . '", 
+			"' . $user_name . '", "' . $this->getUserIP() . '", 
+			"' . $msg . '")
+		;';
+		// echo $sql;
+		if ($this->cx->query($sql)) {
+			# code...
+		}
 	}
 
 	public function getLog()
 	{
-		$data = $this->log->find();
+		$data = array();
 
 		return $data;
 	}
