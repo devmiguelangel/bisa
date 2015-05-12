@@ -18,9 +18,11 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 	    $fecha_em = $row['fecha_emision'];
 		$vec_f = explode('-',$fecha_em);
 		$digi = substr($vec_f[0], -2);
+		$mes = $vec_f[1];
 	 }else{
 	    $fecha = new DateTime();
         $fecha_em = $fecha->format('Y-m-d');
+		$mes = $fecha->format('m');
 		$anio = $fecha->format('Y');
 		$digi = substr($anio, -2);
 	 }
@@ -32,7 +34,7 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                 <tr>
                   <td style="width:100%; text-align:right;">
                      La Paz, <?=get_date_format_crt($fecha_em)?><br><br>
-                     SUD/xxx/<?=$digi;?>
+                     SUD/<?=$mes;?>/<?=$digi;?>
 
                   </td> 
                 </tr>

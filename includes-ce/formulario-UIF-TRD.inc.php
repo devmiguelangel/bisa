@@ -9,15 +9,35 @@ function trd_formulario_uif($link, $row, $rsDt, $url, $implant, $fac, $reason = 
       font-family: Arial, Helvetica, sans-serif; color: #000000; border-left: 1px solid #000;
       border-top: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 <?php
+    if($row['tipo_cliente']=='Natural'){
        $vec = explode('-',$row['fecha_emision']);
 	   $dia = $vec[2];
 	   $mes = $vec[1];
 	   $anio = $vec[0];
 	   $cliente = $row['cl_nombre'].' '.$row['cl_paterno'].' '.$row['cl_materno'];
+	   $sucursal = $row['u_depto'];
+	   $ci = $row['cl_ci'];
+	   $extension = $row['cl_extension'];
+	   $pais = $row['cl_pais'];
+	   $direccion = $row['cl_direccion'];
 	   $vec_fn = explode('-',$row['cl_fecha_nacimiento']);
 	   $dia_fn = $vec_fn[2];
 	   $mes_fn = $vec_fn[1];
 	   $anio_fn = $vec_fn[0]; 
+	}elseif($row['tipo_cliente']=='Juridico'){
+	   $dia = '';
+	   $mes = '';
+	   $anio = '';
+	   $cliente = ''; 
+	   $sucursal = '';
+	   $ci = '';
+	   $extension = '';
+	   $pais = '';
+	   $direccion = '';
+	   $dia_fn = '';
+	   $mes_fn = '';
+	   $anio_fn = ''; 	
+	}
 ?>
         <div style="width: 775px; border: 0px solid #000; text-align:center;">
             <table 
@@ -45,7 +65,7 @@ function trd_formulario_uif($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         </tr>
                         <tr>
                           <td style="width:40%; text-align:center; border-left: 1px solid #000;
-                           border-bottom: 1px solid #000; height:25px;"><?=$row['u_depto'];?></td>
+                           border-bottom: 1px solid #000; height:25px;"><?=$sucursal;?></td>
                           <td style="width:20%; text-align:center; border-left: 1px solid #000;
                            border-bottom: 1px solid #000; height:25px;"><?=$dia;?></td>
                           <td style="width:20%; text-align:center; border-left: 1px solid #000;
@@ -83,11 +103,11 @@ function trd_formulario_uif($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:28%; border-bottom: 1px solid #000; height:25px; text-align:left;
                     border-left: 1px solid #000; vertical-align:middle;">
-                    <b>N° DOC. DE IDENTIDAD:</b>&nbsp;<?=$row['cl_ci'];?>                                  
+                    <b>N° DOC. DE IDENTIDAD:</b>&nbsp;<?=$ci ;?>                                  
                   </td>
                   <td style="width:20%; border-bottom: 1px solid #000; height:25px; text-align:left;
                     border-left: 1px solid #000; vertical-align:middle;">
-                    <b>EXTENSION:</b>&nbsp;<?=$row['cl_extension'];?>                                 
+                    <b>EXTENSION:</b>&nbsp;<?=$extension;?>                                 
                   </td>
                 </tr>
                 <tr>
@@ -95,7 +115,7 @@ function trd_formulario_uif($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                           <td style="width:73%; text-align:left; height:25px;
-                          vertical-align:middle;"><b>NACIONALIDAD:</b>&nbsp;<?=$row['cl_pais'];?></td>
+                          vertical-align:middle;"><b>NACIONALIDAD:</b>&nbsp;<?=$pais;?></td>
                           <td style="width:27%; text-align:left; border-left: 1px solid #000; height:25px;
                           vertical-align:middle;">
                              <b>FECHA DE NACIMIENTO:</b> 
@@ -217,7 +237,7 @@ function trd_formulario_uif($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                               </table> 
                            </td>
                            <td style="width:34%; height:25px; border-left: 1px solid #000; text-align:left;">
-                              <b>DIRECCION DOMICILIO:</b>&nbsp;<?=$row['cl_direccion'];?>
+                              <b>DIRECCION DOMICILIO:</b>&nbsp;<?=$direccion;?>
                            </td>
                          </tr>
                       </table> 
