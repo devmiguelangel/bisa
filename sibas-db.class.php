@@ -25,11 +25,26 @@ class SibasDB extends MySQLi
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),
 		$status = array(
-			'SO' => 'Soltero(a)', 
-			'CA' => 'Casado(a)', 
-			'UL' => 'Union Libre',
-			'DI' => 'Divorciado(a)',
-			'VI' => 'Viudo(a)'
+			1 => [
+				0 => 'SO',
+				1 => 'Soltero(a)'
+			],
+			2 => [
+				0 => 'CA',
+				1 => 'Casado(a)'
+			],
+			3 => [
+				0 => 'DI',
+				1 => 'Divorciado(a)'
+			],
+			4 => [
+				0 => 'VI',
+				1 => 'Viudo(a)'
+			],
+			5 => [
+				0 => 'UL',
+				1 => 'Union Libre']
+			,
 		), 
 		$typeDoc = array(
 					0 => 'CI|Carnet de Identidad', 
@@ -304,6 +319,7 @@ class SibasDB extends MySQLi
         where sef.id_ef = "' . base64_decode($idef) . '"
           and sef.activado = true
           and ssh.producto = "' . $product . '"
+        limit 0, 1
         ;';
 
         if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
@@ -313,15 +329,11 @@ class SibasDB extends MySQLi
 
                 if (true === (boolean)$this->row['ws']) {
                     return true;
-                } else {
-                    return false;
                 }
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+      	
+      	return false;
     }
 
     public function getResetPassword($id_user, &$data)
@@ -567,19 +579,19 @@ class SibasDB extends MySQLi
         from s_departamento as sd
         where
           sd.codigo = "' . $code . '"
+        limit 0, 1
         ;';
 
         if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
             if ($this->rs->num_rows === 1) {
                 $this->row = $this->rs->fetch_array(MYSQLI_ASSOC);
                 $this->rs->free();
+                
                 return $this->row;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+		
+		return false;
     }
 	
 	public function get_question($idef, $product = 'DE')
