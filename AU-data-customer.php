@@ -149,7 +149,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 	$display_fsc = 'display: block;';
 
 	if ($link->checkWebService($_SESSION['idEF'], 'AU')) {
-		$ws = new BisaWs();
+		$ws = new BisaWs($link);
 
 		$var = [
 			'tipoCliente' 	=> '',
@@ -199,7 +199,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 					. ' ' . $this->ws->data['empTrabajo'];
 				$dc_phone_office = $this->ws->data['telefonOfic'];
 				$dc_position = $this->ws->data['Cargo'];
-				
+
 			} elseif ($type_client === 1) {
 				
 			}
