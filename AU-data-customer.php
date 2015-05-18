@@ -1,3 +1,4 @@
+<?php ini_set('display_errors', 1); ?>
 <script type="text/javascript">
 $(document).ready(function(e) {
 	$("#fau-customer").validateForm({
@@ -84,7 +85,9 @@ $(document).ready(function(e) {
 });
 </script>
 <?php
-require_once('sibas-db.class.php');
+require_once 'sibas-db.class.php';
+require 'classes/BisaWs.php';
+
 $link = new SibasDB();
 
 $swCl = FALSE;
