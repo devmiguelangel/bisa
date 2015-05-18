@@ -64,6 +64,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		}
 		
 		if($sw !== 0){
+			$data = array();
+
 			$idcia = $link->real_escape_string(trim(base64_decode($_POST['cia'])));
 			$dcr_amount = 0;
 			$dcr_warranty = (int)$link->real_escape_string(trim(base64_decode($_POST['di-warranty'])));
@@ -75,7 +77,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$dcr_date_end = $link->real_escape_string(trim(base64_decode($_POST['di-end-inception'])));
 			$dcr_term = 1;
 			$dcr_type_term = 'Y';
-			
+			if ($dcr_warranty === 1) {
+				$dcr_term = $link->real_escape_string(trim($_POST['di-term']));
+				$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
+			}
 			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 			$codeMethodPayment = '';
 			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
@@ -87,7 +92,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$prefix = array();
 			$arrPrefix = 'null';
 			
-			$bl_name = $bl_nit = '';
+			$bl_name = $bl_nit = $taken_name = $taken_nit = '';
+			$taken_name = $link->real_escape_string(trim($_POST['taken-name']));
+			$taken_nit = $link->real_escape_string(trim($_POST['taken-nit']));
 			if(isset($_POST['bl-name']) && isset($_POST['bl-nit'])){
 				$bl_name = $link->real_escape_string(trim($_POST['bl-name']));
 				$bl_nit = $link->real_escape_string(trim($_POST['bl-nit']));
@@ -99,16 +106,45 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			}	
 			
 			$cl_type_client = (boolean)$link->real_escape_string(trim(base64_decode($_POST['dc-type-client'])));
-			$idcl = $cl_name = $cl_patern = $cl_matern = $cl_married = $cl_dni = $cl_ci = $cl_nit = $cl_comp = $cl_ext = 
-			$cl_date_birth = $cl_gender = $cl_place_res = $cl_locality = $cl_phone_home = $cl_phone_cel = $cl_avc = 
-			$cl_address_home = $cl_nhome = $cl_occupation = $cl_desc_occ = $cl_address_work = $cl_phone_office = 
-			$cl_email = $cl_company_name = $cl_attached = '';
+			$idcl = 
+			$cl_name = 
+			$cl_patern = 
+			$cl_matern = 
+			$cl_married = 
+			$cl_dni = 
+			$cl_ci = 
+			$cl_nit = 
+			$cl_comp = 
+			$cl_ext = 
+			$cl_date_birth = 
+			$cl_country = 
+			$cl_status = 
+			$cl_gender = 
+			$cl_place_res = 
+			$cl_locality = 
+			$cl_phone_home = 
+			$cl_phone_cel = 
+			$cl_avc = 
+			$cl_address_home = 
+			$cl_nhome = 
+			$cl_occupation = 
+			$cl_desc_occ = 
+			$cl_address_work = 
+			$cl_phone_office = 
+			$cl_email = 
+			$cl_company_name = 
+			$cl_position = 
+			$cl_monthly_income = 
+			$cl_executive = 
+			$cl_activity = 
+			$account = 
+			$attached = '';
 			$cl_place_res = 'null';
 			$cl_occupation = 'null';
 			
 			if(isset($_POST['dc-idcl'])) {
 				$idcl = $link->real_escape_string(trim(base64_decode($_POST['dc-idcl'])));
-			} else { $idcl = uniqid('@S#2$2013',true); }
+			} else { $idcl = uniqid('@S#2$2013', true); }
 			
 			
 			if($cl_type_client === FALSE){
@@ -121,6 +157,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_ext = $link->real_escape_string(trim($_POST['dc-ext']));
 				$cl_gender = '';
 				$cl_date_birth = $link->real_escape_string(trim($_POST['dc-date-birth']));
+				$cl_country = $link->real_escape_string(trim($_POST['dc-country']));
+				$cl_status = $link->real_escape_string(trim($_POST['dc-status']));
 				$cl_locality = '';
 				$cl_phone_home = $link->real_escape_string(trim($_POST['dc-phone-1']));
 				$cl_phone_cel = $link->real_escape_string(trim($_POST['dc-phone-2']));
@@ -128,10 +166,13 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_avc = '';
 				$cl_address_home = $link->real_escape_string(trim($_POST['dc-address-home']));
 				$cl_nhome = '';
-				$cl_desc_occ = '';
+				$cl_desc_occ = $link->real_escape_string(trim($_POST['dc-desc-occ']));
+				$cl_position = $link->real_escape_string(trim($_POST['dc-position']));
+				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income']));
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
 				$cl_dni = $cl_ci;
+				$account = $link->real_escape_string(trim($_POST['dc-account-nat']));
 			}else{
 				$cl_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
 				$cl_nit = $link->real_escape_string(trim($_POST['dc-nit']));
@@ -142,6 +183,25 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-company-address-work']));
 				$cl_date_birth = date('Y-m-d', time());
 				$cl_dni = $cl_nit;
+				$cl_activity = $link->real_escape_string(trim($_POST['dc-activity']));
+				$cl_type_company = $link->real_escape_string(trim($_POST['dc-type-company']));
+				$cl_registration_number = $link->real_escape_string(trim($_POST['dc-registration-number']));
+				$cl_license_number = $link->real_escape_string(trim($_POST['dc-license-number']));
+				$cl_number_vifpe = $link->real_escape_string(trim($_POST['dc-number-vifpe']));
+				$cl_antiquity = $link->real_escape_string(trim($_POST['dc-antiquity']));
+				$cl_executive = $link->real_escape_string(trim($_POST['dc-executive']));
+				$cl_position = $link->real_escape_string(trim($_POST['dc-position2']));
+				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
+				$account = $link->real_escape_string(trim($_POST['dc-account-jur']));
+
+				$data = [
+					'type_company' 			=> $cl_type_company,
+					'registration_number' 	=> $cl_registration_number,
+					'license_number' 		=> $cl_license_number,
+					'number_vifpe' 			=> $cl_number_vifpe,
+					'antiquity' 			=> $cl_antiquity
+				];
+
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
 			}
 			
@@ -242,22 +302,27 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						ci, extension, complemento, tipo_documento, estado_civil, 
 						ci_archivo, lugar_residencia, localidad, avenida, direccion, 
 						no_domicilio, direccion_laboral, pais, id_ocupacion, 
-						desc_ocupacion, telefono_domicilio, telefono_oficina, 
+						desc_ocupacion, ingreso_mensual, actividad, ejecutivo, 
+						cargo, telefono_domicilio, telefono_oficina, 
 						telefono_celular, email, peso, estatura, genero, edad, 
-						mano, created_at) 
+						mano, data_jur, created_at) 
 					VALUES 
 						("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
 							'.(int)$cl_type_client.', "'.$cl_company_name.'", 
 							"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", 
 							"'.$cl_married.'", "'.$cl_date_birth.'", "", 
-							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", "", 
+							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", 
+							"' . $cl_status . '", 
 							"'.$cl_attached.'", '.$cl_place_res.', 
 							"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", 
 							"'.$cl_nhome.'", "'.$cl_address_work.'", 
-							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'", 
+							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'",
+							"' . $cl_monthly_income . '", "' . $cl_activity . '", 
+							"' . $cl_executive . '", "' . $cl_position . '", 
 							"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
 							"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
-							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "", now()) ;';
+							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "", 
+							"' . $link->real_escape_string(json_encode($data)) . '", now()) ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
 					SET razon_social = "'.$cl_company_name.'", 
@@ -265,19 +330,26 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						nombre = "'.$cl_name.'", ap_casada = "'.$cl_married.'", 
 						fecha_nacimiento = "'.$cl_date_birth.'", 
 						extension = '.$cl_ext.', complemento = "'.$cl_comp.'", 
+						estado_civil = "' . $cl_status . '",
 						ci_archivo = "'.$cl_attached.'", 
 						lugar_residencia = '.$cl_place_res.', 
 						localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
 						direccion = "'.$cl_address_home.'", 
 						no_domicilio = "'.$cl_nhome.'", 
-						direccion_laboral = "'.$cl_address_work.'", 
+						direccion_laboral = "'.$cl_address_work.'",
+						pais = "' . $cl_country . '", 
 						id_ocupacion = '.$cl_occupation.', 
-						desc_ocupacion = "'.$cl_desc_occ.'", 
+						desc_ocupacion = "'.$cl_desc_occ.'",
+						ingreso_mensual = "' . $cl_monthly_income . '",
+						actividad = "' . $cl_activity . '",
+						ejecutivo = "' . $cl_executive . '",
+						cargo = "' . $cl_position . '",
 						telefono_domicilio = "'.$cl_phone_home.'", 
 						telefono_oficina = "'.$cl_phone_office.'", 
 						telefono_celular = "'.$cl_phone_cel.'", 
 						email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
-						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+						edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()),
+						data_jur = "' . $link->real_escape_string(json_encode($data)) . '"
 					WHERE id_cliente = "'.$idcl.'" 
 						and id_ef = "'.base64_decode($_SESSION['idEF']).'"
 						and tipo = '.(int)$cl_type_client.' ;';
@@ -291,7 +363,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						certificado_provisional, garantia, tipo, 
 						id_cliente, no_operacion, prefijo, ini_vigencia, 
 						fin_vigencia, forma_pago, plazo, tipo_plazo, 
-						factura_nombre, factura_nit, fecha_creacion, 
+						factura_nombre, factura_nit, tomador_nombre,
+						tomador_ci_nit, cuenta, fecha_creacion, 
 						id_usuario, anulado, and_usuario, fecha_anulado, 
 						motivo_anulado, emitir, fecha_emision, id_compania, 
 						id_poliza, no_copia, facultativo, motivo_facultativo, 
@@ -302,7 +375,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.$dcr_warranty.'", '.(int)$cl_type_client.', "'.$idcl.'", 
 						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
 						"'.$dcr_method_payment.'", '.$dcr_term.', "'.$dcr_type_term.'", 
-						"'.$bl_name.'", "'.$bl_nit.'", curdate(), 
+						"'.$bl_name.'", "'.$bl_nit.'", "' . $taken_name . '", 
+						"' . $taken_nit . '", "' . $account . '", curdate(), 
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
 						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
@@ -402,24 +476,39 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$sqlCl = 'UPDATE s_cliente 
 				SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
 					nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
-					extension = '.$cl_ext.', complemento = "'.$cl_comp.'", ci_archivo = "'.$cl_attached.'", 
+					extension = '.$cl_ext.', complemento = "'.$cl_comp.'",
+					estado_civil = "' . $cl_status . '", ci_archivo = "'.$cl_attached.'", 
 					lugar_residencia = '.$cl_place_res.', localidad = "'.$cl_locality.'", avenida = "'.$cl_avc.'", 
 					direccion = "'.$cl_address_home.'", no_domicilio = "'.$cl_nhome.'", 
 					direccion_laboral = "'.$cl_address_work.'", id_ocupacion = '.$cl_occupation.', 
-					desc_ocupacion = "'.$cl_desc_occ.'", telefono_domicilio = "'.$cl_phone_home.'", 
+					desc_ocupacion = "'.$cl_desc_occ.'", ingreso_mensual = "' . $cl_monthly_income . '", 
+					actividad = "' . $cl_activity . '", ejecutivo = "' . $cl_executive . '", 
+					cargo = "' . $cl_position . '", telefono_domicilio = "'.$cl_phone_home.'", 
 					telefono_oficina = "'.$cl_phone_office.'", telefono_celular = "'.$cl_phone_cel.'", 
 					email = "'.$cl_email.'", genero = "'.$cl_gender.'", 
-					edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate())
+					edad = TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()),
+					data_jur = "' . $link->real_escape_string(json_encode($data)) . '"
 				WHERE id_cliente = "'.$idcl.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'"
 					and tipo = '.(int)$cl_type_client.' ;';
 					
 				if($link->query($sqlCl)) {
 					$sql = 'UPDATE s_au_em_cabecera 
-					SET no_operacion = "'.$dcr_opp.'", ini_vigencia = "'.$dcr_date_begin.'", 
-						fin_vigencia = "'.$dcr_date_end.'", forma_pago = "'.$dcr_method_payment.'", plazo = '.$dcr_term.', 
-						tipo_plazo = "'.$dcr_type_term.'", factura_nombre = "'.$bl_name.'", factura_nit =  "'.$bl_nit.'", 
-						id_poliza = '.$dcr_policy.', no_copia = 0, facultativo = '.(int)$_FAC.', 
-						motivo_facultativo = "'.$_FAC_REASON.'", prima_total = '.$PRIMA.', leido = FALSE
+					SET no_operacion = "'.$dcr_opp.'", 
+						ini_vigencia = "'.$dcr_date_begin.'", 
+						fin_vigencia = "'.$dcr_date_end.'", 
+						forma_pago = "'.$dcr_method_payment.'", 
+						plazo = '.$dcr_term.', 
+						tipo_plazo = "'.$dcr_type_term.'", 
+						factura_nombre = "'.$bl_name.'", 
+						factura_nit =  "'.$bl_nit.'",
+						tomador_nombre = "' . $taken_name . '",
+						tomador_ci_nit = "' . $taken_nit . '",
+						cuenta = "' . $account . '", 
+						id_poliza = '.$dcr_policy.', 
+						no_copia = 0, facultativo = '.(int)$_FAC.', 
+						motivo_facultativo = "'.$_FAC_REASON.'", 
+						prima_total = '.$PRIMA.', 
+						leido = FALSE
 					WHERE id_emision = "'.$ide.'" and id_ef = "'.base64_decode($_SESSION['idEF']).'" ;';
 					
 					if($link->query($sql)) {

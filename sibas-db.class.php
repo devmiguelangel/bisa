@@ -11,22 +11,26 @@ class SibasDB extends MySQLi
 					2 => 'TRD|Todo Riesgo Domiciliario',
 					3 => 'TRM|Todo Riesgo Equipo Móvil'),
 		$typeTerm = array(
-			'Y' => 'Anual', 
-			'M' => 'Mensual'
+			'Y' => 'Años', 
+			'M' => 'Meses',
+			'W' => 'Semanas',
+			'D' => 'Días'
 		),
 		$methodPayment = array(
 			'CO' => 'Al Contado', 
-			'DA' => 'Débito Automatico'
+			// 'DA' => 'Débito Automatico'
+			'CR' => 'A Crédito'
 		),
 		$gender = array(
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),
 		$status = array(
-					0 => 'SO|Soltero(a)', 
-					1 => 'CA|Casado(a)', 
-					2 => 'VI|Viudo(a)',
-					3 => 'DI|Divorciado(a)',
-					4 => 'UL|Union Libre'), 
+			'SO' => 'Soltero(a)', 
+			'CA' => 'Casado(a)', 
+			'UL' => 'Union Libre',
+			'DI' => 'Divorciado(a)',
+			'VI' => 'Viudo(a)'
+		), 
 		$typeDoc = array(
 					0 => 'CI|Carnet de Identidad', 
 					1 => 'RUN|RUN', 
@@ -86,7 +90,25 @@ class SibasDB extends MySQLi
 					0 => 'RM|Rotura de Maquinaria'),
 		$modTH = array (
 					0 => 'TC|Tarjeta de Crédito',
-					1 => 'TD|Tarjeta de Débito')
+					1 => 'TD|Tarjeta de Débito'),
+		$monthly_income =  array(
+			'N' => [
+				11 => 'De Bs. 1 a Bs. 2,000',
+				12 => 'De Bs. 2,001 a Bs. 4,000',
+				13 => 'De Bs. 4,001 a Bs. 8,000',
+				14 => 'De Bs. 8,001 a Bs. 12,000',
+				15 => 'De Bs. 12,001 a Bs. 15,000',
+				16 => 'De Bs. 15,001 a Bs. 20,000',
+				17 => 'De 20,000 en adelante',
+			],
+			'J' => [
+				21 => 'De Bs 1 a Bs. 50,000',
+				22 => 'De Bs. 50,001 a Bs. 100,000',
+				23 => 'De Bs 100,001 a Bs. 150,000',
+				24 => 'De Bs. 150,001 a Bs 200,000',
+				25 => 'De 200,001 en adelante',
+			],
+		)
 		
 		;
 	
@@ -936,7 +958,7 @@ class SibasDB extends MySQLi
 				$arr_state['bg'] = '';
 				
 				if($token === 4){
-					$arr_state['action'] = 'Anular Certificado';
+					$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
 				}
 				
@@ -1036,7 +1058,7 @@ class SibasDB extends MySQLi
 						. base64_encode($row['ide']) . '&flag=' . md5('i-read') 
 						. '&cia=' . base64_encode($row['id_compania']);
 				} elseif($token === 4){
-					$arr_state['action'] = 'Anular Certificado';
+					$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide=' 
 						. base64_encode($row['ide']) . '&nc=' 
 						. base64_encode($row['r_no_emision']) 
@@ -1053,7 +1075,7 @@ class SibasDB extends MySQLi
 			$arr_state['obs'] = $row['estado_pendiente'];
 			if($token === 1){
 				$arr_state['link'] = $pr.'-quote.php?ms=&page=&pr='.base64_encode($product.'|05').'&ide='.base64_encode($row['ide']).'&cia='.base64_encode($row['id_compania']).'&flag='.md5('i-read').'&target='.md5('ERROR-C');
-				$arr_state['action'] = 'Editar Certificado';
+				$arr_state['action'] = 'Editar Póliza';
 			}
 		}elseif($row['observacion'] === 'NE' && $row['estado'] !== 'A' && $row['estado'] !== 'R'){
 			$arr_state['obs'] = $row['estado_pendiente'];
@@ -1087,12 +1109,12 @@ class SibasDB extends MySQLi
 		}
 		
 		if ($token === 4 && ($product === 'AU' || $product === 'TRD')) {
-			$arr_state['action'] = 'Anular Certificado';
+			$arr_state['action'] = 'Anular Póliza';
 			$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
 		}
 
 		if ($token === 6 && ($product === 'AU' || $product === 'TRD')) {
-			$arr_state['action'] = '<br>Cambiar Certificado Provisional';
+			$arr_state['action'] = '<br>Cambiar Póliza Provisional';
 			$arr_state['link'] = 'provisional-certificate.php?ide='.base64_encode($row['ide']).'&pr='.base64_encode($product);
 		}
 	}

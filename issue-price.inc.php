@@ -99,7 +99,7 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<h3 class="h3">Emisión de Cotizaciones</h3>
+<h3 class="h3">Emisión de Solicitudes</h3>
 <table class="rp-link-container">
 	<tr>
     	<td style="width:20%;">
@@ -115,7 +115,7 @@ $(document).ready(function(e) {
 <div class="rc-records">
 	<div class="rp-pr-container" id="rp-tab-1" style="display:block;">
     	<form class="f-reports">
-            <label>N° de Cotización: </label>
+            <label>N° de Solicitud: </label>
             <input type="text" id="frp-nc" name="frp-nc" value="" autocomplete="off">
     
             <label>Usuario: </label>

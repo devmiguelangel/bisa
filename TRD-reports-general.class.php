@@ -72,10 +72,10 @@ class ReportsGeneralTRD{
 		case md5('RP'): $this->token = 'RP'; 
 			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Polizas Emitidas'; break;
 		case md5('RQ'): $this->token = 'RQ'; 
-			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Cotizaciones'; break;
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Solicitudes'; break;
 		
 		case md5('IQ'): $this->token = 'IQ'; 
-			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Cotizaciones'; break;
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Solicitudes'; break;
 		case md5('PA'): $this->token = 'PA'; 
 			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Solicitudes Preaprobadas'; break;
         case md5('SP'): $this->token = 'SP'; 
@@ -488,7 +488,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td>No. Certificado</td>
+    		<td>No. Póliza</td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
@@ -673,7 +673,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td><?=htmlentities('No. Cotización', ENT_QUOTES, 'UTF-8');?></td>
+    		<td><?=htmlentities('No. Solicitud', ENT_QUOTES, 'UTF-8');?></td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>

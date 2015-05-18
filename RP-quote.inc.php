@@ -82,7 +82,7 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<h3 class="h3">Reportes de Cotizaciones</h3>
+<h3 class="h3">Reportes de Solicitudes</h3>
 <?php
 $class = $display = '';
 if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
@@ -130,7 +130,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 ?>
 	<div class="rp-pr-container" id="rp-tab-<?=$k;?>" style=" <?=$display;?> ">
     	<form class="f-reports">
-            <label>N° de Cotización: </label>
+            <label>N° de Solicitud: </label>
             <input type="text" id="frp-nc" name="frp-nc" value="" autocomplete="off">
     
             <label>Usuario: </label>

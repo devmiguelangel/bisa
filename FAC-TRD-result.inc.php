@@ -49,7 +49,7 @@ if($token === 1){
 	echo '<td>Leido / No Leido</td>';
 }
 ?>
-        	<td>No. Certificado</td>
+        	<td>No. Póliza</td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>

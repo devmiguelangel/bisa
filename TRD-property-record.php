@@ -19,7 +19,7 @@ if($token === FALSE){
 	} else {
 		$arrTR[0] = 1;
 		$arrTR[1] = 'logout.php';
-		$arrTR[2] = 'La Cotización no puede ser registrada, intentelo mas tarde';
+		$arrTR[2] = 'La Solicitud no puede ser registrada, intentelo mas tarde';
 	}
 }
 

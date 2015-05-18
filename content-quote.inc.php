@@ -66,7 +66,9 @@ if($cp === true){
 <?php
 }
 ?>
-        <a href="<?=strtolower($seguro);?>-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=base64_encode($seguro.'|01');?>" class="quote-ln">Cotizar</a>
+        <a href="<?=strtolower($seguro);?>-quote.php?ms=<?=$_GET['ms'];?>&page=<?=
+        	$_GET['page'];?>&pr=<?=base64_encode($seguro.'|01');?>" 
+        	class="quote-ln">Solicitar</a>
     </form>
 	<div class="quote-img"><img src="images/<?=$HOST_HOME['imagen'];?>"></div>
 </aside>

@@ -65,19 +65,19 @@ class CertificateSibas extends CertificateQuery{
 			} else {
 				switch ($this->product) {
 				case 'DE':
-					$this->title = 'Certificado-Poliza-Desgravamen';
+					$this->title = 'Poliza-Desgravamen';
 					break;
 				case 'AU':
-					$this->title = 'Certificado-Poliza-Automotores';
+					$this->title = 'Poliza-Automotores';
 					break;
 				case 'TRD':
-					$this->title = 'Certificado-Poliza-Todo-Riesgo-Domiciliario';
+					$this->title = 'Poliza-Todo-Riesgo-Domiciliario';
 					break;
 				case 'TRM':
-					$this->title = 'Certificado-Poliza-Todo-Riesgo-Equipo-Movil';
+					$this->title = 'Poliza-Todo-Riesgo-Equipo-Movil';
 					break;
 				case 'TH':
-					$this->title = 'Certificado-Poliza-Tarjetahabiente';
+					$this->title = 'Poliza-Tarjetahabiente';
 					break;
 				}
 				
@@ -85,54 +85,54 @@ class CertificateSibas extends CertificateQuery{
 					$this->formatPdf = 'Letter';
 					switch ($this->product) {
 					case 'DE':
-						$this->subject = 'Slip de Cotizacion Desgravamen No. ' 
+						$this->subject = 'Slip de Solicitud Desgravamen No. ' 
 							. $this->rowPo['no_cotizacion'];
 						break;
 					case 'AU':
-						$this->subject = 'Slip de Cotizacion Automotores No. '.$this->rowPo['no_cotizacion'];
+						$this->subject = 'Slip de Solicitud Automotores No. '.$this->rowPo['no_cotizacion'];
 						break;
 					case 'TRD':
-						$this->subject = 'Slip de cotizacion Todo Riesgo Domiciliario No. '.$this->rowPo['no_cotizacion'];
+						$this->subject = 'Slip de Solicitud Todo Riesgo Domiciliario No. '.$this->rowPo['no_cotizacion'];
 						break;
 					case 'TRM':
-						$this->subject = 'Slip de Cotizacion Todo Riesgo Equipo Movil No. '.$this->rowPo['no_cotizacion'];
+						$this->subject = 'Slip de Solicitud Todo Riesgo Equipo Movil No. '.$this->rowPo['no_cotizacion'];
 						break;
 					}
 				} elseif ($this->category === 'CE') {
 					switch ($this->product) {
 					case 'DE':
 						$this->formatPdf = 'Letter';
-						$this->subject = 'Certificado Desgravamen Poliza No. ' 
+						$this->subject = 'Desgravamen Poliza No. ' 
 							. $this->rowPo['prefijo'] . ' - ' 
 							. $this->rowPo['no_emision'];
 						break;
 					case 'AU':
-						$this->subject = 'Certificado Automotores Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Automotores Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'TRD':
-						$this->subject = 'Certificado Todo Riesgo Domiciliario Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Todo Riesgo Domiciliario Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'TRM':
-						$this->subject = 'Certificado Todo Riesgo Equipo Movil Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Todo Riesgo Equipo Movil Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'TH':
-						$this->subject = 'Certificado Tarjetahabiente No. ' 
+						$this->subject = 'Tarjetahabiente No. ' 
 							. $this->rowPo['prefijo'] . '-' . $this->rowPo['no_cotizacion'];
 						break;
 					}
 				} elseif ($this->category === 'CP'){
 					switch ($this->product){
 					case 'DE':
-						$this->subject = 'Certificado Provisional Desgravamen Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Provisional Desgravamen Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'AU':
-						$this->subject = 'Certificado Provisional Automotores Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Provisional Automotores Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'TRD':
-						$this->subject = 'Certificado Provisional Todo Riesgo Domiciliario Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Provisional Todo Riesgo Domiciliario Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					case 'TRM':
-						$this->subject = 'Certificado Provisional Todo Riesgo Equipo Movil Poliza No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Provisional Todo Riesgo Equipo Movil Poliza No. '.$this->rowPo['no_emision'];
 						break;
 					}
 				} elseif ($this->category === 'PES') {
@@ -146,7 +146,7 @@ class CertificateSibas extends CertificateQuery{
 					$this->formatPdf = 'Letter';
 					switch ($this->product) {
 					case 'DE':
-						$this->subject = 'Certificado Producto extra Desgravamen No. '.$this->rowPo['no_emision'];
+						$this->subject = 'Producto extra Desgravamen No. '.$this->rowPo['no_emision'];
 						break;
 					}
 				}
@@ -171,7 +171,7 @@ class CertificateSibas extends CertificateQuery{
 				break;
 			}
 		} else {
-			echo 'No se puede obtener el Certificado';
+			echo 'No se puede obtener la Póliza';
 		}
 	}
 	
@@ -223,31 +223,31 @@ class CertificateSibas extends CertificateQuery{
 			} elseif ($this->category === 'CE'){
 				switch ($this->product) {
 				case 'DE':
-					$this->namePdf = 'certificado_emision_DE.pdf';
+					$this->namePdf = 'poliza_emision_DE.pdf';
 					break;
 				case 'AU':
-					$this->namePdf = 'certificado_emision_AU.pdf'; 
+					$this->namePdf = 'poliza_emision_AU.pdf'; 
 					break;
 				case 'TRD':
-					$this->namePdf = 'certificado_emision_TRD.pdf';
+					$this->namePdf = 'poliza_emision_TRD.pdf';
 					break;
 				case 'TRM':
-					$this->namePdf = 'certificado_emision_TRM.pdf';
+					$this->namePdf = 'poliza_emision_TRM.pdf';
 					break;
 				}
 			} elseif($this->category === 'CP'){
 				switch ($this->product) {
 				case 'DE':
-					$this->namePdf = 'certificado_provisional_DE.pdf'; 
+					$this->namePdf = 'poliza_provisional_DE.pdf'; 
 					break;
 				case 'AU':
-					$this->namePdf = 'certificado_provisional_AU.pdf'; 
+					$this->namePdf = 'poliza_provisional_AU.pdf'; 
 					break;
 				case 'TRD':
-					$this->namePdf = 'certificado_provisional_TRD.pdf';
+					$this->namePdf = 'poliza_provisional_TRD.pdf';
 					break;
 				case 'TRM':
-					$this->namePdf = 'certificado_provisional_TRM.pdf';
+					$this->namePdf = 'poliza_provisional_TRM.pdf';
 					break;
 				}
 			} elseif ($this->category === 'PES') {
@@ -259,7 +259,7 @@ class CertificateSibas extends CertificateQuery{
 			} elseif ($this->category === 'PEC') {
 				switch ($this->product) {
 				case 'DE':
-					$this->namePdf = 'certificado_vida_grupo_DE.pdf';
+					$this->namePdf = 'poliza_vida_grupo_DE.pdf';
 					break;
 				}
 			}

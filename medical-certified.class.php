@@ -571,7 +571,7 @@ if($this->flag === FALSE){
         <tr>
             <td style="width:15%; font-weight:bold;">TITULAR 1: </td>
             <td style="width:55%; color:#00557D; "><?=$this->rowt['cl_nombre'];?></td>
-            <td style="width:15%; font-weight:bold;">CERTIFICADO N°: </td>
+            <td style="width:15%; font-weight:bold;">Póliza N°: </td>
             <td style="width:15%; color:#00557D; ">DE - <?=$this->rowt['no_emision'];?></td>
         </tr>
         <tr>

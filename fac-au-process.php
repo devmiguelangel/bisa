@@ -241,7 +241,9 @@ $(document).ready(function(e) {
 	<div class="content-process" id="ctr-process" >
     	<form id="form-process" name="form-process" class="f-process" style="width:75%; margin:0 auto;">
             <h4 class="h4">Formulario para aprobar la solicitud no emitida</h4>
-			<a href="certificate-detail.php?ide=<?=base64_encode($ide);?>&pr=<?=base64_encode('AU');?>&type=<?=base64_encode('PRINT');?>&category=<?=base64_encode($category);?>" class="vc-popup">Ver Certificado</a>
+			<a href="certificate-detail.php?ide=<?=base64_encode($ide);?>&pr=<?=
+				base64_encode('AU');?>&type=<?=base64_encode('PRINT');?>&category=<?=
+				base64_encode($category);?>" class="vc-popup">Ver Póliza</a>
         	<label class="fp-lbl">Aprobado: <span>*</span></label>
             <label class="fp-rb">
             	<input type="radio" id="fp-approved-1" name="fp-approved" value="SI"> SI
@@ -354,7 +356,7 @@ $(document).ready(function(e) {
 		
 	}
 }else{
-	echo 'USTED NO PUEDE PROCESAR ESTE CERTIFICADO';
+	echo 'USTED NO PUEDE PROCESAR ESTA PÓLIZA';
 }
 
 ?>

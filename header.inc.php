@@ -339,10 +339,10 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 <?php
 		if ($tokenM === TRUE) {
 			if ($user_type === 'LOG' || $user_type === 'ROOT') {
-				$titleMenuCot = 'Cotizar Póliza';
+				$titleMenuCot = 'Solicitar Póliza';
 
 				if ($rowMenu['producto'] === 'TH') {
-					$titleMenuCot = 'Cotizar y Emitir Póliza';
+					$titleMenuCot = 'Solicitar y Emitir Póliza';
 				}
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_quote');?>" class="link-pr">
@@ -352,7 +352,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 				if ($rowMenu['producto'] !== 'TH') {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_issue');?>" class="link-pr">
-						Emitir Cotización
+						Emitir Solicitud
 					</a></li>
 <?php
 				}
@@ -411,7 +411,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 		} else {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_quote');?>" class="link-pr">
-						Cotizar Póliza
+						Solicitar Póliza
 					</a></li>
 <?php
 		}
@@ -446,7 +446,7 @@ if($tokenM === TRUE){
         <ul>
 			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_general');?>">Generales</a></li>
 			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_policy');?>">Pólizas Emitidas</a></li>
-			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_quote');?>">Cotizaciones</a></li>
+			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_quote');?>">Solicitudes</a></li>
         </ul>
     </li>
 <?php

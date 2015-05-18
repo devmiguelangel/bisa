@@ -87,7 +87,7 @@ if(($rsEf = $link->get_financial_institution_user($_SESSION['idUser'])) !== FALS
 ?>
 		</select>
         
-    	<label>N° de Certificado: </label>
+    	<label>N° de Póliza: </label>
         <input type="text" id="fde-nc" name="fde-nc" value="<?=$nEm;?>" autocomplete="off">
 
         <label style="width:auto;">Usuario: </label>

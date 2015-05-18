@@ -20,7 +20,7 @@ $pr = base64_encode($product);
 
 $titleSlip = 'Formulario de Solicitud';
 $titleSlip2 = '';
-$titleCert = 'Certificado';
+$titleCert = 'Póliza';
 $titleCert2 = '';
 $titleCert3 = 'Formulario de Autorización';
 $titleCert4 = 'Formulario UIF';
@@ -32,8 +32,8 @@ if($token === TRUE){
 	switch($product){
 		case 'DE':
 			$titleSlip2 = 'Slip Vida en Grupo';
-			$titleCert = 'Certificado Desgravamen';
-			$titleCert2 = 'Certificado Vida en Grupo';
+			$titleCert = 'Póliza Desgravamen';
+			$titleCert2 = 'Póliza Vida en Grupo';
 			
 			$sqlIs = 'select 
 					sde.id_emision as ide,
@@ -100,11 +100,11 @@ if($token === TRUE){
 		
 		if ($cp === true) {
 			$category = base64_encode('CP');
-			$titleCert = 'Certificado Provisional';
+			$titleCert = 'Póliza Provisional';
 		} else {
 			$category = base64_encode('CE');
 			if ($product === 'DE') {
-				$titleCert = 'Certificado Desgravamen';
+				$titleCert = 'Póliza Desgravamen';
 			}
 		}
 ?>

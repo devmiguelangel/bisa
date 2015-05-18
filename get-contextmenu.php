@@ -30,7 +30,7 @@ if(isset($_GET['ide'])){
 	$category2 = NULL;
 	$modality = true;
 	
-	$titleCert = 'Certificado';
+	$titleCert = 'Póliza';
 	$titleCert2 = '';
 	$titleCert3 = 'Formulario de Autorización';
 	$titleCert4 = 'Formulario UIF';
@@ -318,12 +318,12 @@ if(isset($_GET['ide'])){
 				$cp = (boolean)$row['cp'];
 				
 				$category = base64_encode('CE');
-				$titleCert = 'Certificado';
+				$titleCert = 'Póliza';
 				if ($product === 'DE' && $row['modalidad'] === null) {
 					$modality = false;
 					$category2 = base64_encode('PEC');
-					$titleCert = 'Certificado Desgravamen';
-					$titleCert2 = 'Certificado Vida en Grupo';
+					$titleCert = 'Póliza Desgravamen';
+					$titleCert2 = 'Póliza Vida en Grupo';
 				}
 				
 				//echo (int)$issue;
@@ -471,7 +471,7 @@ if(isset($_GET['ide'])){
                                     . md5('P_quote') . '&pr='
                                     . base64_encode($pr_href) . '&idc='
                                     . base64_encode($idc)
-                                    . '">Emitir Cotización</a></li>';
+                                    . '">Emitir Solicitud</a></li>';
                             }
 						} elseif($limit === 1) {
 							$menu .= '<li>
@@ -489,7 +489,7 @@ if(isset($_GET['ide'])){
                                 . '&pr=' . base64_encode($product . '|03')
                                 . '&idc=' . base64_encode($idc)
                                 . '&cp=' . md5(1)
-                                . '">Cambiar Certificado Provisional</a></li>';
+                                . '">Cambiar Póliza Provisional</a></li>';
                         }
                     }
 				}

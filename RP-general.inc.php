@@ -148,7 +148,7 @@ if (($rsPo = $link->get_policy($_SESSION['idEF'], $rowMenu['producto'])) !== FAL
 ?>
             </select>-->
             
-            <label>N° de Certificado: </label>
+            <label>N° de Póliza: </label>
             <input type="text" id="frp-nc" name="frp-nc" value="" autocomplete="off">
     
             <label>Usuario: </label>

@@ -24,7 +24,7 @@ $(document).ready(function(e) {
 		var type = $(this).prop('value');
 
 		if (type == 1) {
-			$('#di-method-payment option[value="DA"]').prop('selected', true);
+			$('#di-method-payment option[value="CR"]').prop('selected', true);
 			$('#di-method-payment option:not(:selected)').prop('disabled', true);
 			$('#di-method-payment').trigger('change');
 		} else {
@@ -100,8 +100,12 @@ $dc_comp = '';
 $dc_ext = '';
 $dc_depto = '';
 $dc_birth = '';
+$dc_country = '';
+$dc_status = '';
 $dc_address_home = '';
 $dc_address_work = '';
+$dc_desc_occ = '';
+$dc_monthly_income = '';
 $dc_phone_1 = '';
 $dc_phone_2 = '';
 $dc_email = '';
@@ -110,9 +114,15 @@ $dc_phone_office = '';
 $dc_activity = '';
 $dc_executive = '';
 $dc_position = '';
+$dc_type_company = '';
+$dc_registration_number = '';
+$dc_license_number = '';
+$dc_number_vifpe = '';
+$dc_antiquity = '';
+$data = array();
 
 
-$title_btn = 'Cotiza tu mejor seguro';
+$title_btn = 'Registrar Cliente ';
 $err_search = '';
 
 $display_fsc = $display_nat = $display_jur = 'display: none;';
@@ -136,38 +146,43 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 	$display_fsc = 'display: block;';
 	
 	$sqlSc = 'select 
-			scl.id_cliente,
-			scl.tipo as cl_tipo,
-			scl.razon_social as cl_razon_social,
-			scl.nombre as cl_nombre,
-			scl.paterno as cl_paterno,
-			scl.materno as cl_materno,
-			scl.ap_casada as cl_ap_casada,
-			scl.ci as cl_dni,
-			scl.complemento as cl_complemento,
-			scl.extension as cl_extension,
-			scl.fecha_nacimiento as cl_fecha_nacimiento,
-			scl.direccion_domicilio as cl_direccion_domicilio,
-			scl.direccion_laboral as cl_direccion_laboral,
-			scl.actividad as cl_actividad,
-			scl.ejecutivo as cl_ejecutivo,
-			scl.cargo as cl_cargo,
-			scl.telefono_domicilio as cl_tel_domicilio,
-			scl.telefono_celular as cl_tel_celular,
-			scl.telefono_oficina as cl_tel_oficina,
-			scl.email as cl_email,
-			scl.genero as cl_genero
-		from
-			s_au_cot_cliente as scl
-				inner join
-			s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
-		where
-			scl.ci = "' . $dni . '"
-				and scl.tipo = ' . $type_client . '
-				and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
-				and sef.activado = true
-		limit 0 , 1
-		;';
+		scl.id_cliente,
+		scl.tipo as cl_tipo,
+		scl.razon_social as cl_razon_social,
+		scl.nombre as cl_nombre,
+		scl.paterno as cl_paterno,
+		scl.materno as cl_materno,
+		scl.ap_casada as cl_ap_casada,
+		scl.ci as cl_dni,
+		scl.complemento as cl_complemento,
+		scl.extension as cl_extension,
+		scl.fecha_nacimiento as cl_fecha_nacimiento,
+		scl.pais as cl_pais,
+		scl.estado_civil as cl_estado_civil,
+		scl.direccion_domicilio as cl_direccion_domicilio,
+		scl.direccion_laboral as cl_direccion_laboral,
+		scl.desc_ocupacion as cl_desc_ocupacion,
+		scl.ingreso_mensual as cl_ingreso_mensual,
+		scl.actividad as cl_actividad,
+		scl.ejecutivo as cl_ejecutivo,
+		scl.cargo as cl_cargo,
+		scl.telefono_domicilio as cl_tel_domicilio,
+		scl.telefono_celular as cl_tel_celular,
+		scl.telefono_oficina as cl_tel_oficina,
+		scl.email as cl_email,
+		scl.genero as cl_genero,
+		scl.data_jur
+	from
+		s_au_cot_cliente as scl
+			inner join
+		s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
+	where
+		scl.ci = "' . $dni . '"
+			and scl.tipo = ' . $type_client . '
+			and sef.id_ef = "'.base64_decode($_SESSION['idEF']).'"
+			and sef.activado = true
+	limit 0 , 1
+	;';
 	//echo $sqlSc;
 	if(($rsSc = $link->query($sqlSc,MYSQLI_STORE_RESULT))){
 		if($rsSc->num_rows === 1){
@@ -183,8 +198,12 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 			$dc_comp = $rowSc['cl_complemento'];
 			$dc_depto = $dc_ext = $rowSc['cl_extension'];
 			$dc_birth = $rowSc['cl_fecha_nacimiento'];
+			$dc_country = $rowSc['cl_pais'];
+			$dc_status = $rowSc['cl_estado_civil'];
 			$dc_address_home = $rowSc['cl_direccion_domicilio'];
 			$dc_address_work = $rowSc['cl_direccion_laboral'];
+			$dc_desc_occ = $rowSc['cl_desc_ocupacion'];
+			$dc_monthly_income = (int)$rowSc['cl_ingreso_mensual'];
 			$dc_activity = $rowSc['cl_actividad'];
 			$dc_executive = $rowSc['cl_ejecutivo'];
 			$dc_position = $rowSc['cl_cargo'];
@@ -197,6 +216,14 @@ if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
 			$dc_type = (int)$rowSc['cl_tipo'];
 			if($dc_type === 1) {
 				$dc_doc_id = $dc_ext = $dc_email = '';
+				$data = json_decode($rowSc['data_jur'], true);
+				if (count($data) === 5) {
+					$dc_type_company = $data['type_company'];
+					$dc_registration_number = $data['registration_number'];
+					$dc_license_number = $data['license_number'];
+					$dc_number_vifpe = $data['number_vifpe'];
+					$dc_antiquity = $data['antiquity'];
+				}
 			} elseif ($dc_type === 0) {
 				$dc_nit = $dc_depto = $dc_company_email = '';
 			}
@@ -312,15 +339,60 @@ if ($rsDep->data_seek(0) === TRUE) {
                 	class="<?=$require_nat;?> fbin date field-person" 
                 	readonly style="cursor:pointer;">
             </div><br>
-        </div><!--
-        --><div class="form-col">
-        	<label>Dirección domicilio: <span>*</span></label><br>
+
+            <label>País: <span>*</span></label>
+			<div class="content-input">
+				<input type="text" id="dc-country" name="dc-country" 
+					autocomplete="off" value="<?=$dc_country;?>" 
+					class="<?=$require_nat;?> text fbin field-person">
+			</div><br>
+
+			<label>Estado Civil: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-status" name="dc-status" 
+					class="<?=$require_nat;?> fbin field-person">
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->status as $key => $value): $selected = ''; ?>
+	            		<?php if ($key === $dc_status): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
+				</select>
+			</div><br>
+
+			<label>Dirección domicilio: <span>*</span></label><br>
 			<textarea id="dc-address-home" name="dc-address-home" 
 				class="fbin <?= $require_nat ;?> field-person"><?= $dc_address_home ;?></textarea><br>
 
-			<label>Dirección Laboral: <span></span></label><br>
+        </div><!--
+        --><div class="form-col">
+        	<label>Dirección Laboral: <span></span></label><br>
 			<textarea id="dc-address-work" name="dc-address-work" 
 				class="not-required fbin"><?= $dc_address_work ;?></textarea><br>
+
+			<label>Ocupación: <span>*</span></label><br>
+			<textarea id="dc-desc-occ" name="dc-desc-occ" 
+				class="<?= $require_nat ;?> fbin field-person"><?= $dc_desc_occ ;?></textarea><br>
+
+			<label>Cargo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-position" name="dc-position" 
+					autocomplete="off" value="<?=$dc_position;?>" 
+					class="<?= $require_nat ;?> field-person text fbin" style="width: 350px;">
+			</div><br>
+
+			<label>Ingreso Mensual: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-monthly-income" name="dc-monthly-income" 
+					class="<?=$require_nat;?> fbin field-person">
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->monthly_income['N'] as $key => $value): $selected = ''; ?>
+	            		<?php if ($key === $dc_monthly_income): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
+				</select>
+			</div><br>
 
             <label>Teléfono de domicilio: <span>*</span></label>
             <div class="content-input">
@@ -385,8 +457,52 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
-			
-            <label>Dirección domicilio: <span></span></label><br>
+
+            <label style="width: auto;">Tipo de Sociedad Comercial: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-type-company" name="dc-type-company" 
+					autocomplete="off" value="<?=$dc_type_company;?>" 
+					class="<?= $require_jur ;?> field-company text-2 fbin">
+			</div><br>
+
+            <label style="width: auto;">No. de Registro en Fundempresa: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-registration-number" name="dc-registration-number" 
+					autocomplete="off" value="<?=$dc_registration_number;?>" 
+					class="<?= $require_jur ;?> field-company text-2 fbin">
+			</div><br>
+
+			<label style="width: auto;">No. de Licencia de Funcionamiento GAM: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-license-number" name="dc-license-number" 
+					autocomplete="off" value="<?=$dc_license_number;?>" 
+					class="<?= $require_jur ;?> field-company text-2 fbin">
+			</div><br>
+
+			<label style="width: auto;">
+				No. de Registro del VIFPE (Solo para Org. sin fines de lucro): <span></span>
+			</label><br>
+            <div class="content-input">
+				<input type="text" id="dc-number-vifpe" name="dc-number-vifpe" 
+					autocomplete="off" value="<?=$dc_number_vifpe;?>" 
+					class="not-required text-2 fbin">
+			</div><br>
+
+			<label style="width: auto;">Actividad y/o Giro del Negocio: <span>*</span></label><br>
+			<div class="content-input">
+				<textarea id="dc-activity" name="dc-activity" 
+					class="<?= $require_jur ;?> fbin field-company"><?= $dc_activity ;?></textarea><br>
+			</div><br>
+        </div><!--
+        --><div class="form-col">
+        	<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-antiquity" name="dc-antiquity" 
+					autocomplete="off" value="<?=$dc_antiquity;?>" 
+					class="<?= $require_jur ;?> field-company text-2 fbin">
+			</div><br>
+
+        	<label>Dirección domicilio: <span></span></label><br>
             <div class="content-input">
                 <textarea id="dc-address-home2" name="dc-address-home2" 
 					class="not-required fbin"><?= $dc_address_home ;?></textarea>
@@ -396,13 +512,6 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input">
 				<textarea id="dc-address-work2" name="dc-address-work2" 
 					class="<?= $require_jur ;?> fbin field-company"><?= $dc_address_work ;?></textarea><br>
-			</div><br>
-        </div><!--
-        --><div class="form-col">
-        	<label>Actividad y/o Giro del Negocio: <span>*</span></label><br>
-			<div class="content-input">
-				<textarea id="dc-activity" name="dc-activity" 
-					class="<?= $require_jur ;?> fbin field-company"><?= $dc_activity ;?></textarea><br>
 			</div><br>
 
 			<label>Principal Ejecutivo: <span>*</span></label><br>
@@ -414,9 +523,22 @@ if ($rsDep->data_seek(0) === TRUE) {
 
 			<label>Cargo: <span>*</span></label><br>
 			<div class="content-input" style="width: 350px;">
-				<input type="text" id="dc-position" name="dc-position" 
+				<input type="text" id="dc-position2" name="dc-position2" 
 					autocomplete="off" value="<?=$dc_position;?>" 
 					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+			</div><br>
+
+			<label>Ingreso Mensual: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-monthly-income2" name="dc-monthly-income2" 
+					class="<?=$require_jur;?> fbin field-company">
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->monthly_income['J'] as $key => $value): $selected = ''; ?>
+	            		<?php if ($key === $dc_monthly_income): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
+				</select>
 			</div><br>
 
         	<label>Teléfono: </label>

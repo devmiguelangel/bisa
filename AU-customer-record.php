@@ -62,9 +62,14 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		$dc_comp = $link->real_escape_string(trim($_POST['dc-comp']));
 		$dc_ext = $link->real_escape_string(trim($_POST['dc-ext']));
 		$dc_birth = $link->real_escape_string(trim($_POST['dc-date-birth']));
+		$dc_country = $link->real_escape_string(trim($_POST['dc-country']));
+		$dc_status = $link->real_escape_string(trim($_POST['dc-status']));
 		$dc_gender = '';
 		$dc_address_home = $link->real_escape_string(trim($_POST['dc-address-home']));
 		$dc_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
+		$dc_desc_occ = $link->real_escape_string(trim($_POST['dc-desc-occ']));
+		$dc_position = $link->real_escape_string(trim($_POST['dc-position']));
+		$dc_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income']));
 		$dc_phone_1 = $link->real_escape_string(trim($_POST['dc-phone-1']));
 		$dc_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
 		$dc_phone_2 = $link->real_escape_string(trim($_POST['dc-phone-2']));
@@ -77,9 +82,16 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		$dc_address_work2 = $link->real_escape_string(trim($_POST['dc-address-work2']));
 		$dc_activity = $link->real_escape_string(trim($_POST['dc-activity']));
 		$dc_executive = $link->real_escape_string(trim($_POST['dc-executive']));
-		$dc_position = $link->real_escape_string(trim($_POST['dc-position']));
+		$dc_position2 = $link->real_escape_string(trim($_POST['dc-position2']));
 		$dc_phone_office2 = $link->real_escape_string(trim($_POST['dc-phone-office2']));
 		$dc_company_email = $link->real_escape_string(trim($_POST['dc-company-email']));
+		$dc_type_company = $link->real_escape_string(trim($_POST['dc-type-company']));
+		$dc_registration_number = $link->real_escape_string(trim($_POST['dc-registration-number']));
+		$dc_license_number = $link->real_escape_string(trim($_POST['dc-license-number']));
+		$dc_number_vifpe = $link->real_escape_string(trim($_POST['dc-number-vifpe']));
+		$dc_antiquity = $link->real_escape_string(trim($_POST['dc-antiquity']));
+		$dc_monthly_income2 = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
+		$data = array();
 		
 		$ms = $link->real_escape_string(trim($_POST['ms']));
 		$page = $link->real_escape_string(trim($_POST['page']));
@@ -93,8 +105,18 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 			$dc_ext = $dc_depto;
 			$dc_address_home = $dc_address_home2;
 			$dc_address_work = $dc_address_work2;
+			$dc_position = $dc_position2;
 			$dc_email = $dc_company_email;
 			$dc_phone_office = $dc_phone_office2;
+			$dc_monthly_income = $dc_monthly_income2;
+
+			$data = [
+				'type_company' 			=> $dc_type_company,
+				'registration_number' 	=> $dc_registration_number,
+				'license_number' 		=> $dc_license_number,
+				'number_vifpe' 			=> $dc_number_vifpe,
+				'antiquity' 			=> $dc_antiquity
+			];
 		}
 		
 		$year = $link->get_year_final($di_term, $di_type_term);
@@ -143,19 +165,24 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					nombre = "' . $dc_name . '", 
 					ap_casada = "' . $dc_lnmarried . '", 
 					fecha_nacimiento = "' . $dc_birth . '", 
+					pais = "' . $dc_country . '", 
 					ci = "' . $dc_doc_id . '", 
 					extension = "' . $dc_ext . '", 
 					complemento = "' . $dc_comp . '", 
 					genero = "' . $dc_gender . '",
+					estado_civil = "' . $dc_status . '",
 					direccion_domicilio = "' . $dc_address_home . '",
 					direccion_laboral = "' . $dc_address_work . '",
+					desc_ocupacion = "' . $dc_desc_occ . '",
+					ingreso_mensual = "' . $dc_monthly_income . '",
 					actividad = "' . $dc_activity . '", 
 					ejecutivo = "' . $dc_executive . '", 
 					cargo = "' . $dc_position . '",
 					telefono_domicilio = "' . $dc_phone_1 . '", 
 					telefono_oficina = "' . $dc_phone_office . '", 
 					telefono_celular = "' . $dc_phone_2 . '", 
-					email = "' . $dc_email . '"
+					email = "' . $dc_email . '",
+					data_jur = "' . $link->real_escape_string(json_encode($data)) . '"
 				where 
 					id_cliente = "' . $idClient . '" 
 						and id_ef = "' . $idef . '" ;';
@@ -164,22 +191,29 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 				
 				$sql = 'insert into s_au_cot_cliente 
 				(id_cliente, id_ef, tipo, razon_social, paterno, materno, 
-					nombre, ap_casada, fecha_nacimiento, ci, extension, 
-					complemento, genero, direccion_domicilio, direccion_laboral,
+					nombre, ap_casada, fecha_nacimiento, pais, ci, extension, 
+					complemento, genero, estado_civil, direccion_domicilio, 
+					direccion_laboral, desc_ocupacion, ingreso_mensual,
 					actividad, ejecutivo, cargo, 
 					telefono_domicilio, telefono_oficina, 
-					telefono_celular, email, created_at) 
+					telefono_celular, email, data_jur, created_at) 
 				values 
-				("' . $idClient . '", "' . $idef . '", ' . (int)$dc_type_client . ', 
+				("' . $idClient . '", "' . $idef . '", 
+					' . (int)$dc_type_client . ', 
 					"' . $dc_company_name . '", "' . $dc_lnpatern . '", 
 					"' . $dc_lnmatern . '", "' . $dc_name . '", 
 					"' . $dc_lnmarried . '", "' . $dc_birth . '", 
-					"' . $dc_doc_id . '", "' . $dc_ext . '", "' . $dc_comp . '", 
-					"' . $dc_gender . '", "' . $dc_address_home . '",
-					"' . $dc_address_work . '", "' . $dc_activity . '", 
-					"' . $dc_executive . '", "' . $dc_position . '", 
-					"' . $dc_phone_1 . '", "' . $dc_phone_office . '", 
-					"' . $dc_phone_2 . '", "' . $dc_email . '", now()) ;';
+					"' . $dc_country . '", "' . $dc_doc_id . '", 
+					"' . $dc_ext . '", "' . $dc_comp . '", 
+					"' . $dc_gender . '", "' . $dc_status . '", 
+					"' . $dc_address_home . '", "' . $dc_address_work . '", 
+					"' . $dc_desc_occ . '", "' . $dc_monthly_income . '", 
+					"' . $dc_activity . '", "' . $dc_executive . '", 
+					"' . $dc_position . '", "' . $dc_phone_1 . '", 
+					"' . $dc_phone_office . '", "' . $dc_phone_2 . '", 
+					"' . $dc_email . '", 
+					"' . $link->real_escape_string(json_encode($data)) . '", 
+					now()) ;';
 			}
 			
 			if ($link->query($sql)){

@@ -356,7 +356,7 @@ if(($rsAg = $link->query($sqlAg,MYSQLI_STORE_RESULT))){
 <?php
 if($tokenSi === FALSE)	echo '<td style="width:8%;" id="td-mark">Marcar</td>';
 ?>
-					<td style="width:10%;">No. Certificado</td>
+					<td style="width:10%;">No. Póliza</td>
 					<td style="width:10%;">No. Póliza</td>
 					<td style="width:17%;">Ramo</td>
 					<td style="width:10%;">No. Operación</td>

@@ -3,7 +3,7 @@ require('sibas-db.class.php');
 require('session.class.php');
 $session = new Session();
 $token = $session->check_session();
-$arrAU = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo procesar la Cotización');
+$arrAU = array(0 => 0, 1 => 'R', 2 => 'Error: No se pudo procesar la Solicitud');
 
 $link = new SibasDB();
 
@@ -13,7 +13,7 @@ if($token === FALSE){
 	} else {
 		$arrAU[0] = 1;
 		$arrAU[1] = 'logout.php';
-		$arrAU[2] = 'La Cotización no puede ser registrada, intentelo mas tarde';
+		$arrAU[2] = 'La Solicitud no puede ser registrada, intentelo mas tarde';
 	}
 }
 
@@ -47,13 +47,13 @@ if(isset($_POST['ms']) && isset($_POST['page']) && isset($_POST['pr'])){
 		if($link->query($sql) === TRUE){
 			$arrAU[0] = 1;
 			$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.base64_encode('AU|01').'&idc='.base64_encode($idc);
-			$arrAU[2] = 'La Cotización fue registrada con exito';
+			$arrAU[2] = 'La Solicitud fue registrada con exito';
 		}else{
 			
 		}
 		$link->close();
 	}else{
-		$arrAU[2] = 'La Cotización no puede ser registrada';
+		$arrAU[2] = 'La Solicitud no puede ser registrada';
 	}
 	echo json_encode($arrAU);
 }else{

@@ -98,7 +98,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs']) &&
 			$mail->Host = $rowEm['email'];
 			$mail->From = $rowEm['email'];
 			$mail->FromName = $rowEm['ef_nombre'];
-			$mail->Subject = $rowEm['ef_nombre'].': Anulacion de Certificado No. '.$pr.'-'.$rowEm['no_emision'];
+			$mail->Subject = $rowEm['ef_nombre'].': Anulacion de Poliza No. '.$pr.'-'.$rowEm['no_emision'];
 			
 			$mail->addAddress($rowEm['email_c'], $rowEm['nombre_c']);
 			$mail->addCC($rowEm['email'], $rowEm['nombre']);
@@ -153,7 +153,7 @@ function get_html_body($rowEm, $pr){
 	</div><br>
     
     <div style="padding:5px 10px;">
-		<?=htmlentities('Anulación de Certificado No. '.$pr.'-'.$rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
+		<?=htmlentities('Anulación de Póliza No. '.$pr.'-'.$rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
 	</div>
     <div style="padding:5px 10px;">
 		<?=htmlentities('Oficial de Crédito '.$rowEm['nombre'], ENT_QUOTES, 'UTF-8');?>

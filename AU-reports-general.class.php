@@ -72,9 +72,9 @@ class ReportsGeneralAU{
 		switch($this->flag){
 		case md5('RG'): $this->token = 'RG'; $this->xlsTitle = 'Automotores - Reporte General'; break;
 		case md5('RP'): $this->token = 'RP'; $this->xlsTitle = 'Automotores - Reporte Polizas Emitidas'; break;
-		case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Automotores - Reporte Cotizaciones'; break;
+		case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Automotores - Reporte Solicitudes'; break;
 		
-		case md5('IQ'): $this->token = 'IQ'; $this->xlsTitle = 'Automotores - Cotizaciones'; break;
+		case md5('IQ'): $this->token = 'IQ'; $this->xlsTitle = 'Automotores - Solicitudes'; break;
 		case md5('PA'): $this->token = 'PA'; $this->xlsTitle = 'Automotores - Solicitudes Preaprobadas'; break;
         case md5('SP'): $this->token = 'SP'; $this->xlsTitle = 'Automotores - Solicitudes Pendientes'; break;
 		case md5('AP'): $this->token = 'AP'; $this->xlsTitle = 'Automotores - Pólizas Aprobadas'; break;
@@ -483,7 +483,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td>No. Certificado</td>
+    		<td>No. Póliza</td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
@@ -767,7 +767,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-        	<td><?=htmlentities('No. Cotización', ENT_QUOTES, 'UTF-8');?></td>
+        	<td><?=htmlentities('No. Solicitud', ENT_QUOTES, 'UTF-8');?></td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
