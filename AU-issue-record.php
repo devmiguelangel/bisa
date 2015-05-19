@@ -106,6 +106,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			}	
 			
 			$cl_type_client = (boolean)$link->real_escape_string(trim(base64_decode($_POST['dc-type-client'])));
+			$cl_code = $link->real_escape_string(trim(base64_decode($_POST['dc-code'])));
 			$idcl = 
 			$cl_name = 
 			$cl_patern = 
@@ -136,6 +137,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$cl_position = 
 			$cl_monthly_income = 
 			$cl_executive = 
+			$cl_ex_ci =
+			$cl_ex_birth =
+			$cl_ex_profession =
 			$cl_activity = 
 			$account = 
 			$attached = '';
@@ -190,6 +194,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_number_vifpe = $link->real_escape_string(trim($_POST['dc-number-vifpe']));
 				$cl_antiquity = $link->real_escape_string(trim($_POST['dc-antiquity']));
 				$cl_executive = $link->real_escape_string(trim($_POST['dc-executive']));
+				$cl_ex_ci = $link->real_escape_string(trim($_POST['dc-ex-ci']));
+				$cl_ex_birth = $link->real_escape_string(trim($_POST['dc-ex-birth']));
+				$cl_ex_profession = $link->real_escape_string(trim($_POST['dc-ex-profession']));
 				$cl_position = $link->real_escape_string(trim($_POST['dc-position2']));
 				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
 				$account = $link->real_escape_string(trim($_POST['dc-account-jur']));
@@ -199,7 +206,10 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					'registration_number' 	=> $cl_registration_number,
 					'license_number' 		=> $cl_license_number,
 					'number_vifpe' 			=> $cl_number_vifpe,
-					'antiquity' 			=> $cl_antiquity
+					'antiquity' 			=> $cl_antiquity,
+					'executive_ci'			=> $cl_ex_ci,
+					'executive_birth'		=> $cl_ex_birth,
+					'executive_profession'	=> $cl_ex_profession
 				];
 
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
@@ -297,7 +307,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			if($sw === 1) {
 				if($swCl === FALSE) {	// REGISTRAR POLIZAc
 					$sqlCl = 'INSERT INTO s_cliente 
-					(id_cliente, id_ef, tipo, razon_social, paterno, materno, 
+					(id_cliente, id_ef, tipo, codigo_bb, razon_social, paterno, materno, 
 						nombre, ap_casada, fecha_nacimiento, lugar_nacimiento, 
 						ci, extension, complemento, tipo_documento, estado_civil, 
 						ci_archivo, lugar_residencia, localidad, avenida, direccion, 
@@ -308,8 +318,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						mano, data_jur, created_at) 
 					VALUES 
 						("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
-							'.(int)$cl_type_client.', "'.$cl_company_name.'", 
-							"'.$cl_patern.'", "'.$cl_matern.'", "'.$cl_name.'", 
+							"'.(int)$cl_type_client.'", "' . $cl_code . '", 
+							"'.$cl_company_name.'", "'.$cl_patern.'", 
+							"'.$cl_matern.'", "'.$cl_name.'", 
 							"'.$cl_married.'", "'.$cl_date_birth.'", "", 
 							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", 
 							"' . $cl_status . '", 
@@ -325,7 +336,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							"' . $link->real_escape_string(json_encode($data)) . '", now()) ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
-					SET razon_social = "'.$cl_company_name.'", 
+					SET codigo_bb = "' . $cl_code . '",
+						razon_social = "'.$cl_company_name.'", 
 						paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
 						nombre = "'.$cl_name.'", ap_casada = "'.$cl_married.'", 
 						fecha_nacimiento = "'.$cl_date_birth.'", 
@@ -474,7 +486,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				}
 
 				$sqlCl = 'UPDATE s_cliente 
-				SET razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
+				SET codigo_bb = "' . $cl_code . '",
+					razon_social = "'.$cl_company_name.'", paterno = "'.$cl_patern.'", materno = "'.$cl_matern.'", 
 					nombre = "'.$cl_name.'", fecha_nacimiento = "'.$cl_date_birth.'", 
 					extension = '.$cl_ext.', complemento = "'.$cl_comp.'",
 					estado_civil = "' . $cl_status . '", ci_archivo = "'.$cl_attached.'", 

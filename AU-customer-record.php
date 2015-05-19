@@ -54,6 +54,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		$di_type_term = 'Y';
 		
 		$dc_type_client = $link->real_escape_string(trim($_POST['dc-type-client']));
+		$dc_code = $link->real_escape_string(trim(base64_decode($_POST['dc-code'])));
 		$dc_name = $link->real_escape_string(trim($_POST['dc-name']));
 		$dc_lnpatern = $link->real_escape_string(trim($_POST['dc-ln-patern']));
 		$dc_lnmatern = $link->real_escape_string(trim($_POST['dc-ln-matern']));
@@ -82,6 +83,9 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 		$dc_address_work2 = $link->real_escape_string(trim($_POST['dc-address-work2']));
 		$dc_activity = $link->real_escape_string(trim($_POST['dc-activity']));
 		$dc_executive = $link->real_escape_string(trim($_POST['dc-executive']));
+		$dc_ex_ci = $link->real_escape_string(trim($_POST['dc-ex-ci']));
+		$dc_ex_birth = $link->real_escape_string(trim($_POST['dc-ex-birth']));
+		$dc_ex_profession = $link->real_escape_string(trim($_POST['dc-ex-profession']));
 		$dc_position2 = $link->real_escape_string(trim($_POST['dc-position2']));
 		$dc_phone_office2 = $link->real_escape_string(trim($_POST['dc-phone-office2']));
 		$dc_company_email = $link->real_escape_string(trim($_POST['dc-company-email']));
@@ -115,7 +119,10 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 				'registration_number' 	=> $dc_registration_number,
 				'license_number' 		=> $dc_license_number,
 				'number_vifpe' 			=> $dc_number_vifpe,
-				'antiquity' 			=> $dc_antiquity
+				'antiquity' 			=> $dc_antiquity,
+				'executive_ci'			=> $dc_ex_ci,
+				'executive_birth'		=> $dc_ex_birth,
+				'executive_profession'	=> $dc_ex_profession
 			];
 		}
 		
@@ -159,7 +166,8 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 				$idClient = $vc[1];
 				
 				$sql = 'update s_au_cot_cliente 
-				set razon_social = "' . $dc_company_name . '", 
+				set codigo_bb = "' . $dc_code . '",
+					razon_social = "' . $dc_company_name . '", 
 					paterno = "' . $dc_lnpatern . '", 
 					materno = "' . $dc_lnmatern . '", 
 					nombre = "' . $dc_name . '", 
@@ -190,7 +198,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 				$idClient = uniqid('@S#2$2013', true);
 				
 				$sql = 'insert into s_au_cot_cliente 
-				(id_cliente, id_ef, tipo, razon_social, paterno, materno, 
+				(id_cliente, id_ef, tipo, codigo_bb, razon_social, paterno, materno, 
 					nombre, ap_casada, fecha_nacimiento, pais, ci, extension, 
 					complemento, genero, estado_civil, direccion_domicilio, 
 					direccion_laboral, desc_ocupacion, ingreso_mensual,
@@ -199,7 +207,8 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 					telefono_celular, email, data_jur, created_at) 
 				values 
 				("' . $idClient . '", "' . $idef . '", 
-					' . (int)$dc_type_client . ', 
+					"' . (int)$dc_type_client . '",
+					"' . $dc_code . '", 
 					"' . $dc_company_name . '", "' . $dc_lnpatern . '", 
 					"' . $dc_lnmatern . '", "' . $dc_name . '", 
 					"' . $dc_lnmarried . '", "' . $dc_birth . '", 

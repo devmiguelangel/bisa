@@ -93,21 +93,27 @@ class BisaWs
 
 	private function getDataCustomer()
 	{
-		$aux = $this->data;
+		if (count($this->data) > 2) {
+			$aux = $this->data;
 		
-		foreach ($aux as $key => $value) {
-			$this->data[$key] = trim($value);
-		}
+			foreach ($aux as $key => $value) {
+				$this->data[$key] = trim($value);
+			}
 
-		if (($row = $this->cx->getExtenssionCode(substr($this->data['sigla'], 1))) !== false) {
-			$this->data['sigla'] = $row['id_depto'];
+			if ($this->method['CD']['var']['tipoCliente'] === 'P') {
+				if (($row = $this->cx->getExtenssionCode(substr($this->data['sigla'], 1))) !== false) {
+					$this->data['sigla'] = $row['id_depto'];
+				} else {
+					$this->data['sigla'] = 1;
+				}
+
+				$this->data['fecNacimiento'] = date('Y-m-d', strtotime($this->data['fecNacimiento']));
+				$this->data['estCivil'] = $this->cx->status[$this->data['estCivil']][0];
+			}
 		} else {
-			$this->data['sigla'] = 1;
+			$this->err_flag = true;
+			$this->err_mess = 'El Cliente no Existe';
 		}
-
-		$this->data['fecNacimiento'] = date('Y-m-d', strtotime($this->data['fecNacimiento']));
-		$this->data['estCivil'] = $this->cx->status[$this->data['estCivil'][0]];
-
 	}
 
 	public function getDataAccount()

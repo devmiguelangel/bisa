@@ -117,6 +117,9 @@ $dc_company_email = '';
 $dc_phone_office = '';
 $dc_activity = '';
 $dc_executive = '';
+$dc_ex_ci = '';
+$dc_ex_birth = '';
+$dc_ex_profession = '';
 $dc_position = '';
 $dc_type_company = '';
 $dc_registration_number = '';
@@ -168,43 +171,54 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 
 		$ws->getData('CD', $var);
 
-		$dc_code = $this->ws->data['codigoCliente'];
 
 		if (!$ws->err_flag) {
+			$dc_code = $ws->data['codigoCliente'];
+
 			if ($type_client === 0) {
-				$dc_name 		= $this->ws->data['primerNombre'] 
-					. ' ' . $this->ws->data['segundoNombre'];
-				$dc_lnpatern 	= $this->ws->data['apPaterno'];
-				$dc_lnmatern	= $this->ws->data['apMaterno'];
-				$dc_lnmarried	= $this->ws->data['apCasada'];
-				$dc_nit			= $this->ws->data['nroDocumento'];
-				$dc_depto		= $this->ws->data['sigla'];
-				$dc_country		= $this->ws->data['nacionalidad'];
-				$dc_birth		= $this->ws->data['fecNacimiento'];
-				$dc_status		= $this->ws->data['estCivil'];
-				$dc_desc_occ	= $this->ws->data['profesion'] 
-					. ' ' . $this->ws->data['actividad'];
-				$dc_address_home = $this->ws->data['ciudad'] 
-					. ' ' . $this->ws->data['zona']
-					. ' ' . $this->ws->data['calle']
-					. ' ' . $this->ws->data['numero']
-					. ' ' . $this->ws->data['nomEdificio']
-					. ' ' . $this->ws->data['nroDepto'];
-				$dc_phone_1 = $this->ws->data['telefono'];
-				$dc_phone_2 = $this->ws->data['celular'];
-				$dc_company_email = $this->ws->data['correo'];
-				$dc_address_work = $this->ws->data['ciudadTrab']
-					. ' ' . $this->ws->data['zonaTrabajo']
-					. ' ' . $this->ws->data['empCalle']
-					. ' ' . $this->ws->data['empNumero']
-					. ' ' . $this->ws->data['empNomEdif']
-					. ' ' . $this->ws->data['empNroPiso']
-					. ' ' . $this->ws->data['empTrabajo'];
-				$dc_phone_office = $this->ws->data['telefonOfic'];
-				$dc_position = $this->ws->data['Cargo'];
+				$dc_name 		= $ws->data['primerNombre'] 
+					. ' ' . $ws->data['segundoNombre'];
+				$dc_lnpatern 	= $ws->data['apPaterno'];
+				$dc_lnmatern	= $ws->data['apMaterno'];
+				$dc_lnmarried	= $ws->data['apCasada'];
+				$dc_doc_id		= $ws->data['nroDocumento'];
+				$dc_ext			= $ws->data['sigla'];
+				$dc_country		= $ws->data['nacionalidad'];
+				$dc_birth		= $ws->data['fecNacimiento'];
+				$dc_status		= $ws->data['estCivil'];
+				$dc_desc_occ	= $ws->data['profesion'] 
+					. ' ' . $ws->data['actividad'];
+				$dc_address_home = $ws->data['ciudad'] 
+					. ' ' . $ws->data['zona']
+					. ' ' . $ws->data['calle']
+					. ' ' . $ws->data['numero']
+					. ' ' . $ws->data['nomEdificio']
+					. ' ' . $ws->data['nroDepto'];
+				$dc_phone_1 = $ws->data['telefono'];
+				$dc_phone_2 = $ws->data['celular'];
+				$dc_email = $ws->data['correo'];
+				$dc_address_work = $ws->data['ciudadTrab']
+					. ' ' . $ws->data['zonaTrabajo']
+					. ' ' . $ws->data['empCalle']
+					. ' ' . $ws->data['empNumero']
+					. ' ' . $ws->data['empNomEdif']
+					. ' ' . $ws->data['empNroPiso']
+					. ' ' . $ws->data['empTrabajo'];
+				$dc_phone_office = $ws->data['telefonOfic'];
+				$dc_position = $ws->data['Cargo'];
 
 			} elseif ($type_client === 1) {
-				
+				$dc_company_name	= $ws->data['primerNombre'];
+				$dc_nit				= $ws->data['nroDocumento'];
+				$dc_activity		= $ws->data['actividad'];
+				$dc_address_work	= $ws->data['ciudad']
+					. ' ' . $ws->data['zona']
+					. ' ' . $ws->data['calle']
+					. ' ' . $ws->data['numero']
+					. ' ' . $ws->data['nomEdificio']
+					. ' ' . $ws->data['nroDepto'];
+				$dc_phone_office 	= $ws->data['telefono'];
+				$dc_company_email	= $ws->data['correo'];
 			}
 		} else {
 			$err_search = $ws->err_mess;
@@ -213,6 +227,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 		$sqlSc = 'select 
 			scl.id_cliente,
 			scl.tipo as cl_tipo,
+			scl.codigo_bb as cl_code,
 			scl.razon_social as cl_razon_social,
 			scl.nombre as cl_nombre,
 			scl.paterno as cl_paterno,
@@ -255,6 +270,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 				$rowSc = $rsSc->fetch_array(MYSQLI_ASSOC);
 				$rsSc->free();
 				
+				$dc_code = $rowSc['cl_code'];
 				$dc_company_name = $rowSc['cl_razon_social'];
 				$dc_name = $rowSc['cl_nombre'];
 				$dc_lnpatern = $rowSc['cl_paterno'];
@@ -282,12 +298,15 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 				if($dc_type === 1) {
 					$dc_doc_id = $dc_ext = $dc_email = '';
 					$data = json_decode($rowSc['data_jur'], true);
-					if (count($data) === 5) {
-						$dc_type_company = $data['type_company'];
+					if (count($data) === 8) {
+						$dc_type_company 		= $data['type_company'];
 						$dc_registration_number = $data['registration_number'];
-						$dc_license_number = $data['license_number'];
-						$dc_number_vifpe = $data['number_vifpe'];
-						$dc_antiquity = $data['antiquity'];
+						$dc_license_number 		= $data['license_number'];
+						$dc_number_vifpe 		= $data['number_vifpe'];
+						$dc_antiquity 			= $data['antiquity'];
+						$dc_ex_ci				= $data['executive_ci'];
+						$dc_ex_birth			= $data['executive_birth'];
+						$dc_ex_profession		= $data['executive_profession'];
 					}
 				} elseif ($dc_type === 0) {
 					$dc_nit = $dc_depto = $dc_company_email = '';
@@ -342,6 +361,8 @@ for($i = 0; $i < count($arr_type_client); $i++){
             </select>
         </div><br>
     </div><br>
+
+    <input type="hidden" id="dc-code" name="dc-code" value="<?= base64_encode($dc_code) ;?>">
     
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
@@ -566,15 +587,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 				<textarea id="dc-activity" name="dc-activity" 
 					class="<?= $require_jur ;?> fbin field-company"><?= $dc_activity ;?></textarea><br>
 			</div><br>
-        </div><!--
-        --><div class="form-col">
-        	<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
+
+			<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
             <div class="content-input">
 				<input type="text" id="dc-antiquity" name="dc-antiquity" 
 					autocomplete="off" value="<?=$dc_antiquity;?>" 
 					class="<?= $require_jur ;?> field-company text-2 fbin">
 			</div><br>
-
+        </div><!--
+        --><div class="form-col">
         	<label>Dirección domicilio: <span></span></label><br>
             <div class="content-input">
                 <textarea id="dc-address-home2" name="dc-address-home2" 
@@ -591,6 +612,27 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-executive" name="dc-executive" 
 					autocomplete="off" value="<?=$dc_executive;?>" 
+					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+			</div><br>
+
+			<label>No. de Documento de Identidad: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
+                	value="<?=$dc_ex_ci;?>" class="<?=$require_jur;?> dni fbin field-company">
+            </div><br>
+
+            <label>Fecha de Nacimiento: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-birth" name="dc-ex-birth" 
+                	autocomplete="off" value="<?=$dc_ex_birth;?>" 
+                	class="<?=$require_jur;?> fbin date field-company" 
+                	readonly style="cursor:pointer;">
+            </div><br>
+
+            <label>Profesión: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-ex-profession" name="dc-ex-profession" 
+					autocomplete="off" value="<?=$dc_ex_profession;?>" 
 					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
 			</div><br>
 

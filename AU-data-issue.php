@@ -70,6 +70,7 @@ switch($sw){
 			sac.forma_pago as c_forma_pago,
 			sac.prima_total as c_prima_total,
 			scl.tipo as cl_tipo_cliente,
+			scl.codigo_bb as cl_code,
 			scl.id_cliente as idcl,
 			scl.ci as cl_dni,
 			scl.extension as cl_extension,
@@ -167,6 +168,7 @@ if($sw !== 1){
 		sae.facultativo as c_facultativo,
 	    sae.motivo_facultativo as c_motivo_facultativo,
 		scl.tipo as cl_tipo_cliente,
+		scl.codigo_bb as cl_code,
 		scl.id_cliente as idcl,
 		scl.ci as cl_dni,
 		scl.extension as cl_extension,
@@ -308,6 +310,7 @@ if($rs->data_seek(0) === TRUE){
 	$cr_method_payment = $row['c_forma_pago'];
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
+	$cl_code = $row['cl_code'];
 	
 	if($cl_type_client === 0) { 
 		$display_jur = 'display: none;';
@@ -322,12 +325,15 @@ if($rs->data_seek(0) === TRUE){
 		$read_jur = 'required';
 
 		$data = json_decode($row['data_jur'], true);
-		if (count($data) === 5) {
-			$row['type_company'] = $data['type_company'];
+		if (count($data) === 8) {
+			$row['type_company'] 		= $data['type_company'];
 			$row['registration_number'] = $data['registration_number'];
-			$row['license_number'] = $data['license_number'];
-			$row['number_vifpe'] = $data['number_vifpe'];
-			$row['antiquity'] = $data['antiquity'];
+			$row['license_number'] 		= $data['license_number'];
+			$row['number_vifpe'] 		= $data['number_vifpe'];
+			$row['antiquity'] 			= $data['antiquity'];
+			$row['ex_ci']				= $data['executive_ci'];
+			$row['ex_birth']			= $data['executive_birth'];
+			$row['ex_profession']		= $data['executive_profession'];
 		}
 	}
 	
@@ -367,6 +373,8 @@ if($sw > 1){
 ?>
     <input type="hidden" id="dc-type-client" name="dc-type-client" 
     	value="<?=base64_encode($cl_type_client);?>">
+    <input type="hidden" id="dc-code" name="dc-code" 
+    	value="<?=base64_encode($cl_code);?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
@@ -608,15 +616,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 					class="<?= $read_jur ;?> fbin field-company" 
 						<?= $read_new ;?>><?= $row['cl_actividad'] ;?></textarea><br>
 			</div><br>
-        </div><!--
-        --><div class="form-col">
-        	<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
+
+			<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
             <div class="content-input">
 				<input type="text" id="dc-antiquity" name="dc-antiquity" 
 					autocomplete="off" value="<?=$row['antiquity'];?>" 
 					class="<?= $read_jur ;?> field-company text-2 fbin" <?= $read_new ;?>>
 			</div><br>
-
+        </div><!--
+        --><div class="form-col">
         	<label>Dirección domicilio: <span></span></label><br>
 			<textarea id="dc-company-address-home" name="dc-company-address-home" 
 				class="not-required fbin" 
@@ -632,6 +640,29 @@ if ($rsDep->data_seek(0) === TRUE) {
 				<input type="text" id="dc-executive" name="dc-executive" 
 					autocomplete="off" value="<?=$row['cl_ejecutivo'];?>" 
 					class="<?= $read_jur ;?> field-company text fbin" <?= $read_new ;?> style="width: 350px;">
+			</div><br>
+
+			<label>No. de Documento de Identidad: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
+                	value="<?=$row['ex_ci'];?>" class="<?=$read_jur;?> dni fbin field-company"
+                	<?= $read_new ;?>>
+            </div><br>
+
+            <label>Fecha de Nacimiento: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-birth" name="dc-ex-birth" 
+                	autocomplete="off" value="<?=$row['ex_birth'];?>" 
+                	class="<?=$read_jur;?> fbin date field-company" 
+                	readonly style="cursor:pointer;" <?= $read_new ;?>>
+            </div><br>
+
+            <label>Profesión: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-ex-profession" name="dc-ex-profession" 
+					autocomplete="off" value="<?=$row['ex_profession'];?>" 
+					class="<?= $read_jur ;?> field-company text fbin" 
+					style="width: 350px;" <?= $read_new ;?>>
 			</div><br>
 
 			<label>Cargo: <span>*</span></label><br>
