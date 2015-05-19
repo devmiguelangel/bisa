@@ -83,10 +83,13 @@ $(document).ready(function(e) {
 </script>
 <?php
 require_once('sibas-db.class.php');
+require 'classes/BisaWs.php';
+
 $link = new SibasDB();
 
 $swCl = FALSE;
 
+$dc_code = '';
 $dc_name = '';
 $dc_company_name = '';
 $dc_lnpatern = '';
@@ -111,12 +114,16 @@ $dc_company_email = '';
 $dc_phone_office = '';
 $dc_activity = '';
 $dc_executive = '';
+$dc_ex_ci = '';
+$dc_ex_birth = '';
+$dc_ex_profession = '';
 $dc_position = '';
 $dc_type_company = '';
 $dc_registration_number = '';
 $dc_license_number = '';
 $dc_number_vifpe = '';
 $dc_antiquity = '';
+$data = array();
 
 $title_btn = 'Registrar Cliente';
 $err_search = '';
@@ -125,119 +132,203 @@ $display_fsc = $display_nat = $display_jur = 'display: none;';
 $require_nat = $require_jur = 'not-required';
 $_TYPE_CLIENT = '';
 
-if(isset($_POST['dsc-dni']) && isset($_POST['dsc-type-client'])){
+if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-type-client'])) {
 	$dni = $link->real_escape_string(trim($_POST['dsc-dni']));
+	$ext = $link->real_escape_string(trim($_POST['dsc-ext']));
 	$type_client = $link->real_escape_string(trim($_POST['dsc-type-client']));
 	$_TYPE_CLIENT = $type_client;
-	if($type_client === 'NAT'){
+
+	if ($type_client === 'NAT') {
 		$type_client = 0;
 		$display_nat = 'display: block;';
 		$require_nat = 'required';
-	}elseif($type_client === 'JUR'){
+	} elseif ($type_client === 'JUR') {
 		$type_client = 1;
 		$display_jur = 'display: block;';
 		$require_jur = 'required';
 	}
 	
 	$display_fsc = 'display: block;';
-	
-	$sqlSc = 'select 
-		scl.id_cliente,
-		scl.tipo as cl_tipo,
-		scl.razon_social as cl_razon_social,
-		scl.nombre as cl_nombre,
-		scl.paterno as cl_paterno,
-		scl.materno as cl_materno,
-		scl.ap_casada as cl_ap_casada,
-		scl.ci as cl_dni,
-		scl.complemento as cl_complemento,
-		scl.extension as cl_extension,
-		scl.fecha_nacimiento as cl_fecha_nacimiento,
-		scl.pais as cl_pais,
-		scl.estado_civil as cl_estado_civil,
-		scl.direccion_domicilio as cl_direccion_domicilio,
-	    scl.direccion_laboral as cl_direccion_laboral,
-	    scl.desc_ocupacion as cl_desc_ocupacion,
-		scl.ingreso_mensual as cl_ingreso_mensual,
-	    scl.actividad as cl_actividad,
-		scl.ejecutivo as cl_ejecutivo,
-		scl.cargo as cl_cargo,
-		scl.telefono_domicilio as cl_tel_domicilio,
-		scl.telefono_celular as cl_tel_celular,
-		scl.telefono_oficina as cl_tel_oficina,
-		scl.email as cl_email,
-		scl.genero as cl_genero,
-		scl.data_jur
-	from
-		s_trd_cot_cliente as scl
-			inner join
-		s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
-	where
-		scl.ci = "' . $dni . '"
-			and scl.tipo = ' . $type_client . '
-			and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
-			and sef.activado = true
-	limit 0 , 1
-	;';
-	// echo $sqlSc;
-	if(($rsSc = $link->query($sqlSc,MYSQLI_STORE_RESULT))){
-		if($rsSc->num_rows === 1){
-			$rowSc = $rsSc->fetch_array(MYSQLI_ASSOC);
-			$rsSc->free();
-			
-			$dc_company_name = $rowSc['cl_razon_social'];
-			$dc_name = $rowSc['cl_nombre'];
-			$dc_lnpatern = $rowSc['cl_paterno'];
-			$dc_lnmatern = $rowSc['cl_materno'];
-			$dc_lnmarried = $rowSc['cl_ap_casada'];
-			$dc_nit = $dc_doc_id = $rowSc['cl_dni'];
-			$dc_comp = $rowSc['cl_complemento'];
-			$dc_depto = $dc_ext = $rowSc['cl_extension'];
-			$dc_birth = $rowSc['cl_fecha_nacimiento'];
-			$dc_country = $rowSc['cl_pais'];
-			$dc_status = $rowSc['cl_estado_civil'];
-			$dc_address_home = $rowSc['cl_direccion_domicilio'];
-			$dc_address_work = $rowSc['cl_direccion_laboral'];
-			$dc_desc_occ = $rowSc['cl_desc_ocupacion'];
-			$dc_monthly_income = (int)$rowSc['cl_ingreso_mensual'];
-			$dc_activity = $rowSc['cl_actividad'];
-			$dc_executive = $rowSc['cl_ejecutivo'];
-			$dc_position = $rowSc['cl_cargo'];
-			$dc_phone_1 = $rowSc['cl_tel_domicilio'];
-			$dc_phone_2 = $rowSc['cl_tel_celular'];
-			$dc_company_email = $dc_email = $rowSc['cl_email'];
-			$dc_phone_office = $rowSc['cl_tel_oficina'];
-			$dc_gender = $rowSc['cl_genero'];
-			
-			$dc_type = (int)$rowSc['cl_tipo'];
-			if($dc_type === 1) {
-				$dc_doc_id = $dc_ext = $dc_email = '';
-				$data = json_decode($rowSc['data_jur'], true);
-				if (count($data) === 5) {
-					$dc_type_company = $data['type_company'];
-					$dc_registration_number = $data['registration_number'];
-					$dc_license_number = $data['license_number'];
-					$dc_number_vifpe = $data['number_vifpe'];
-					$dc_antiquity = $data['antiquity'];
+
+	if ($link->checkWebService($_SESSION['idEF'], 'TRD')) {
+		$ws = new BisaWs($link);
+
+		$var = [
+			'tipoCliente' 	=> '',
+			'nroDocumento' 	=> $dni,
+			'sigla' 		=> $ext,
+		];
+
+		if ($type_client === 1) {
+			$var['tipoCliente'] = 'E';
+		} elseif ($type_client === 0) {
+			$var['tipoCliente'] = 'P';
+		}
+
+		$ws->getData('CD', $var);
+
+
+		if (!$ws->err_flag) {
+			$dc_code = $ws->data['codigoCliente'];
+
+			if ($type_client === 0) {
+				$dc_name 		= $ws->data['primerNombre'] 
+					. ' ' . $ws->data['segundoNombre'];
+				$dc_lnpatern 	= $ws->data['apPaterno'];
+				$dc_lnmatern	= $ws->data['apMaterno'];
+				$dc_lnmarried	= $ws->data['apCasada'];
+				$dc_doc_id		= $ws->data['nroDocumento'];
+				$dc_ext			= $ws->data['sigla'];
+				$dc_country		= $ws->data['nacionalidad'];
+				$dc_birth		= $ws->data['fecNacimiento'];
+				$dc_status		= $ws->data['estCivil'];
+				$dc_desc_occ	= $ws->data['profesion'] 
+					. ' ' . $ws->data['actividad'];
+				$dc_address_home = $ws->data['ciudad'] 
+					. ' ' . $ws->data['zona']
+					. ' ' . $ws->data['calle']
+					. ' ' . $ws->data['numero']
+					. ' ' . $ws->data['nomEdificio']
+					. ' ' . $ws->data['nroDepto'];
+				$dc_phone_1 = $ws->data['telefono'];
+				$dc_phone_2 = $ws->data['celular'];
+				$dc_email = $ws->data['correo'];
+				$dc_address_work = $ws->data['ciudadTrab']
+					. ' ' . $ws->data['zonaTrabajo']
+					. ' ' . $ws->data['empCalle']
+					. ' ' . $ws->data['empNumero']
+					. ' ' . $ws->data['empNomEdif']
+					. ' ' . $ws->data['empNroPiso']
+					. ' ' . $ws->data['empTrabajo'];
+				$dc_phone_office = $ws->data['telefonOfic'];
+				$dc_position = $ws->data['Cargo'];
+
+			} elseif ($type_client === 1) {
+				$dc_company_name	= $ws->data['primerNombre'];
+				$dc_nit				= $ws->data['nroDocumento'];
+				$dc_activity		= $ws->data['actividad'];
+				$dc_address_work	= $ws->data['ciudad']
+					. ' ' . $ws->data['zona']
+					. ' ' . $ws->data['calle']
+					. ' ' . $ws->data['numero']
+					. ' ' . $ws->data['nomEdificio']
+					. ' ' . $ws->data['nroDepto'];
+				$dc_phone_office 	= $ws->data['telefono'];
+				$dc_company_email	= $ws->data['correo'];
+			}
+		} else {
+			$err_search = $ws->err_mess;
+		}
+	} else {
+		$sqlSc = 'select 
+			scl.id_cliente,
+			scl.tipo as cl_tipo,
+			scl.codigo_bb as cl_code,
+			scl.razon_social as cl_razon_social,
+			scl.nombre as cl_nombre,
+			scl.paterno as cl_paterno,
+			scl.materno as cl_materno,
+			scl.ap_casada as cl_ap_casada,
+			scl.ci as cl_dni,
+			scl.complemento as cl_complemento,
+			scl.extension as cl_extension,
+			scl.fecha_nacimiento as cl_fecha_nacimiento,
+			scl.pais as cl_pais,
+			scl.estado_civil as cl_estado_civil,
+			scl.direccion_domicilio as cl_direccion_domicilio,
+		    scl.direccion_laboral as cl_direccion_laboral,
+		    scl.desc_ocupacion as cl_desc_ocupacion,
+			scl.ingreso_mensual as cl_ingreso_mensual,
+		    scl.actividad as cl_actividad,
+			scl.ejecutivo as cl_ejecutivo,
+			scl.cargo as cl_cargo,
+			scl.telefono_domicilio as cl_tel_domicilio,
+			scl.telefono_celular as cl_tel_celular,
+			scl.telefono_oficina as cl_tel_oficina,
+			scl.email as cl_email,
+			scl.genero as cl_genero,
+			scl.data_jur
+		from
+			s_trd_cot_cliente as scl
+				inner join
+			s_entidad_financiera as sef ON (sef.id_ef = scl.id_ef)
+		where
+			scl.ci = "' . $dni . '"
+				and scl.tipo = ' . $type_client . '
+				and sef.id_ef = "' . base64_decode($_SESSION['idEF']) . '"
+				and sef.activado = true
+		limit 0 , 1
+		;';
+		// echo $sqlSc;
+		if(($rsSc = $link->query($sqlSc,MYSQLI_STORE_RESULT))){
+			if($rsSc->num_rows === 1){
+				$rowSc = $rsSc->fetch_array(MYSQLI_ASSOC);
+				$rsSc->free();
+				
+				$dc_code = $rowSc['cl_code'];
+				$dc_company_name = $rowSc['cl_razon_social'];
+				$dc_name = $rowSc['cl_nombre'];
+				$dc_lnpatern = $rowSc['cl_paterno'];
+				$dc_lnmatern = $rowSc['cl_materno'];
+				$dc_lnmarried = $rowSc['cl_ap_casada'];
+				$dc_nit = $dc_doc_id = $rowSc['cl_dni'];
+				$dc_comp = $rowSc['cl_complemento'];
+				$dc_depto = $dc_ext = $rowSc['cl_extension'];
+				$dc_birth = $rowSc['cl_fecha_nacimiento'];
+				$dc_country = $rowSc['cl_pais'];
+				$dc_status = $rowSc['cl_estado_civil'];
+				$dc_address_home = $rowSc['cl_direccion_domicilio'];
+				$dc_address_work = $rowSc['cl_direccion_laboral'];
+				$dc_desc_occ = $rowSc['cl_desc_ocupacion'];
+				$dc_monthly_income = (int)$rowSc['cl_ingreso_mensual'];
+				$dc_activity = $rowSc['cl_actividad'];
+				$dc_executive = $rowSc['cl_ejecutivo'];
+				$dc_position = $rowSc['cl_cargo'];
+				$dc_phone_1 = $rowSc['cl_tel_domicilio'];
+				$dc_phone_2 = $rowSc['cl_tel_celular'];
+				$dc_company_email = $dc_email = $rowSc['cl_email'];
+				$dc_phone_office = $rowSc['cl_tel_oficina'];
+				
+				$dc_type = (int)$rowSc['cl_tipo'];
+				if($dc_type === 1) {
+					$dc_doc_id = $dc_ext = $dc_email = '';
+					$data = json_decode($rowSc['data_jur'], true);
+					if (count($data) === 8) {
+						$dc_type_company 		= $data['type_company'];
+						$dc_registration_number = $data['registration_number'];
+						$dc_license_number 		= $data['license_number'];
+						$dc_number_vifpe 		= $data['number_vifpe'];
+						$dc_antiquity 			= $data['antiquity'];
+						$dc_ex_ci				= $data['executive_ci'];
+						$dc_ex_birth			= $data['executive_birth'];
+						$dc_ex_profession		= $data['executive_profession'];
+					}
+				} elseif ($dc_type === 0) {
+					$dc_nit = $dc_depto = $dc_company_email = '';
 				}
-			} elseif ($dc_type === 0) {
-				$dc_nit = $dc_depto = $dc_company_email = '';
+			}else{
+				$err_search = 'El Cliente no Existe !';
 			}
 		}else{
-			$err_search = 'El Cliente no Existe !';
+			$err_search = 'El Cliente no Existe';
 		}
-	}else{
-		$err_search = 'El Cliente no Existe';
 	}
 }
 
 ?>
 <h3>Datos del Cliente</h3>
 <div style="text-align:center;">
-	<form id="ftr-sc" name="ftr-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> ">
-        <label>Documento de Identidad: <span>*</span></label>
+	<form id="ftr-sc" name="ftr-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> font-size: 80%;">
+        <label style="width: auto;">Documento de Identidad: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-            <input type="text" id="dsc-dni" name="dsc-dni" autocomplete="off" value="" style="width:120px;" class="required text fbin">
+            <input type="text" id="dsc-dni" name="dsc-dni" autocomplete="off" 
+            	value="" style="width:120px;" class="required text fbin">
+        </div>
+
+        <label style="width: auto;">Extensión: <span>*</span></label>
+        <div class="content-input" style="width:auto;">
+            <input type="text" id="dsc-ext" name="dsc-ext" autocomplete="off" 
+            	value="" style="width:30px;" class="required text fbin">
         </div>
         <input type="hidden" id="dsc-type-client" name="dsc-type-client" value="<?=$_TYPE_CLIENT;?>">
         <input type="submit" id="dsc-sc" name="dsc-sc" value="Buscar Cliente" class="btn-search-cs">
@@ -265,6 +356,8 @@ for($i = 0; $i < count($arr_type_client); $i++){
             </select>
         </div><br>
     </div><br>
+
+    <input type="hidden" id="dc-code" name="dc-code" value="<?= base64_encode($dc_code) ;?>">
     
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
@@ -348,9 +441,9 @@ if ($rsDep->data_seek(0) === TRUE) {
 					class="<?=$require_nat;?> fbin field-person">
 	            	<option value="">Seleccione...</option>
 	            	<?php foreach ($link->status as $key => $value): $selected = ''; ?>
-	            		<?php if ($key === $dc_status): $selected = 'selected'; ?>
+	            		<?php if ($value[0] === $dc_status): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<option value="<?= $value[0] ;?>" <?= $selected ;?>><?= $value[1] ;?></option>
 	            	<?php endforeach ?>
 				</select>
 			</div><br>
@@ -488,7 +581,13 @@ if ($rsDep->data_seek(0) === TRUE) {
 				<textarea id="dc-activity" name="dc-activity" 
 					class="<?= $require_jur ;?> fbin field-company"><?= $dc_activity ;?></textarea><br>
 			</div><br>
-            
+
+			<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-antiquity" name="dc-antiquity" 
+					autocomplete="off" value="<?=$dc_antiquity;?>" 
+					class="<?= $require_jur ;?> field-company text-2 fbin">
+			</div><br>
         </div><!--
         --><div class="form-col">
         	<label>Dirección domicilio: <span></span></label><br>
@@ -510,9 +609,30 @@ if ($rsDep->data_seek(0) === TRUE) {
 					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
 			</div><br>
 
+			<label>No. de Documento de Identidad: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
+                	value="<?=$dc_ex_ci;?>" class="<?=$require_jur;?> dni fbin field-company">
+            </div><br>
+
+            <label>Fecha de Nacimiento: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-birth" name="dc-ex-birth" 
+                	autocomplete="off" value="<?=$dc_ex_birth;?>" 
+                	class="<?=$require_jur;?> fbin date field-company" 
+                	readonly style="cursor:pointer;">
+            </div><br>
+
+            <label>Profesión: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-ex-profession" name="dc-ex-profession" 
+					autocomplete="off" value="<?=$dc_ex_profession;?>" 
+					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+			</div><br>
+
 			<label>Cargo: <span>*</span></label><br>
 			<div class="content-input" style="width: 350px;">
-				<input type="text" id="dc-position" name="dc-position" 
+				<input type="text" id="dc-position2" name="dc-position2" 
 					autocomplete="off" value="<?=$dc_position;?>" 
 					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
 			</div><br>

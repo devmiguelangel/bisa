@@ -71,6 +71,7 @@ switch($sw){
 		    strc.tipo_plazo as c_tipo_plazo,
 		    strc.prima_total as c_prima_total,
 		    scl.tipo as cl_tipo_cliente,
+		    scl.codigo_bb as cl_code,
 		    scl.id_cliente as idcl,
 		    scl.ci as cl_dni,
 		    scl.extension as cl_extension,
@@ -99,11 +100,19 @@ switch($sw){
 		    scl.telefono_celular as cl_tel_celular,
 		    scl.telefono_oficina as cl_tel_oficina,
 		    scl.email as cl_email,
+		    scl.pais as cl_pais,
+			scl.estado_civil as cl_estado_civil,
 		    "" as cl_lugar_residencia,
 		    "" as cl_localidad,
 		    "" as cl_ocupacion,
-		    "" as cl_desc_ocupacion,
+		    scl.desc_ocupacion as cl_desc_ocupacion,
 		    "" as cl_adjunto,
+		    scl.cargo as cl_cargo,
+			scl.ingreso_mensual as cl_ingreso_mensual,
+			scl.actividad as cl_actividad,
+			scl.ejecutivo as cl_ejecutivo,
+		    scl.data_jur,
+		    "" as cl_cuenta,
 		    strd.id_inmueble as idpr,
 		    strd.tipo_in as pr_tipo,
 		    strd.uso as pr_uso,
@@ -156,6 +165,7 @@ if($sw !== 1){
 	    stre.facultativo as c_facultativo,
 	    stre.motivo_facultativo as c_motivo_facultativo,
 	    scl.tipo as cl_tipo_cliente,
+	    scl.codigo_bb as cl_code,
 	    scl.id_cliente as idcl,
 	    scl.ci as cl_dni,
 	    scl.extension as cl_extension,
@@ -166,6 +176,8 @@ if($sw !== 1){
 	    scl.materno as cl_materno,
 	    scl.ap_casada as cl_ap_casada,
 	    scl.fecha_nacimiento as cl_fecha_nacimiento,
+	    scl.pais as cl_pais,
+		scl.estado_civil as cl_estado_civil,
 	    scl.complemento as cl_complemento,
 	    scl.genero as cl_genero,
 	    scl.telefono_domicilio as cl_tel_domicilio,
@@ -180,7 +192,15 @@ if($sw !== 1){
 	    scl.id_ocupacion as cl_ocupacion,
 	    scl.desc_ocupacion as cl_desc_ocupacion,
 	    scl.direccion_laboral as cl_direccion_laboral,
+	    scl.cargo as cl_cargo,
+	    scl.ingreso_mensual as cl_ingreso_mensual,
+		scl.actividad as cl_actividad,
+		scl.ejecutivo as cl_ejecutivo,
+	    scl.data_jur,
+	    stre.cuenta as cl_cuenta,
 	    scl.ci_archivo as cl_adjunto,
+	    stre.tomador_nombre as cl_tomador_nombre,
+		stre.tomador_ci_nit as cl_tomador_dni,
 	    strd.id_inmueble as idpr,
 	    strd.tipo_in as pr_tipo,
 	    strd.uso as pr_uso,
@@ -266,6 +286,8 @@ $YEAR_FINAL = 0;
 $cr_amount = 0;
 $cr_term = 0;
 $cr_type_term = $cr_method_payment = $cr_opp = $cr_policy = '';
+$taken_name = $taken_nit = '';
+$data = array();
 
 $display_nat = $display_jur = 'display: block;';
 $read_nat = $read_jur = 'not-required';
@@ -281,29 +303,59 @@ if($rs->data_seek(0) === TRUE){
 	$cr_method_payment = $row['c_forma_pago'];
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
+	$cl_code = $row['cl_code'];
 	
 	if($cl_type_client === 0) { 
 		$display_jur = 'display: none;';
 		$read_nat = 'required';
+		$row['type_company'] = '';
+		$row['registration_number'] = '';
+		$row['license_number'] = '';
+		$row['number_vifpe'] = '';
+		$row['antiquity'] = '';
+		$row['ex_ci'] = '';
+		$row['ex_birth'] = '';
+		$row['ex_profession'] = '';
 	} elseif($cl_type_client === 1) { 
 		$display_nat = 'display: none;'; 
 		$read_jur = 'required';
+
+		$data = json_decode($row['data_jur'], true);
+		if (count($data) === 8) {
+			$row['type_company'] 		= $data['type_company'];
+			$row['registration_number'] = $data['registration_number'];
+			$row['license_number'] 		= $data['license_number'];
+			$row['number_vifpe'] 		= $data['number_vifpe'];
+			$row['antiquity'] 			= $data['antiquity'];
+			$row['ex_ci']				= $data['executive_ci'];
+			$row['ex_birth']			= $data['executive_birth'];
+			$row['ex_profession']		= $data['executive_profession'];
+		}
 	}
 	
-	if($sw !== 1){
+	if ($sw !== 1) {
 		$idNE = $row['no_emision'];
 		
 		$cr_opp = $row['c_no_operacion'];
 		$cr_policy = $row['c_poliza'];
 		$mFC = $row['c_motivo_facultativo'];
 		
-		if($sw === 2 || $sw === 3){
+		if ($sw === 2 || $sw === 3) {
 			if((boolean)$row['c_facultativo'] === TRUE) {
 				$FC = TRUE;
 			}
 		}
-	}else{
+
+		$taken_name = $row['cl_tomador_nombre'];
+		$taken_nit = $row['cl_tomador_dni'];
+	} else {
+		if ($cl_type_client === 0) {
+			$taken_name = $row['cl_nombre'] . ' ' . $row['cl_paterno'] . ' ' . $row['cl_materno'];
+		} else {
+			$taken_name = $row['cl_razon_social'];
+		}
 		
+		$taken_nit = $row['cl_dni'];
 	}
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
@@ -317,6 +369,8 @@ if($sw > 1){
 ?>
     <input type="hidden" id="dc-type-client" name="dc-type-client" 
     	value="<?=base64_encode($cl_type_client);?>">
+    <input type="hidden" id="dc-code" name="dc-code" 
+    	value="<?=base64_encode($cl_code);?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
@@ -389,12 +443,76 @@ if ($rsDep->data_seek(0) === TRUE) {
                 	class="<?=$read_nat;?> fbin date field-person" readonly 
                 	style="cursor:pointer;" <?=$read_new;?>>
             </div><br>
+
+            <label>País: <span>*</span></label>
+			<div class="content-input">
+				<input type="text" id="dc-country" name="dc-country" 
+					autocomplete="off" value="<?=$row['cl_pais'];?>" 
+					class="<?=$read_nat;?> text fbin field-person" <?= $read_new ;?>>
+			</div><br>
+			
+			<label>Estado Civil: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-status" name="dc-status" 
+					class="<?=$read_nat;?> fbin field-person <?=$read_new . ' ' . $read_edit;?>" <?= $read_new ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->status as $key => $value): $selected = ''; ?>
+	            		<?php if ($value[0] === $row['cl_estado_civil']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $value[0] ;?>" <?= $selected ;?>><?= $value[1] ;?></option>
+	            	<?php endforeach ?>
+				</select>
+			</div><br>
+            
+            <label>Dirección domicilio: <span>*</span></label><br>
+            <textarea id="dc-address-home" name="dc-address-home" 
+            	class="<?=$read_nat;?> fbin" <?=$read_new . ' ' 
+            	. $read_save;?>><?=$row['cl_direccion_domicilio'];?></textarea><br>
+        </div><!--
+        --><div class="form-col">
+            <label>Dirección laboral: <span></span></label><br>
+            <textarea id="dc-address-work" name="dc-address-work" 
+            	class="fbin" <?=$read_new . ' ' 
+            	. $read_save;?>><?=$row['cl_direccion_laboral'];?></textarea><br>
+
+            <label>Ocupación: <span>*</span></label><br>
+			<textarea id="dc-desc-occ" name="dc-desc-occ" 
+				class="<?= $read_nat ;?> fbin field-person" 
+				<?= $read_new ;?>><?= $row['cl_desc_ocupacion'] ;?></textarea><br>
+
+			<label>Cargo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-position" name="dc-position" 
+					autocomplete="off" value="<?=$row['cl_cargo'];?>" 
+					class="<?= $read_nat ;?> field-person text fbin" 
+					<?= $read_new ;?> style="width: 350px;">
+			</div><br>
+
+			<label>Ingreso Mensual: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-monthly-income" name="dc-monthly-income" 
+					class="<?=$read_nat;?> fbin field-person <?=$read_new;?>" <?= $read_new ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->monthly_income['N'] as $key => $value): $selected = ''; ?>
+	            		<?php if ($key === (int)$row['cl_ingreso_mensual']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
+				</select>
+			</div><br>
             
             <label>Teléfono de domicilio: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-phone-1" name="dc-phone-1" 
                 	autocomplete="off" value="<?=$row['cl_tel_domicilio'];?>" 
                 	class="<?=$read_nat;?> phone fbin" <?=$read_new;?>>
+            </div><br>
+
+            <label>Teléfono oficina: </label>
+            <div class="content-input">
+                <input type="text" id="dc-phone-office" name="dc-phone-office" 
+                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
+                	class="not-required phone fbin" <?=$read_new . ' ' . $read_save;?>>
             </div><br>
             
             <label>Teléfono celular: </label>
@@ -410,24 +528,13 @@ if ($rsDep->data_seek(0) === TRUE) {
 					autocomplete="off" value="<?=$row['cl_email'];?>" 
 					class="not-required email fbin" <?=$read_new;?>>
 			</div><br>
-        </div><!--
-        --><div class="form-col">
-			<label>Dirección domicilio: <span>*</span></label><br>
-            <textarea id="dc-address-home" name="dc-address-home" 
-            	class="<?=$read_nat;?> fbin" <?=$read_new . ' ' 
-            	. $read_save;?>><?=$row['cl_direccion_domicilio'];?></textarea><br>
-            
-            <label>Dirección laboral: <span></span></label><br>
-            <textarea id="dc-address-work" name="dc-address-work" 
-            	class="fbin" <?=$read_new . ' ' 
-            	. $read_save;?>><?=$row['cl_direccion_laboral'];?></textarea><br>
-            
-            <label>Teléfono oficina: </label>
-            <div class="content-input">
-                <input type="text" id="dc-phone-office" name="dc-phone-office" 
-                	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
-                	class="not-required phone fbin" <?=$read_new . ' ' . $read_save;?>>
-            </div><br>
+
+			<label>Número de Cuenta: <span>*</span></label>
+			<div class="content-input">
+				<input type="text" id="dc-account-nat" name="dc-account-nat" 
+					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
+					class="<?=$read_nat;?> fbin number" <?=$read_save;?> >
+			</div><br>
         </div><br>
     </div>
     
@@ -468,8 +575,113 @@ if ($rsDep->data_seek(0) === TRUE) {
 ?>
                 </select>
             </div><br>
-            
-            <label>Teléfono oficina: </label>
+
+            <label style="width: auto;">Tipo de Sociedad Comercial: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-type-company" name="dc-type-company" 
+					autocomplete="off" value="<?=$row['type_company'];?>" 
+					class="<?= $read_jur ;?> field-company text-2 fbin" <?= $read_new ;?>>
+			</div><br>
+
+            <label style="width: auto;">No. de Registro en Fundempresa: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-registration-number" name="dc-registration-number" 
+					autocomplete="off" value="<?=$row['registration_number'];?>" 
+					class="<?= $read_jur ;?> field-company text-2 fbin" <?= $read_new ;?>>
+			</div><br>
+
+			<label style="width: auto;">No. de Licencia de Funcionamiento GAM: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-license-number" name="dc-license-number" 
+					autocomplete="off" value="<?=$row['license_number'];?>" 
+					class="<?= $read_jur ;?> field-company text-2 fbin" <?= $read_new ;?>>
+			</div><br>
+
+			<label style="width: auto;">
+				No. de Registro del VIFPE (Solo para Org. sin fines de lucro): <span></span>
+			</label><br>
+            <div class="content-input">
+				<input type="text" id="dc-number-vifpe" name="dc-number-vifpe" 
+					autocomplete="off" value="<?=$row['number_vifpe'];?>" 
+					class="not-required text-2 fbin" <?= $read_new ;?>>
+			</div><br>
+
+			<label style="width: auto;">Actividad y/o Giro del Negocio: <span>*</span></label><br>
+			<div class="content-input">
+				<textarea id="dc-activity" name="dc-activity" 
+					class="<?= $read_jur ;?> fbin field-company" 
+						<?= $read_new ;?>><?= $row['cl_actividad'] ;?></textarea><br>
+			</div><br>
+
+			<label style="width: auto;">Antigüedad de la Persona Juridica: <span>*</span></label><br>
+            <div class="content-input">
+				<input type="text" id="dc-antiquity" name="dc-antiquity" 
+					autocomplete="off" value="<?=$row['antiquity'];?>" 
+					class="<?= $read_jur ;?> field-company text-2 fbin" <?= $read_new ;?>>
+			</div><br>
+        </div><!--
+        --><div class="form-col">
+            <label>Dirección domicilio: <span></span></label><br>
+			<textarea id="dc-company-address-home" name="dc-company-address-home" 
+				class="not-required fbin" <?=$read_new . ' ' . $read_save;?>><?=
+					$row['cl_direccion_domicilio'];?></textarea><br>
+
+			<label>Dirección laboral: <span>*</span></label><br>
+			<textarea id="dc-company-address-work" name="dc-company-address-work" 
+				class="<?=$read_jur;?> fbin" 
+				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
+
+			<label>Principal Ejecutivo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-executive" name="dc-executive" 
+					autocomplete="off" value="<?=$row['cl_ejecutivo'];?>" 
+					class="<?= $read_jur ;?> field-company text fbin" <?= $read_new ;?> style="width: 350px;">
+			</div><br>
+
+			<label>No. de Documento de Identidad: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
+                	value="<?=$row['ex_ci'];?>" class="<?=$read_jur;?> dni fbin field-company"
+                	<?= $read_new ;?>>
+            </div><br>
+
+            <label>Fecha de Nacimiento: <span>*</span></label>
+            <div class="content-input">
+                <input type="text" id="dc-ex-birth" name="dc-ex-birth" 
+                	autocomplete="off" value="<?=$row['ex_birth'];?>" 
+                	class="<?=$read_jur;?> fbin date field-company" 
+                	readonly style="cursor:pointer;" <?= $read_new ;?>>
+            </div><br>
+
+            <label>Profesión: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-ex-profession" name="dc-ex-profession" 
+					autocomplete="off" value="<?=$row['ex_profession'];?>" 
+					class="<?= $read_jur ;?> field-company text fbin" 
+					style="width: 350px;" <?= $read_new ;?>>
+			</div><br>
+
+			<label>Cargo: <span>*</span></label><br>
+			<div class="content-input" style="width: 350px;">
+				<input type="text" id="dc-position2" name="dc-position2" 
+					autocomplete="off" value="<?=$row['cl_cargo'];?>" 
+					class="<?= $read_jur ;?> field-company text fbin" <?= $read_new ;?> style="width: 350px;">
+			</div><br>
+
+			<label>Ingreso Mensual: <span>*</span></label>
+			<div class="content-input">
+				<select id="dc-monthly-income2" name="dc-monthly-income2" 
+					class="<?=$read_jur;?> fbin field-company <?= $read_new ;?>" <?= $read_new ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($link->monthly_income['J'] as $key => $value): $selected = ''; ?>
+	            		<?php if ($key === (int)$row['cl_ingreso_mensual']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<?php endforeach ?>
+				</select>
+			</div><br>
+
+			<label>Teléfono oficina: </label>
             <div class="content-input">
                 <input type="text" id="dc-company-phone-office" name="dc-company-phone-office" 
                 	autocomplete="off" value="<?=$row['cl_tel_oficina'];?>" 
@@ -482,19 +694,46 @@ if ($rsDep->data_seek(0) === TRUE) {
                  	autocomplete="off" value="<?=$row['cl_email'];?>" 
                  	class="not-required email fbin" <?=$read_new;?>>
             </div><br>
-        </div><!--
-        --><div class="form-col">
-            <label>Dirección domicilio: <span></span></label><br>
-			<textarea id="dc-company-address-home" name="dc-company-address-home" 
-				class="not-required fbin" <?=$read_new . ' ' . $read_save;?>><?=
-					$row['cl_direccion_domicilio'];?></textarea><br>
 
-			<label>Dirección domicilio: <span>*</span></label><br>
-			<textarea id="dc-company-address-work" name="dc-company-address-work" 
-				class="<?=$read_jur;?> fbin" 
-				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
+            <label>Número de Cuenta: <span>*</span></label>
+			<div class="content-input">
+				<input type="text" id="dc-account-jur" name="dc-account-jur" 
+					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
+					class="<?=$read_jur;?> fbin number" <?=$read_save;?> >
+			</div><br>
         </div>
     </div>
+
+    <div class="form-col">
+		<h4>Datos del Tomador</h4>
+
+    	<label style="width: auto; font-size: 90%;">
+            <input class="check various fancybox.ajax" type="checkbox" id="taken-flag" 
+            	name="taken-flag" value="1" <?=$read_save;?>>
+			&nbsp;&nbsp;El Tomador de la Póliza no es igual al Asegurado
+		</label>
+
+		<div class="taken">
+			Documento de Identidad:
+			<input type="text" id="dsc-dni" autocomplete="off" 
+				value="" class="text fbin">
+			<input type="button" id="dsc-sc" value="Buscar Titular" class="btn-search-cs">
+			<div class="taken__result"></div>
+		</div>
+		
+		<label>Nombre: <span>*</span></label><br>
+    	<div class="content-input">
+            <textarea id="taken-name" name="taken-name" class="required fbin" 
+            	<?=$read_save . $read_edit;?>><?=trim($taken_name);?></textarea><br>
+        </div><br>
+
+        <label>CI/NIT: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="taken-nit" name="taken-nit" autocomplete="off" value="<?=$taken_nit;?>" 
+            	class="required dni fbin field-company" <?=$read_save . $read_edit;?>>
+        </div><br>
+    </div><!--
+    --><div class="form-col"></div>
 <?php
 }
 
@@ -568,7 +807,7 @@ if(($rsDp = $link->get_depto()) !== FALSE){
             <td style="width: 15%;">Valor Muebles y/o contenido</td>
             <td style="width: 15%;">Prima</td>
         </tr>
-        <tr valign="top" class="thead">
+        <tr valign="top">
         	<td>
         		<select id="dp-<?=$k;?>-type" name="dp-<?=$k;?>-type" 
         			class="required fbin <?= $read_new . ' ' . $read_edit ;?>" <?=$read_save;?>>
@@ -635,6 +874,25 @@ if(($rsDp = $link->get_depto()) !== FALSE){
             <input type="hidden" id="di-end-inception" name="di-end-inception" 
             	value="<?=base64_encode($row['c_fin_vigencia']);?>">
         </div><br>
+
+        <?php if ((boolean)$row['c_garantia']): ?>
+			<label>Plazo: <span>*</span></label>
+			<div class="content-input" style="width: auto;">
+				<input type="text" id="di-term" name="di-term" autocomplete="off" 
+					value="<?=$row['c_plazo'];?>" style="width:30px;" maxlength="" 
+					class="required number fbin" <?=$read_save;?>>
+				<select id="di-type-term" name="di-type-term" 
+					class="required fbin " <?=$read_save;?> style="width: 132px;">
+					<option value="">Seleccione...</option>
+					<?php foreach ($link->typeTerm as $key => $value): $selected = ''; ?>
+						<?php if ($key === $row['c_tipo_plazo']): $selected = 'selected'; ?>
+						<?php endif ?>
+						<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+					<?php endforeach ?>
+				</select>
+        	</div>
+			<br>
+        <?php endif ?>
         
 		<label>Modalidad de Pago: <span>*</span></label>
 		<div class="content-input">
@@ -779,6 +1037,23 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 </form>
 <script type="text/javascript">
 $(document).ready(function(e) {
+	$('.check').iCheck({
+		checkboxClass: 'icheckbox_flat-red',
+		radioClass: 'iradio_flat-red'
+	});
+
+	$('#taken-flag').on('ifChanged', function(e) {
+		var payment = $('#di-method-payment').prop('value');
+		
+		if (payment.length > 0) {
+			if ($(this).is(':checked')) {
+				$('.taken').slideDown();
+			} else {
+				$('.taken').slideUp();
+			}
+		}
+	});
+
 	$("#dc-save").click(function(e){
 		e.preventDefault();
 		location.href = 'index.php';

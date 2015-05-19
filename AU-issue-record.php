@@ -95,6 +95,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$bl_name = $bl_nit = $taken_name = $taken_nit = '';
 			$taken_name = $link->real_escape_string(trim($_POST['taken-name']));
 			$taken_nit = $link->real_escape_string(trim($_POST['taken-nit']));
+			
 			if(isset($_POST['bl-name']) && isset($_POST['bl-nit'])){
 				$bl_name = $link->real_escape_string(trim($_POST['bl-name']));
 				$bl_nit = $link->real_escape_string(trim($_POST['bl-nit']));
@@ -317,23 +318,23 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						telefono_celular, email, peso, estatura, genero, edad, 
 						mano, data_jur, created_at) 
 					VALUES 
-						("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
-							"'.(int)$cl_type_client.'", "' . $cl_code . '", 
-							"'.$cl_company_name.'", "'.$cl_patern.'", 
-							"'.$cl_matern.'", "'.$cl_name.'", 
-							"'.$cl_married.'", "'.$cl_date_birth.'", "", 
-							"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", 
-							"' . $cl_status . '", 
-							"'.$cl_attached.'", '.$cl_place_res.', 
-							"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", 
-							"'.$cl_nhome.'", "'.$cl_address_work.'", 
-							"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'",
-							"' . $cl_monthly_income . '", "' . $cl_activity . '", 
-							"' . $cl_executive . '", "' . $cl_position . '", 
-							"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
-							"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
-							TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "", 
-							"' . $link->real_escape_string(json_encode($data)) . '", now()) ;';
+					("'.$idcl.'", "'.base64_decode($_SESSION['idEF']).'", 
+						"'.(int)$cl_type_client.'", "' . $cl_code . '", 
+						"'.$cl_company_name.'", "'.$cl_patern.'", 
+						"'.$cl_matern.'", "'.$cl_name.'", 
+						"'.$cl_married.'", "'.$cl_date_birth.'", "", 
+						"'.$cl_dni.'", '.$cl_ext.', "'.$cl_comp.'", "", 
+						"' . $cl_status . '", 
+						"'.$cl_attached.'", '.$cl_place_res.', 
+						"'.$cl_locality.'", "'.$cl_avc.'", "'.$cl_address_home.'", 
+						"'.$cl_nhome.'", "'.$cl_address_work.'", 
+						"BOLIVIA", '.$cl_occupation.', "'.$cl_desc_occ.'",
+						"' . $cl_monthly_income . '", "' . $cl_activity . '", 
+						"' . $cl_executive . '", "' . $cl_position . '", 
+						"'.$cl_phone_home.'", "'.$cl_phone_office.'", 
+						"'.$cl_phone_cel.'", "'.$cl_email.'", "0", "0", "'.$cl_gender.'", 
+						TIMESTAMPDIFF(YEAR, "'.$cl_date_birth.'", curdate()), "", 
+						"' . $link->real_escape_string(json_encode($data)) . '", now()) ;';
 				} else {
 					$sqlCl = 'UPDATE s_cliente 
 					SET codigo_bb = "' . $cl_code . '",

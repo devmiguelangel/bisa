@@ -1,4 +1,5 @@
 <?php
+
 require_once('sibas-db.class.php');
 $link = new SibasDB();
 $ide = 0;
@@ -320,6 +321,9 @@ if($rs->data_seek(0) === TRUE){
 		$row['license_number'] = '';
 		$row['number_vifpe'] = '';
 		$row['antiquity'] = '';
+		$row['ex_ci'] = '';
+		$row['ex_birth'] = '';
+		$row['ex_profession'] = '';
 	} elseif($cl_type_client === 1) { 
 		$display_nat = 'display: none;'; 
 		$read_jur = 'required';
@@ -460,9 +464,9 @@ if ($rsDep->data_seek(0) === TRUE) {
 					class="<?=$read_nat;?> fbin field-person <?=$read_new . ' ' . $read_edit;?>" <?= $read_new ;?>>
 	            	<option value="">Seleccione...</option>
 	            	<?php foreach ($link->status as $key => $value): $selected = ''; ?>
-	            		<?php if ($key === $row['cl_estado_civil']): $selected = 'selected'; ?>
+	            		<?php if ($value[0] === $row['cl_estado_civil']): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>
+	            	<option value="<?= $value[0] ;?>" <?= $selected ;?>><?= $value[1] ;?></option>
 	            	<?php endforeach ?>
 				</select>
 			</div><br>
@@ -705,7 +709,6 @@ if ($rsDep->data_seek(0) === TRUE) {
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
 					class="<?=$read_jur;?> fbin number" <?=$read_save;?> >
 			</div><br>
-
         </div>
     </div>
 
@@ -1150,7 +1153,6 @@ $(document).ready(function(e) {
 				$('.taken').slideUp();
 			}
 		}
-
 	});
 
 	$("#dc-save").click(function(e){
