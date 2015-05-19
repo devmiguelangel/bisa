@@ -12,12 +12,12 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
      $num_titulares=$rsDt->num_rows;
 	 $text = '';		
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
-		 if($row['tipo_cliente']=='Juridico'){
+		 if($row['tipo_cliente']=='J'){
 			 $cliente_nombre = $row['cl_razon_social'];
 			 $cliente_nitci = $row['ci'];
 			 $cliente_direccion = $row['direccion_laboral'];
 			 $cliente_fono = $row['telefono_oficina'];
-		 }elseif($row['tipo_cliente']=='Natural'){
+		 }elseif($row['tipo_cliente']=='N'){
 			 $cliente_nombre = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
 			 $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
 			 $cliente_direccion = $row['direccion'].' '.$row['no_domicilio'];
@@ -502,7 +502,17 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>     
                 </tr> 
             </table>
-            
+<?php
+          if($row['forma_pago']=='CO'){
+			  $prima_co = $row['prima_total'];
+			  $prima_cr = '';
+			  $prima_mensual = '';
+		  }elseif($row['forma_pago']=='CR'){
+			  $prima_co = '';
+			  $prima_cr = $row['prima_total'];
+			  $prima_mensual = $row['prima_total']/12;
+		  }
+?>            
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
@@ -515,12 +525,12 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   <td style="width:100%; border-bottom: 1px solid #333;">
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
                         <tr>
-                          <td style="width:13%; text-align:left;">Al contacto: </td>
+                          <td style="width:13%; text-align:left;">Al contado: </td>
                           <td style="width:13%; font-weight:bold; text-align:left;">
                              $US
                           </td>
                           <td style="width:15%;">&nbsp;
-                             
+                             <?=$prima_co;?>
                           </td>
                           <td style="width:18%;">&nbsp;</td>
                           <td style="width:13%; text-align:left;">
@@ -530,7 +540,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              $US
                           </td>
                           <td style="width:15%;">&nbsp;
-                             
+                             <?=$prima_cr;?>
                           </td>
                         </tr>
                      </table>
@@ -545,15 +555,15 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   <td style="width:100%; border-bottom: 1px solid #333;">
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
                         <tr>
-                          <td style="width:13%; text-align:left;">Al contacto: </td>
+                          <td style="width:15%; text-align:left;">Al Crédito:&nbsp;&nbsp;<?=$prima_cr;?></td>
                           <td style="width:15%; font-weight:bold; text-align:left;">
                              Cuota Mensual
                           </td>
                           <td style="width:12%; text-align:left; font-weight:bold;">
                              $US
                           </td>
-                          <td style="width:15%;">&nbsp;</td>
-                          <td style="width:45%;">&nbsp;
+                          <td style="width:15%;">&nbsp;<?=$prima_mensual;?></td>
+                          <td style="width:43%;">&nbsp;
                             
                           </td>
                         </tr>
@@ -812,10 +822,13 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
             <div style="width: 775px; border: 0px solid #FFFF00;">
                 <table 
                     cellpadding="0" cellspacing="0" border="0" 
-                    style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">
+                    style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">                   
                     <tr>
                       <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
                       border:0px solid #333;" valign="top">
+<?php
+               if($rowDt['categoria_vh']=='L'){ 
+?>                       
                         <div style="text-align: center; font-weight:bold;">
                            CLAUSULA DE AUTO REEMPLAZO<br>
                            Código ASFI: 109-910502-2007 12 311-2046<br>
@@ -874,6 +887,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                             <td style="width:20%;">&nbsp;</td>
                            </tr>
                         </table>
+<?php
+			   }
+?>                        
                         <div style="text-align: center; font-weight:bold;">
                            ANEXO PARA EL ROBO DE LLANTAS, PARTES, EQUIPOS DE MÚSICA Y OTRAS PIEZAS<br>
                            CÓDIGOAPS:109-910502-2007 12 311 2052<br>

@@ -8,10 +8,10 @@ function au_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 	  <div id="main-c" style="width: 775px; font-weight: normal; font-size: 12px; 
       font-family: Arial, Helvetica, sans-serif; color: #000000;">
 <?php
-     if($row['tipo_cliente']=='Natural'){
+     if($row['tipo_cliente']=='N'){
 		 $cliente_nombre = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
 		 $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
-	 }elseif($row['tipo_cliente']=='Juridico'){
+	 }elseif($row['tipo_cliente']=='J'){
 		 $cliente_nombre = $row['cl_razon_social'];
 		 $cliente_nitci = $row['ci'];
 	 }

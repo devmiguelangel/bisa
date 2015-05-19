@@ -117,6 +117,7 @@ $dc_phone_office = '';
 $dc_activity = '';
 $dc_executive = '';
 $dc_ex_ci = '';
+$dc_ex_ext = '';
 $dc_ex_birth = '';
 $dc_ex_profession = '';
 $dc_position = '';
@@ -297,13 +298,14 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 				if($dc_type === 1) {
 					$dc_doc_id = $dc_ext = $dc_email = '';
 					$data = json_decode($rowSc['data_jur'], true);
-					if (count($data) === 8) {
+					if (count($data) === 9) {
 						$dc_type_company 		= $data['type_company'];
 						$dc_registration_number = $data['registration_number'];
 						$dc_license_number 		= $data['license_number'];
 						$dc_number_vifpe 		= $data['number_vifpe'];
 						$dc_antiquity 			= $data['antiquity'];
 						$dc_ex_ci				= $data['executive_ci'];
+						$dc_ex_ext				= $data['executive_ext'];
 						$dc_ex_birth			= $data['executive_birth'];
 						$dc_ex_profession		= $data['executive_profession'];
 					}
@@ -615,9 +617,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 			</div><br>
 
 			<label>No. de Documento de Identidad: <span>*</span></label>
-            <div class="content-input">
+            <div class="content-input" style="width: auto;">
                 <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
-                	value="<?=$dc_ex_ci;?>" class="<?=$require_jur;?> dni fbin field-company">
+                	value="<?=$dc_ex_ci;?>" class="<?=$require_jur;?> dni fbin field-company"
+                	style="width: 110px;">
+            </div>
+            <div class="content-input" style="width: auto;">
+                <input type="text" id="dc-ex-ext" name="dc-ex-ext" autocomplete="off" 
+                	value="<?=$dc_ex_ext;?>" class="not-required dni fbin field-company"
+                	style="width: 45px;">
             </div><br>
 
             <label>Fecha de Nacimiento: <span>*</span></label>

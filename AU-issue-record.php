@@ -139,6 +139,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$cl_monthly_income = 
 			$cl_executive = 
 			$cl_ex_ci =
+			$cl_ex_ext =
 			$cl_ex_birth =
 			$cl_ex_profession =
 			$cl_activity = 
@@ -196,6 +197,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_antiquity = $link->real_escape_string(trim($_POST['dc-antiquity']));
 				$cl_executive = $link->real_escape_string(trim($_POST['dc-executive']));
 				$cl_ex_ci = $link->real_escape_string(trim($_POST['dc-ex-ci']));
+				$cl_ex_ext = $link->real_escape_string(trim($_POST['dc-ex-ext']));
 				$cl_ex_birth = $link->real_escape_string(trim($_POST['dc-ex-birth']));
 				$cl_ex_profession = $link->real_escape_string(trim($_POST['dc-ex-profession']));
 				$cl_position = $link->real_escape_string(trim($_POST['dc-position2']));
@@ -209,6 +211,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					'number_vifpe' 			=> $cl_number_vifpe,
 					'antiquity' 			=> $cl_antiquity,
 					'executive_ci'			=> $cl_ex_ci,
+					'executive_ext'			=> $cl_ex_ext,
 					'executive_birth'		=> $cl_ex_birth,
 					'executive_profession'	=> $cl_ex_profession
 				];

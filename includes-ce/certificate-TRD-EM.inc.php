@@ -13,11 +13,11 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
      $num_titulares=$rsDt->num_rows;
 			
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
-		 if($row['tipo_cliente']=='Juridico'){
+		 if($row['tipo_cliente']=='J'){
 			 $cliente_nombre = $row['cl_razon_social'];
 			 $cliente_nitci = $row['cl_ci'];
 			 $cliente_direccion = $row['cl_direccion_laboral'];
-		 }elseif($row['tipo_cliente']=='Natural'){
+		 }elseif($row['tipo_cliente']=='N'){
 			 $cliente_nombre = $row['cl_nombre'].' '.$row['cl_paterno'].' '.$row['cl_materno'];
 			 $cliente_nitci = $row['cl_ci'].$row['cl_complemento'].' '.$row['cl_extension'];
 			 $cliente_direccion = $row['cl_direccion'];
@@ -78,7 +78,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        <?=$cliente_nombre;?>
+                        PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
                       </td>  
                     </tr>
                     <tr>
@@ -88,7 +88,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        <?=$row['ef_nombre'];?>
+                        PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
                       </td>  
                     </tr>
                     <tr>
@@ -98,7 +98,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        <?=$rowDt['pr_departamento'].'&nbsp;'.$rowDt['pr_zona'].'&nbsp;'.$rowDt['pr_localidad'].'&nbsp;'.$rowDt['pr_direccion'];?>
+                        DE ACUERDO A DECLARACIONES DE CADA PRESTATARIO.
                       </td>  
                     </tr>
                     <tr>
@@ -108,7 +108,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        <?=$cliente_direccion?>
+                        DIRECCIÓN LEGAL DEL ASEGURADO
                       </td>  
                     </tr>
                     <tr>

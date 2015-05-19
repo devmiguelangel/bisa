@@ -322,6 +322,7 @@ if($rs->data_seek(0) === TRUE){
 		$row['number_vifpe'] = '';
 		$row['antiquity'] = '';
 		$row['ex_ci'] = '';
+		$row['ex_ext'] = '';
 		$row['ex_birth'] = '';
 		$row['ex_profession'] = '';
 	} elseif($cl_type_client === 1) { 
@@ -329,13 +330,14 @@ if($rs->data_seek(0) === TRUE){
 		$read_jur = 'required';
 
 		$data = json_decode($row['data_jur'], true);
-		if (count($data) === 8) {
+		if (count($data) === 9) {
 			$row['type_company'] 		= $data['type_company'];
 			$row['registration_number'] = $data['registration_number'];
 			$row['license_number'] 		= $data['license_number'];
 			$row['number_vifpe'] 		= $data['number_vifpe'];
 			$row['antiquity'] 			= $data['antiquity'];
 			$row['ex_ci']				= $data['executive_ci'];
+			$row['ex_ext']				= $data['executive_ext'];
 			$row['ex_birth']			= $data['executive_birth'];
 			$row['ex_profession']		= $data['executive_profession'];
 		}
@@ -647,10 +649,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 			</div><br>
 
 			<label>No. de Documento de Identidad: <span>*</span></label>
-            <div class="content-input">
+            <div class="content-input" style="width: auto;">
                 <input type="text" id="dc-ex-ci" name="dc-ex-ci" autocomplete="off" 
                 	value="<?=$row['ex_ci'];?>" class="<?=$read_jur;?> dni fbin field-company"
-                	<?= $read_new ;?>>
+                	<?= $read_new ;?> style="width: 110px;">
+            </div>
+            <div class="content-input" style="width: auto;">
+                <input type="text" id="dc-ex-ext" name="dc-ex-ext" autocomplete="off" 
+                	value="<?=$row['ex_ext'];?>" class="not-required dni fbin field-company"
+                	<?= $read_new ;?> style="width: 45px;">
             </div><br>
 
             <label>Fecha de Nacimiento: <span>*</span></label>

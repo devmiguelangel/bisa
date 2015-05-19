@@ -1134,7 +1134,7 @@ class CertificateQuery extends CertificateHtml {
 	
 	
 	
-	//CERTIFICADO SOLICITUD AUTOMOTORES
+	//CERTIFICADO SLIP AUTOMOTORES
 	private function set_query_au_sc (){
 	    $this->sqlPo = "select 
 				aucc.id_cotizacion,
@@ -1151,11 +1151,6 @@ class CertificateQuery extends CertificateHtml {
 				aucc.tipo_plazo,
 				aucc.fecha_creacion,
 				aucc.id_usuario,
-				aucc.forma_pago as code_fpago,
-				(case aucc.forma_pago
-				  when 'CO' then 'Al Contado'
-				  when 'CR' then 'Al Credito'
-				 end) as forma_pago,
 				sc.nombre as compania,
 				sc.logo as logo_cia,
 				sc.id_compania,
@@ -1192,8 +1187,7 @@ class CertificateQuery extends CertificateHtml {
 				sefc.id_ef_cia,
 				sc.id_compania,
 				sh.monto_facultativo,
-				sh.anio as anio_max,
-			    '' as no_emision 
+				sh.anio as anio_max
 			from
 				s_au_cot_cabecera as aucc
 					inner join
@@ -1249,7 +1243,6 @@ class CertificateQuery extends CertificateHtml {
 						auc.updated_at,
 						auc.facultativo,
 						autv.vehiculo,
-						autv.categoria as categoria_vh,
 						aumr.marca,
 						aumod.modelo
 					from
@@ -1280,7 +1273,7 @@ class CertificateQuery extends CertificateHtml {
 	}
 	
 	//EMISION CERTIFICADO AUTOMOTORES
-	private function set_query_au_em (){		// Automotores
+	private function set_query_au_em () {		// Automotores
 		$this->sqlPo = "select
 			  auec.id_emision,
 			  auec.no_emision,
@@ -1313,14 +1306,12 @@ class CertificateQuery extends CertificateHtml {
 			  auec.prima_total,
 			  auec.garantia,
 			  auec.no_copia,
-			  auec.forma_pago,
 			  sclie.tipo as cl_tipo,
 			  case sclie.tipo
-				when 0 then 'N'
-				when 1 then 'J'
+				when 0 then 'Natural'
+				when 1 then 'Juridico'
 			  end tipo_cliente,
 			  sclie.razon_social as cl_razon_social,
-			  sclie.data_jur,
 			  sclie.direccion_laboral, 
 			  sclie.paterno,
 			  sclie.materno,
@@ -1339,12 +1330,6 @@ class CertificateQuery extends CertificateHtml {
 			  sclie.email,
 			  sclie.pais,
 			  sclie.fecha_nacimiento,
-			  sclie.estado_civil,
-			  sclie.desc_ocupacion,
-			  sclie.cargo,
-			  sclie.ejecutivo,
-			  sclie.ingreso_mensual,
-			  sclie.actividad,
 			  sef.nombre as ef_nombre,
 			  sef.logo as logo_ef,
 			  sc.nombre as compania,
@@ -1352,7 +1337,7 @@ class CertificateQuery extends CertificateHtml {
 			  su.nombre as u_nombre,
 			  su.email as u_email,
 			  sdu.departamento as u_departamento,
-              aucot.no_cotizacion
+              aucot.no_cotizacion 
 			from
 			  s_au_em_cabecera as auec
 				  inner join
@@ -1404,7 +1389,6 @@ class CertificateQuery extends CertificateHtml {
 						emd.motivo_facultativo,
 						emd.aprobado,
 						tipv.vehiculo as tipo_vechiculo,
-						tipv.categoria as categoria_vh,
 						aumr.marca,
 						aumod.modelo,
 						auf.aprobado as vh_aprobado,
@@ -1448,7 +1432,7 @@ class CertificateQuery extends CertificateHtml {
 		} else { $this->error = TRUE; }
 	}
 	
-	//SOLICITUD COTIZACION TODO RIESGO DOMICILIARIO
+	//SLIP COTIZACION TODO RIESGO DOMICILIARIO
 	private function set_query_trd_sc(){
 		$this->sqlPo="select 
 				trdc.id_cotizacion,
@@ -1506,8 +1490,7 @@ class CertificateQuery extends CertificateHtml {
 				trdclt.actividad,
 				trdclt.desc_ocupacion,
 				trdclt.direccion_laboral,
-				socu.ocupacion,
-				'' as no_emision
+				socu.ocupacion
 			from
 				s_trd_cot_cabecera as trdc
 					inner join
@@ -1579,7 +1562,7 @@ class CertificateQuery extends CertificateHtml {
 		}					
 	}
 	
-	//CERTIFICADO EMISION TODO RIESGO DOMICILIARIO
+	//CERTIFICADO EMISIION TODO RIESGO DOMICILIARIO
 	private function set_query_trd_em () {		// Todo Riesgo Domiciliario
 		$this->sqlPo = "select 
 				stre.id_emision,
@@ -1625,12 +1608,11 @@ class CertificateQuery extends CertificateHtml {
 				su.email as u_email,
 				sdeu.departamento as u_depto,
 				(case scl.tipo
-					when 0 then 'N'
-					when 1 then 'J'
+					when 0 then 'Natural'
+					when 1 then 'Juridico'
 				end) as tipo_cliente,
 				scl.tipo as cl_tipo,
 				scl.razon_social as cl_razon_social,
-				scl.data_jur,
 				scl.paterno as cl_paterno,
 				scl.materno as cl_materno,
 				scl.nombre as cl_nombre,
@@ -1645,13 +1627,7 @@ class CertificateQuery extends CertificateHtml {
 				scl.telefono_oficina as cl_tel_oficina,
 				scl.telefono_celular as cl_tel_celular,
 				scl.fecha_nacimiento as cl_fecha_nacimiento,
-				scl.pais as cl_pais,
-				scl.desc_ocupacion as cl_desc_ocupacion,
-				scl.cargo as cl_cargo,
-				scl.estado_civil as cl_estado_civil,
-				scl.ingreso_mensual,
-				scl.actividad,
-				scl.ejecutivo
+				scl.pais as cl_pais
 			from
 				s_trd_em_cabecera as stre
 					inner join

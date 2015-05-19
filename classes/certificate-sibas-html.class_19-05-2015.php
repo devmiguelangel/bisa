@@ -9,10 +9,8 @@ require('includes-ce/certificate-TRD-SC.inc.php');
 require('includes-ce/formulario-autorizacion-AU.inc.php');
 require('includes-ce/formulario-autorizacion-TRD.inc.php');
 
-require('includes-ce/formulario-UIF-AU-N.inc.php');
-require('includes-ce/formulario-UIF-AU-J.inc.php');
-require('includes-ce/formulario-UIF-TRD-N.inc.php');
-require('includes-ce/formulario-UIF-TRD-J.inc.php');
+require('includes-ce/formulario-UIF-AU.inc.php');
+require('includes-ce/formulario-UIF-TRD.inc.php');
 
 require('includes-ce/formulario-ASR-AU.inc.php');
 require('includes-ce/formulario-ASR-TRD.inc.php');
@@ -265,22 +263,12 @@ class CertificateHtml{
 	
 	//FORMULARIOS DE IDENTIFICACION UIF
 	private function set_html_au_uif() { //Automotores
-		if($this->rowPo['tipo_cliente']==='N'){ 
-		   return au_formulario_uif_N($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-								  $this->implant, $this->fac, $this->reason);
-		}elseif($this->rowPo['tipo_cliente']==='J'){
-		   return au_formulario_uif_J($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-								  $this->implant, $this->fac, $this->reason);						
-		}
+		return au_formulario_uif($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	private function set_html_trd_uif() { //Todo Riesgo Domiciliario
-	    if($this->rowPo['tipo_cliente']==='N'){  
-			return trd_formulario_uif_N($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
-		}elseif($this->rowPo['tipo_cliente']==='J'){
-		    return trd_formulario_uif_J($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-									$this->implant, $this->fac, $this->reason);
-		}
+		return trd_formulario_uif($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason);
 	}
 	
 	//FORMULARIOS ANEXO DE SUBROGACION
