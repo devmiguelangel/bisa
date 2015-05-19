@@ -493,7 +493,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-position" name="dc-position" 
 					autocomplete="off" value="<?=$row['cl_cargo'];?>" 
-					class="<?= $read_nat ;?> field-person text fbin" 
+					class="<?= $read_nat ;?> field-person fbin" 
 					<?= $read_new ;?> style="width: 350px;">
 			</div><br>
 
@@ -680,7 +680,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-position2" name="dc-position2" 
 					autocomplete="off" value="<?=$row['cl_cargo'];?>" 
-					class="<?= $read_jur ;?> field-company text fbin" <?= $read_new ;?> style="width: 350px;">
+					class="<?= $read_jur ;?> field-company fbin" <?= $read_new ;?> style="width: 350px;">
 			</div><br>
 
 			<label>Ingreso Mensual: <span>*</span></label>

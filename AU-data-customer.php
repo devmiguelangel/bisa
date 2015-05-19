@@ -473,7 +473,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-position" name="dc-position" 
 					autocomplete="off" value="<?=$dc_position;?>" 
-					class="<?= $require_nat ;?> field-person text fbin" style="width: 350px;">
+					class="<?= $require_nat ;?> field-person fbin" style="width: 350px;">
 			</div><br>
 
 			<label>Ingreso Mensual: <span>*</span></label>
@@ -647,7 +647,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-position2" name="dc-position2" 
 					autocomplete="off" value="<?=$dc_position;?>" 
-					class="<?= $require_jur ;?> field-company text fbin" style="width: 350px;">
+					class="<?= $require_jur ;?> field-company fbin" style="width: 350px;">
 			</div><br>
 
 			<label>Ingreso Mensual: <span>*</span></label>
