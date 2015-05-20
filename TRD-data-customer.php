@@ -152,24 +152,22 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 	$display_fsc = 'display: block;';
 
 	if ($link->checkWebService($_SESSION['idEF'], 'TRD')) {
-		$ws = new BisaWs($link);
-
-		$var = [
+		$req = [
 			'tipoCliente' 	=> '',
 			'nroDocumento' 	=> $dni,
 			'sigla' 		=> $ext,
 		];
 
 		if ($type_client === 1) {
-			$var['tipoCliente'] = 'E';
+			$req['tipoCliente'] = 'E';
 		} elseif ($type_client === 0) {
-			$var['tipoCliente'] = 'P';
+			$req['tipoCliente'] = 'P';
 		}
 
-		$ws->getData('CD', $var);
+		$ws = new BisaWs($link, 'CD', $req);
 
-
-		if (!$ws->err_flag) {
+		
+		if ($ws->getDataCustomer()) {
 			$dc_code = $ws->data['codigoCliente'];
 
 			if ($type_client === 0) {

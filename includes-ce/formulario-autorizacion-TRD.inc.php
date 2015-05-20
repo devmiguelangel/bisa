@@ -8,10 +8,10 @@ function trd_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $
 	  <div id="main-c" style="width: 775px; font-weight: normal; font-size: 15px; 
       font-family: Arial, Helvetica, sans-serif; color: #000000;">
 <?php
-     if($row['tipo_cliente']=='Natural'){
+     if($row['tipo_cliente']=='N'){
 		 $cliente_nombre = $row['cl_nombre'].' '.$row['cl_paterno'].' '.$row['cl_materno'];
 		 $cliente_nitci = $row['cl_ci'].$row['cl_complemento'].' '.$row['cl_extension'];
-	 }elseif($row['tipo_cliente']=='Juridico'){
+	 }elseif($row['tipo_cliente']=='J'){
 		 $cliente_nombre = $row['cl_razon_social'];
 		 $cliente_nitci = $row['cl_ci'];
 	 }

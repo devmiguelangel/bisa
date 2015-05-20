@@ -4,13 +4,14 @@ require __DIR__ . '/../nusoap/nusoap.php';
 
 class BisaWs
 {
+	private $soapAction = 'http://aqua.bisa.com/servicios/swissre/ws/';
+	private $wsdl = 'http://10.200.3.82:8810/AquaWar/soap/definition-sudprueba.wsdl';
 	private 
 		$cx,
-		$soapAction,
-		$wsdl,
 		$client,
 		$err,
-		$message;
+		$message,
+		$op;
 
 	private $method = [
 		'CD' => [
@@ -26,18 +27,13 @@ class BisaWs
 	public 
 		$data,
 		$err_mess,
-		$err_flag = true;
+		$err_flag = false;
 
-	public function __construct($cx)
+	public function __construct($cx, $op, $req)
 	{
-		$this->cx			= $cx;
-		$this->soapAction 	= 'http://aqua.bisa.com/servicios/swissre/ws/';
-		$this->wsdl			= 'http://10.200.3.82:8810/AquaWar/soap/definition-sudprueba.wsdl';
-	}
-
-	private function getMessage($m, $var)
-	{
-		$this->method[$m]['var'] = $var;
+		$this->cx = $cx;
+		$this->op = $op;
+		$this->method[$this->op]['var'] = $req;
 
 		$this->message = "<soapenv:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
 			xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
@@ -45,26 +41,24 @@ class BisaWs
 			xmlns:ws='http://aqua.bisa.com/servicios/swissre/ws'>
 			<soapenv:Header/>
 			<soapenv:Body>
-				<ws:" . $this->method[$m]['method'] . ">";
-			foreach ($this->method[$m]['var'] as $key => $value) {
+				<ws:" . $this->method[$this->op]['method'] . ">";
+			foreach ($this->method[$this->op]['var'] as $key => $value) {
 				$this->message .= "<ws:" . $key . ">" . $value . "</ws:" . $key . ">";
 			}
-		$this->message .="</ws:" . $this->method[$m]['method'] . ">
+		$this->message .="</ws:" . $this->method[$this->op]['method'] . ">
 			</soapenv:Body>
-		</soapenv:Envelope> ";
+		</soapenv:Envelope>";
 	}
 
-	public function getData($m, $var)
+	private function wsConnect()
 	{
 		$this->client = new nusoap_client($this->wsdl, false);
 
 		$this->client->soap_defencoding = 'UTF-8';
 		$this->client->setCredentials('sudprueba', 'HZ+hRGJnkiCK5bRsnnQcpw==');
-
+		
 		$this->err = $this->client->getError();
 		if (!$this->err) {
-			$this->getMessage($m, $var);
-			
 			$this->data = $this->client->send($this->message, $this->soapAction, '', '');
 
 		    if ($this->client->fault) {
@@ -74,46 +68,45 @@ class BisaWs
 			    if ($this->err) {
 			        $this->err_mess = $this->err;
 			    } else {
-			    	$this->err_flag = false;
-
-			    	switch ($m) {
-		    		case 'CD':
-		    			$this->getDataCustomer();
-		    			break;
-		    		case 'AD':
-		    			
-		    			break;
-			    	}
+			    	return true;
 			    }
 			}
 		} else {
 			$this->err_mess = $this->$err;
 		}
+
+		return false;
 	}
 
-	private function getDataCustomer()
+	public function getDataCustomer()
 	{
-		if (count($this->data) > 2) {
-			$aux = $this->data;
-		
-			foreach ($aux as $key => $value) {
-				$this->data[$key] = trim($value);
-			}
-
-			if ($this->method['CD']['var']['tipoCliente'] === 'P') {
-				if (($row = $this->cx->getExtenssionCode(substr($this->data['sigla'], 1))) !== false) {
-					$this->data['sigla'] = $row['id_depto'];
-				} else {
-					$this->data['sigla'] = 1;
+		if ($this->wsConnect()) {
+			if (count($this->data) > 2) {
+				$aux = $this->data;
+			
+				foreach ($aux as $key => $value) {
+					$this->data[$key] = trim($value);
 				}
 
-				$this->data['fecNacimiento'] = date('Y-m-d', strtotime($this->data['fecNacimiento']));
-				$this->data['estCivil'] = $this->cx->status[$this->data['estCivil']][0];
+				if ($this->method['CD']['var']['tipoCliente'] === 'P') {
+					if (($row = $this->cx->getExtenssionCode(substr($this->data['sigla'], 1))) !== false) {
+						$this->data['sigla'] = $row['id_depto'];
+					} else {
+						$this->data['sigla'] = 1;
+					}
+
+					$this->data['fecNacimiento'] = date('Y-m-d', strtotime($this->data['fecNacimiento']));
+					$this->data['estCivil'] = $this->cx->status[$this->data['estCivil']][0];
+				}
+
+				return true;
+			} else {
+				$this->err_mess = 'El Cliente no Existe';
 			}
-		} else {
-			$this->err_flag = true;
-			$this->err_mess = 'El Cliente no Existe';
 		}
+
+		return false;
+
 	}
 
 	public function getDataAccount()
