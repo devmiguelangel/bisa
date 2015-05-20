@@ -1,5 +1,5 @@
 <?php
-// ini_set('display_errors', 1);
+ini_set('display_errors', 1);
 require __DIR__ . '/../nusoap/nusoap.php'; 
 
 class BisaWs
@@ -18,8 +18,8 @@ class BisaWs
 			'method'	=> 'datosClienteRequest',
 			'var' 		=> []
 		],
-		'AC' => [
-			'method'	=> '',
+		'AD' => [
+			'method'	=> 'cuentasporClienteRequest',
 			'var' 		=> []
 		],
 	];
@@ -58,6 +58,7 @@ class BisaWs
 		$this->client->setCredentials('sudprueba', 'HZ+hRGJnkiCK5bRsnnQcpw==');
 		
 		$this->err = $this->client->getError();
+
 		if (!$this->err) {
 			$this->data = $this->client->send($this->message, $this->soapAction, '', '');
 
@@ -111,10 +112,22 @@ class BisaWs
 
 	public function getDataAccount()
 	{
-		
-	}	
+		if ($this->wsConnect()) {
+			$accounts = $this->data;
+			$this->data = array();
 
-	
+			if (is_array($accounts)) {
+				foreach ($accounts['cuenta'] as $key => $value) {
+					if (is_array($value)) {
+						$this->data[] = $value;
+					} else {
+						$this->data[] = $accounts['cuenta'];
+						break;
+					}
+				}
+			}
+		}
+	}
 
 }
 

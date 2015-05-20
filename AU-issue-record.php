@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/classes/Logs.php';
+require __DIR__ . '/classes/BisaWs.php';
 require 'sibas-db.class.php';
 require 'session.class.php';
 
@@ -62,6 +63,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$idc = $link->real_escape_string(trim(base64_decode($_POST['de-idc'])));
 			$ide = uniqid('@S#2$2013',true);
 		}
+
+		$ws_db = $link->checkWebService($_SESSION['idEF'], 'AU');
 		
 		if($sw !== 0){
 			$data = array();
@@ -222,7 +225,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			// $cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
 			$cl_attached = '';
 			$nVh = (int)$link->real_escape_string(trim(base64_decode($_POST['nVh'])));
-			
+
 			$swCl = FALSE;
 			$sqlSCl = '';
 			if($sw === 1) {

@@ -1,6 +1,8 @@
 <?php
 
-require_once('sibas-db.class.php');
+require_once 'sibas-db.class.php';
+require 'classes/BisaWs.php';
+
 $link = new SibasDB();
 $ide = 0;
 $idc = 0;
@@ -14,6 +16,8 @@ $max_item = 0;
 if (($rowAU = $link->get_max_amount_optional($_SESSION['idEF'], 'AU')) !== FALSE) {
 	$max_item = (int)$rowAU['max_item'];
 }
+
+$ws_db = $link->checkWebService($_SESSION['idEF'], 'AU');
 
 $cp = false;
 
@@ -312,6 +316,17 @@ if($rs->data_seek(0) === TRUE){
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
 	$cl_code = $row['cl_code'];
+
+	$accounts = array();
+	$req = [
+		'codigoCliente' => $cl_code,
+	];
+
+	if ($ws_db) {
+		$ws = new BisaWs($link, 'AD', $req);
+		$ws->getDataAccount();
+		$accounts = $ws->data;
+	}
 	
 	if($cl_type_client === 0) { 
 		$display_jur = 'display: none;';
@@ -540,9 +555,21 @@ if ($rsDep->data_seek(0) === TRUE) {
 
 			<label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
+				<?php if ($ws_db): ?>
+				<select id="dc-account-nat" name="dc-account-nat" 
+					class="<?=$read_nat;?> fbin field-person <?=$read_new;?>" <?= $read_new ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
+	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $account['numero'] ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<?php endforeach ?>
+				</select>
+				<?php else: ?>
 				<input type="text" id="dc-account-nat" name="dc-account-nat" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
 					class="<?=$read_nat;?> fbin number" <?=$read_save;?> >
+				<?php endif ?>
 			</div><br>
         </div><br>
     </div>
@@ -712,9 +739,21 @@ if ($rsDep->data_seek(0) === TRUE) {
 
             <label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
+				<?php if ($ws_db): ?>
+				<select id="dc-account-jur" name="dc-account-jur" 
+					class="<?=$read_jur;?> fbin field-person <?=$read_new;?>" <?= $read_new ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
+	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value="<?= $account['numero'] ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<?php endforeach ?>
+				</select>
+				<?php else: ?>
 				<input type="text" id="dc-account-jur" name="dc-account-jur" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
 					class="<?=$read_jur;?> fbin number" <?=$read_save;?> >
+				<?php endif ?>
 			</div><br>
         </div>
     </div>

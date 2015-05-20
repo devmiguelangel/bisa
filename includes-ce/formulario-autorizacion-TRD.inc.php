@@ -48,7 +48,7 @@ function trd_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $
                 padding-top:4px; padding-bottom:3px;">
                 <tr> 
                   <td style="width:100%; padding-bottom:4px; text-align:justify;">
-                     En razón que el CLIENTE ha decidido contratar de forma voluntaria una póliza de seguros de la empresa BISA SEGUROS Y REASEGUROS S.A., el CLIENTE instruye al Banco BISA S.A. a proporcionar su información con la que cuenta el Banco, a la Aseguradora referida y a la empresa AON Bolivia S.A., para la obtención de la póliza de seguros escogida por el propio CLIENTE.
+                     En razón que el CLIENTE ha decidido contratar de forma voluntaria una póliza de seguros de la empresa BISA SEGUROS Y REASEGUROS S.A., el CLIENTE instruye al Banco BISA S.A. a proporcionar su información con la que cuenta el Banco, a la Aseguradora referida y a la empresa Sudamericana Corredores de Seguros y Reaseguros, para la obtención de la póliza de seguros escogida por el propio CLIENTE.
                      <br><br>
                      Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº.__________________ a nombre de ____________________
                      <br><br><br>

@@ -352,6 +352,7 @@ class SibasDB extends MySQLi
     	where
     		su.id_usuario = "' . base64_decode($id_user) . '"
     			and su.activado = true
+    			and su.cambio_password = true
     	limit 0, 1
     	;';
     	// echo $this->sql;
