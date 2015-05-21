@@ -100,6 +100,9 @@ class BisaWs
 					$this->data['estCivil'] = $this->cx->status[$this->data['estCivil']][0];
 				}
 
+				$this->data['full_name'] = $this->data['primerNombre'] . ' ' . $this->data['segundoNombre'] 
+					. ' ' . $this->data['apPaterno'] . ' ' . $this->data['apMaterno'];
+
 				return true;
 			} else {
 				$this->err_mess = 'El Cliente no Existe';
@@ -119,8 +122,10 @@ class BisaWs
 			if (is_array($accounts)) {
 				foreach ($accounts['cuenta'] as $key => $value) {
 					if (is_array($value)) {
+						$value['tipo'] = base64_encode($value['tipo']);
 						$this->data[] = $value;
 					} else {
+						$accounts['cuenta']['tipo'] = base64_encode($accounts['cuenta']['tipo']);
 						$this->data[] = $accounts['cuenta'];
 						break;
 					}

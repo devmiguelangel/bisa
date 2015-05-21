@@ -181,7 +181,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
 				$cl_dni = $cl_ci;
-				$account = $link->real_escape_string(trim($_POST['dc-account-nat']));
+				$account = unserialize($link->real_escape_string(trim($_POST['dc-account-nat'])));
 			}else{
 				$cl_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
 				$cl_nit = $link->real_escape_string(trim($_POST['dc-nit']));
@@ -205,7 +205,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_ex_profession = $link->real_escape_string(trim($_POST['dc-ex-profession']));
 				$cl_position = $link->real_escape_string(trim($_POST['dc-position2']));
 				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
-				$account = $link->real_escape_string(trim($_POST['dc-account-jur']));
+				$account = unserialize($link->real_escape_string(trim($_POST['dc-account-jur'])));
 
 				$data = [
 					'type_company' 			=> $cl_type_company,
@@ -221,6 +221,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 
 				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
 			}
+
+			$account = $link->real_escape_string(json_encode($account));
 			
 			// $cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
 			$cl_attached = '';

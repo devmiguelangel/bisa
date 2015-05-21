@@ -1314,6 +1314,8 @@ class CertificateQuery extends CertificateHtml {
 			  auec.garantia,
 			  auec.no_copia,
 			  auec.forma_pago,
+			  auec.tomador_nombre,
+			  auec.cuenta as nro_cuenta_tomador,
 			  sclie.tipo as cl_tipo,
 			  case sclie.tipo
 				when 0 then 'N'
@@ -1603,6 +1605,8 @@ class CertificateQuery extends CertificateHtml {
 					when 'W' then 'Semanas'
 				end) as tipo_plazo_text,
 				concat(stre.plazo, ' ', @plazo) as tip_plazo_text,
+				stre.tomador_nombre,
+				stre.cuenta as nro_cuenta_tomador,
 				stre.fecha_creacion,
 				stre.anulado,    
 				stre.fecha_anulado,

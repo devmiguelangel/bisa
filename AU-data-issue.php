@@ -555,14 +555,14 @@ if ($rsDep->data_seek(0) === TRUE) {
 
 			<label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
-				<?php if ($ws_db): ?>
+				<?php if ($ws_db && $sw === 1): ?>
 				<select id="dc-account-nat" name="dc-account-nat" 
-					class="<?=$read_nat;?> fbin field-person <?=$read_new;?>" <?= $read_new ;?>>
+					class="<?=$read_nat;?> fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
 	            	<option value="">Seleccione...</option>
 	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
 	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= $account['numero'] ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<option value="<?= serialize($account) ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
 	            	<?php endforeach ?>
 				</select>
 				<?php else: ?>
@@ -739,14 +739,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 
             <label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
-				<?php if ($ws_db): ?>
+				<?php if ($ws_db && $sw === 1): ?>
 				<select id="dc-account-jur" name="dc-account-jur" 
-					class="<?=$read_jur;?> fbin field-person <?=$read_new;?>" <?= $read_new ;?>>
+					class="<?=$read_jur;?> fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
 	            	<option value="">Seleccione...</option>
 	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
 	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= $account['numero'] ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<option value="<?= serialize($account) ;?>" 
+	            		<?= $selected ;?>><?= $account['numero'] ;?></option>
 	            	<?php endforeach ?>
 				</select>
 				<?php else: ?>
@@ -770,8 +771,10 @@ if ($rsDep->data_seek(0) === TRUE) {
 		<div class="taken">
 			Documento de Identidad:
 			<input type="text" id="dsc-dni" autocomplete="off" 
-				value="" class="text fbin">
-			<input type="button" id="dsc-sc" value="Buscar Titular" class="btn-search-cs">
+				value="" class="text fbin" style="width: 80px;">
+			<input type="text" id="dsc-ext" autocomplete="off" 
+				value="" class="text fbin" style="width: 25px;">
+			<input type="button" id="dsc-sc" value="Buscar Ciente" class="btn-search-cs">
 			<div class="taken__result"></div>
 		</div>
 		
@@ -1209,6 +1212,43 @@ $(document).ready(function(e) {
 	$("#dc-edit").click(function(e){
 		e.preventDefault();
 		location.href = 'au-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&ide=<?=base64_encode($ide);?>&flag=<?=md5('i-edit');?>&cia=<?=$_GET['cia'].$target;?>';
+	});
+
+	$('#dsc-sc').click(function(e) {
+		var type	= $('#dc-type-client').prop('value');
+		var dni 	= $('#dsc-dni').prop('value');
+		var ext 	= $('#dsc-ext').prop('value');
+
+		if (dni.length > 0 && ext.length > 0 && type.length > 0) {
+			$.ajax({
+				url: 'data_client.php',
+				type: 'GET',
+				data: 'type=' + type + '&dni=' + dni + '&ext=' + ext,
+				dataType: 'json',
+				async: true,
+				cache: false,
+				beforeSend: function(){
+					$('.taken__result').html('Espere...');
+				},
+				complete: function(){
+				},
+				success: function(result){
+					$('.taken__result').html('');
+
+					if (result['token'] === true) {
+						$.each(result['data']['client'], function(index, value) {
+							$('.taken__result').append('<a href="" tittle="Codigo de Cliente" \
+								class="code-cl" data-code="' + value['codigoCliente'] + '" \
+								data-name="' + value['full_name'] + '" \
+								data-nit="' + value['nroDocumento'] + '">' + value['codigoCliente'] + ' - \
+								' + value['full_name'] + ' - ' + value['nroDocumento'] + ' </a><br>');
+						});
+					} else {
+						$('.taken__result').html(result['mess']);
+					}
+				}
+			});
+		}
 	});
 <?php
 switch($sw){
