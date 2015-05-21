@@ -373,13 +373,19 @@ if($rs->data_seek(0) === TRUE){
 
 		$taken_name = $row['cl_tomador_nombre'];
 		$taken_nit = $row['cl_tomador_dni'];
+
+		$aux_account = json_decode($row['cl_cuenta'], true);
+		if (is_array($aux_account)) {
+			$row['cl_cuenta'] = $aux_account['numero'] . ' / ' 
+				. $aux_account['moneda'] . ' / ' . $aux_account['tipo'];
+		}
 	} else {
 		if ($cl_type_client === 0) {
 			$taken_name = $row['cl_nombre'] . ' ' . $row['cl_paterno'] . ' ' . $row['cl_materno'];
 		} else {
 			$taken_name = $row['cl_razon_social'];
 		}
-		$taken_code = $row['codigo_bb'];
+		$taken_code = $row['cl_code'];
 		$taken_nit = $row['cl_dni'];
 	}
 	
@@ -562,13 +568,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
 	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= serialize($account) ;?>" <?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<option value='<?= $account['account'] ;?>' <?= $selected ;?>>
+	            		<?= $account['numero'] . ' / ' . $account['moneda'] . ' / ' . $account['tipo'] ;?>
+	            	</option>
 	            	<?php endforeach ?>
 				</select>
 				<?php else: ?>
 				<input type="text" id="dc-account-nat" name="dc-account-nat" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
-					class="<?=$read_nat;?> fbin number" <?=$read_save;?> >
+					class="<?=$read_nat;?> fbin" <?=$read_save . ' ' . $read_edit;?> >
 				<?php endif ?>
 			</div><br>
         </div><br>
@@ -746,14 +754,15 @@ if ($rsDep->data_seek(0) === TRUE) {
 	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
 	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
 	            		<?php endif ?>
-	            	<option value="<?= serialize($account) ;?>" 
-	            		<?= $selected ;?>><?= $account['numero'] ;?></option>
+	            	<option value='<?= $account['account'] ;?>' <?= $selected ;?>>
+	            		<?= $account['numero'] . ' / ' . $account['moneda'] . ' / ' . $account['tipo'] ;?>
+	            	</option>
 	            	<?php endforeach ?>
 				</select>
 				<?php else: ?>
 				<input type="text" id="dc-account-jur" name="dc-account-jur" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
-					class="<?=$read_jur;?> fbin number" <?=$read_save;?> >
+					class="<?=$read_jur;?> fbin" <?=$read_save . ' ' . $read_edit;?> >
 				<?php endif ?>
 			</div><br>
         </div>
@@ -1056,11 +1065,6 @@ for($i = 0; $i < count($arr_traction); $i++){
 		</div><br>
 	</div><!--
 	--><div class="form-col">
-		<label>Número de Operación: </label>
-		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
-				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
-		</div>
 <?php
 if ($swMo === false) {
 ?>
@@ -1084,7 +1088,16 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 		</div><br>
 <?php
 }
+
 ?>
+		<label>Número de Operación: </label>
+		<div class="content-input" style="width:auto;">
+			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
+				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
+		</div>
+
+		
+
 	</div>
 <?php
 $display_bll = 'display: none;';
@@ -1216,15 +1229,14 @@ $(document).ready(function(e) {
 	});
 
 	$('#dsc-sc').click(function(e) {
-		var type	= $('#dc-type-client').prop('value');
 		var dni 	= $('#dsc-dni').prop('value');
 		var ext 	= $('#dsc-ext').prop('value');
 
-		if (dni.length > 0 && ext.length > 0 && type.length > 0) {
+		if (dni.length > 0 && ext.length > 0) {
 			$.ajax({
 				url: 'data_client.php',
 				type: 'GET',
-				data: 'op=C&type=' + type + '&dni=' + dni + '&ext=' + ext,
+				data: 'op=C&dni=' + dni + '&ext=' + ext,
 				dataType: 'json',
 				async: true,
 				cache: false,
@@ -1236,17 +1248,20 @@ $(document).ready(function(e) {
 				success: function(result){
 					$('.taken__result').html('');
 
-					alert(result);
 					if (result['token'] === true) {
+						var type = '';
+
 						$.each(result['data']['clients'], function(index, value) {
 							$('.taken__result').append('<a href="" tittle="Codigo de Cliente" \
 								class="code-cl" data-code="' + value['codigoCliente'] + '" \
 								data-name="' + value['full_name'] + '" \
-								data-nit="' + value['nroDocumento'] + '">' + value['codigoCliente'] + ' - \
-								' + value['full_name'] + ' - ' + value['nroDocumento'] + ' </a><br>');
+								data-nit="' + value['nroDocumento'] + value['ext'] + '">' + value['codigoCliente'] + ' - \
+								' + value['full_name'] + ' - ' + value['nroDocumento'] + value['ext'] + ' </a><br>');
+
+							type = value['type'];
 						});
 
-
+						setDataClient(type);
 					} else {
 						$('.taken__result').html(result['mess']);
 					}
@@ -1255,7 +1270,7 @@ $(document).ready(function(e) {
 		}
 	});
 
-	function setDataClient () {
+	function setDataClient (type) {
 		$('.code-cl').click(function(e) {
 			e.preventDefault();
 			var code = $(this).attr('data-code');
@@ -1270,7 +1285,24 @@ $(document).ready(function(e) {
 				op: 'A',
 				code: code
 			}).done(function (result) {
-				console.log(result);
+				var field = 'dc-account-';
+
+				switch(type) {
+				case 'P':
+					field += 'nat';
+					break;
+				case 'E':
+					field += 'jur';
+					break;
+				}
+
+				$('#' + field + ' option[value!=""]').remove();
+				$.each(result['data']['accounts'], function(index, value) {
+					$('#' + field + '').append($('<option>', {
+					    value: 	value['account'],
+					    text:	value['numero'] + ' / ' + value['moneda'] + ' / ' + value['tipo']
+					}));
+				});
 			});
 		});
 	}

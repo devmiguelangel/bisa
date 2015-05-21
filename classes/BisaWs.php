@@ -89,9 +89,13 @@ class BisaWs
 					$this->data[$key] = trim($value);
 				}
 
-				if ($this->method['CD']['var']['tipoCliente'] === 'P') {
+				$this->data['ext'] = '';
+				$this->data['type'] = $this->method['CD']['var']['tipoCliente'];
+
+				if ($this->data['type'] === 'P') {
 					if (($row = $this->cx->getExtenssionCode(substr($this->data['sigla'], 1))) !== false) {
 						$this->data['sigla'] = $row['id_depto'];
+						$this->data['ext'] = $row['d_codigo'];
 					} else {
 						$this->data['sigla'] = 1;
 					}
@@ -122,10 +126,10 @@ class BisaWs
 			if (is_array($accounts)) {
 				foreach ($accounts['cuenta'] as $key => $value) {
 					if (is_array($value)) {
-						$value['tipo'] = base64_encode($value['tipo']);
+						$value['account'] = serialize($value);
 						$this->data[] = $value;
 					} else {
-						$accounts['cuenta']['tipo'] = base64_encode($accounts['cuenta']['tipo']);
+						$accounts['cuenta']['account'] = serialize($accounts['cuenta']);
 						$this->data[] = $accounts['cuenta'];
 						break;
 					}

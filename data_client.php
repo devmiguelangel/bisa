@@ -15,10 +15,11 @@ $res = array(
 $link = new SibasDB();
 
 if (isset($_GET['op'])) {
-	switch (variable) {
+	$op = $link->real_escape_string(trim($_GET['op']));
+	
+	switch ($op) {
 	case 'C':
-		if (isset($_GET['type']) && isset($_GET['dni']) && isset($_GET['ext'])) {
-			$type = (boolean)$link->real_escape_string(trim(base64_decode($_GET['type'])));
+		if (isset($_GET['dni']) && isset($_GET['ext'])) {
 			$dni = $link->real_escape_string(trim($_GET['dni']));
 			$ext = $link->real_escape_string(trim($_GET['ext']));
 
@@ -28,10 +29,10 @@ if (isset($_GET['op'])) {
 				'sigla' 		=> $ext,
 			];
 
-			if ($type === true) {
-				$req['tipoCliente'] = 'E';
-			} elseif ($type === false) {
+			if (stripos($ext, 'nit') === false) {
 				$req['tipoCliente'] = 'P';
+			} else {
+				$req['tipoCliente'] = 'E';
 			}
 
 			$ws = new BisaWs($link, 'CD', $req);
