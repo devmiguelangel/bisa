@@ -298,7 +298,7 @@ $YEAR_FINAL = 0;
 $cr_amount = 0;
 $cr_term = 0;
 $cr_type_term = $cr_method_payment = $cr_opp = $cr_policy = '';
-$taken_name = $taken_nit = '';
+$taken_name = $taken_nit = $taken_code = '';
 $data = array();
 
 $display_nat = $display_jur = 'display: block;';
@@ -379,7 +379,7 @@ if($rs->data_seek(0) === TRUE){
 		} else {
 			$taken_name = $row['cl_razon_social'];
 		}
-		
+		$taken_code = $row['codigo_bb'];
 		$taken_nit = $row['cl_dni'];
 	}
 	
@@ -780,6 +780,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 		
 		<label>Nombre: <span>*</span></label><br>
     	<div class="content-input">
+    		<input type="hidden" name="taken-code" id="taken-code" value="<?=$taken_code;?>">
             <textarea id="taken-name" name="taken-name" class="required fbin" 
             	<?=$read_save . $read_edit;?>><?=trim($taken_name);?></textarea><br>
         </div><br>
@@ -1223,7 +1224,7 @@ $(document).ready(function(e) {
 			$.ajax({
 				url: 'data_client.php',
 				type: 'GET',
-				data: 'type=' + type + '&dni=' + dni + '&ext=' + ext,
+				data: 'op=C&type=' + type + '&dni=' + dni + '&ext=' + ext,
 				dataType: 'json',
 				async: true,
 				cache: false,
@@ -1235,14 +1236,17 @@ $(document).ready(function(e) {
 				success: function(result){
 					$('.taken__result').html('');
 
+					alert(result);
 					if (result['token'] === true) {
-						$.each(result['data']['client'], function(index, value) {
+						$.each(result['data']['clients'], function(index, value) {
 							$('.taken__result').append('<a href="" tittle="Codigo de Cliente" \
 								class="code-cl" data-code="' + value['codigoCliente'] + '" \
 								data-name="' + value['full_name'] + '" \
 								data-nit="' + value['nroDocumento'] + '">' + value['codigoCliente'] + ' - \
 								' + value['full_name'] + ' - ' + value['nroDocumento'] + ' </a><br>');
 						});
+
+
 					} else {
 						$('.taken__result').html(result['mess']);
 					}
@@ -1250,6 +1254,27 @@ $(document).ready(function(e) {
 			});
 		}
 	});
+
+	function setDataClient () {
+		$('.code-cl').click(function(e) {
+			e.preventDefault();
+			var code = $(this).attr('data-code');
+			var name = $(this).attr('data-name');
+			var nit = $(this).attr('data-nit');
+			
+			$('#taken-code').prop('value', code);
+			$('#taken-name').prop('value', name);
+			$('#taken-nit').prop('value', nit);
+
+			$.getJSON('data_client.php', {
+				op: 'A',
+				code: code
+			}).done(function (result) {
+				console.log(result);
+			});
+		});
+	}
+
 <?php
 switch($sw){
 	case 1:
