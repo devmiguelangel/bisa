@@ -1,6 +1,8 @@
 <?php
 
-require_once('sibas-db.class.php');
+require_once 'sibas-db.class.php';
+require 'classes/BisaWs.php';
+
 $link = new SibasDB();
 $ide = 0;
 $idc = 0;
@@ -15,6 +17,8 @@ if (($rowTR = $link->get_max_amount_optional($_SESSION['idEF'], 'TRD')) !== FALS
 	$max_item = (int)$rowTR['max_item'];
 }
 
+$ws_db = $link->checkWebService($_SESSION['idEF'], 'TRD');
+
 $cp = false;
 
 $flag = $_GET['flag'];
@@ -25,6 +29,8 @@ $read_save = '';
 $read_edit = '';
 $title = '';
 $title_btn = '';
+$link_save = 'index.php';
+$token_issue = true;
 
 $sw = 0;
 $swMo = false;
@@ -106,12 +112,12 @@ switch($sw){
 		    "" as cl_localidad,
 		    "" as cl_ocupacion,
 		    scl.desc_ocupacion as cl_desc_ocupacion,
-		    "" as cl_adjunto,
 		    scl.cargo as cl_cargo,
 			scl.ingreso_mensual as cl_ingreso_mensual,
 			scl.actividad as cl_actividad,
 			scl.ejecutivo as cl_ejecutivo,
 		    scl.data_jur,
+		    "" as cl_adjunto,
 		    "" as cl_cuenta,
 		    strd.id_inmueble as idpr,
 		    strd.tipo_in as pr_tipo,
@@ -286,7 +292,7 @@ $YEAR_FINAL = 0;
 $cr_amount = 0;
 $cr_term = 0;
 $cr_type_term = $cr_method_payment = $cr_opp = $cr_policy = '';
-$taken_name = $taken_nit = '';
+$taken_name = $taken_nit = $taken_code = '';
 $data = array();
 
 $display_nat = $display_jur = 'display: block;';
@@ -298,12 +304,24 @@ $FC = FALSE;
 
 if($rs->data_seek(0) === TRUE){
 	$row = $rs->fetch_array(MYSQLI_ASSOC);
+
 	$cr_term = $row['c_plazo'];
 	$cr_type_term = $row['c_tipo_plazo'];
 	$cr_method_payment = $row['c_forma_pago'];
 	
 	$cl_type_client = (int)$row['cl_tipo_cliente'];
 	$cl_code = $row['cl_code'];
+
+	$accounts = array();
+	$req = [
+		'codigoCliente' => $cl_code,
+	];
+
+	if ($ws_db && $sw === 1) {
+		$ws = new BisaWs($link, 'AD', $req);
+		$ws->getDataAccount();
+		$accounts = $ws->data;
+	}
 	
 	if($cl_type_client === 0) { 
 		$display_jur = 'display: none;';
@@ -350,6 +368,12 @@ if($rs->data_seek(0) === TRUE){
 
 		$taken_name = $row['cl_tomador_nombre'];
 		$taken_nit = $row['cl_tomador_dni'];
+
+		$aux_account = json_decode($row['cl_cuenta'], true);
+		if (is_array($aux_account)) {
+			$row['cl_cuenta'] = $aux_account['numero'] . ' / ' 
+				. $aux_account['moneda'] . ' / ' . $aux_account['tipo'];
+		}
 	} else {
 		if ($cl_type_client === 0) {
 			$taken_name = $row['cl_nombre'] . ' ' . $row['cl_paterno'] . ' ' . $row['cl_materno'];
@@ -357,6 +381,7 @@ if($rs->data_seek(0) === TRUE){
 			$taken_name = $row['cl_razon_social'];
 		}
 		
+		$taken_code = $row['cl_code'];
 		$taken_nit = $row['cl_dni'];
 	}
 	
@@ -373,6 +398,7 @@ if($sw > 1){
     	value="<?=base64_encode($cl_type_client);?>">
     <input type="hidden" id="dc-code" name="dc-code" 
     	value="<?=base64_encode($cl_code);?>">
+    <input type="hidden" id="tcs" value="<?= $row['cl_tipo_cliente'] ;?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
@@ -533,9 +559,23 @@ if ($rsDep->data_seek(0) === TRUE) {
 
 			<label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
+				<?php if ($ws_db && $sw === 1): ?>
+				<select id="dc-account-nat" name="dc-account-nat" 
+					class="<?=$read_nat;?> fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
+	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value='<?= $account['account'] ;?>' <?= $selected ;?>>
+	            		<?= $account['numero'] . ' / ' . $account['moneda'] . ' / ' . $account['tipo'] ;?>
+	            	</option>
+	            	<?php endforeach ?>
+				</select>
+				<?php else: ?>
 				<input type="text" id="dc-account-nat" name="dc-account-nat" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
-					class="<?=$read_nat;?> fbin number" <?=$read_save;?> >
+					class="<?=$read_nat;?> fbin" <?=$read_save . ' ' . $read_edit;?> >
+				<?php endif ?>
 			</div><br>
         </div><br>
     </div>
@@ -706,9 +746,23 @@ if ($rsDep->data_seek(0) === TRUE) {
 
             <label>Número de Cuenta: <span>*</span></label>
 			<div class="content-input">
+				<?php if ($ws_db && $sw === 1): ?>
+				<select id="dc-account-jur" name="dc-account-jur" 
+					class="<?=$read_jur;?> fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
+	            	<option value="">Seleccione...</option>
+	            	<?php foreach ($accounts as $key => $account): $selected = ''; ?>
+	            		<?php if ($account['numero'] === (int)$row['cl_cuenta']): $selected = 'selected'; ?>
+	            		<?php endif ?>
+	            	<option value='<?= $account['account'] ;?>' <?= $selected ;?>>
+	            		<?= $account['numero'] . ' / ' . $account['moneda'] . ' / ' . $account['tipo'] ;?>
+	            	</option>
+	            	<?php endforeach ?>
+				</select>
+				<?php else: ?>
 				<input type="text" id="dc-account-jur" name="dc-account-jur" 
 					autocomplete="off" value="<?=$row['cl_cuenta'];?>" 
-					class="<?=$read_jur;?> fbin number" <?=$read_save;?> >
+					class="<?=$read_jur;?> fbin" <?=$read_save . ' ' . $read_edit;?> >
+				<?php endif ?>
 			</div><br>
         </div>
     </div>
@@ -725,13 +779,16 @@ if ($rsDep->data_seek(0) === TRUE) {
 		<div class="taken">
 			Documento de Identidad:
 			<input type="text" id="dsc-dni" autocomplete="off" 
-				value="" class="text fbin">
-			<input type="button" id="dsc-sc" value="Buscar Titular" class="btn-search-cs">
+				value="" class="text fbin" style="width: 75px;">
+			<input type="text" id="dsc-ext" autocomplete="off" 
+				value="" class="text fbin" style="width: 25px;">
+			<input type="button" id="dsc-sc" value="Buscar Ciente" class="btn-search-cs">
 			<div class="taken__result"></div>
 		</div>
 		
 		<label>Nombre: <span>*</span></label><br>
     	<div class="content-input">
+    		<input type="hidden" name="taken-code" id="taken-code" value="<?=$taken_code;?>">
             <textarea id="taken-name" name="taken-name" class="required fbin" 
             	<?=$read_save . $read_edit;?>><?=trim($taken_name);?></textarea><br>
         </div><br>
@@ -917,11 +974,6 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 		</div><br>
 	</div><!--
 	--><div class="form-col">
-		<label>Número de Operación: </label>
-		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
-				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
-		</div>
 <?php
 if ($swMo === false) {
 ?>
@@ -942,6 +994,28 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'TRD')) !== FALSE) {
 ?>
 			</select>
 		</div><br>
+<?php
+}
+
+if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
+	$ws2 = new BisaWs($link, 'WD', $req);
+	$ws2->getDataOperation();
+
+	if (empty($cr_opp)) {
+		$token_issue = false;
+	}
+?>
+		<label>Operaciones y Garantías: </label>
+		<div class="content-input" style="width:auto;">
+			<select id="di-opp" name="di-opp" 
+				class="fbin field-person " <?= $read_save ;?>>
+            	<?php foreach ($ws2->data as $key => $opp): ?>
+            	<option value='<?= $opp['opperation'] ;?>' >
+            		<?= 'Op. ' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'] ;?>
+            	</option>
+            	<?php endforeach ?>
+			</select>
+		</div>
 <?php
 }
 ?>
@@ -1007,7 +1081,8 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 				}
 			} else {
 				btnIssue: 
-				echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
+				echo '<input type="submit" id="dc-issue" name="dc-issue" value="' 
+					. $title_btn . '" class="btn-next btn-issue" > ';
 			}
 		} elseif ($sw === 2) {
 			if(!isset($_GET['target'])) {
@@ -1027,8 +1102,14 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
-			goto btnIssue;
-			if ((boolean)$row['aprobado']) {
+			if ($sw === 1) {
+				goto btnIssue;
+			} elseif ((boolean)$row['c_garantia'] === false) {
+				goto btnIssue;
+			} elseif ($token_issue && $user_type === 'PA') {
+				goto btnIssue;
+			} elseif ($user_type === 'PA' && empty($cr_opp) && $sw == 3) {
+				goto btnIssue;
 			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
@@ -1065,13 +1146,90 @@ $(document).ready(function(e) {
 
 	$("#dc-save").click(function(e){
 		e.preventDefault();
-		location.href = 'index.php';
+		location.href = '<?= $link_save ;?>';
 	});
 	
 	$("#dc-edit").click(function(e){
 		e.preventDefault();
 		location.href = 'trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=$_GET['pr'];?>&ide=<?=base64_encode($ide);?>&flag=<?=md5('i-edit');?>&cia=<?=$_GET['cia'].$target;?>';
 	});
+
+	$('#dsc-sc').click(function(e) {
+		var dni 	= $('#dsc-dni').prop('value');
+		var ext 	= $('#dsc-ext').prop('value');
+
+		if (dni.length > 0 && ext.length > 0) {
+			$.ajax({
+				url: 'data_client.php',
+				type: 'GET',
+				data: 'op=C&dni=' + dni + '&ext=' + ext,
+				dataType: 'json',
+				async: true,
+				cache: false,
+				beforeSend: function(){
+					$('.taken__result').html('Espere...');
+				},
+				complete: function(){
+				},
+				success: function(result){
+					$('.taken__result').html('');
+
+					if (result['token'] === true) {
+						$.each(result['data']['clients'], function(index, value) {
+							$('.taken__result').append('<a href="" tittle="Codigo de Cliente" \
+								class="code-cl" data-code="' + value['codigoCliente'] + '" \
+								data-name="' + value['full_name'] + '" \
+								data-nit="' + value['nroDocumento'] + value['ext'] + '">' + value['codigoCliente'] + ' - \
+								' + value['full_name'] + ' - ' + value['nroDocumento'] + value['ext'] + ' </a><br>');
+						});
+
+						setDataClient();
+					} else {
+						$('.taken__result').html(result['mess']);
+					}
+				}
+			});
+		}
+	});
+
+	function setDataClient () {
+		var type = $('#tcs').prop('value');
+
+		$('.code-cl').click(function(e) {
+			e.preventDefault();
+			var code = $(this).attr('data-code');
+			var name = $(this).attr('data-name');
+			var nit = $(this).attr('data-nit');
+			
+			$('#taken-code').prop('value', code);
+			$('#taken-name').prop('value', name);
+			$('#taken-nit').prop('value', nit);
+
+			$.getJSON('data_client.php', {
+				op: 'A',
+				code: code
+			}).done(function (result) {
+				var field = 'dc-account-';
+
+				switch(type) {
+				case '0':
+					field += 'nat';
+					break;
+				case '1':
+					field += 'jur';
+					break;
+				}
+
+				$('#' + field + ' option[value!=""]').remove();
+				$.each(result['data']['accounts'], function(index, value) {
+					$('#' + field + '').append($('<option>', {
+					    value: 	value['account'],
+					    text:	value['numero'] + ' / ' + value['moneda'] + ' / ' + value['tipo']
+					}));
+				});
+			});
+		});
+	}
 	
 <?php
 switch($sw){

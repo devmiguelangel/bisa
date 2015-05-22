@@ -201,7 +201,6 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 					. ' ' . $ws->data['empTrabajo'];
 				$dc_phone_office = $ws->data['telefonOfic'];
 				$dc_position = $ws->data['Cargo'];
-
 			} elseif ($type_client === 1) {
 				$dc_company_name	= $ws->data['primerNombre'];
 				$dc_nit				= $ws->data['nroDocumento'];

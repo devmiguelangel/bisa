@@ -156,6 +156,7 @@ class BisaWs
 					} else {
 						$ops['operacga']['opperation'] = serialize($ops['operacga']);
 						$this->data[] = $ops['operacga'];
+						break;
 					}
 				}
 			}

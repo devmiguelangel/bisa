@@ -312,6 +312,7 @@ $FC = FALSE;
 
 if($rs->data_seek(0) === TRUE){
 	$row = $rs->fetch_array(MYSQLI_ASSOC);
+
 	$cr_term = $row['c_plazo'];
 	$cr_type_term = $row['c_tipo_plazo'];
 	$cr_method_payment = $row['c_forma_pago'];
@@ -387,6 +388,7 @@ if($rs->data_seek(0) === TRUE){
 		} else {
 			$taken_name = $row['cl_razon_social'];
 		}
+
 		$taken_code = $row['cl_code'];
 		$taken_nit = $row['cl_dni'];
 	}
@@ -789,7 +791,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 		<div class="taken">
 			Documento de Identidad:
 			<input type="text" id="dsc-dni" autocomplete="off" 
-				value="" class="text fbin" style="width: 80px;">
+				value="" class="text fbin" style="width: 75px;">
 			<input type="text" id="dsc-ext" autocomplete="off" 
 				value="" class="text fbin" style="width: 25px;">
 			<input type="button" id="dsc-sc" value="Buscar Ciente" class="btn-search-cs">
