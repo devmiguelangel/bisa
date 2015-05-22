@@ -166,7 +166,7 @@ if($sw !== 1){
 	    stre.tipo_plazo as c_tipo_plazo,
 	    stre.forma_pago as c_forma_pago,
 	    stre.prima_total as c_prima_total,
-	    stre.no_operacion as c_no_operacion,
+	    stre.operacion as c_no_operacion,
 	    stre.id_poliza as c_poliza,
 	    stre.facultativo as c_facultativo,
 	    stre.motivo_facultativo as c_motivo_facultativo,

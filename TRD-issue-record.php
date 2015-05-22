@@ -511,7 +511,6 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						factura_nit = "'.$bl_nit.'", 
 						tomador_nombre = "' . $taken_name . '",
 						tomador_ci_nit = "' . $taken_nit . '",
-						cuenta = "' . $account . '", 
 						id_poliza = '.$dcr_policy.', 
 						no_copia = 0, 
 						facultativo = '.(int)$_FAC.', 

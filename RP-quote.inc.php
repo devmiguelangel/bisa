@@ -61,13 +61,13 @@ $(document).ready(function(e) {
 		return false;
 	});
 	
-	$(".fde-process").fancybox({
+	// $(".fde-process").fancybox({
 		
-	});
+	// });
 	
-	$(".observation").fancybox({
+	// $(".observation").fancybox({
 		
-	});
+	// });
 	
 	var icons = {
       header: "ui-icon-circle-arrow-e",
