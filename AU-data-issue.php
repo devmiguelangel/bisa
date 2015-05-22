@@ -170,7 +170,7 @@ if($sw !== 1){
 		sae.tipo_plazo as c_tipo_plazo,
 		sae.forma_pago as c_forma_pago,
 		sae.prima_total as c_prima_total,
-		sae.no_operacion as c_no_operacion,
+		sae.operacion as c_no_operacion,
 	    sae.id_poliza as c_poliza,
 		sae.facultativo as c_facultativo,
 	    sae.motivo_facultativo as c_motivo_facultativo,
@@ -324,7 +324,7 @@ if($rs->data_seek(0) === TRUE){
 		'codigoCliente' => $cl_code,
 	];
 
-	if ($ws_db) {
+	if ($ws_db && $sw === 1) {
 		$ws = new BisaWs($link, 'AD', $req);
 		$ws->getDataAccount();
 		$accounts = $ws->data;
@@ -1098,17 +1098,20 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 }
 
 if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
-	$ws2 = new BisaWs($link, 'WD', req);
+	$ws2 = new BisaWs($link, 'WD', $req);
 	$ws2->getDataOperation();
+
+	if (empty($cr_opp)) {
+		$token_issue = false;
+	}
 ?>
 		<label>Operaciones y Garantías: </label>
 		<div class="content-input" style="width:auto;">
 			<select id="di-opp" name="di-opp" 
-				class="fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
-            	<option value="">Seleccione...</option>
+				class="fbin field-person " <?= $read_save ;?>>
             	<?php foreach ($ws2->data as $key => $opp): ?>
             	<option value='<?= $opp['opperation'] ;?>' >
-            		<?= 'Op.' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'] ;?>
+            		<?= 'Op. ' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'] ;?>
             	</option>
             	<?php endforeach ?>
 			</select>
@@ -1201,9 +1204,13 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
-			if ((boolean)$row['c_garantia'] === false && $sw > 1) {
+			if ($sw === 1) {
+				goto btnIssue;
+			} elseif ((boolean)$row['c_garantia'] === false) {
 				goto btnIssue;
 			} elseif ($token_issue && $user_type === 'PA') {
+				goto btnIssue;
+			} elseif ($user_type === 'PA' && empty($cr_opp) && $sw == 3) {
 				goto btnIssue;
 			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';

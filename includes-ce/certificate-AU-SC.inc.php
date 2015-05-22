@@ -502,7 +502,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                      </td>
                                      <td style="width:20%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333;">&nbsp;
-                                       <?=$link->typeTerm[$row['tipo_plazo']];?>
+                                       <?=$row['forma_pago'];?>
                                      </td>
                                      <td style="width:8%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; background:#d8d8d8;">
@@ -539,7 +539,11 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                       </td>
                                       <td style="width:33%; border-top:1px solid #333; border-right:1px solid #333;
                                          border-bottom: 1px solid #333;">&nbsp;
-                                         <?=number_format(($vh['v_prima']/12), 2, '.', ',');?>
+                                         <?php 
+											if($row['code_fpago']==='CR'){
+											  echo number_format(($vh['v_prima']/12), 2, '.', ',');
+											}
+										  ?>
                                       </td>   
                                    </tr>
                                </table>
