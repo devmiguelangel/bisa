@@ -1288,7 +1288,7 @@ class CertificateQuery extends CertificateHtml {
 			  auec.id_cotizacion,
 			  aucot.no_cotizacion,
 			  auec.id_cliente,
-			  auec.no_operacion,
+			  auec.operacion,
 			  auec.prefijo,
 			  auec.ini_vigencia as fecha_iniv,
 			  (@fecf:=date_add(auec.ini_vigencia,
