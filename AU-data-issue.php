@@ -1102,7 +1102,7 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 <?php
 }
 
-if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
+if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 	$req = [
 		'codigoCliente' => $taken_code,
 	];
