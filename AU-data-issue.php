@@ -29,6 +29,8 @@ $read_save = '';
 $read_edit = '';
 $title = '';
 $title_btn = '';
+$link_save = 'index.php';
+$token_issue = true;
 
 $sw = 0;
 $swMo = false;
@@ -390,6 +392,12 @@ if($rs->data_seek(0) === TRUE){
 	}
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
+
+	if ((boolean)$row['c_garantia'] && $sw > 1) {
+		$link_save = 'certificate-policy.php?ms=' . $_GET['ms'] 
+			. '&page=' . $_GET['page'] . '&pr=' . base64_encode('AU') 
+			. '&ide=' . base64_encode($row['ide']);
+	}
 ?>
 	<h4>Datos del Cliente</h4>
 <?php
@@ -1089,15 +1097,25 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 <?php
 }
 
+if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
+	$ws2 = new BisaWs($link, 'WD', req);
+	$ws2->getDataOperation();
 ?>
-		<label>Número de Operación: </label>
+		<label>Operaciones y Garantías: </label>
 		<div class="content-input" style="width:auto;">
-			<input type="text" id="di-opp" name="di-opp" autocomplete="off" 
-				value="<?=$cr_opp;?>" class="not-required number fbin" <?=$read_save;?>>
+			<select id="di-opp" name="di-opp" 
+				class="fbin field-person <?=$read_edit;?>" <?= $read_save ;?>>
+            	<option value="">Seleccione...</option>
+            	<?php foreach ($ws2->data as $key => $opp): ?>
+            	<option value='<?= $opp['opperation'] ;?>' >
+            		<?= 'Op.' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'] ;?>
+            	</option>
+            	<?php endforeach ?>
+			</select>
 		</div>
-
-		
-
+<?php
+}
+?>
 	</div>
 <?php
 $display_bll = 'display: none;';
@@ -1162,7 +1180,8 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 				}
 			} else {
 				btnIssue: 
-				echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
+				echo '<input type="submit" id="dc-issue" name="dc-issue" value="' 
+					. $title_btn . '" class="btn-next btn-issue" > ';
 			}
 		} elseif ($sw === 2) {
 			if(!isset($_GET['target'])) {
@@ -1182,8 +1201,10 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 					Solicitar aprobación de la Compañia</a> ';
 			}
 		} else{
-			goto btnIssue;
-			if ((boolean)$row['aprobado']) {
+			if ((boolean)$row['c_garantia'] === false && $sw > 1) {
+				goto btnIssue;
+			} elseif ($token_issue && $user_type === 'PA') {
+				goto btnIssue;
 			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
@@ -1220,7 +1241,7 @@ $(document).ready(function(e) {
 
 	$("#dc-save").click(function(e){
 		e.preventDefault();
-		location.href = 'index.php';
+		location.href = '<?= $link_save ;?>';
 	});
 	
 	$("#dc-edit").click(function(e){

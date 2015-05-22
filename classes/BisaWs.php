@@ -22,6 +22,10 @@ class BisaWs
 			'method'	=> 'cuentasporClienteRequest',
 			'var' 		=> []
 		],
+		'WD' => [
+			'method'	=> 'operacionesyGarantiasRequest',
+			'var' 		=> []
+		],
 	];
 
 	public 
@@ -133,6 +137,21 @@ class BisaWs
 						$this->data[] = $accounts['cuenta'];
 						break;
 					}
+				}
+			}
+		}
+	}
+
+	public function getDataOperation()
+	{
+		if ($this->wsConnect()) {
+			$ops = $this->data;
+			$this->data = array();
+
+			if (is_array($ops)) {
+				foreach ($ops['operacga'] as $key => $value) {
+					$value['opperation'] = serialize($value);
+					$this->data[] = $value;
 				}
 			}
 		}

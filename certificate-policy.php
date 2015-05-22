@@ -56,7 +56,8 @@ if($token === TRUE){
 					sae.no_emision,
 					sae.id_compania,
 					sae.certificado_provisional as cp,
-					sae.garantia
+					sae.garantia,
+					sae.emitir
 				from s_au_em_cabecera as sae
 					inner join s_au_cot_cabecera as sac on (sac.id_cotizacion = sae.id_cotizacion)
 				where sae.id_emision = "'.$ide.'"
@@ -70,7 +71,8 @@ if($token === TRUE){
 					stre.no_emision,
 					stre.id_compania,
 					stre.certificado_provisional as cp,
-					stre.garantia
+					stre.garantia,
+					stre.emitir
 				from s_trd_em_cabecera as stre
 					inner join s_trd_cot_cabecera as strc on (strc.id_cotizacion = stre.id_cotizacion)
 				where stre.id_emision = "'.$ide.'"
@@ -136,6 +138,11 @@ if($token === TRUE){
 	$pr;?>&category=<?=base64_encode('CRT');?>" 
 	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
 
+<?php if ((boolean)$rowIs['garantia'] && !(boolean)$rowIs['emitir']): ?>
+	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 90%;">
+		Póliza pendiente de emisión
+	</div>
+<?php endif ?>
 <?php
 	} else {
 		echo 'Usted no puede visualizar los Cetificados';

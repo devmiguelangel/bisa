@@ -86,7 +86,12 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			}
 			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 			$codeMethodPayment = '';
-			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
+			$dcr_opp = '';
+			if (isset($_POST['di-opp'])) {
+				$dcr_opp = trim($_POST['di-opp']);
+				$dcr_opp = unserialize($dcr_opp);
+				$dcr_opp = $link->real_escape_string(json_encode($dcr_opp));
+			}
 			$dcr_policy = 'null';
 			if (isset($_POST['di-policy'])) {
 				$dcr_policy = '"' . $link->real_escape_string(trim(base64_decode($_POST['di-policy']))) . '"';
@@ -387,7 +392,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$sql = 'insert into s_au_em_cabecera 
 					(id_emision, no_emision, id_ef, id_cotizacion, 
 						certificado_provisional, garantia, tipo, 
-						id_cliente, no_operacion, prefijo, ini_vigencia, 
+						id_cliente, operacion, prefijo, ini_vigencia, 
 						fin_vigencia, forma_pago, plazo, tipo_plazo, 
 						factura_nombre, factura_nit, tomador_nombre,
 						tomador_ci_nit, cuenta, fecha_creacion, 
@@ -520,7 +525,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					
 				if($link->query($sqlCl)) {
 					$sql = 'UPDATE s_au_em_cabecera 
-					SET no_operacion = "'.$dcr_opp.'", 
+					SET operacion = "'.$dcr_opp.'", 
 						ini_vigencia = "'.$dcr_date_begin.'", 
 						fin_vigencia = "'.$dcr_date_end.'", 
 						forma_pago = "'.$dcr_method_payment.'", 
