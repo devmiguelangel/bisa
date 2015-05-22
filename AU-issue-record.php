@@ -84,6 +84,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$dcr_term = $link->real_escape_string(trim($_POST['di-term']));
 				$dcr_type_term = $link->real_escape_string(trim($_POST['di-type-term']));
 			}
+
 			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 			$codeMethodPayment = '';
 			$dcr_opp = '';
@@ -223,8 +224,6 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					'executive_birth'		=> $cl_ex_birth,
 					'executive_profession'	=> $cl_ex_profession
 				];
-
-				//$cl_company_name = $link->real_escape_string(trim($_POST['dc-']));
 			}
 
 			if ($sw === 1 && $ws_db) {
@@ -232,8 +231,6 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$account = $link->real_escape_string(json_encode($account));
 			}
 
-			
-			// $cl_attached = $link->real_escape_string(trim(base64_decode($_POST['dc-attached'])));
 			$cl_attached = '';
 			$nVh = (int)$link->real_escape_string(trim(base64_decode($_POST['nVh'])));
 

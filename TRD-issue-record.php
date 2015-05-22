@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/classes/Logs.php';
+require __DIR__ . '/classes/BisaWs.php';
 require 'sibas-db.class.php';
 require 'session.class.php';
 
@@ -62,6 +63,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$idc = $link->real_escape_string(trim(base64_decode($_POST['de-idc'])));
 			$ide = uniqid('@S#3$2013',true);
 		}
+
+		$ws_db = $link->checkWebService($_SESSION['idEF'], 'TRD');
 		
 		if ($sw !== 0) {
 			$data = array();
@@ -84,7 +87,12 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 
 			$dcr_method_payment = $link->real_escape_string(trim($_POST['di-method-payment']));
 			$codeMethodPayment = '';
-			$dcr_opp = $link->real_escape_string(trim($_POST['di-opp']));
+			$dcr_opp = '';
+			if (isset($_POST['di-opp'])) {
+				$dcr_opp = trim($_POST['di-opp']);
+				$dcr_opp = unserialize($dcr_opp);
+				$dcr_opp = $link->real_escape_string(json_encode($dcr_opp));
+			}
 			$dcr_policy = 'null';
 			if (isset($_POST['di-policy'])) {
 				$dcr_policy = '"' . $link->real_escape_string(trim(base64_decode($_POST['di-policy']))) . '"';
@@ -178,7 +186,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_address_work = $link->real_escape_string(trim($_POST['dc-address-work']));
 				$cl_phone_office = $link->real_escape_string(trim($_POST['dc-phone-office']));
 				$cl_dni = $cl_ci;
-				$account = $link->real_escape_string(trim($_POST['dc-account-nat']));
+				$account = trim($_POST['dc-account-nat']);
 			} else {
 				$cl_company_name = $link->real_escape_string(trim($_POST['dc-company-name']));
 				$cl_nit = $link->real_escape_string(trim($_POST['dc-nit']));
@@ -202,7 +210,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_ex_profession = $link->real_escape_string(trim($_POST['dc-ex-profession']));
 				$cl_position = $link->real_escape_string(trim($_POST['dc-position2']));
 				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
-				$account = $link->real_escape_string(trim($_POST['dc-account-jur']));
+				$account = trim($_POST['dc-account-jur']);
 
 				$data = [
 					'type_company' 			=> $cl_type_company,
@@ -215,6 +223,11 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					'executive_birth'		=> $cl_ex_birth,
 					'executive_profession'	=> $cl_ex_profession
 				];
+			}
+
+			if ($sw === 1 && $ws_db) {
+				$account = unserialize($account);
+				$account = $link->real_escape_string(json_encode($account));
 			}			
 			
 			$cl_attached = '';
@@ -361,7 +374,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$sql = 'insert into s_trd_em_cabecera 
 					(id_emision, no_emision, id_ef, id_cotizacion, 
 						certificado_provisional, garantia, tipo, id_cliente, 
-						no_operacion, prefijo, ini_vigencia, fin_vigencia, 
+						operacion, prefijo, ini_vigencia, fin_vigencia, 
 						forma_pago, plazo, tipo_plazo, factura_nombre, 
 						factura_nit, tomador_nombre, tomador_ci_nit, 
 						cuenta, fecha_creacion, id_usuario, anulado, 
@@ -488,7 +501,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				
 				if($link->query($sqlCl)) {
 					$sql = 'UPDATE s_trd_em_cabecera
-					SET no_operacion = "'.$dcr_opp.'", 
+					SET operacion = "'.$dcr_opp.'", 
 						ini_vigencia = "'.$dcr_date_begin.'", 
 						fin_vigencia = "'.$dcr_date_end.'", 
 						forma_pago = "'.$dcr_method_payment.'", 
