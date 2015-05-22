@@ -150,8 +150,13 @@ class BisaWs
 
 			if (is_array($ops)) {
 				foreach ($ops['operacga'] as $key => $value) {
-					$value['opperation'] = serialize($value);
-					$this->data[] = $value;
+					if (is_array($value)) {
+						$value['opperation'] = serialize($value);
+						$this->data[] = $value;
+					} else {
+						$ops['operacga']['opperation'] = serialize($ops['operacga']);
+						$this->data[] = $ops['operacga'];
+					}
 				}
 			}
 		}
