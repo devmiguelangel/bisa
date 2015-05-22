@@ -101,7 +101,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$prefix = array();
 			$arrPrefix = 'null';
 			
-			$bl_name = $bl_nit = $taken_name = $taken_nit = '';
+			$bl_name = $bl_nit = $taken_code = $taken_name = $taken_nit = '';
+			$taken_code = $link->real_escape_string(trim($_POST['taken-code']));
 			$taken_name = $link->real_escape_string(trim($_POST['taken-name']));
 			$taken_nit = $link->real_escape_string(trim($_POST['taken-nit']));
 			
@@ -391,8 +392,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						certificado_provisional, garantia, tipo, 
 						id_cliente, operacion, prefijo, ini_vigencia, 
 						fin_vigencia, forma_pago, plazo, tipo_plazo, 
-						factura_nombre, factura_nit, tomador_nombre,
-						tomador_ci_nit, cuenta, fecha_creacion, 
+						factura_nombre, factura_nit, tomador_codigo, 
+						tomador_nombre, tomador_ci_nit, cuenta, fecha_creacion, 
 						id_usuario, anulado, and_usuario, fecha_anulado, 
 						motivo_anulado, emitir, fecha_emision, id_compania, 
 						id_poliza, no_copia, facultativo, motivo_facultativo, 
@@ -403,7 +404,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.$dcr_warranty.'", '.(int)$cl_type_client.', "'.$idcl.'", 
 						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
 						"'.$dcr_method_payment.'", '.$dcr_term.', "'.$dcr_type_term.'", 
-						"'.$bl_name.'", "'.$bl_nit.'", "' . $taken_name . '", 
+						"'.$bl_name.'", "'.$bl_nit.'", "' . $taken_code . '", "' . $taken_name . '", 
 						"' . $taken_nit . '", "' . $account . '", curdate(), 
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
@@ -530,6 +531,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						tipo_plazo = "'.$dcr_type_term.'", 
 						factura_nombre = "'.$bl_name.'", 
 						factura_nit =  "'.$bl_nit.'",
+						tomador_codigo = "' . $taken_code . '",
 						tomador_nombre = "' . $taken_name . '",
 						tomador_ci_nit = "' . $taken_nit . '",
 						id_poliza = '.$dcr_policy.', 

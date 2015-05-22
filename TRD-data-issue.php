@@ -205,6 +205,7 @@ if($sw !== 1){
 	    scl.data_jur,
 	    stre.cuenta as cl_cuenta,
 	    scl.ci_archivo as cl_adjunto,
+	    stre.tomador_codigo as cl_tomador_code,
 	    stre.tomador_nombre as cl_tomador_nombre,
 		stre.tomador_ci_nit as cl_tomador_dni,
 	    strd.id_inmueble as idpr,
@@ -366,6 +367,7 @@ if($rs->data_seek(0) === TRUE){
 			}
 		}
 
+		$taken_code = $row['cl_tomador_code'];
 		$taken_name = $row['cl_tomador_nombre'];
 		$taken_nit = $row['cl_tomador_dni'];
 
@@ -381,7 +383,7 @@ if($rs->data_seek(0) === TRUE){
 			$taken_name = $row['cl_razon_social'];
 		}
 		
-		$taken_code = $row['cl_code'];
+		$taken_code = $cl_code;
 		$taken_nit = $row['cl_dni'];
 	}
 	
@@ -998,6 +1000,10 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'TRD')) !== FALSE) {
 }
 
 if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
+	$req = [
+		'codigoCliente' => $taken_code,
+	];
+	
 	$ws2 = new BisaWs($link, 'WD', $req);
 	$ws2->getDataOperation();
 
@@ -1108,7 +1114,9 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 				goto btnIssue;
 			} elseif ($token_issue && $user_type === 'PA') {
 				goto btnIssue;
-			} elseif ($user_type === 'PA' && empty($cr_opp) && $sw == 3) {
+			} elseif ($user_type === 'PA' && empty($cr_opp) && $sw === 3) {
+				goto btnIssue;
+			} elseif ($user_type === 'LOG' && $sw === 3) {
 				goto btnIssue;
 			}
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';

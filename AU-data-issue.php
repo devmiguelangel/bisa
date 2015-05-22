@@ -209,6 +209,7 @@ if($sw !== 1){
 		scl.data_jur,
 		sae.cuenta as cl_cuenta,
 		scl.ci_archivo as cl_adjunto,
+		sae.tomador_codigo as cl_tomador_code,
 		sae.tomador_nombre as cl_tomador_nombre,
 		sae.tomador_ci_nit as cl_tomador_dni,
 		sad.id_vehiculo as idvh,
@@ -374,6 +375,7 @@ if($rs->data_seek(0) === TRUE){
 			}
 		}
 
+		$taken_code = $row['cl_tomador_code'];
 		$taken_name = $row['cl_tomador_nombre'];
 		$taken_nit = $row['cl_tomador_dni'];
 
@@ -389,7 +391,7 @@ if($rs->data_seek(0) === TRUE){
 			$taken_name = $row['cl_razon_social'];
 		}
 
-		$taken_code = $row['cl_code'];
+		$taken_code = $cl_code;
 		$taken_nit = $row['cl_dni'];
 	}
 	
@@ -1101,6 +1103,10 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 }
 
 if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db) {
+	$req = [
+		'codigoCliente' => $taken_code,
+	];
+
 	$ws2 = new BisaWs($link, 'WD', $req);
 	$ws2->getDataOperation();
 
@@ -1215,8 +1221,9 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 				goto btnIssue;
 			} elseif ($user_type === 'PA' && empty($cr_opp) && $sw == 3) {
 				goto btnIssue;
+			} elseif ($user_type === 'LOG' && $sw === 3) {
+				goto btnIssue;
 			}
-			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
 	}
 	
