@@ -410,6 +410,7 @@ if($sw > 1){
     	value="<?=base64_encode($cl_type_client);?>">
     <input type="hidden" id="dc-code" name="dc-code" 
     	value="<?=base64_encode($cl_code);?>">
+    <input type="hidden" id="tcs" value="<?= $row['cl_tipo_cliente'] ;?>">
     
     <!-- NATURAL -->
     <div id="form-person" style=" <?=$display_nat;?> ">
@@ -1277,19 +1278,15 @@ $(document).ready(function(e) {
 					$('.taken__result').html('');
 
 					if (result['token'] === true) {
-						var type = '';
-
 						$.each(result['data']['clients'], function(index, value) {
 							$('.taken__result').append('<a href="" tittle="Codigo de Cliente" \
 								class="code-cl" data-code="' + value['codigoCliente'] + '" \
 								data-name="' + value['full_name'] + '" \
 								data-nit="' + value['nroDocumento'] + value['ext'] + '">' + value['codigoCliente'] + ' - \
 								' + value['full_name'] + ' - ' + value['nroDocumento'] + value['ext'] + ' </a><br>');
-
-							type = value['type'];
 						});
 
-						setDataClient(type);
+						setDataClient();
 					} else {
 						$('.taken__result').html(result['mess']);
 					}
@@ -1298,7 +1295,9 @@ $(document).ready(function(e) {
 		}
 	});
 
-	function setDataClient (type) {
+	function setDataClient () {
+		var type = $('#tcs').prop('value');
+
 		$('.code-cl').click(function(e) {
 			e.preventDefault();
 			var code = $(this).attr('data-code');
@@ -1316,10 +1315,10 @@ $(document).ready(function(e) {
 				var field = 'dc-account-';
 
 				switch(type) {
-				case 'P':
+				case '0':
 					field += 'nat';
 					break;
-				case 'E':
+				case '1':
 					field += 'jur';
 					break;
 				}
