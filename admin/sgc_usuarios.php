@@ -15,7 +15,7 @@ if(isset($_SESSION['usuario_sesion']) && isset($_SESSION['tipo_sesion'])) {
 		//SI HA HECHO CLICK EN EL FORM DE LOGIN, VALIDAMOS LOS DATOS Q HA INGRESADO
 		if(validar_login($conexion)) {
 			//SI LOS DATOS DEL FORM SON CORRECTOS, MOSTRAMOS LA PAGINA
-			header('Location: index.php?l=usuarios');
+			header('Location: index.php?l=usuarios&var=cs');
 			exit;
 		} else {
 			//SI LOS DATOS NO SON CORRECTOS, MOSTRAMOS EL FORM DE LOGIN CON EL MENSAJE DE ERROR
@@ -520,7 +520,15 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 						$id_agencia='null';
 
 					}
-
+					if($_POST['id_agencia']=='OT'){
+						$prefijo3 = '@S#1$2015';
+						$id_unico3 = '';
+						$id_agencia = "'".uniqid($prefijo3,true)."'";
+						$insert = "INSERT INTO s_agencia(id_agencia, agencia, id_depto, id_ef, emision) "
+								 ."VALUES(".$id_agencia.", '".$_POST['txtNewAgency']."', ".$depto_regional.", '".$identidadf."', 0)";
+						$conexion->query($insert);
+								 
+					}
 					//INSERTAMOS LOS DATOS DEL USUARIO
 					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
 					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
@@ -531,8 +539,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 						$id_unico2='';
 						$id_unico2=uniqid($prefijo2,true);
 						$insert_ef = "INSERT INTO s_ef_usuario(id_eu, usuario, id_usuario, id_ef) VALUES('".$id_unico2."', '".$usuario."', '".$id_unico."', '".$identidadf."');";
-						if($conexion->query($insert_ef) === TRUE){ 
-						   $resultado=TRUE;
+						if($conexion->query($insert_ef) === TRUE){
+							 $resultado=TRUE;
 						}else{ 
 						   $resultado=FALSE;
 						}
@@ -723,6 +731,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			   var variable = $('#txtTipousuario option:selected').prop('value');
 			   var tipo_sesion = $('#tipo_sesion').prop('value');
 			   var id_usuario_sesion = $('#id_usuario_sesion').prop('value');
+			   $('.new-agency').css({"display":"none"});
 
 			   var vec = variable.split('|');
 			   var tipousuario = vec[1];
@@ -838,6 +847,8 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			  var vec = variable.split('|');
 			  var tipousuario = vec[1];
 			  var departamento = $('#departamento option:selected').prop('value');
+			  var agencia = $('#id_agencia option:selected').prop('value');
+			  var nuevo_agencia = $('#txtNewAgency').prop('value');
 			  var regional = $('#regional option:selected').prop('value');
 			  var identidadf = $('#identidadf option:selected').prop('value');
 			  var usuario = $('#txtIdusuario').prop('value');
@@ -915,6 +926,18 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						   $('#errorregional').html('seleccione regional');
 					   }
 				   }
+				   
+				   if(tipousuario!='FAC' && tipousuario!='IMP'){
+					   if(agencia=='OT'){
+						   if(nuevo_agencia!=''){
+							   $('#error_newagency').slideUp('slow');
+						   }else{
+							  $('#error_newagency').slideDown('slow');
+							  $('#error_newagency').html('campo requerido');
+						   }
+					   }
+				   }
+				   
 				   if(usuario!=''){
 					   $('#error_usuario').hide('slow');
 				   }else{
@@ -1304,6 +1327,10 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 				  <label style="text-align:right;"><b><span lang="es">Agencia</span></b></label>
 				  <div class="da-form-item small">
 				    <span id="response-loading"></span>
+				  </div>
+				  <div class="da-form-item large new-agency" style="display:none; padding-top:2px;">
+				      <input class="textbox requerid" type="text" name="txtNewAgency" id="txtNewAgency" style="width: 200px;" value="" autocomplete="off"/>
+					  <div class="errorMessage" id="error_newagency" lang="es"></div>
 				  </div>
 				</div>
 				<div class="da-form-row">
@@ -2074,7 +2101,16 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		   $('#btnCancelar').click(function(){
 			   $(location).prop('href','index.php?l=usuarios');
 		   });
-
+           
+		   $('#id_agencia').change(function(){
+			   var value = $(this).prop('value');
+			   if(value=='OT'){
+				  $('.new-agency').css({"display":""}); 
+			   }else{
+				  $('.new-agency').css({"display":"none"});  
+			   } 
+			});
+		    
 		   //SELECT DEPARTAMANTO - FUNCION QUE PERMITE BUSCAR LA AGENCIA DE UN
 		   //DETERMINADO DEPARTAMENTO O REGION
 		   $('#departamento').change(function(e) {
@@ -2194,6 +2230,8 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  var vec = variable.split('|');
 			  var tipousuario = vec[1];
 			  var departamento = $('#departamento option:selected').prop('value');
+			  var agencia = $('#id_agencia option:selected').prop('value');
+			  var nuevo_agencia = $('#txtNewAgency').prop('value');
 			  var regional = $('#regional option:selected').prop('value');
 			  var usuario = $('#txtIdusuario').prop('value');
 			  var nombre = $('#txtNombre').prop('value');
@@ -2213,6 +2251,9 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  //alert('idusuario:'+idusuario+' id_usuario_sesion:'+id_usuario_sesion+' tipo_sesion:'+tipo_sesion);
 			  //alert('tipousuario:'+tipousuario);
 			  //alert('regional:'+regional);
+			  //alert('id_agencia = '+agencia)
+			  //alert('nueva agencia = '+nuevo_agencia);
+			  
 			  var chek=0; var ds=0; var cell=0;
 			  $(this).find('.requerid').each(function(){
 				   if(idusuario!=id_usuario_sesion && tipo_sesion=='ROOT') {
@@ -2282,8 +2323,19 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						   }
 					   }
 				   }
-
-
+                                
+                   if(tipousuario!='FAC' && tipousuario!='IMP'){
+					   if(agencia=='OT'){
+						  if(nuevo_agencia!=''){
+							  $('#error_newagency').slideUp('slow');
+						   }else{
+							  sum++;
+							  $('#error_newagency').slideDown('slow');
+							  $('#error_newagency').html('campo requerido');
+						   }
+					   }
+				   }
+				   
 				   if(usuario!=''){
 					   $('#error_usuario').hide('slow');
 				   }else{
@@ -2919,7 +2971,7 @@ echo'<div class="da-panel" style="width:650px;">
 														  id_depto=".$departamento." and id_ef='".$vec[0]."';";
 											 $resag = $conexion->query($selectAg,MYSQLI_STORE_RESULT);
 											 $num_reg = $resag->num_rows;
-											  echo'<select name="id_agencia" id="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
+											  echo'<select name="id_agencia" id="id_agencia" style="width:250px; font-size:12px;">';
 													if($num_reg>0){
 													  echo'<option value="" lang="es">Ninguno</option>';
 													  while($regiag = $resag->fetch_array(MYSQLI_ASSOC)){
@@ -2930,12 +2982,17 @@ echo'<div class="da-panel" style="width:650px;">
 														  }
 													  }
 													  $resag->free();
+													  echo'<option value="OT" style="font-weight:bold;">Nueva Agencia</option>';
 													}else{
 													   echo'<option value="" lang="es">Ninguno</option>';
 													}
 											  echo'</select>';
 
 									 echo'</span>
+										</div>
+										<div class="da-form-item large new-agency" style="display:none; padding-top:2px;">
+											<input class="textbox requerid" type="text" name="txtNewAgency" id="txtNewAgency" style="width: 200px;" value="" autocomplete="off"/>
+											<div class="errorMessage" id="error_newagency" lang="es"></div>
 										</div>
 								   </div>';
 						 }else{

@@ -218,7 +218,8 @@ function listar_companias_activas($id_usuario_sesion, $tipo_sesion, $usuario_ses
 									efc.id_ef = '".$regief['id_ef']."'
 										and efc.activado = 1
 										and scia.activado = 1
-										and efc.producto = sh.producto;";				 
+										and efc.producto = sh.producto
+										and sh.activado = 1;";				 
 				   if($res = $conexion->query($selectFor,MYSQLI_STORE_RESULT)){		  
 						echo'
 						<div class="da-panel collapsible" style="width:900px;">
