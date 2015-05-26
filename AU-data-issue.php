@@ -1404,11 +1404,7 @@ switch($sw){
 if($FC === TRUE && ($sw === 2 || $sw === 3)){
 ?>
 	$("#issue-title:last").after('\
-		<div class="fac-mess">\
-			<strong>Nota:</strong> Se deshabilitó el boton "Emitir" por las siguientes razones: <br><?=$mFC;?>\
-			<br><br><strong>Por tanto:</strong><br>\
-			Debe solicitar aprobación a la Compañía de Seguros. \
-		</div>');
+		<div class="fac-mess"><strong>Nota:</strong> Se deshabilitó el boton "Emitir" por las siguientes razones: <br><?=$link->real_escape_string($mFC);?><br><br><strong>Por tanto:</strong><br>Debe solicitar aprobación a la Compañía de Seguros.</div>');
 <?php
 }
 ?>

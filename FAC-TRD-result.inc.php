@@ -182,8 +182,10 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 	    sef.nombre as ef_nombre,
 	    sef.logo as ef_logo,
 	    datediff(curdate(), stre.fecha_creacion) as dias_proceso,
-	    @fum:=datediff(curdate(), strp.fecha_creacion) as fum,
-	    if(@fum is not null, @fum, 0) as dias_ultima_modificacion,
+	    @fum:=(if(strf.aprobado is null,
+			datediff(curdate(), strp.fecha_creacion),
+			datediff(curdate(), strf.fecha_creacion))) as fum,
+		if(@fum is not null, @fum, 0) as dias_ultima_modificacion,
 	    stre.leido
 	from
 	    s_trd_em_cabecera as stre
@@ -273,6 +275,8 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 		$unread = '';
 		
 		while($row = $rs->fetch_array(MYSQLI_ASSOC)){
+			$rowSpanBgOld = '';
+
 			$nMt = (int)$row['noMt'];
 			
 			if($swBG === FALSE){
@@ -326,6 +330,21 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 							$bgCheck = 'background-position:0 -24px;';
 							$unread = 'unread';
 						}
+
+						$bgOld = 'color: #ffffff; background: ';
+                		$dayOld = (int)$row['dias_ultima_modificacion'];
+                		
+                		if ($dayOld >= 0 && $dayOld <= 2) {
+		                    $bgOld .= '#18b745;';
+		                } elseif ($dayOld >= 3 && $dayOld <= 10) {
+		                    $bgOld = 'color: #000000; background: #f4ec1c;';
+		                } elseif ($dayOld > 10) {
+		                    $bgOld .= '#f31d1d;';
+		                }
+
+		                if ($token === 1) {
+		                    $rowSpanBgOld .= ' style="' . $bgOld . '"';
+		                }
 						
 						if ($row['estado'] === 'A' && $_SW_EM === TRUE) {
 							$_EM = 1;
@@ -354,7 +373,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 				}
 ?>
 			
-            <td <?=$rowSpan;?>><?=$row['prefijo'].'-'.$row['no_emision'];?></td>
+            <td <?=$rowSpan . $rowSpanBgOld;?>><?=$row['prefijo'].'-'.$row['no_emision'];?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['ef_nombre']);?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['cl_nombre']);?></td>
             <td <?=$rowSpan;?>><?=$row['cl_ci'];?></td>

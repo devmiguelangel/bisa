@@ -248,6 +248,8 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 		$unread = '';
 		
 		while($row = $rs->fetch_array(MYSQLI_ASSOC)){
+			$rowSpanBgOld = '';
+
 			$nVh = (int)$row['noVh'];
 			$_PEN = (int)$row['pendiente'];
 			$_APS = (int)$row['aprobado_si'];
@@ -306,7 +308,11 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 			    sds.id_estado,
 			    sds.estado as estado_pendiente,
 				sds.codigo as estado_codigo,
-			    sad.leido
+			    sad.leido,
+			    @fum:=(if(saf.aprobado is null,
+					datediff(curdate(), sap.fecha_creacion),
+					datediff(curdate(), saf.fecha_creacion))) as fum,
+				if(@fum is not null, @fum, 0) as dias_ultima_modificacion
 			from
 			    s_au_em_detalle as sad
 			        inner join
@@ -358,11 +364,28 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 							$bgCheck = 'background-position:0 -24px;';
 							$unread = 'unread';
 						}
+
+						$bgOld = 'color: #ffffff; background: ';
+                		$dayOld = (int)$rowVh['dias_ultima_modificacion'];
+                		
+                		if ($dayOld >= 0 && $dayOld <= 2) {
+		                    $bgOld .= '#18b745;';
+		                } elseif ($dayOld >= 3 && $dayOld <= 10) {
+		                    $bgOld = 'color: #000000; background: #f4ec1c;';
+		                } elseif ($dayOld > 10) {
+		                    $bgOld .= '#f31d1d;';
+		                }
+
+		                if ($token === 1) {
+		                    $rowSpanBgOld .= ' style="' . $bgOld . '"';
+		                }
 						
 						if ($_PEN === 0 && $_APS > 0 && $_SW_EM === TRUE) {
 							$_EM = 1;
 						}
-					}
+					} else {
+		                $bgOld = '';
+		            }
 					
 					$arr_state['txt'] = '';		$arr_state['action'] = '';
 					$arr_state['obs'] = '';		$arr_state['link'] = '';	$arr_state['bg'];
@@ -386,7 +409,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 				}
 ?>
 			
-            <td <?=$rowSpan;?>><?=$row['prefijo'].'-'.$row['no_emision'];?></td>
+            <td <?=$rowSpan . $rowSpanBgOld;?>><?=$row['prefijo'].'-'.$row['no_emision'];?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['ef_nombre']);?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['cl_nombre']);?></td>
             <td <?=$rowSpan;?>><?=$row['cl_ci'];?></td>
