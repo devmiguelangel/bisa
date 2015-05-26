@@ -1126,6 +1126,20 @@ if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 			</select>
 		</div>
 <?php
+} elseif (empty($cr_opp) === false) {
+	$opp = $row['c_no_operacion'] = json_decode($cr_opp, true);
+	if (is_array($opp)) {
+		$row['c_no_operacion'] = 'Op. ' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'];
+	}
+?>
+		<label>Operaciones y Garantías: </label>
+		<input type="text" id="di-opp" name="di-opp" 
+			autocomplete="off" value="<?=$row['c_no_operacion'];?>" 
+			class="fbin" <?=$read_save . ' ' . $read_edit;?> >
+
+<?php
+} elseif ($ws_db && $sw === 2 && empty($cr_opp)) {
+	$token_issue = false;
 }
 ?>
 	</div>
