@@ -13,20 +13,20 @@ class BisaWs
 		$message,
 		$op;
 
-	private $method = [
-		'CD' => [
+	private $method = array(
+		'CD' => array(
 			'method'	=> 'datosClienteRequest',
-			'var' 		=> []
-		],
-		'AD' => [
+			'var' 		=> array()
+		),
+		'AD' => array(
 			'method'	=> 'cuentasporClienteRequest',
-			'var' 		=> []
-		],
-		'WD' => [
+			'var' 		=> array()
+		),
+		'WD' => array(
 			'method'	=> 'operacionesyGarantiasRequest',
-			'var' 		=> []
-		],
-	];
+			'var' 		=> array()
+		),
+	);
 
 	public 
 		$data,

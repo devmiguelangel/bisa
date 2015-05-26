@@ -235,7 +235,7 @@ $(document).ready(function(e) {
 
 <body>
 <header>
-	<?php if ($token): $data = [] ?>
+	<?php if ($token): $data = array() ?>
 		<?php if ($link->getResetPassword($_SESSION['idUser'], $data)): ?>
 			<?php if ($data['mess']): ?>
 			<div class="alert">

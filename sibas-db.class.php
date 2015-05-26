@@ -25,26 +25,26 @@ class SibasDB extends MySQLi
 					0 => 'M|Masculino', 
 					1 => 'F|Femenino'),
 		$status = array(
-			1 => [
+			1 => array(
 				0 => 'SO',
 				1 => 'Soltero(a)'
-			],
-			2 => [
+			),
+			2 => array(
 				0 => 'CA',
 				1 => 'Casado(a)'
-			],
-			3 => [
+			),
+			3 => array(
 				0 => 'DI',
 				1 => 'Divorciado(a)'
-			],
-			4 => [
+			),
+			4 => array(
 				0 => 'VI',
 				1 => 'Viudo(a)'
-			],
-			5 => [
+			),
+			5 => array(
 				0 => 'UL',
-				1 => 'Union Libre']
-			,
+				1 => 'Union Libre'
+			),
 		), 
 		$typeDoc = array(
 					0 => 'CI|Carnet de Identidad', 
@@ -107,7 +107,7 @@ class SibasDB extends MySQLi
 					0 => 'TC|Tarjeta de Crédito',
 					1 => 'TD|Tarjeta de Débito'),
 		$monthly_income =  array(
-			'N' => [
+			'N' => array(
 				11 => 'De Bs. 1 a Bs. 2,000',
 				12 => 'De Bs. 2,001 a Bs. 4,000',
 				13 => 'De Bs. 4,001 a Bs. 8,000',
@@ -115,14 +115,14 @@ class SibasDB extends MySQLi
 				15 => 'De Bs. 12,001 a Bs. 15,000',
 				16 => 'De Bs. 15,001 a Bs. 20,000',
 				17 => 'De 20,000 en adelante',
-			],
-			'J' => [
+			),
+			'J' => array(
 				21 => 'De Bs 1 a Bs. 50,000',
 				22 => 'De Bs. 50,001 a Bs. 100,000',
 				23 => 'De Bs 100,001 a Bs. 150,000',
 				24 => 'De Bs. 150,001 a Bs 200,000',
 				25 => 'De 200,001 en adelante',
-			],
+			),
 		)
 		
 		;
@@ -338,11 +338,11 @@ class SibasDB extends MySQLi
 
     public function getResetPassword($id_user, &$data)
     {
-    	$data = [
+    	$data = array(
     		'mess'		=> false,
     		'action'	=> false,
     		'days'		=> 0
-    	];
+    	);
 
     	$this->sql = 'select 
     		su.id_usuario,

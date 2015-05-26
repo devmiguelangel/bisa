@@ -117,7 +117,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 			$dc_phone_office = $dc_phone_office2;
 			$dc_monthly_income = $dc_monthly_income2;
 
-			$data = [
+			$data = array(
 				'type_company' 			=> $dc_type_company,
 				'registration_number' 	=> $dc_registration_number,
 				'license_number' 		=> $dc_license_number,
@@ -127,7 +127,7 @@ if (isset($_POST['dc-token']) && isset($_POST['dc-idc'])
 				'executive_ext'			=> $dc_ex_ext,
 				'executive_birth'		=> $dc_ex_birth,
 				'executive_profession'	=> $dc_ex_profession
-			];
+			);
 		}
 		
 		$year = $link->get_year_final($di_term, $di_type_term);

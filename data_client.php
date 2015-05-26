@@ -7,8 +7,8 @@ $res = array(
 	'token'	=> false,
 	'mess' 	=> '', 
 	'data' 	=> array(
-		'clients' 	=> [],
-		'accounts' 	=> []
+		'clients' 	=> array(),
+		'accounts' 	=> array()
 	)
 );
 
@@ -23,11 +23,11 @@ if (isset($_GET['op'])) {
 			$dni = $link->real_escape_string(trim($_GET['dni']));
 			$ext = $link->real_escape_string(trim($_GET['ext']));
 
-			$req = [
+			$req = array(
 				'tipoCliente' 	=> '',
 				'nroDocumento' 	=> $dni,
 				'sigla' 		=> $ext,
-			];
+			);
 
 			if (stripos($ext, 'nit') === false) {
 				$req['tipoCliente'] = 'P';
@@ -50,9 +50,9 @@ if (isset($_GET['op'])) {
 		if (isset($_GET['code'])) {
 			$code = $link->real_escape_string(trim($_GET['code']));
 			
-			$req = [
+			$req = array(
 				'codigoCliente' => $code,
-			];
+			);
 
 			$ws = new BisaWs($link, 'AD', $req);
 			$ws->getDataAccount();

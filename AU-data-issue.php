@@ -322,9 +322,9 @@ if($rs->data_seek(0) === TRUE){
 	$cl_code = $row['cl_code'];
 
 	$accounts = array();
-	$req = [
+	$req = array(
 		'codigoCliente' => $cl_code,
-	];
+	);
 
 	if ($ws_db && $sw === 1) {
 		$ws = new BisaWs($link, 'AD', $req);
@@ -1103,9 +1103,9 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AU')) !== FALSE) {
 }
 
 if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
-	$req = [
+	$req = array(
 		'codigoCliente' => $taken_code,
-	];
+	);
 
 	$ws2 = new BisaWs($link, 'WD', $req);
 	$ws2->getDataOperation();

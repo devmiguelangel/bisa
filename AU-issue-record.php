@@ -214,7 +214,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$cl_monthly_income = $link->real_escape_string(trim($_POST['dc-monthly-income2']));
 				$account = trim($_POST['dc-account-jur']);
 
-				$data = [
+				$data = array(
 					'type_company' 			=> $cl_type_company,
 					'registration_number' 	=> $cl_registration_number,
 					'license_number' 		=> $cl_license_number,
@@ -224,7 +224,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					'executive_ext'			=> $cl_ex_ext,
 					'executive_birth'		=> $cl_ex_birth,
 					'executive_profession'	=> $cl_ex_profession
-				];
+				);
 			}
 
 			if ($sw === 1 && $ws_db) {

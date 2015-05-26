@@ -2178,10 +2178,10 @@ function setHistoryPassword($histories, $password) {
 		$no_histories = 0;
 	}
 
-	$histories[$no_histories + 1] = [
+	$histories[$no_histories + 1] = array(
 		'password'  => $password,
 		'ts'		=> date('Y-m-d H:i:s')
-	];
+	);
 	
 	return json_encode($histories);
 }

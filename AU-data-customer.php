@@ -155,11 +155,11 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 	$display_fsc = 'display: block;';
 
 	if ($link->checkWebService($_SESSION['idEF'], 'AU')) {
-		$req = [
+		$req = array(
 			'tipoCliente' 	=> '',
 			'nroDocumento' 	=> $dni,
 			'sigla' 		=> $ext,
-		];
+		);
 
 		if ($type_client === 1) {
 			$req['tipoCliente'] = 'E';
