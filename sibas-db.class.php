@@ -962,7 +962,7 @@ class SibasDB extends MySQLi
 			case 'A':
 				$arr_state['txt'] = 'APROBADO';
 				if($token < 2){
-					if ($issue === TRUE) {
+					if ($issue && (boolean)$row['garantia'] === false) {
 						$arr_state['action'] = 'Emitir';
 						$arr_state['link'] = 'fac-issue-policy.php?ide='.base64_encode($row['ide']).'&pr='.base64_encode($product);
 					}
@@ -973,6 +973,8 @@ class SibasDB extends MySQLi
 				if($token === 4){
 					$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
+				} elseif ($token === 3) {
+					goto EditData;
 				}
 				
 				break;

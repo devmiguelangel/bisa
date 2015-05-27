@@ -231,13 +231,16 @@ if($sw !== 1){
 		sad.tasa as vh_tasa,
 		sad.prima as vh_prima,
 		sad.vh_archivo as vh_adjunto,
-		sae.aprobado
+		sae.aprobado,
+		saf.aprobado as f_aprobado
 	from
 		s_au_em_cabecera as sae
 			inner join
 		s_cliente as scl ON (scl.id_cliente = sae.id_cliente)
 			inner join
 		s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
+			left join
+		s_au_facultativo as saf ON (saf.id_emision = sae.id_emision and saf.id_vehiculo = sad.id_vehiculo)
 			inner join
 		s_entidad_financiera as sef ON (sef.id_ef = sae.id_ef)
 	where
@@ -397,7 +400,7 @@ if($rs->data_seek(0) === TRUE){
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
 
-	if ((boolean)$row['c_garantia'] && $sw > 1) {
+	if ((boolean)$row['c_garantia'] && $FC === false && $sw > 1) {
 		$link_save = 'certificate-policy.php?ms=' . $_GET['ms'] 
 			. '&page=' . $_GET['page'] . '&pr=' . base64_encode('AU') 
 			. '&ide=' . base64_encode($row['ide']);
@@ -1218,7 +1221,7 @@ if(($BLL = $link->verify_billing('AU', $_SESSION['idEF'])) !== FALSE) {
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
 	} else {
-		if($FC === TRUE && $sw === 2){
+		if($FC === TRUE && $sw === 2 && is_null($row['f_aprobado'])){
 			if(!isset($_GET['target'])) {
 				btnApproval:
 				echo '<a href="company-approval.php?ide=' . base64_encode($ide) 

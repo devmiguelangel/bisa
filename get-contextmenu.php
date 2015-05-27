@@ -348,6 +348,8 @@ if(isset($_GET['ide'])){
 					if(($row['observacion'] === 'E' || $token === 3) 
 							&& $row['estado'] !== 'A' && $token !== 4) {
 						$fancybox = '';
+					} elseif ($token === 3 && $row['estado'] === 'A') {
+						$fancybox = '';
 					}
 					
 					if ($product === 'DE' || $product === 'AU' || $product === 'TRD' || $product === 'TRM') {

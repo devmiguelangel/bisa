@@ -250,7 +250,10 @@ class ReportsGeneralTRD{
 				 ";
 		} elseif($this->token === 'PA'){
 			$this->sql .= "and stre.emitir = false
-							and stre.facultativo = false
+							and (stre.facultativo = false
+								or (stre.facultativo = true
+									and strf.aprobado = 'SI'
+									and stre.estado = ''))
 							and stre.anulado like '%".$this->data['r-canceled']."%'
 							";
 		} elseif($this->token === 'SP'){

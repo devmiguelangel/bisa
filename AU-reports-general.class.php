@@ -234,7 +234,10 @@ class ReportsGeneralAU{
 					";
 		}elseif($this->token === 'PA'){
 			$this->sql .= "and sae.emitir = false
-							and sae.facultativo = false
+							and (sae.facultativo = false
+								or (sae.facultativo = true
+									and saf.aprobado = 'SI'
+									and sae.estado = ''))
 							and sae.anulado like '%".$this->data['r-canceled']."%'
 							";
 		}elseif($this->token === 'SP'){

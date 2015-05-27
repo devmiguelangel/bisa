@@ -223,13 +223,16 @@ if($sw !== 1){
 	    "" as pr_adjunto,
 	    strd.tasa as pr_tasa,
     	strd.prima as pr_prima,
-    	stre.aprobado
+    	stre.aprobado,
+    	strf.aprobado as f_aprobado
 	from
 	    s_trd_em_cabecera as stre
 	        inner join
 	    s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
 	        inner join
 	    s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision)
+	   		left join
+	   	s_trd_facultativo as strf ON (strf.id_emision = stre.id_emision)
 	        inner join
 	    s_entidad_financiera as sef ON (sef.id_ef = stre.id_ef)
 	where
@@ -388,6 +391,12 @@ if($rs->data_seek(0) === TRUE){
 	}
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
+
+	if ((boolean)$row['c_garantia'] && $FC === false && $sw > 1) {
+		$link_save = 'certificate-policy.php?ms=' . $_GET['ms'] 
+			. '&page=' . $_GET['page'] . '&pr=' . base64_encode('TRD') 
+			. '&ide=' . base64_encode($row['ide']);
+	}
 ?>
 	<h4>Datos del Prestatario</h4>
 <?php
@@ -1113,7 +1122,7 @@ if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
 			//echo '<input type="submit" id="dc-issue" name="dc-issue" value="'.$title_btn.'" class="btn-next btn-issue" > ';
 		}
 	} else {
-		if($FC === TRUE && $sw === 2){
+		if($FC === TRUE && $sw === 2 && is_null($row['f_aprobado'])){
 			if(!isset($_GET['target'])) {
 				btnApproval:
 				echo '<a href="company-approval.php?ide=' . base64_encode($ide) 
