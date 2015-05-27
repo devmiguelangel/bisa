@@ -2320,7 +2320,7 @@ if($_GET['opcion']=='crear_correos'){
 			  </div>
 		  </div>';
 }elseif($_GET['opcion']=='editar_correo'){//EDITAR CORREOS ELECTRONICOS
-	$select="select
+	$query="select
 			  id_correo,
 			  correo,
 			  nombre,
@@ -2330,9 +2330,9 @@ if($_GET['opcion']=='crear_correos'){
 			  s_correo
 			where
 			  id_correo=".base64_decode($_GET['idcorreo']).";";
-	$res = $conexion->query($select,MYSQLI_STORE_RESULT);
-	$regi = $res->fetch_array(MYSQLI_ASSOC);
-	$res->free();
+	$result = $conexion->query($query,MYSQLI_STORE_RESULT);
+	$regi = $result->fetch_array(MYSQLI_ASSOC);
+	$result->free();
 	//SACAMOS ENTIDADES FINANCIERAS
 	if(base64_decode($_GET['tipo_sesion'])=='ROOT'){
 		  $selectEf="select
@@ -2415,44 +2415,26 @@ if($_GET['opcion']=='crear_correos'){
 										  from
 											s_sgc_home
 										  where
-											id_ef='".$regi['id_ef']."' and producto!='H';";
+											id_ef='".$regi['id_ef']."' and producto!='H' and activado=1;";
 								  $sql = $conexion->query($select,MYSQLI_STORE_RESULT);
 								  echo'<select name="producto" id="producto" class="required" style="width:230px;">';
 											  echo'<option value="" lang="es">seleccionar...</option>';
 											  while($regief = $sql->fetch_array(MYSQLI_ASSOC)){
-												  if($regi['producto']==$regief['producto']){
-													echo'<option value="'.$regief['producto'].'" selected>'.$regief['producto_nombre'].'</option>';
-													echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
-													echo'<option value="CO" >Contacto</option>';
-													echo'<option value="RC" >Siniestro</option>';
-
-												  }elseif($regi['producto']=='F'.$regief['producto']){
-													echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
-													echo'<option value="F'.$regief['producto'].'" selected>Facultativo '.$regief['producto_nombre'].'</option>';
- 													echo'<option value="CO" >Contacto</option>';
-													echo'<option value="RC" >Siniestro</option>';
-
-												  }elseif($regi['producto']=='CO'){
-											          echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
-													  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
-													  echo'<option value="CO" selected>Contacto</option>';
-													  echo'<option value="RC" >Siniestro</option>';
-
-
-
-												  }elseif($regi['producto']=='RC'){
-											          echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
-													  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
-													  echo'<option value="CO" >Contacto</option>';
-													  echo'<option value="RC" selected>Siniestro</option>';
-
-												  }else{
-													  echo'<option value="'.$regief['producto'].'">'.$regief['producto_nombre'].'</option>';
-													  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
-													  echo'<option value="CO" >Contacto</option>';
-													  echo'<option value="RC" >Siniestro</option>';
-												  }
+												  echo'<option value="'.$regief['producto'].'"';
+												        if($regi['producto']===$regief['producto'])
+														  echo'selected';
+												  echo'>'.$regief['producto_nombre'].'</option>';
+												  //if($regief['producto']!=='AP' && $regief['producto']!=='VI'){
+												  echo'<option value="F'.$regief['producto'].'"';
+													     if($regi['producto']==='F'.$regief['producto'])
+														  echo'selected';
+												  echo'>Facultativo '.$regief['producto_nombre'].'</ooption>';
+												  //}
 											  }
+											  echo'<option value="CO" ';
+													if($regi['producto']==='CO')
+													  echo'selected';
+											  echo'>Contacto</option>';
 								  echo'</select>
 									   <span class="errorMessage" id="errorproducto" lang="es"></span>
 							 </span>
