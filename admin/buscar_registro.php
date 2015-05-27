@@ -3,6 +3,20 @@
   $conexion = new SibasDB();
 
   if($_POST['opcion']=='buscar_agencia'){
+?>
+     <script type="text/javascript">
+        $(document).ready(function() {
+            $('#id_agencia').change(function(){
+			   var value = $(this).prop('value');
+			   if(value=='OT'){
+				  $('.new-agency').css({"display":""}); 
+			   }else{
+				  $('.new-agency').css({"display":"none"});  
+			   } 
+			});
+        });
+     </script>
+<?php	  
 	  $select="select
 				id_agencia,
 				codigo,
@@ -26,6 +40,7 @@
 				  while($regi = $res->fetch_array(MYSQLI_ASSOC)){
 					 echo'<option value="'.$regi['id_agencia'].'">'.$regi['agencia'].'</option>';
 				  }
+				  //echo'<option value="OT" style="font-weight:bold;">Nueva Agencia</option>';
 		  echo'</select>';
 	  }elseif($_POST['required']=='v'){
 		  if($num_regi>0){
@@ -371,7 +386,7 @@
 				from
 				  s_sgc_home
 				where
-				  id_ef='".$_POST['idefin']."' and producto!='H';";
+				  id_ef='".$_POST['idefin']."' and producto!='H' and activado=1;";
 		$sql = $conexion->query($select, MYSQLI_STORE_RESULT);
 		echo'<select name="producto" id="producto" class="required" style="width:230px;">';
 					echo'<option value="" lang="es">seleccione...</option>';
@@ -380,7 +395,7 @@
 						  echo'<option value="F'.$regief['producto'].'">Facultativo '.$regief['producto_nombre'].'</option>';
 					}
 					echo'<option value="CO">Contactos</option>';
-					echo'<option value="RC">Siniestro</option>';
+					//echo'<option value="RC">Siniestro</option>';
 		echo'</select>
 		     <span class="errorMessage" id="errorproducto" lang="es" style="display:none;">seleccione producto</span>';
 

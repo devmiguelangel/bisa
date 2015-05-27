@@ -552,8 +552,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			    $vecidmultiple=$_POST['idmultiple'];
 				
 				//INSERTAMOS LOS DATOS DEL USUARIO
-				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, cargo, fecha_creacion, created_at) "
-					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', null, '".$fono_agencia."', '".$cargo."', curdate(), '".date('Y-m-d H:i:s')."')";
+				$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
+					     ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', null, '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 				if($conexion->query($insert_us) === TRUE){ $resultado=TRUE;}else{ $resultado=FALSE;}
 
 				$cant=count($vecidmultiple);
@@ -932,6 +932,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						   if(nuevo_agencia!=''){
 							   $('#error_newagency').slideUp('slow');
 						   }else{
+							  sum++; 
 							  $('#error_newagency').slideDown('slow');
 							  $('#error_newagency').html('campo requerido');
 						   }
@@ -1394,7 +1395,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						<span class="errorMessage" id="erroremail" lang="es"></span>
 					</div>
 				</div>
-				<div class="da-form-row">
+				<div class="da-form-row" style="display:none;">
 					<label style="text-align:right;"><b><span lang="es">Cargo</span></b></label>
 					<div class="da-form-item large">
 						<input class="textbox requerid" type="text" name="txtCargo" id="txtCargo" style="width: 250px;" maxlength="50" value="'.$txtCargo.'" autocomplete="off"/>
