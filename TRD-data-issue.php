@@ -1036,7 +1036,8 @@ if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 } elseif (empty($cr_opp) === false) {
 	$opp = $row['c_no_operacion'] = json_decode($cr_opp, true);
 	if (is_array($opp)) {
-		$row['c_no_operacion'] = 'Op. ' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'];
+		$row['c_no_operacion'] = 'Op. ' . $opp['operacion'] . ' / Gar. ' . $opp['garantia'] 
+			. ' / ' . $opp['monto'] . ' / ' . $opp['moneda'];
 	}
 ?>
 		<label>Operaciones y Garantías: </label>
