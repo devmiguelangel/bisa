@@ -12,6 +12,11 @@ class BisaWs
 		$err,
 		$message,
 		$op;
+	private 
+		$currency = array(
+			1 => 'USD',
+			2 => 'BS'
+		);
 
 	private $method = array(
 		'CD' => array(
@@ -152,9 +157,12 @@ class BisaWs
 				foreach ($ops['operacga'] as $key => $value) {
 					if (is_array($value)) {
 						$value['opperation'] = serialize($value);
+						$value['opperation']['moneda'] = $this->currency[$value['opperation']['moneda']];
 						$this->data[] = $value;
 					} else {
 						$ops['operacga']['opperation'] = serialize($ops['operacga']);
+						$value['operacga']['opperation']['moneda'] 
+							= $this->currency[$value['operacga']['opperation']['moneda']];
 						$this->data[] = $ops['operacga'];
 						break;
 					}
