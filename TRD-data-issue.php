@@ -1026,7 +1026,8 @@ if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 				class="fbin field-person " <?= $read_save ;?>>
             	<?php foreach ($ws2->data as $key => $opp): ?>
             	<option value='<?= $opp['opperation'] ;?>' >
-            		<?= 'Op. ' . $opp['operacion'] . ' / ' . $opp['monto'] . ' / ' . $opp['moneda'] ;?>
+            		<?= 'Op. ' . $opp['operacion'] . ' / Gar. ' . $opp['garantia'] 
+            			. ' / Monto. ' . $opp['monto'] . ' / Moneda. ' . $opp['moneda'] ;?>
             	</option>
             	<?php endforeach ?>
 			</select>
