@@ -320,7 +320,6 @@ function get_menu($user_type, $tokenM, $link){
     <li><a href="#">Entidad Financiera</a>
         <ul>
 			<li><a href="index.php">Inicio</a></li>
-			<li><a href="http://ecofuturo.abrenet.com/aulavirtual/" target="_blank">E-learning</a></li>
             <li><a href="index.php?ms=<?=md5('MS_COMP');?>&page=<?=md5('P_aboutus');?>">Nosotros</a></li>
             <li><a href="index.php?ms=<?=md5('MS_COMP');?>&page=<?=md5('P_forms');?>">Formularios</a></li>
             <li><a href="index.php?ms=<?=md5('MS_COMP');?>&page=<?=md5('P_fAQs');?>">Preguntas Frecuentes</a></li>
