@@ -156,13 +156,12 @@ class BisaWs
 			if (is_array($ops)) {
 				foreach ($ops['operacga'] as $key => $value) {
 					if (is_array($value)) {
+						$value['moneda'] = $this->currency[$value['moneda']];
 						$value['opperation'] = serialize($value);
-						$value['opperation']['moneda'] = $this->currency[$value['opperation']['moneda']];
 						$this->data[] = $value;
 					} else {
+						$ops['operacga']['moneda'] = $this->currency[$ops['operacga']['moneda']];
 						$ops['operacga']['opperation'] = serialize($ops['operacga']);
-						$value['operacga']['opperation']['moneda'] 
-							= $this->currency[$value['operacga']['opperation']['moneda']];
 						$this->data[] = $ops['operacga'];
 						break;
 					}
