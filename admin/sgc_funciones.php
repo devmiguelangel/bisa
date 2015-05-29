@@ -307,7 +307,7 @@ function validarPdf($nombreCampo, $tamanoMax, $tamanoMaxStr, $folderDestino, $re
 		//echo $imagen_en_servidor; echo'<br/>';
 
 		//PRIMERO VEMOS SI EL ARCHIVO SUBIDO ES UN PDF, DOC, DOCX
-		if($fileType == "application/pdf" /*|| $fileType == "application/msword" || $fileType == "application/vnd.ms-powerpoint"*/) {
+		if($fileType == "application/pdf" || $fileType == "binary/octet-stream" /*|| $fileType == "application/vnd.ms-powerpoint"*/) {
 
 			//LUEGO, VEMOS SI EL TAMAÑO DE ARCHIVO ES MENOR O IGUAL AL LIMITE DADO
 			if($fileSize <= $tamanoMax) {

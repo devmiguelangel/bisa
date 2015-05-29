@@ -253,7 +253,7 @@ if($tipo_sesion=='ROOT'){
 					  s_sgc_formulario as sf
 					  inner join s_sgc_home as sh on (sh.id_home=sf.id_home)
 					where
-					  id_ef='".$regief['id_ef']."' and producto !='H'; ";
+					  id_ef='".$regief['id_ef']."' and producto !='H' and activado=1; ";
 		//echo $selectFor; 			
 		$res = $conexion->query($selectFor,MYSQLI_STORE_RESULT);			
 		echo'
@@ -341,7 +341,7 @@ function agregar_nuevo_formulario($id_usuario_sesion, $tipo_sesion, $usuario_ses
 			//HUBO ERRORES EN LOS CAMPOS NO SE PODRA SUBIR EL ARCHIVO			
 			
 		}else{
-		    $validacion = validarPdf('txtArchivo', 2097152, '2 MB', '../file_form', true);
+		    $validacion = validarPdf('txtArchivo', 4194304, '4 MB', '../file_form', true);
 			if($validacion['flag']) {
 				//SE VALIDO CORRECTAMENTE LA IMAGEN
 				$archivoServidor = $validacion['archivo'];
@@ -375,8 +375,8 @@ function agregar_nuevo_formulario($id_usuario_sesion, $tipo_sesion, $usuario_ses
 			    header('Location: index.php?l=archivos&var='.$_GET['var'].'&op=1&msg='.base64_encode($mensaje));
 			    exit;
 			} else {
-				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador "."\n ".$conexion->errno.": ". $conexion->error;
-			    header('Location: index.php?l=archivos&var='.$_GET['var'].'&op=2&msg='.base64_encode($mensaje));
+				$mensaje="Hubo un error al ingresar los datos, consulte con su administrador ".$conexion->errno.": ". $conexion->error;
+			    header('Location: index.php?l=archivos&var='.$_GET['var'].'&op=2&msg='.base64_encode($insert));
 				exit;
 			}
 		}
