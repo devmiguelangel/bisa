@@ -85,8 +85,8 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           <b>PÓLIZA <?=$row['no_emision'];?></b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
-                                <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                                <td style="width:98%;">
+                                <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
+                                <td style="width:98%; padding-top:10px;">
                                    <b>Condiciones Particulares que estipulan:</b>
                                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                       <tr>
@@ -174,9 +174,9 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                         </td>       
                       </tr>
                       <tr>
-                        <td style="width:2%; font-weight:bold;" valign="top">2.&nbsp;</td>
-                        <td style="width:98%; text-align:justify; font-weight:bold;">
-                           PAGOS DE PRIMAS<br>
+                        <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">2.&nbsp;</td>
+                        <td style="width:98%; text-align:justify; font-weight:bold; padding-top:10px;">
+                           PAGOS DE PRIMAS<br><br>
                            de acuerdo a lo estipulado en el Art. 58 Inciso d) de la Ley de Seguros 1883, de no 
                            realizar el pago dentro de los plazos establecidos, la vigencia y cobertura de su Póliza 
                            quedan suspendidas, como consecuencia, si ocurriera un siniestro mientras las primas se 
@@ -184,15 +184,15 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                         </td>
                       </tr>
                       <tr>
-                        <td style="width:2%; font-weight:bold;" valign="top">3.&nbsp;</td>
-                        <td style="width:98%; text-align:justify;">
+                        <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">3.&nbsp;</td>
+                        <td style="width:98%; text-align:justify; padding-top:10px;">
                            <b>AVISO DE VENCIMIENTO:</b>
                         </td>
                       </tr>
                       <tr>
-                         <td style="width:2%; font-weight:bold;" valign="top">4.&nbsp;</td>
-                         <td style="width:98%;">
-                           <b>NOTA ACLARATORIA:</b>
+                         <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">4.&nbsp;</td>
+                         <td style="width:98%; padding-top:10px;">
+                           <b>NOTA ACLARATORIA:</b><br><br>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
                                 <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>

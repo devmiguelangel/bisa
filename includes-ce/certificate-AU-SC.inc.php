@@ -669,7 +669,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                  COBERTURAS
                 </td></tr>
                 <tr>
-                  <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
+                  <td style="width:50%; font-size:80%; text-align: justify; padding-right:5px; 
                   border:0px solid #333;" valign="top">
                     <b>Coberturas</b><br>
                     <b>Sección I</b>
@@ -820,7 +820,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     </table> 
                   </td>
                   
-                  <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
+                  <td style="width:50%; font-size:80%; text-align: justify; padding-right:5px; 
                   border:0px solid #333;" valign="top">
                     <b>Coberturas Adicionales</b>
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">

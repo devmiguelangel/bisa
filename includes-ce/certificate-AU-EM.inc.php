@@ -3,966 +3,999 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		
 	ob_start();
 ?>
+
   <div id="container-c" style="width: 785px; height: auto; 
     border: 0px solid #0081C2; padding: 5px;">
 	  <div id="main-c" style="width: 775px; font-weight: normal; font-size: 12px; 
       font-family: Arial, Helvetica, sans-serif; color: #000000;">
 <?php
      $j = 0;
-     $num_titulares=$rsDt->num_rows;
+     $num_titulares = $rsDt->num_rows;
 	 $text = '';		
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
-		 if($row['tipo_cliente']=='J'){
-			 $cliente_nombre = $row['cl_razon_social'];
-			 $cliente_nitci = $row['ci'];
-			 $cliente_direccion = $row['direccion_laboral'];
-			 $cliente_fono = $row['telefono_oficina'];
-		 }elseif($row['tipo_cliente']=='N'){
-			 $cliente_nombre = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
-			 $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
-			 $cliente_direccion = $row['direccion'].' '.$row['no_domicilio'];
-			 $cliente_fono = $row['telefono_domicilio'].' '.$row['telefono_celular'];
-		 }
-		 $j += 1;
-		 if($row['no_copia']>0){
-			 if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
-		 }
-?>
-        <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
-            <table 
-                cellpadding="0" cellspacing="0" border="0" 
-                style="width: 100%; height: auto; font-family: Arial;">
-                <tr>
-                  <td style="width:20%;">&nbsp;</td>
-                  <td style="width:60%;">
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
-                        <tr>
-                          <td style="width:100%; font-size:70%; text-align:center; font-weight:bold;
-                            border: 0px solid #FFFF00;">
-                            SEGUROS DE AUTOMOTORES INDIVIDUAL<br>
-                            CONDICIONES PARTICULARES
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:100%; font-size:60%; text-align:center; font-weight:bold;">
-                            CODIGO SPVS No.: 109-910502-2007 12 311<br>
-                            R.A. 014/08
-                          </td>
-                        </tr>
-                     </table>
-                  </td>
-                  <td style="width:20%; text-align:right;">
-                     <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
-                  </td>
-              </tr>
-            </table>
-            <div style="text-align:right; font-size:64%;"><?=$text;?></div>          
-        </div>
-        <div style="width: 775px; border: 0px solid #FFFF00;">
-            <table 
-                cellpadding="0" cellspacing="0" border="0" 
-                style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
-                <tr> 
-                  <td style="width:100%; border-bottom: 1px solid #333;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
-                        <tr>
-                          <td style="width:15%; text-align:left;">
-                             Póliza No.: 
-                          </td>
-                          <td style="width:35%;">&nbsp;
-                              AU-<?=$row['no_emision'];?>
-                          </td>
-                          <td style="width:15%; text-align:left;">
-                             Nota de Cobranza.:   
-                          </td>
-                          <td style="width:35%;">&nbsp;
-                              AU-<?=$row['no_emision'];?> 
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:15%; text-align:left;">
-                             Lugar y Fecha: 
-                          </td>
-                          <td style="width:85%;" colspan="3">&nbsp;
-                              <?=strtoupper($row['u_departamento']);?>, <?=strtoupper(get_date_format_au($row['fecha_emision']));?>
-                          </td>
-                        </tr>
-                     </table>
-                  </td>      
-                </tr>
-                <tr>
-                  <td style="width:100%; border-bottom: 1px solid #333;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                        <tr>
-                          <td style="width:100%; text-align:left; font-weight:bold;" colspan="2">
-                            Datos del Cliente
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:15%; text-align:left;">Pagador: </td>
-                          <td style="width:85%;">&nbsp;
-                               
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:100%; text-align:left;" colspan="2">
-                             <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                               <tr>
-                                <td style="width: 15%;">Asegurado: </td>
-                                <td style="width: 45%;">&nbsp;<?=$cliente_nombre;?></td>
-                                <td style="width: 15%;">Email: </td>
-                                <td style="width: 25%;">&nbsp;<?=$row['email'];?></td>
-                               </tr>
-                             </table> 
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:15%; text-align:left;">Dirección: </td>
-                          <td style="width:85%;">&nbsp;
-                            <?=$cliente_direccion;?>  
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:100%; text-align:left;" colspan="2">
-                             <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                               <tr>
-                                <td style="width: 15%;">NIT/CI: </td>
-                                <td style="width: 45%;">&nbsp;<?=$cliente_nitci;?></td>
-                                <td style="width: 15%;">Teléfono: </td>
-                                <td style="width: 25%;">&nbsp;<?=$cliente_fono;?></td>
-                               </tr>
-                             </table> 
-                          </td>
-                        </tr>
-                     </table>                                  
-                  </td>
-                </tr>   
-                <tr>
-                  <td style="width:100%; border-bottom: 1px solid #333;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                        <tr>
-                         <td colspan="6" style="width:100%; text-align:left; font-weight:bold;">
-                            Datos del Vehículo
-                         </td>
-                        </tr>
-                        <tr>
-                          <td style="width:19%; text-align:left; font-weight:bold;">Clase: </td>
-                          <td style="width:25%;">&nbsp;
-                              
-                          </td>
-                          <td style="width:12%; text-align:left; font-weight:bold;">Marca: </td>
-                          <td style="width:15%;">&nbsp;
-                              <?=$rowDt['marca'];?>
-                          </td>
-                          <td style="width:13%; text-align:left; font-weight:bold;">Tipo: </td>
-                          <td style="width:16%;">&nbsp;
-                              <?=$rowDt['tipo_vechiculo'];?> 
-                          </td>   
-                        </tr>
-                        <tr>
-                          <td style="width:19%; text-align:left; font-weight:bold;">Color: </td>
-                          <td style="width:25%;">&nbsp;
-                             <?=$rowDt['color'];?> 
-                          </td>
-                          <td style="width:12%; text-align:left; font-weight:bold;">Modelo: </td>
-                          <td style="width:15%;">&nbsp;
-                             <?=$rowDt['modelo']?> 
-                          </td>
-                          <td style="width:13%; text-align:left; font-weight:bold;">No. Chasis: </td>
-                          <td style="width:16%;">&nbsp;
-                             <?=$rowDt['chasis']?>  
-                          </td>   
-                        </tr>
-                        <tr>
-                          <td style="width:19%; text-align:left; font-weight:bold;">No. Motor: </td>
-                          <td style="width:25%;">&nbsp;
-                              <?=$rowDt['motor'];?>
-                          </td>
-                          <td style="width:12%; text-align:left; font-weight:bold;">Placa: </td>
-                          <td style="width:15%;">&nbsp;
-                              <?=$rowDt['placa']?>
-                          </td>
-                          <td style="width:13%; text-align:left;">&nbsp;</td>
-                          <td style="width:16%;">&nbsp;
-                               
-                          </td>   
-                        </tr>
-                        <tr>
-                          <td style="width:19%; text-align:left; font-weight:bold;">Caracteristicas especiales: </td>
-                          <td style="width:25%;">&nbsp;
-                              
-                          </td>
-                          <td style="width:12%; text-align:left; font-weight:bold;">Cap/Ton: </td>
-                          <td style="width:15%;">&nbsp;
-                             <?=$rowDt['cap_ton'];?> 
-                          </td>
-                          <td style="width:13%; text-align:left; font-weight:bold;">Uso:</td>
-                          <td style="width:16%;">
-                              PARTICULAR 
-                          </td>   
-                        </tr>
-                     </table> 
-                  </td>              
-                </tr>
-                <tr>
-                   <td style="width:100%; font-weight:bold; text-align:left; border-bottom: 1px solid #333;">
-                     Valores Asegurados y Número de Pasajeros
-                   </td>
-                </tr>
-                <tr>
-                  <td style="width:100%; border-bottom: 1px solid #333;">
-                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                         <tr>
-                           <td style="width:25%; text-align:left; font-weight:bold;">
-                             Responsabilidad Civil Extracontractual: 
-                           </td>
-                           <td style="width:10%; text-align:right;">
-                                        
-                           </td>
-                           <td style="width:12%; text-align:right;" valign="top">$us&nbsp;25.000,00</td>
-                           <td style="width:8%;">
-                             
-                           </td>
-                           <td style="width:24%; text-align:left; font-weight:bold;">
-                             Casco:<br>
-                             Accesorios: 
-                           </td>
-                           <td style="width:10%;">&nbsp;
-                             
-                           </td>
-                           <td style="width:11%; text-align:left;">
-                             $us<br>
-                             -
-                           </td>
-                         </tr>
-                         <tr>
-                           <td style="width:25%; text-align:left; font-weight:bold;">
-                            Responsabilidad Civil Consecuencial: 
-                           </td>
-                           <td style="width:10%; text-align:right;">
-                                        
-                           </td>
-                           <td style="width:12%; text-align:right;" valign="top">$us&nbsp;3.000,00</td>
-                           <td style="width:8%;">
-                             
-                           </td>
-                           <td style="width:24%; text-align:left; font-weight:bold;">
-                             Muerte Accidental, p/ocupante:<br>
-                             Invalidez Permanente, p/ocupante        
-                           </td>
-                           <td style="width:10%; text-align:right;">
-                             
-                           </td>
-                           <td style="width:11%; text-align:left;">
-                             $us&nbsp;5.000,00<br>
-                             $us&nbsp;5.000,00
-                           </td>
-                         </tr>
-                         <tr>
-                           <td style="width:25%; text-align:left; font-weight:bold;">
-                            Responsabilidad Civil a Ocupantes, p/ocupante: 
-                           </td>
-                           <td style="width:10%; text-align:right;">
-                                        
-                           </td>
-                           <td style="width:12%; text-align:right;" valign="top">$us&nbsp;1.000,00</td>
-                           <td style="width:8%;">
-                             
-                           </td>
-                           <td style="width:24%; text-align:left; font-weight:bold;">
-                             Gastos Médicos, p/ocupante:<br>
-                             Gastos de Sepelio, p/ocupante:        
-                           </td>
-                           <td style="width:10%; text-align:right;">
-                             
-                           </td>
-                           <td style="width:11%; text-align:left;">
-                             $us&nbsp;1.000,00<br>
-                             $us&nbsp;1.000,00
-                           </td>
-                         </tr>
-                      </table>
-                  </td> 
-                </tr>
-                <tr>
-                  <td style="width:100%; border-bottom: 1px solid #333;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:90%;">
-                        <tr>
-                          <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
-                              border:0px solid #333;" valign="top">
-                              <b>Coberturas</b><br>
-                              <b>Sección I</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    <td style="width:90%;">Responsabilidad Civil Extracontractual</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">Responsabilidad Civil Consecuencial</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                              </table>
-                              <b>Sección II</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    <td style="width:90%;">Perdida Total por Robo al 100%</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">Perdida Total por Robo al 80%</td>
-                                    <td style="width:10%; text-align:right;">No Cubre</td>
-                                  </tr>
-                              </table>
-                              <b>Sección III</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    <td style="width:90%;">Perdida Total por Accidente al 100%</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                              </table>
-                              <b>Sección IV</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    <td style="width:90%;">Daños Propios, VEH. LIVIANOS c/Franquicia Deducible</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">$us 50.- hasta $us. 50.000.- de valor de casco</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">y $us. 200.- con valor de casco mayor a $us. 50.000.-</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">Daños Propios, VEH. PESADOS c/Franquicia Deducible</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">$us 150.- hasta $us. 50.000.- de valor de casco </td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">y $us. 300.- con valor de casco mayor a $us. 50.000.-</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                              </table>
-                              <b>Sección V</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    <td style="width:90%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">Vandalismo y Terrorismo, VEH. LIVIANOS c/Franquicia</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">Deducible $us 50.- hasta $us. 50.000.- de valor de</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">casco y $us. 200.- con valor de casco mayor</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    <td style="width:90%;">a $us 50.000.-</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Vandalismo y Terrorismo, VEH. PESADOS c/Franquicia</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Deducible $us 150.- hasta $us. 50.000.- de valor de</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                   
-                                    <td style="width:90%;">casco y $us. 300.- con valor de casco mayor</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                   
-                                    <td style="width:90%;">a $us 50.000.-</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                              </table>
-                              <b>Sección VI</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Robo Parcial al 80% </td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                              </table>
-                              <b>Sección VII</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Muerte Accidental</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Invalidez Permanente (Total y Parcial)</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Gastos Médicos</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                              </table> 
-                          </td>
-                          <td style="width:50%; font-size:100%; text-align: justify; padding-left:5px; 
-                              border:0px solid #333;" valign="top">
-                              <b>Coberturas Adicionales</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Ausencia de Control para el Seguro de Automotores para empresas		
-                  
-          </td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Daños a Causa de Riesgos de la Naturaleza c/Franquicia deducible estipulada en la Sección IV y V</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Clausula de Circulación en Vías No Habilitadas para el Tránsito Vehicular</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Extraterritorialidad (Por la vigencia de la Poliza)</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo para Accesorio de vehículos</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Gastos de Sepelio para Accidentes </td>
-                                    <td style="width:10%; text-align:right;" valign="top"></td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">personales</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Clausula de Autoreemplazo (excluye motocicletas/quatracks y vehículos pesados)</td>
-                                    <td style="width:10%; text-align:right;" valign="top">Cubre</td>
-                                  </tr>
-                              </table>
-                              <b>Cláusulas y Anexos Adicionales</b>
-                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Rehabilitación Automática de la suma Asegurada</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo para Restringir de Copia Legalizada</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Adelanto del 50% del Siniestro</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Elegibilidad de Ajustadores</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo para Vehículos con antigüedad  mayor</td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">a 15 años y para vehículos transformados</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo para Robo de Llantas, Partes, Equipos de Música y otras piezas</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Elegibilidad de Talleres</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Ampliación de Aviso de Siniestro a Diez Días</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Asistencia al Vehículo (excepto </td>
-                                    <td style="width:10%; text-align:right;"></td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;"> motocicletas/quadratracks y vehículos pesados)</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo de Beneficio de Asistencia Jurídica</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Rescisión de Contrato a Prorrata</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de cobertura para Flete Aéreo ( hasta $us. 500.-)</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Anexo para Cubrir la Responsabilidad Civil a Ocupantes</td>
-                                    <td style="width:10%; text-align:right;">Cubre</td>
-                                  </tr>
-                                  <tr>
-                                    
-                                    <td style="width:90%;">Cláusula de Valor Acordado</td>
-                                    <td style="width:10%; text-align:right;">No Cubre</td>
-                                  </tr>
-                              </table>
-                          </td>
-                        </tr>
-                    </table>
-                  </td>     
-                </tr>
-                <tr>
-                  <td style="width:100%; text-align:left; font-weight:bold; 
-                    border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                    EXCLUSIONES
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                     <b>Exclusiones Adicionales a las Condiciones Generales</b><br>
-                     La cobertura de Extraterritorialidad excluye el autoreemplazo (si es que cuenta con esta cobertura) y la asistencia jurídica.
-                  </td> 
-                </tr>
-                <tr>
-                  <td style="width:100%; text-align:left; font-weight:bold; 
-                    border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                    VIGENCIA/PRIMA/FORMA DE PAGO
-                  </td>
-                </tr>
-<?php
-			  if($row['forma_pago']=='CO'){
-				  $prima_co = $row['prima_total'];
-				  $prima_cr = '';
-				  $prima_mensual = '';
-			  }elseif($row['forma_pago']=='CR'){
-				  $prima_co = '';
-				  $prima_cr = $row['prima_total'];
-				  $prima_mensual = $row['prima_total']/12;
-			  }
+		   if($row['tipo_cliente']=='J'){
+			   $cliente_nombre = $row['cl_razon_social'];
+			   $cliente_nitci = $row['ci'];
+			   $cliente_direccion = $row['direccion_laboral'];
+			   $cliente_fono = $row['telefono_oficina'];
+		   }elseif($row['tipo_cliente']=='N'){
+			   $cliente_nombre = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
+			   $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
+			   $cliente_direccion = $row['direccion'].' '.$row['no_domicilio'];
+			   $cliente_fono = $row['telefono_domicilio'].' '.$row['telefono_celular'];
+		   }
+		   $j += 1;
+		   if($row['no_copia']>0){
+			   if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
+		   }
 ?>      
-               <tr>
-                  <td style="width:100%; padding-top:5px;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
-                        <tr>
-                          <td style="width:100%; text-align:left; padding-bottom:5px;" colspan="4">
-                            <b>Vigencia:</b>&nbsp;<?=$row['plazo_dias'];?>, A PARTIR DE LAS 12:01 P.M. HORAS DEL DIA <?=strtoupper(get_date_format_au($row['fecha_iniv']));?>, HASTA LA MISMA HORA DEL <?=strtoupper(get_date_format_au($row['fecha_finv']));?>.
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:100%; text-align:left; font-weight:bold;" colspan="4">
-                            Prima Anual
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:20%; text-align:left;"></td>
-                          <td style="width:20%; text-align:left;">Al Contado: $us.&nbsp;<?=$prima_co;?></td>
-                          <td style="width:25%; text-align:left;">Incluye impuestos de Ley</td>
-                          <td style="width:35%;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:20%; text-align:left;"></td>
-                          <td style="width:20%; text-align:left;">Al Credito: $us.&nbsp;<?=$prima_cr;?></td>
-                          <td style="width:25%; text-align:left;">Incluye impuestos de Ley y costos de los interés</td>
-                          <td style="width:35%;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:100%; text-align:left; font-weight:bold; padding-top:5px;" colspan="4">
-                            Forma Pago:
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:20%; text-align:left;">CONTADO</td>
-                          <td style="width:20%; text-align:left;">$US&nbsp;<?=$prima_co;?></td>
-                          <td style="width:25%;"></td>
-                          <td style="width:35%;"></td>
-                        </tr>
-                     </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                    Le recordamos que para contar con Cobertura el pago de la prima debe ser efectuado en los plazos establecidos con Ud. Según el siguiente detalle
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width:100%;">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
-                        <tr>
-                          <td style="width:100%; text-align:left; font-weight:bold;" colspan="5">
-                            La modalidad de renovación de esta Póliza es : "Anual con Renovacion Automatica"
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            Forma Pago
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            Moneda
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            Monto
-                          </td>
-                          <td style="width:25%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            Fecha de Vencimiento de Pago
-                          </td>
-                          <td style="width:15%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
-                            
-                          </td>
-                        </tr> 
-                        <tr>
-                          <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">
-                            Cuota Inicial
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">
-                            $us.
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
-                            
-                          </td>
-                          <td style="width:25%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
-                            
-                          </td>
-                          <td style="width:15%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
-                            
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            TOTAL
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                            $us
-                          </td>
-                          <td style="width:20%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
-                            
-                          </td>
-                          <td style="width:25%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
-                            
-                          </td>
-                          <td style="width:15%; text-align:left; font-weight:bold; 
-                            border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
-                            
-                          </td>
-                        </tr>  
-                     </table>
-                  </td>
-                </tr>
-            </table>
-       
-            <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
-<?php
-             $queryVar = 'set @anulado = "Polizas Anuladas: ";';
-             if($link->query($queryVar,MYSQLI_STORE_RESULT)){
-                 $canceled="select 
-                                max(@anulado:=concat(@anulado, prefijo, '-', no_emision, ', ')) as cert_canceled
-                            from
-                                s_au_em_cabecera
-                            where
-                                anulado = 1
-                                    and id_cotizacion = '".$row['id_cotizacion']."';";
-                 if($resp = $link->query($canceled,MYSQLI_STORE_RESULT)){
-                     $regis = $resp->fetch_array(MYSQLI_ASSOC);
-                     echo '<span style="font-size:8px;">'.trim($regis['cert_canceled'],', ').'</span>';
-                 }else{
-                     echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;
-                 }
-             }else{
-               echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;   
-             }
-?>
-            </div>
-            <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
-<?php
-			    if((boolean)$rowDt['facultativo']===true){
-				   if((boolean)$rowDt['vh_aprobado']===true){
-?>
-                      <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 8px; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">
-                            <tr>
-                                <td colspan="7" style="width:100%; text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">Caso Facultativo</td>
-                            </tr>
-                            <tr>
-                                
-                                <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Aprobado</td>
-                                <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa de Recargo</td>
-                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Porcentaje de Recargo</td>
-                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Actual</td>
-                                <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Final</td>
-                                <td style="width:69%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Observaciones</td>
-                            </tr>
-                            <tr>
-                                
-                                <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_aprobado']);?></td>
-                                <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_tasa_recargo']);?></td>
-                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_porcentaje_recargo'];?> %</td>
-                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_actual'];?> %</td>
-                                <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_final'];?> %</td>
-                                <td style="width:69%; text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['motivo_facultativo'];?> |<br /><?=$rowDt['vh_observacion'];?></td>
-                            </tr>
-                       </table>
-<?php
-				   }else{	 
-?> 
-                      <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 9px; border-collapse: collapse; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">         
-                           <tr>
-                            <td  style="text-align: center; font-weight: bold; background: #e57474; 
-                              color: #FFFFFF; width:100%;">
-                              Caso Facultativo
-                            </td>
-                           </tr>
-                           <tr>
-                            <td style="text-align: center; font-weight: bold; border: 1px solid #dedede; 
-                              background: #e57474; width:100%;">
-                              Observaciones
-                            </td>
-                           </tr>
-                           <tr>
-                            <td style="text-align: justify; background: #e78484; color: #FFFFFF; 
-                              border: 1px solid #dedede; width:100%;">
-							  <?=$rowDt['motivo_facultativo'];?>
-                            </td>
-                           </tr>
-                      </table>
-<?php
-				   }
-				}
-?>    
-            </div>
-        </div>      
-      
-<?php
-        if($type!=='MAIL' && ( (boolean)$row['emitir']===true || ( (boolean)$row['emitir']===false && (boolean)$row['garantia']===true && (boolean)$row['facultativo']===false ) ) && (boolean)$row['anulado']===false){
-?>        
-            <page><div style="page-break-before: always;">&nbsp;</div></page>
-          
-            <div style="width: 775px; border: 0px solid #FFFF00;">
-                <table 
-                    cellpadding="0" cellspacing="0" border="0" 
-                    style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-bottom:5px;">
-                        En caso que el pago no sea efectuado en el plazo estipulado, la vigencia del presente seguro quedara suspendida y por tanto, cualquier siniestro ocurrido, cuando la póliza este impaga o en mora no será cubierto, según lo estipulado en el artículo 58 inciso d) de la .Ley de Seguros 1883. Asimismo cabe denotar que la Poliza sera anulada luego de pasados 60 dias del no pago de las primas establecidas.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        SUBROGACIONES
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left;">
-                       Subrogatario:<br>
-                       Monto a Subrogar:
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        BENEFICIOS GRATUITOS
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                       *Los accesorios instalados al momento de asegurar el vehículo quedan automáticamente cubiertos sin costo adicional hasta los límites establecidos en el Anexo para Robo de LLantas, Equipos de Música y Otras Piezas. En caso que el accesorio supere los límites establecidos, el Aseguirado puede incluir mediante anexo y pago de prima adicional.<br>
-                      Los accesorios que se instalen con posterioridad deben incluirse mediante anexo y pago de prima adicional.<br>              *En caso de anulación de la Póliza la prima será devuelta a prorrata. (descontando los impuestos de Ley)<br><br>
-                      <b>Extraterritorialidad</b><br><br>
-                      Se otorga la cobertura de Extraterritorialidad anualmente cubriendo al vehículo asegurado mientras se encuentra fuera del Territorio de Bolivia máximo 60 días por cada viaje y de acuerdo a condiciones del anexo respectivo.
-                      <br><br>
-                      <b>Asistencia al Vehículo dentro del Territorio Nacional (No aplica para motocicletas/quadratracks y vehúculos pesados)</b><br><br>
-                      Bisa Seguros en caso de emergencia le otorga Asistencia al Vehículo y a los ocupantes del mismo las 24 horas del días y los 365 días del año llamando al Numero Gratuito 800-10-6060, de acuerdo a las condiciones y términos establecidos en el Anexo respectivo.<br><br>
-                     <b>Asistencia Jurídica</b><br><br>
-                     En caso de siniestro Bisa Seguros y Reaseguros le proporciona un servicio de asistencia jurídica solo dentro de territorio Boliviano, que incluye:<br>
-    *Asistencia a audiencias  de tránsito o ante otras autoridades que tengan jurisdicción en el  accidente<br>
-    *Preparación de memoriales<br>
-    *Presentación de fianzas judiciales hasta el límite del valor asegurado de responsabilidad civil<br>
-    *Asistencia a audiencias de conciliación
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        ACLARACIONES
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                       <b>Desgaste de Llantas:</b> Es responsabilidad del Asegurado el correcto reemplazo de las llantas del vehículo Asegurado, ya que en caso de presentarse un siniestro, y se determine que el mal estado de las llantas (desgaste superior al tiempo de vida útil de las mismas) propicio el siniestro, este no estará cubierto por ser considerado como una situación de Agravación de Riesgo.<br><br>
-                       <b>Anexo para restringir el requisito de presentación de Copia Legalizada de la denuncia a Transito:</b> En casos en que el monto del siniestro, sea inferior a $us. 500.-; excepto para casos de responsabilidad civil y perdida total, aplicable solamente dentro territorio boliviano, en caso de que el asegurado solicite estraterritorialidad esta clausula no aplica, siendo que el asegurado deberá presentar todos los informes y copias del siniestro de las autoridades extranjeras en caso de tener un siniestro fuera del país.<br><br>
-                       <b>Accesorios</b><br><br>
-                       Los accesorios que se coloquen con posterioridad deben incluirse mediante anexo y pago de prima adicional
-                       <br><br>
-  <?php
-                   if((boolean)$row['garantia']===true){
-  ?>                     
-                       <b>Vigencia</b><br><br>
-                       Se aclara que esta póliza no se renovará posteriormente a la cancelación total de la operación crediticia del asegurado con el contratante, de acuerdo al monto subrogado y declarado en la póliza. Se aclara que la vigencia de la póliza podrá terminar en forma anticipada, cuando el Asegurado realice el pago anticipado del monto total de su operación crediticia adeudada al Contratante. Sin embargo, si la prima fue pagada al contado, la póliza se mantendrá vigente hasta su finalización.
-                       <br><br>
-  <?php
-                   }
-  ?>                     
-                       <b>Monto Indemnizable en caso de Siniestro</b><br><br>
-                       Se acuerda y establece, que para definir el monto indemnizable en caso de siniestro por Pérdida Total (sea por Robo o Accidente) ocurrido durante el primer año de vigencia, de un vehículo adquirido del concesionario representante de marca y asegurado como "0" KM, se deducirá el valor fiscal  del 13% (correspondiente a la factura de compra) y se aplicara una depreciación del 10% sobre el valor asegurable total. 
-  <?php
-                  if((boolean)$row['garantia']===true){
-  ?>                     
-                       Si el monto indemnizable, después de esta deducción, es menor al saldo insoluto adeudado por el Asegurado al Subrogatario, la Compañía indemnizará el saldo insoluto al Subrogatario.
-  <?php
-                  }
-  ?>                     
-                       <br>
-  <?php
-                 if((boolean)$row['garantia']===true){ 
-  ?>                     
-                       En caso de perdida total por robo o accidente, la aseguradora no aplicara infraseguro<br><br>
-  <?php
-                 }else{
-  ?>                   
-                      <br>
-  <?php
-                 }
-  ?>                      
-                       <b>Depreciación</b><br><br>
-                       Se acuerda y establece, que la depreciación se apalicara en un 10% para los primeros 5 años, manteniendose constante una vez concluido este periodo.         
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        CONDICIONES ESPECIALES:
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                       El Asegurado autoriza a la Compañía de Seguros a enviar el reporte a la Central de Riesgos del Mercado de Seguros acorde a las Normativas Reglamentarias de la Autoridad de Fiscalización y Control de Pensiones y Seguros - APS.          
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        CONDICIONES ESPECIALES:
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                       * En caso de siniestro se otorgara cobertura cuando la Licencia de Conducir no esté vigente hasta 60 días
-                       después de la fecha de su vencimiento.<br>                   
-                       * No es requisito obligatorio presentar a la Compañía la denuncia a Diprove en caso de robo de partes y 
-                       piezas.<br>                                         
-                       * Alcoholemia permitida hasta 0,5 gramos por Litro de Sangre, de acuerdo al Decreto Supremo Nº 1347, 
-                       Articulo 14º.<br>
-                       * La cobertura de Robo Parcial al 80% se limita a cubrir el robo de 1 llanta con aro hasta $us.700.-, 
-                       incluida la llanta de auxilio y sus accesorios. 1 Equipo de música y accesorios hasta $us. 350.-,  una 
-                       vez al año. Se excluye el robo de radios o equipos de comunicación, equipos similares y sus accesorios.                   <br>
-                       Para la ciudad de Santa Cruz se excluye el robo de la llanta de auxilio y sus accesorios.<br>                   * En casos de accidentes de tránsito en la ciudad de Santa Cruz el sistema de seguridad pasiva (bolsas de
-                        aire mas accesorios) se cubre hasta $us. 1.500 por evento<br>
-                       * Autoreemplazo sujeto a términos y condiciones según Cláusula adjunta. Excepto motocicletas/quadratracks
-                       y vehículos pesados (camiones, tracto-camiones, acoplados).<br>
-                       * La cobertura de robo parcial al 80% para motocicletas/quadratracks queda limitada a 1 evento por 
-                       durante la vigencia de la póliza.<br>
-                       * La cobertura de Pérdida Total  por Robo para motocicletas/quadratracks queda limitada al 80%.<br>                   <b>SEGURIDAD PREVENTIVA</b><br>
-                       *La compañía podrá realizar campañas de seguridad preventiva durante la vigencia de la presente póliza, 
-                       estableciendo condiciones específicas para tal efecto las cuales serán de cumplimiento obligatorio por 
-                       parte del asegurado.          
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; font-weight:bold; 
-                        border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                        OBSERVACIONES:
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                       Las presentes Condiciones Particulares prevalecen sobre las Condiciones Generales preimpresas adjuntas,  debiendo aplicarse las últimas en ausencia de disposición específica de las presentes Condiciones Particulares.        
-                      </td>
-                    </tr>
-                </table>
-                <table 
+          <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
+              <table 
                   cellpadding="0" cellspacing="0" border="0" 
-                  style="width: 100%; height: auto; font-size: 65%; font-family: Arial;">
-                 <tr>
-                  <td style="width:30%;">&nbsp;</td>
-                  <td style="width:40%; text-align:center;">
-                    BISA SEGUROS Y REASEGUROS S.A.
-                  </td>
-                  <td style="width:30%;">&nbsp;</td>
-                 </tr>
-                 <tr>
-                  <td style="width:30%;">&nbsp;</td>
-                  <td style="width:40%; border-bottom: 1px solid #333; text-align:center;">
-                    <img src="<?=$url;?>img/firmas_bisa.png" height="115"/>
-                  </td>
-                  <td style="width:30%;">&nbsp;</td>
-                 </tr>
-                 <tr>
-                  <td style="width:30%;">&nbsp;</td>
-                  <td style="width:40%; text-align:center;">
-                    FIRMAS AUTORIZADAS
-                  </td>
-                  <td style="width:30%;">&nbsp;</td>
-                 </tr>
-              </table>            
+                  style="width: 100%; height: auto; font-family: Arial;">
+                  <tr>
+                    <td style="width:20%;">&nbsp;</td>
+                    <td style="width:60%;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                          <tr>
+                            <td style="width:100%; font-size:70%; text-align:center; font-weight:bold;
+                              border: 0px solid #FFFF00;">
+                              SEGUROS DE AUTOMOTORES INDIVIDUAL<br>
+                              CONDICIONES PARTICULARES
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; font-size:60%; text-align:center; font-weight:bold;">
+                              CODIGO SPVS No.: 109-910502-2007 12 311<br>
+                              R.A. 014/08
+                            </td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td style="width:20%; text-align:right;">
+                       <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/>
+                    </td>
+                </tr>
+              </table>    
+              <div style="text-align:right; font-size:60%; padding-right:30px;"><?=$text;?></div>      
+          </div>
+          <div style="width: 775px; border: 0px solid #FFFF00;">
+              <table 
+                  cellpadding="0" cellspacing="0" border="0" 
+                  style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
+                  <tr> 
+                    <td style="width:100%; border-bottom: 0px solid #333;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left;">
+                               <b>POLIZA NRO.:</b>&nbsp; <?=$row['no_emision'];?> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left;">
+                               <b>LUGAR Y FECHA:</b>&nbsp; <?=strtoupper($row['u_departamento']);?>, <?=strtoupper(get_date_format_au($row['fecha_emision']));?> 
+                            </td>
+                          </tr>
+                       </table>
+                    </td>      
+                  </tr>
+                  <tr>
+                    <td style="width:100%;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;" colspan="2">
+                              DATOS DEL ASEGURADO/TOMADOR/PAGADOR
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left;" colspan="2"><b>Tomador:</b>
+                            &nbsp;<?=$row['tomador_nombre'];?> </td>
+                          </tr>
+                          <tr>
+                            <td style="width:60%; text-align:left; padding-top:5px;"><b>Asegurado:</b>
+                             &nbsp;<?=$cliente_nombre;?></td>
+                            <td style="width:40%; text-align:left; padding-top:5px;"><b>NIT o CI:</b>
+                             &nbsp;<?=$cliente_nitci?></td>
+                          </tr>
+                          <tr>
+                            <td style="width:60%; text-align:left;"><b>Direccion:</b>
+                             &nbsp;<?=$cliente_direccion;?></td>
+                            <td style="width:40%; text-align:left;"><b>Teléfono/Celular:</b>
+                            &nbsp;<?=$cliente_fono?></td>
+                          </tr>
+                          <tr>
+                            <td style="width:60%; text-align:left; padding-top:5px;"><b>Pagador:</b> </td>
+                            <td style="width:40%; text-align:left; padding-top:5px;"><b>NIT o CI:</b></td>
+                          </tr>
+                          <tr>
+                            <td style="width:60%; text-align:left;"><b>Direccion:</b> </td>
+                            <td style="width:40%; text-align:left;"><b>Teléfono/Celular:</b></td>
+                          </tr>
+                       </table>                                  
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; padding-top:5px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;" colspan="3">
+                              DATOS DE LA POLIZA
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:25%; text-align:left;"><b>Producto:</b></td>
+                            <td style="width:25%; text-align:left;">AUTO PLUS</td>
+                            <td style="width:50%;"></td>
+                          </tr>
+                          <tr>
+                            <td style="width:25%; text-align:left;"><b>Alcance Territorial, Competencia y Jurisdicción:</b></td>
+                            <td style="width:25%; text-align:left;"></td>
+                            <td style="width:50%; text-align:left;">ESTADO PLURINACIONAL DE BOLIVIA</td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left;" colspan="3"><b>Intermediario:</b></td>
+                          </tr>
+                       </table>
+                    </td>
+                  </tr>   
+                  <tr>
+                    <td style="width:100%; padding-top:5px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333; margin-bottom:5px;" colspan="6">
+                              INFORMACION DE LA MATERIA DEL SEGURO Y VALORES ASEGURADOS
+                            </td>
+                          </tr>
+                          <tr>
+                           <td colspan="6" style="width:100%; text-align:left; font-weight:bold;">
+                              Datos del Vehículo
+                           </td>
+                          </tr>
+                          <tr>
+                            <td style="width:19%; text-align:left; font-weight:bold;">Clase: </td>
+                            <td style="width:25%;">&nbsp;
+                                
+                            </td>
+                            <td style="width:12%; text-align:left; font-weight:bold;">Marca: </td>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['marca'];?>
+                                
+                            </td>
+                            <td style="width:13%; text-align:left; font-weight:bold;">Tipo: </td>
+                            <td style="width:16%;">&nbsp;<?=$rowDt['tipo_vechiculo'];?>
+                                 
+                            </td>   
+                          </tr>
+                          <tr>
+                            <td style="width:19%; text-align:left; font-weight:bold;">Color: </td>
+                            <td style="width:25%;">&nbsp;<?=$rowDt['color'];?>
+                                
+                            </td>
+                            <td style="width:12%; text-align:left; font-weight:bold;">Modelo: </td>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['modelo']?>
+                                
+                            </td>
+                            <td style="width:13%; text-align:left; font-weight:bold;">No. Chasis: </td>
+                            <td style="width:16%;">&nbsp;<?=$rowDt['chasis']?>
+                                 
+                            </td>   
+                          </tr>
+                          <tr>
+                            <td style="width:19%; text-align:left; font-weight:bold;">No. Motor: </td>
+                            <td style="width:25%;">&nbsp;<?=$rowDt['motor'];?>
+                                
+                            </td>
+                            <td style="width:12%; text-align:left; font-weight:bold;">Placa: </td>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['placa']?>
+                                
+                            </td>
+                            <td style="width:13%; text-align:left; font-weight:bold;">Cap/Ton:</td>
+                            <td style="width:16%;">&nbsp;<?=$rowDt['cap_ton']?>
+                                 
+                            </td>   
+                          </tr>
+                          <tr>
+                            <td style="width:19%; text-align:left; font-weight:bold;">
+<?php
+                            if((boolean)$row['garantia']===false)
+							     echo 'Uso';
+?>                            
+                             
+                            
+                            </td>
+                            <td style="width:25%;">&nbsp;
+                                
+                            </td>
+                            <td style="width:12%; text-align:left; font-weight:bold;">No. de Ocupantes: </td>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['no_asiento'];?>
+                                
+                            </td>
+                            <td style="width:13%; text-align:left; font-weight:bold;">Cilindrada:</td>
+                            <td style="width:16%;">&nbsp;
+                                
+                            </td>   
+                          </tr>
+                          <tr>
+                            <td style="width:100%;" colspan="6">
+                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;"> 
+                                 <tr>
+                                   <td style="width:55%; text-align:left;">
+                                      <b>Caracteristicas especiales:</b>
+                                   </td>
+                                   <td style="width:45%; text-align:left;">
+                                      <b>Plaza de Circulación:</b>
+                                   </td>
+                                 </tr>
+                               </table> 
+                            </td>
+                          </tr>
+                       </table> 
+                    </td>              
+                  </tr>
+                  <tr>
+                    <td style="width:100%; font-weight:bold; text-align:left; border-bottom: 0px solid #333;
+                       padding-top:5px;">
+                       Valores Asegurados
+                     </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; border-bottom: 0px solid #333; padding-top:5px;">
+                        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                           <tr>
+                             <td style="width:25%; text-align:left; font-weight:bold;">
+                               Responsabilidad Civil Extracontractual: 
+                             </td>
+                             <td style="width:10%; text-align:right;">
+                                          
+                             </td>
+                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;25.000,00</td>
+                             <td style="width:8%;">
+                               
+                             </td>
+                             <td style="width:24%; text-align:left; font-weight:bold;">
+                               Casco:<br>
+                               Accesorios: 
+                             </td>
+                             <td style="width:10%;">&nbsp;
+                               
+                             </td>
+                             <td style="width:11%; text-align:left;">
+                               $us <?=number_format($rowDt['valor_asegurado'],2,'.',',');?><br>
+                               -
+                             </td>
+                           </tr>
+                           <tr>
+                             <td style="width:25%; text-align:left; font-weight:bold;">
+                              Responsabilidad Civil Consecuencial: 
+                             </td>
+                             <td style="width:10%; text-align:right;">
+                                          
+                             </td>
+                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;3.000,00</td>
+                             <td style="width:8%;">
+                               
+                             </td>
+                             <td style="width:24%; text-align:left; font-weight:bold;">
+                               Muerte Accidental, p/ocupante:<br>
+                               Invalidez Permanente, p/ocupante        
+                             </td>
+                             <td style="width:10%; text-align:right;">
+                               
+                             </td>
+                             <td style="width:11%; text-align:left;">
+                               $us&nbsp;5.000,00<br>
+                               $us&nbsp;5.000,00
+                             </td>
+                           </tr>
+                           <tr>
+                             <td style="width:25%; text-align:left; font-weight:bold;">
+                              Responsabilidad Civil a Ocupantes, p/ocupante: 
+                             </td>
+                             <td style="width:10%; text-align:right;">
+                                          
+                             </td>
+                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;1.000,00</td>
+                             <td style="width:8%;">
+                               
+                             </td>
+                             <td style="width:24%; text-align:left; font-weight:bold;">
+                               Gastos Médicos, p/ocupante:<br>
+                               Gastos de Sepelio, p/ocupante:        
+                             </td>
+                             <td style="width:10%; text-align:right;">
+                               
+                             </td>
+                             <td style="width:11%; text-align:left;">
+                               $us&nbsp;1.000,00<br>
+                               $us&nbsp;1.000,00
+                             </td>
+                           </tr>
+                        </table> 
+                    </td> 
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333; margin-bottom:5px;">
+                      SECCIONES/COBERTURAS, CLAUSULAS Y ANEXOS
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; border-bottom: 0px solid #333; padding-top:5px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:90%;">
+                            <tr>
+                              <td style="width:50%; font-size:100%; text-align: justify; padding-right:5px; 
+                                  border:0px solid #333;" valign="top">
+                                  <b>Coberturas</b><br>
+                                  <b>Sección I</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        <td style="width:90%;">Responsabilidad Civil Extracontractual</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">Responsabilidad Civil Consecuencial</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección II</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        <td style="width:90%;">Perdida Total por Robo al 100%</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">Perdida Total por Robo al 80%</td>
+                                        <td style="width:10%; text-align:right;">No Cubre</td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección III</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        <td style="width:90%;">Perdida Total por Accidente al 100%</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección IV</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        <td style="width:90%;">Daños Propios, VEH. LIVIANOS c/Franquicia Deducible</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">$us 50.- hasta $us. 50.000.- de valor de casco</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">y $us. 200.- con valor de casco mayor a $us. 50.000.-</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">Daños Propios, VEH. PESADOS c/Franquicia Deducible</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">$us 150.- hasta $us. 50.000.- de valor de casco </td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">y $us. 300.- con valor de casco mayor a $us. 50.000.-</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección V</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        <td style="width:90%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">Vandalismo y Terrorismo, VEH. LIVIANOS c/Franquicia</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">Deducible $us 50.- hasta $us. 50.000.- de valor de</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">casco y $us. 200.- con valor de casco mayor</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width:90%;">a $us 50.000.-</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Vandalismo y Terrorismo, VEH. PESADOS c/Franquicia</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Deducible $us 150.- hasta $us. 50.000.- de valor de</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                       
+                                        <td style="width:90%;">casco y $us. 300.- con valor de casco mayor</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                       
+                                        <td style="width:90%;">a $us 50.000.-</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección VI</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Robo Parcial al 80% </td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                  </table>
+                                  <b>Sección VII</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Muerte Accidental</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Invalidez Permanente (Total y Parcial)</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Gastos Médicos</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                  </table> 
+                              </td>
+                              <td style="width:50%; font-size:100%; text-align: justify; padding-left:5px; 
+                                  border:0px solid #333;" valign="top">
+                                  <b>Coberturas Adicionales</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Ausencia de Control para el Seguro de Automotores para empresas		
+                      
+              </td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Daños a Causa de Riesgos de la Naturaleza c/Franquicia deducible estipulada en la Sección IV y V</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Clausula de Circulación en Vías No Habilitadas para el Tránsito Vehicular</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Extraterritorialidad (Por la vigencia de la Poliza)</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo para Accesorio de vehículos</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Gastos de Sepelio para Accidentes </td>
+                                        <td style="width:10%; text-align:right;" valign="top"></td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">personales</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Clausula de Autoreemplazo (excluye motocicletas/quatracks y vehículos pesados)</td>
+                                        <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                                      </tr>
+                                  </table>
+                                  <b>Cláusulas y Anexos Adicionales</b>
+                                  <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Rehabilitación Automática de la suma Asegurada</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo para Restringir de Copia Legalizada</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Adelanto del 50% del Siniestro</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Elegibilidad de Ajustadores</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo para Vehículos con antigüedad  mayor</td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">a 15 años y para vehículos transformados</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo para Robo de Llantas, Partes, Equipos de Música y otras piezas</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Elegibilidad de Talleres</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Ampliación de Aviso de Siniestro a Diez Días</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Asistencia al Vehículo (excepto </td>
+                                        <td style="width:10%; text-align:right;"></td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;"> motocicletas/quadratracks y vehículos pesados)</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo de Beneficio de Asistencia Jurídica</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Rescisión de Contrato a Prorrata</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de cobertura para Flete Aéreo ( hasta $us. 500.-)</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Anexo para Cubrir la Responsabilidad Civil a Ocupantes</td>
+                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                      </tr>
+                                      <tr>
+                                        
+                                        <td style="width:90%;">Cláusula de Valor Acordado</td>
+                                        <td style="width:10%; text-align:right;">No Cubre</td>
+                                      </tr>
+                                  </table>
+                              </td>
+                            </tr>
+                        </table>
+                    </td>     
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      EXCLUSIONES
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                       <b>Exclusiones Adicionales a las Condiciones Generales</b><br>
+                       La cobertura de Extraterritorialidad excluye el autoreemplazo (si es que cuenta con esta cobertura) y la asistencia jurídica.
+                    </td> 
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      VIGENCIA/PRIMA/FORMA DE PAGO
+                    </td>
+                  </tr>
+<?php
+          if($row['forma_pago']=='CO'){
+			  $prima_co = $row['prima_total'];
+			  $prima_cr = '';
+			  $prima_mensual = '';
+		  }elseif($row['forma_pago']=='CR'){
+			  $prima_co = '';
+			  $prima_cr = $row['prima_total'];
+			  $prima_mensual = $row['prima_total']/12;
+		  }
+?>   
+                  <tr>
+                    <td style="width:100%; padding-top:5px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left; padding-bottom:5px;" colspan="4">
+                              <b>Vigencia:</b>&nbsp;<?=$row['plazo_dias'];?>, A PARTIR DE LAS 12:01 P.M. HORAS DEL DIA <?=strtoupper(get_date_format_au($row['fecha_iniv']));?>, HASTA LA MISMA HORA DEL <?=strtoupper(get_date_format_au($row['fecha_finv']));?>.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold;" colspan="4">
+                              Prima Anual
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:20%; text-align:left;"></td>
+                            <td style="width:20%; text-align:left;">Al Contado: $us.&nbsp;<?=$prima_co;?></td>
+                            <td style="width:25%; text-align:left;">Incluye impuestos de Ley</td>
+                            <td style="width:35%;"></td>
+                          </tr>
+                          <tr>
+                            <td style="width:20%; text-align:left;"></td>
+                            <td style="width:20%; text-align:left;">Al Credito: $us.&nbsp;<?=$prima_cr;?></td>
+                            <td style="width:25%; text-align:left;">Incluye impuestos de Ley y costos de los interés</td>
+                            <td style="width:35%;"></td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold; padding-top:5px;" colspan="4">
+                              Forma Pago:
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:20%; text-align:left;">CONTADO</td>
+                            <td style="width:20%; text-align:left;">$US&nbsp;<?=$prima_co;?></td>
+                            <td style="width:25%;"></td>
+                            <td style="width:35%;"></td>
+                          </tr>
+                       </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                      Le recordamos que para contar con Cobertura el pago de la prima debe ser efectuado en los plazos establecidos con Ud. Según el siguiente detalle
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
+                          <tr>
+                            <td style="width:100%; text-align:left; font-weight:bold;" colspan="5">
+                              La modalidad de renovación de esta Póliza es : "Anual con Renovacion Automatica"
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              Forma Pago
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              Moneda
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              Monto
+                            </td>
+                            <td style="width:25%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              Fecha de Vencimiento de Pago
+                            </td>
+                            <td style="width:15%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
+                              
+                            </td>
+                          </tr> 
+                          <tr>
+                            <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">
+                              Cuota Inicial
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">
+                              $us.
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
+                              
+                            </td>
+                            <td style="width:25%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
+                              
+                            </td>
+                            <td style="width:15%; text-align:left; font-weight:bold; padding-bottom:5px;">&nbsp;
+                              
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              TOTAL
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                              $us
+                            </td>
+                            <td style="width:20%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
+                              
+                            </td>
+                            <td style="width:25%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
+                              
+                            </td>
+                            <td style="width:15%; text-align:left; font-weight:bold; 
+                              border-bottom: 1px solid #333; border-top: 1px solid #333;">&nbsp;
+                              
+                            </td>
+                          </tr>  
+                       </table>
+                    </td>
+                  </tr>
+              </table>
+              <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
+<?php
+				 $queryVar = 'set @anulado = "Polizas Anuladas: ";';
+				 if($link->query($queryVar,MYSQLI_STORE_RESULT)){
+					 $canceled="select 
+									max(@anulado:=concat(@anulado, prefijo, '-', no_emision, ', ')) as cert_canceled
+								from
+									s_au_em_cabecera
+								where
+									anulado = 1
+										and id_cotizacion = '".$row['id_cotizacion']."';";
+					 if($resp = $link->query($canceled,MYSQLI_STORE_RESULT)){
+						 $regis = $resp->fetch_array(MYSQLI_ASSOC);
+						 echo '<span style="font-size:8px;">'.trim($regis['cert_canceled'],', ').'</span>';
+					 }else{
+						 echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;
+					 }
+				 }else{
+				   echo "Error en la consulta "."\n ".$link->errno. ": " . $link->error;   
+				 }
+?>
             </div>
-            
-            <page><div style="page-break-before: always;">&nbsp;</div></page>
-            
-            <div style="width: 775px; border: 0px solid #FFFF00;">
-                <table 
+              <div style="'width: 100%; height: auto; margin: 0 0 5px 0;">
+  <?php
+                  if((boolean)$rowDt['facultativo']===true){
+                     if((boolean)$rowDt['vh_aprobado']===true){
+  ?>
+                        <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 8px; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">
+                              <tr>
+                                  <td colspan="7" style="width:100%; text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">Caso Facultativo</td>
+                              </tr>
+                              <tr>
+                                  
+                                  <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Aprobado</td>
+                                  <td style="width:5%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa de Recargo</td>
+                                  <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Porcentaje de Recargo</td>
+                                  <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Actual</td>
+                                  <td style="width:7%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Tasa Final</td>
+                                  <td style="width:69%; text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">Observaciones</td>
+                              </tr>
+                              <tr>
+                                  
+                                  <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_aprobado']);?></td>
+                                  <td style="width:5%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=strtoupper($rowDt['vh_tasa_recargo']);?></td>
+                                  <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_porcentaje_recargo'];?> %</td>
+                                  <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_actual'];?> %</td>
+                                  <td style="width:7%; text-align: center; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['vh_tasa_final'];?> %</td>
+                                  <td style="width:69%; text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;"><?=$rowDt['motivo_facultativo'];?> |<br /><?=$rowDt['vh_observacion'];?></td>
+                              </tr>
+                         </table>
+  <?php
+                     }else{	 
+  ?> 
+                        <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 9px; border-collapse: collapse; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">         
+                             <tr>
+                              <td  style="text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">
+                                Caso Facultativo
+                              </td>
+                             </tr>
+                             <tr>
+                              <td style="text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">
+                                Observaciones
+                              </td>
+                             </tr>
+                             <tr>
+                              <td style="text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;">
+                                <?=$rowDt['motivo_facultativo'];?>
+                              </td>
+                             </tr>
+  
+                        </table>
+  <?php
+                     }
+                  }
+  ?>    
+              </div>   	
+          </div>            
+<?php
+     if($type!=='MAIL' && ( (boolean)$row['emitir']===true || ( (boolean)$row['emitir']===false && (boolean)$row['garantia']===true && (boolean)$row['facultativo']===false ) ) && (boolean)$row['anulado']===false){
+?>            
+          <page><div style="page-break-before: always;">&nbsp;</div></page>
+          
+          <div style="width: 775px; border: 0px solid #FFFF00;">
+              <table 
+                  cellpadding="0" cellspacing="0" border="0" 
+                  style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-bottom:5px;">
+                      En caso que el pago no sea efectuado en el plazo estipulado, la vigencia del presente seguro quedara suspendida y por tanto, cualquier siniestro ocurrido, cuando la póliza este impaga o en mora no será cubierto, según lo estipulado en el artículo 58 inciso d) de la .Ley de Seguros 1883. Asimismo cabe denotar que la Poliza sera anulada luego de pasados 60 dias del no pago de las primas establecidas.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      SUBROGACIONES
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left;">
+                     Subrogatario:<br>
+                     Monto a Subrogar:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      BENEFICIOS GRATUITOS
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                     *Los accesorios instalados al momento de asegurar el vehículo quedan automáticamente cubiertos sin costo adicional hasta los límites establecidos en el Anexo para Robo de LLantas, Equipos de Música y Otras Piezas. En caso que el accesorio supere los límites establecidos, el Aseguirado puede incluir mediante anexo y pago de prima adicional.<br>
+                    Los accesorios que se instalen con posterioridad deben incluirse mediante anexo y pago de prima adicional.<br>              *En caso de anulación de la Póliza la prima será devuelta a prorrata. (descontando los impuestos de Ley)<br><br>
+                    <b>Extraterritorialidad</b><br><br>
+                    Se otorga la cobertura de Extraterritorialidad anualmente cubriendo al vehículo asegurado mientras se encuentra fuera del Territorio de Bolivia máximo 60 días por cada viaje y de acuerdo a condiciones del anexo respectivo.
+                    <br><br>
+                    <b>Asistencia al Vehículo dentro del Territorio Nacional (No aplica para motocicletas/quadratracks y vehículos pesados)</b><br><br>
+                    Bisa Seguros en caso de emergencia le otorga Asistencia al Vehículo y a los ocupantes del mismo las 24 horas del días y los 365 días del año llamando al Numero Gratuito 800-10-6060, de acuerdo a las condiciones y términos establecidos en el Anexo respectivo.<br><br>
+                   <b>Asistencia Jurídica</b><br><br>
+                   En caso de siniestro Bisa Seguros y Reaseguros le proporciona un servicio de asistencia jurídica solo dentro de territorio Boliviano, que incluye:<br>
+  *Asistencia a audiencias  de tránsito o ante otras autoridades que tengan jurisdicción en el  accidente<br>
+  *Preparación de memoriales<br>
+  *Presentación de fianzas judiciales hasta el límite del valor asegurado de responsabilidad civil<br>
+  *Asistencia a audiencias de conciliación
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      ACLARACIONES
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                     <b>Desgaste de Llantas:</b> Es responsabilidad del Asegurado el correcto reemplazo de las llantas del vehículo Asegurado, ya que en caso de presentarse un siniestro, y se determine que el mal estado de las llantas (desgaste superior al tiempo de vida útil de las mismas) propicio el siniestro, este no estará cubierto por ser considerado como una situación de Agravación de Riesgo.<br><br>
+                     <b>Anexo para restringir el requisito de presentación de Copia Legalizada de la denuncia a Transito:</b> En casos en que el monto del siniestro, sea inferior a $us. 500.-; excepto para casos de responsabilidad civil y perdida total, aplicable solamente dentro territorio boliviano, en caso de que el asegurado solicite extraterritorialidad esta clausula no aplica, siendo que el asegurado deberá presentar todos los informes y copias del siniestro de las autoridades extranjeras en caso de tener un siniestro fuera del país.<br><br>
+                     <b>Accesorios</b><br><br>
+                     Los accesorios que se coloquen con posterioridad deben incluirse mediante anexo y pago de prima adicional
+                     <br><br>
+<?php
+                 if((boolean)$row['garantia']===true){
+?>                     
+                     <b>Vigencia</b><br><br>
+                     Se aclara que esta póliza no se renovará posteriormente a la cancelación total de la operación crediticia del asegurado con el contratante, de acuerdo al monto subrogado y declarado en la póliza. Se aclara que la vigencia de la póliza podrá terminar en forma anticipada, cuando el Asegurado realice el pago anticipado del monto total de su operación crediticia adeudada al Contratante. Sin embargo, si la prima fue pagada al contado, la póliza se mantendrá vigente hasta su finalización.
+                     <br><br>
+<?php
+				 }
+?>                     
+                     <b>Monto Indemnizable en caso de Siniestro</b><br><br>
+                     Se acuerda y establece, que para definir el monto indemnizable en caso de siniestro por Pérdida Total (sea por Robo o Accidente) ocurrido durante el primer año de vigencia, de un vehículo adquirido del concesionario representante de marca y asegurado como "0" KM, se deducirá el valor fiscal  del 13% (correspondiente a la factura de compra) y se aplicara una depreciación del 10% sobre el valor asegurable total. 
+<?php
+                if((boolean)$row['garantia']===true){
+?>                     
+                     Si el monto indemnizable, después de esta deducción, es menor al saldo insoluto adeudado por el Asegurado al Subrogatario, la Compañía indemnizará el saldo insoluto al Subrogatario.
+<?php
+				}
+?>                     
+                     <br>
+<?php
+               if((boolean)$row['garantia']===true){ 
+?>                     
+                     En caso de perdida total por robo o accidente, la aseguradora no aplicara infraseguro<br><br>
+<?php
+			   }else{
+?>                   
+                    <br>
+<?php
+			   }
+?>                      
+                     <b>Depreciación</b><br><br>
+                     Se acuerda y establece, que la depreciación se aplicara en un 10% para los primeros 5 años, manteniendose constante una vez concluido este periodo.         
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      CONDICIONES ESPECIALES:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                     El Asegurado autoriza a la Compañía de Seguros a enviar el reporte a la Central de Riesgos del Mercado de Seguros acorde a las Normativas Reglamentarias de la Autoridad de Fiscalización y Control de Pensiones y Seguros - APS.          
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      CONDICIONES ESPECIALES:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                     * En caso de siniestro se otorgara cobertura cuando la Licencia de Conducir no esté vigente hasta 60 días
+                     después de la fecha de su vencimiento.<br>                   
+                     * No es requisito obligatorio presentar a la Compañía la denuncia a Diprove en caso de robo de partes y 
+                     piezas.<br>                                         
+                     * Alcoholemia permitida hasta 0,5 gramos por Litro de Sangre, de acuerdo al Decreto Supremo Nº 1347, 
+                     Articulo 14º.<br>
+                     * La cobertura de Robo Parcial al 80% se limita a cubrir el robo de 1 llanta con aro hasta $us.700.-, 
+                     incluida la llanta de auxilio y sus accesorios. 1 Equipo de música y accesorios hasta $us. 350.-,  una 
+                     vez al año. Se excluye el robo de radios o equipos de comunicación, equipos similares y sus accesorios.                   <br>
+                     Para la ciudad de Santa Cruz se excluye el robo de la llanta de auxilio y sus accesorios.<br>                   * En casos de accidentes de tránsito en la ciudad de Santa Cruz el sistema de seguridad pasiva (bolsas de
+                      aire mas accesorios) se cubre hasta $us. 1.500 por evento<br>
+                     * Autoreemplazo sujeto a términos y condiciones según Cláusula adjunta. Excepto motocicletas/quadratracks
+                     y vehículos pesados (camiones, tracto-camiones, acoplados).<br>
+                     * La cobertura de robo parcial al 80% para motocicletas/quadratracks queda limitada a 1 evento por 
+                     durante la vigencia de la póliza.<br>
+                     * La cobertura de Pérdida Total  por Robo para motocicletas/quadratracks queda limitada al 80%.<br>                   <b>SEGURIDAD PREVENTIVA</b><br>
+                     *La compañía podrá realizar campañas de seguridad preventiva durante la vigencia de la presente póliza, 
+                     estableciendo condiciones específicas para tal efecto las cuales serán de cumplimiento obligatorio por 
+                     parte del asegurado.          
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; font-weight:bold; 
+                      border-bottom: 1px solid #333; border-top: 1px solid #333;">
+                      OBSERVACIONES:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
+                     Las presentes Condiciones Particulares prevalecen sobre las Condiciones Generales preimpresas adjuntas,  debiendo aplicarse las últimas en ausencia de disposición específica de las presentes Condiciones Particulares.        
+                    </td>
+                  </tr>
+              </table>
+              <table 
+                cellpadding="0" cellspacing="0" border="0" 
+                style="width: 100%; height: auto; font-size: 65%; font-family: Arial;">
+               <tr>
+                <td style="width:30%;">&nbsp;</td>
+                <td style="width:40%; text-align:center;">
+                  BISA SEGUROS Y REASEGUROS S.A.
+                </td>
+                <td style="width:30%;">&nbsp;</td>
+               </tr>
+               <tr>
+                <td style="width:30%;">&nbsp;</td>
+                <td style="width:40%; border-bottom: 1px solid #333; text-align:center;">
+                  <img src="<?=$url;?>img/firmas_bisa.png" height="115"/>
+                </td>
+                <td style="width:30%;">&nbsp;</td>
+               </tr>
+               <tr>
+                <td style="width:30%;">&nbsp;</td>
+                <td style="width:40%; text-align:center;">
+                  FIRMAS AUTORIZADAS
+                </td>
+                <td style="width:30%;">&nbsp;</td>
+               </tr>
+            </table>            
+          </div>
+          
+          <page><div style="page-break-before: always;">&nbsp;</div></page>
+          
+          <div style="width: 775px; border: 0px solid #FFFF00;">
+              <table 
                     cellpadding="0" cellspacing="0" border="0" 
                     style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">                   
                     <tr>
@@ -1291,12 +1324,11 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                       </td>
                     </tr>  
                 </table>
-                   
-            </div>
+          </div> 
 <?php
-		}
-	    if($num_titulares <> $j)
-		   echo "<page><div style='page-break-before: always;'>&nbsp;</div></page>";
+	 }
+	      if($num_titulares <> $j)
+		     echo "<page><div style='page-break-before: always;'>&nbsp;</div></page>";
 	   
 	 
 	 }
@@ -1316,11 +1348,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
        </div> 
 <?php
 	}
-?>        
-        
+?>            
       </div>
    </div> 
-   
 
 <?php
 	$html = ob_get_clean();

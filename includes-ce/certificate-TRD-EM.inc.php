@@ -174,7 +174,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A DECLARACIONES DE CADA PRESTATARIO.
+                        DE ACUERDO A DECLARACIONES DE CADA CLIENTE.
                       </td>  
                     </tr>
                     <tr>
@@ -555,7 +555,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
         <page><div style="page-break-before: always;">&nbsp;</div></page>
         
         <div style="width: 775px; border: 0px solid #FFFF00;">
-            <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
+            <div style="width: 775px; border: 0px solid #FFFF00; text-align:center; margin-bottom:40px;">
                 <table 
                     cellpadding="0" cellspacing="0" border="0" 
                     style="width: 100%; height: auto; font-family: Arial;">
@@ -576,11 +576,11 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     EXCLUSIONES: 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     DE ACUERDO A CONDICIONADO GENERAL, ANEXOS Y CLAUSULAS DE LA PÓLIZA.<br>
                     ADICIONALMENTE A LAS EXCLUSIONES ESTIPULADAS SE EXCLUYE:<br>
                     -BIENES EN CÁMARAS FRIGORÍFICAS Y EN EL AGUA<br>
@@ -590,43 +590,65 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     -DINERO, JOYAS Y/O VALORES         
                   </td>  
                 </tr>
+<?php
+            if((boolean)$row['garantia']===true){
+?> 
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     VIGENCIA 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
+                    SE ACLARA QUE ESTA PÓLIZA NO SE RENOVARÁ POSTERIORMENTE A LA CANCELACIÓN TOTAL DE LA OPERACIÓN CREDITICIA DEL ASEGURADO CON EL CONTRATANTE, DE ACUERDO AL MONTO SUBROGADO Y DECLARADO EN LA PÓLIZA. SE ACLARA QUE LA VIGENCIA DE LA PÓLIZA PODRÁ TERMINAR EN FORMA ANTICIPADA, CUANDO EL ASEGURADO REALICE EL PAGO ANTICIPADO DEL MONTO TOTAL DE SU OPERACIÓN CREDITICIA ADEUDADA AL CONTRATANTE.  SIN EMBARGO, SI LA PRIMA FUE PAGADA AL CONTADO, LA PÓLIZA SE MANTENDRÁ VIGENTE HASTA SU FINALIZACIÓN.         
+                  </td>  
+                </tr>
+<?php
+			}
+?>                
+                <tr>
+                  <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
+                    RENOVACIÓN 
+                  </td>
+                  <td style="width:65%; text-align: justify; padding-left:5px; 
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     ANUAL CON RENOVACIÓN AUTOMÁTICA.         
                   </td>  
                 </tr>
+<?php
+            if((boolean)$row['garantia']===true){
+?>                 
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     CLAUSULA DE SUBROGACIÓN:
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     CLAUSULA ADJUNTA A LA PRESENTE PÓLIZA        
                   </td>  
                 </tr>
+<?php
+			}
+?>                
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     FORMA DE PAGO:
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     AL CONTADO O CON DEBITO EN CUENTA 
                   </td>  
                 </tr>
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     CONDICIONES ESPECIALES:
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     EL ASEGURADO AUTORIZA A LA COMPAÑÍA DE SEGUROS A ENVIAR EL REPORTE A LA CENTRAL DE RIESGOS DEL MERCADO DE SEGUROS, ACORDE A LAS NORMATIVAS REGLAMENTARIAS DE LA AUTORIDAD DE FISCALIZACIÓN Y CONTROL DE PENSIONES Y SEGUROS - APS.<br>
                     EL ASEGURADO DEBERÁ PRESENTAR:
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
@@ -650,33 +672,30 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     </table>     
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===false){
-?>                
+              
                 <tr>
                    <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
                     ANULACIÓN POR MORA:
                    </td>
                    <td style="width:65%; text-align: justify; padding-left:5px; 
-                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     LA PÓLIZA SERA ANULADA LUEGO DE PASADOS 60 DÍAS DEL NO PAGO DE LAS PRIMAS ESTABLECIDAS.
                    </td>
                 </tr>
-<?php
-			}
-?>                
+                
+                <!--
                 <tr>
                    <td style="width:35%; text-align: left; padding-right:5px; padding-top:10px; font-weight:bold; 
-                    border:0px solid #0081C2;" valign="top">
-                    &nbsp;
+                    border:0px solid #0081C2;" valign="top">&nbsp;
+                    
                    </td>
                    <td style="width:65%; text-align: justify; padding-left:5px; padding-top:10px; 
                      border:0px solid #0081C2; font-style:italic;" valign="top">
                      BISA SEGUROS Y REASEGUROS S.A., DENTRO DE TERRITORIO NACIONAL LE OTORGA EL SERVICIO DE ASISTENCIA DOMICILIARIA, LAS 24 HORAS DEL DÍA Y LOS 365 DÍAS DEL AÑO, CON BENEFICIOS ESTABLECIDOS EN EL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.<br>                                                           
 PARA MAYOR INFORMACIÓN SOBRE LOS SERVICIOS Y LIMITES REFIÉRASE AL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.
 <?php
-            if((boolean)$row['garantia']===true){
+            if((boolean)$row['garantia']===false){
 ?> 
 <br><br>
 EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVICIOS PRESTADOS A LOS ASEGURADOS. 
@@ -686,6 +705,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
 
                    </td>
                 </tr>
+                -->
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2;" valign="top">
@@ -697,7 +717,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                   </td>  
                 </tr>
             </table>
-           
+            <br><br>
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 

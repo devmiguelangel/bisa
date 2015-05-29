@@ -86,8 +86,8 @@ function trd_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                            <b>PÓLIZA <?=$row['no_emision'];?></b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
-                                <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                                <td style="width:98%;">
+                                <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
+                                <td style="width:98%; padding-top:10px;">
                                    <b>Condiciones Particulares que estipulan:</b>
                                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                       <tr>
@@ -177,7 +177,7 @@ function trd_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       <tr>
                         <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">2.&nbsp;</td>
                         <td style="width:98%; text-align:justify; font-weight:bold; padding-top:10px;">
-                           PAGOS DE PRIMAS<br>
+                           PAGOS DE PRIMAS<br><br>
                            de acuerdo a lo estipulado en el Art. 58 Inciso d) de la Ley de Seguros 1883, de no 
                            realizar el pago dentro de los plazos establecidos, la vigencia y cobertura de su Póliza 
                            quedan suspendidas, como consecuencia, si ocurriera un siniestro mientras las primas se 
@@ -196,8 +196,8 @@ function trd_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                            <b>NOTA ACLARATORIA:</b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
-                                <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                                <td style="width:98%;">
+                                <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
+                                <td style="width:98%; padding-top:10px;">
                                     Se aclara que esta póliza no se renovará posteriormente a la cancelación total de 
                                     la operación crediticia del asegurado con el contratante, de acuerdo al monto 
                                     subrogado y declarado en la póliza
