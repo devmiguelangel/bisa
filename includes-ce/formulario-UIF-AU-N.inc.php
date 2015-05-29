@@ -83,7 +83,7 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
                 </tr>
                 <tr>
                   <td style="width:100%; font-weight:bold; text-align:center; padding-top:15px;" colspan="2">
-                     FORMULARIO DE IDENTIFICACION DE CLIENTE Y BENEFICIARIO ECONOMICO  - PERSONAS NATURALES / PRIMAS MENORES A $US. 5,000 <br> Politica Conozoca su Cliente ART 26 D.S.24771
+                     FORMULARIO DE IDENTIFICACION DE CLIENTE Y BENEFICIARIO ECONOMICO  - PERSONAS NATURALES / PRIMAS MENORES A $US. 5,000 <br> Politica Conozca su Cliente ART 26 D.S.24771
                   </td> 
                 </tr>
             </table>     
