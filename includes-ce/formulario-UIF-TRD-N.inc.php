@@ -11,11 +11,17 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
 <?php
        $ingreso_mensual = $link->monthly_income[$row['tipo_cliente']];
 	   $estadoc = $link->status;
-	   	   	   
-       $vec = explode('-',$row['fecha_emision']);
-	   $dia = $vec[2];
-	   $mes = $vec[1];
-	   $anio = $vec[0];
+	   if($row['fecha_emision']!=='0000-00-00'){	   	   
+       	 $vec = explode('-',$row['fecha_emision']);
+	   	 $dia = $vec[2];
+	   	 $mes = $vec[1];
+	   	 $anio = $vec[0];
+	   }else{
+		 $vec = explode('-',$row['fecha_creacion']);
+	   	 $dia = $vec[2];
+	   	 $mes = $vec[1];
+	   	 $anio = $vec[0];  
+	   }
 	   $sucursal = $row['u_depto'];
 	   $cliente = $row['cl_nombre'].' '.$row['cl_paterno'].' '.$row['cl_materno'];
 	   $ci = $row['cl_ci'];
@@ -71,7 +77,7 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
                 </tr>
                 <tr>
                   <td style="width:100%; font-weight:bold; text-align:center; padding-top:15px;" colspan="2">
-                     FORMULARIO DE IDENTIFICACION DE CLIENTE Y BENEFICIARIO ECONOMICO  - PERSONAS NATURALES / PRIMAS MENORES A $US. 5,000 <br> Politica Conzoca su Cliente ART 26 D.S.24771
+                     FORMULARIO DE IDENTIFICACION DE CLIENTE Y BENEFICIARIO ECONOMICO  - PERSONAS NATURALES / PRIMAS MENORES A $US. 5,000 <br> Politica Conozoca su Cliente ART 26 D.S.24771
                   </td> 
                 </tr>
             </table>     
@@ -432,7 +438,7 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
                 <td style="width:10%;"></td>
                 <td style="width:80%; text-align:center; font-weight:bold;">
                  Firma del Declarante (Cliente)<br>
-                 * El presente formulario tiene carácter de delaración jurada, firmo en conformidad de los datos contenidos en el presente documento 
+                 * El presente formulario tiene carácter de declaración jurada, firmo en conformidad de los datos contenidos en el presente documento 
                 </td>
                 <td style="width:10%;"></td>  
                </tr>

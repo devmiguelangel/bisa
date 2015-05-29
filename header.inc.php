@@ -374,13 +374,13 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					}
 	            }
 				
-				/*if ($rowMenu['producto'] !== 'TH') {
+				if ($rowMenu['producto'] !== 'TH') {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_cancel');?>" class="link-pr">
 						Anular Póliza
 					</a></li>
 <?php
-				}*/
+				}
 			} elseif ($user_type === 'PA') {
 ?>
 				<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_app_ok');?>" class="link-pr">

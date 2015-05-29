@@ -1,10 +1,17 @@
 <?php
 function au_formulario_uif_J($link, $row, $rsDt, $url, $implant, $fac, $reason = '') {
 	$ingreso_mensual = $link->monthly_income[$row['tipo_cliente']];
-	$vec = explode('-',$row['fecha_emision']);
-	$dia = $vec[2];
-	$mes = $vec[1];
-	$anio = $vec[0];
+	if($row['fecha_emision']!=='0000-00-00'){
+		$vec = explode('-',$row['fecha_emision']);
+		$dia = $vec[2];
+		$mes = $vec[1];
+		$anio = $vec[0];
+	}else{
+		$vec = explode('-',$row['fecha_creacion']);
+		$dia = $vec[2];
+		$mes = $vec[1];
+		$anio = $vec[0];
+	}
 	$sucursal = $row['u_departamento'];
 	$razon_social = $row['cl_razon_social'];
 	$nit = $row['ci'];

@@ -15,6 +15,11 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 		 $cliente_nombre = $row['cl_razon_social'];
 		 $cliente_nitci = $row['cl_ci'];
 	 }
+	 if($row['fecha_emision']!=='0000-00-00'){
+	    $fecha_em = $row['fecha_emision'];	 
+	 }else{
+		$fecha_em = $row['fecha_creacion'];
+	 }
 	 while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){ 
 	    $materia_seguro = $rowDt['pr_departamento'].' '.$rowDt['pr_tipo_inmueble'].' '.$rowDt['pr_uso_inmueble'].' '.$rowDt['pr_zona'].' '.$rowDt['pr_localidad'].' '.$rowDt['pr_direccion'];
 ?>
@@ -53,7 +58,7 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['ini_vigencia'];?> hasta <?=$row['fin_vigencia'];?><br>
                     <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                     <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.$row['fecha_emision'];?> 
+                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.$fecha_em;?> 
                   </td>      
                 </tr>
                 <tr>

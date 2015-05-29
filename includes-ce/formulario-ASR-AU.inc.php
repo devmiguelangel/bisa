@@ -15,6 +15,11 @@ function au_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		 $cliente_nombre = $row['cl_razon_social'];
 		 $cliente_nitci = $row['ci'];
 	 }
+	 if($row['fecha_emision']!=='0000-00-00'){
+		$fecha_em = $row['fecha_emision'];  
+	 }else{
+		$fecha_em = $row['fecha_creacion']; 
+	 }
 	 while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){ 
 	    $materia_seguro = $rowDt['tipo_vechiculo'].' '.$rowDt['marca'].' '.$rowDt['modelo'].' '.$rowDt['placa'];
 ?>
@@ -53,7 +58,7 @@ function au_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['fecha_iniv'];?> hasta <?=$row['fecha_finv'];?><br>
                     <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                     <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.$row['fecha_emision'];?> 
+                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.$fecha_em;?> 
                   </td>      
                 </tr>
                 <tr>

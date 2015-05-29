@@ -16,6 +16,14 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
 		 $cliente_nitci = $row['ci'];
 	 }
 	 $data_count = json_decode($row['nro_cuenta_tomador'],true);
+	 
+	 if($row['fecha_emision']!=='0000-00-00'){
+		 $fecha_em = $row['fecha_emision'];
+	 }else{
+		 $fecha_em = $row['fecha_creacion'];
+		 /*$fecha = new DateTime();
+         $fecha_em = $fecha->format('Y-m-d');*/
+	 }
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -51,7 +59,7 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
                   <td style="width:100%; padding-bottom:4px; text-align:justify;">
                      En razón que el CLIENTE ha decidido contratar de forma voluntaria una póliza de seguros de la empresa BISA SEGUROS Y REASEGUROS S.A., el CLIENTE instruye al Banco BISA S.A. a proporcionar su información con la que cuenta el Banco, a la Aseguradora referida y a la empresa Sudamericana S.R.L. Corredores de Seguros y Reaseguros, para la obtención de la póliza de seguros escogida por el propio CLIENTE.
                      <br><br>
-                     Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº._____<?=$data_count['numero'];?>_____ a nombre de ______<?=$row['tomador_nombre'];?>______
+                     Así mismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº._____<?=$data_count['numero'];?>_____ a nombre de ______<?=$row['tomador_nombre'];?>______
                      <br><br><br>
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
@@ -65,7 +73,7 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
                          <tr> 
                           <td style="width:20%;">LUGAR Y FECHA: </td>
                           <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
-                             <?=strtoupper(get_date_format_fat_au($row['fecha_emision']));?>
+                             <?=strtoupper(get_date_format_fat_au($fecha_em));?>
                           </td>
                           <td style="width:30%;"></td>  
                          </tr> 

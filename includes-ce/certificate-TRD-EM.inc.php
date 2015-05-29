@@ -71,6 +71,9 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 			 <table 
                     cellpadding="0" cellspacing="0" border="0" 
                     style="width: 100%; height: auto; font-size: 75%; font-family: Arial;">
+<?php
+               if((boolean)$row['garantia']===true){//subrogado 
+?>                    
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -141,6 +144,82 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA PRESTATARIO.
                       </td>  
                     </tr>
+<?php
+			   }else{//no subrogado
+?>                    
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        ASEGURADO: 
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        PAGADOR: 
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        UBICACIÓN DEL RIESGO:
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        DE ACUERDO A DECLARACIONES DE CADA PRESTATARIO.
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        DIRECCIÓN LEGAL:
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        DIRECCIÓN LEGAL DEL ASEGURADO
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        MATERIA DEL SEGURO:
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        BIENES INMUEBLES U OTRA PROPIEDAD DE CLIENTES DEL BANCO BISA.
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        VALORES TOTAL A RIESGO:
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA CLIENTE.
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                        border:0px solid #0081C2;" valign="top">
+                        VALORES ASEGURADOS:
+                      </td>
+                      <td style="width:65%; text-align: justify; padding-left:5px; 
+                        border:0px solid #0081C2; font-style:italic;" valign="top">
+                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA CLIENTE.
+                      </td>  
+                    </tr> 
+<?php
+			   }
+?>                    
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
@@ -439,17 +518,20 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 ?> 
                       <table border="0" cellpadding="1" cellspacing="0" style="width: 100%; font-size: 9px; border-collapse: collapse; font-weight: normal; font-family: Arial; margin: 2px 0 0 0; padding: 0; border-collapse: collapse; vertical-align: bottom;">         
                            <tr>
-                            <td  style="text-align: center; font-weight: bold; background: #e57474; color: #FFFFFF;">
+                            <td  style="text-align: center; font-weight: bold; background: #e57474; 
+                              color: #FFFFFF; width:100%;">
                               Caso Facultativo
                             </td>
                            </tr>
                            <tr>
-                            <td style="text-align: center; font-weight: bold; border: 1px solid #dedede; background: #e57474;">
+                            <td style="text-align: center; font-weight: bold; border: 1px solid #dedede; 
+                              background: #e57474; width:100%;">
                               Observaciones
                             </td>
                            </tr>
                            <tr>
-                            <td style="text-align: justify; background: #e78484; color: #FFFFFF; border: 1px solid #dedede;">
+                            <td style="text-align: justify; background: #e78484; color: #FFFFFF; 
+                              border: 1px solid #dedede; width:100%;">
 							  <?=$row['motivo_facultativo'];?>
                             </td>
                            </tr>
@@ -467,7 +549,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
               </div>  	
         </div>            
 <?php
-       if($type!=='MAIL' && (boolean)$row['emitir']===true && (boolean)$row['anulado']===false){
+       if($type!=='MAIL' && ( (boolean)$row['emitir']===true || ( (boolean)$row['emitir']===false && (boolean)$row['garantia']===true && (boolean)$row['facultativo']===false ) ) && (boolean)$row['anulado']===false){
 ?>        
         
         <page><div style="page-break-before: always;">&nbsp;</div></page>
@@ -515,7 +597,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic;" valign="top">
-                    ANUAL CON RENOVACIÓNAUTOMÁTICA.         
+                    ANUAL CON RENOVACIÓN AUTOMÁTICA.         
                   </td>  
                 </tr>
                 <tr>
@@ -535,7 +617,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic;" valign="top">
-                    AL CONTADOO CON DEBITO EN CUENTA 
+                    AL CONTADO O CON DEBITO EN CUENTA 
                   </td>  
                 </tr>
                 <tr>
@@ -565,14 +647,44 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                            <td style="width:98%;">Y/O CUALQUIER OTRO DOCUMENTO ADICIONAL QUE REQUIERA LA COMPAÑÍA EN CASO DE SER NECESARIO.</td>
                          </tr>
                          
-                    </table>
-                    <br>
-                    BISA SEGUROS Y REASEGUROS S.A., DENTRO DE TERRITORIO NACIONAL LE OTORGA EL SERVICIO DE ASISTENCIA DOMICILIARIA, LAS 24 HORAS DEL DÍA Y LOS 365 DÍAS DEL AÑO, CON BENEFICIOS ESTABLECIDOS EN EL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.<br>                                                           
-PARA MAYOR INFORMACIÓN SOBRE LOS SERVICIOS Y LIMITES REFIÉRASE AL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.<br><br>
-
-EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVICIOS PRESTADOS A LOS ASEGURADOS.
-     
+                    </table>     
                   </td>  
+                </tr>
+<?php
+            if((boolean)$row['garantia']===false){
+?>                
+                <tr>
+                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                    border:0px solid #0081C2;" valign="top">
+                    ANULACIÓN POR MORA:
+                   </td>
+                   <td style="width:65%; text-align: justify; padding-left:5px; 
+                    border:0px solid #0081C2; font-style:italic;" valign="top">
+                    LA PÓLIZA SERA ANULADA LUEGO DE PASADOS 60 DÍAS DEL NO PAGO DE LAS PRIMAS ESTABLECIDAS.
+                   </td>
+                </tr>
+<?php
+			}
+?>                
+                <tr>
+                   <td style="width:35%; text-align: left; padding-right:5px; padding-top:10px; font-weight:bold; 
+                    border:0px solid #0081C2;" valign="top">
+                    &nbsp;
+                   </td>
+                   <td style="width:65%; text-align: justify; padding-left:5px; padding-top:10px; 
+                     border:0px solid #0081C2; font-style:italic;" valign="top">
+                     BISA SEGUROS Y REASEGUROS S.A., DENTRO DE TERRITORIO NACIONAL LE OTORGA EL SERVICIO DE ASISTENCIA DOMICILIARIA, LAS 24 HORAS DEL DÍA Y LOS 365 DÍAS DEL AÑO, CON BENEFICIOS ESTABLECIDOS EN EL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.<br>                                                           
+PARA MAYOR INFORMACIÓN SOBRE LOS SERVICIOS Y LIMITES REFIÉRASE AL ANEXO DE SERVICIO DE ASISTENCIA DOMICILIARIA.
+<?php
+            if((boolean)$row['garantia']===true){
+?> 
+<br><br>
+EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVICIOS PRESTADOS A LOS ASEGURADOS. 
+<?php
+			}
+?>
+
+                   </td>
                 </tr>
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
