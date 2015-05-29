@@ -2291,11 +2291,7 @@ class SibasDB extends MySQLi
 			sf.archivo as f_archivo,
 			sf.titulo as f_titulo,
 			sh.producto as f_producto,
-			(case sh.producto
-				when "DE" then "Desgravamen"
-				when "AU" then "Automotores"
-				when "TR" then "Todoriesgo"
-			end) as f_producto_text
+			sh.producto_nombre as f_nombre
 		from
 			s_sgc_formulario as sf
 				inner join
