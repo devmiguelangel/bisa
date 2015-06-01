@@ -299,7 +299,7 @@ class ReportsGeneralTRD{
 				        when
 				            "LOG"
 				        then
-				            if(curdate() = stre.fecha_emision and stre.request = false,
+				            if(curdate() = stre.fecha_emision,
 				                true,
 				                false)
 				        else false
@@ -312,7 +312,7 @@ class ReportsGeneralTRD{
 				        when
 				            "LOG"
 				        then
-				            if(stre.fecha_emision < curdate(),
+				            if(stre.fecha_emision < curdate() and stre.request = false,
 				                true,
 				                false)
 				        else false
