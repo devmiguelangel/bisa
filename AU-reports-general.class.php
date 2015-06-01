@@ -275,7 +275,7 @@ class ReportsGeneralAU{
 				        when
 				            "LOG"
 				        then
-				            if(sae.fecha_emision < curdate(),
+				            if(sae.fecha_emision < curdate() and sae.request = false,
 				                true,
 				                false)
 				        else false

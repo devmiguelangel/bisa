@@ -614,12 +614,12 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </tr>
 <?php
           if($row['forma_pago']=='CO'){
-			  $prima_co = number_format($row['prima_total'],2,'.',',');
+			  $prima_co = $row['prima_total'];
 			  $prima_cr = '';
 			  $prima_mensual = '';
 		  }elseif($row['forma_pago']=='CR'){
 			  $prima_co = '';
-			  $prima_cr = number_format($row['prima_total'],2,'.',',');
+			  $prima_cr = $row['prima_total'];
 			  $prima_mensual = $row['prima_total']/12;
 		  }
 ?>   

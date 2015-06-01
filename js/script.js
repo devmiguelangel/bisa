@@ -89,19 +89,23 @@ function go_to_home(){
 	});
 }
 
-function set_ajax_upload(field, product){
-	var action = '';
-	if(product === 'AU' || product === 'TRM'){
-		//action = 'upload-file.php?product='+product+'&attached='+attached;
-		action = 'upload-file.php?product='+product;
-	}
+function set_ajax_upload(field_id){
+	var action = 'upload-file.php';
+
+	var field 			= $('#a-' + field_id);
+	var field_product 	= field.attr('data-product');
+	var field_data		= $('#' + field_id);
 	
-	var button = $('#a-'+field), interval;
+	var button = $(field), interval;
+
 	new AjaxUpload(button,{
 		action: action,
 		name: 'attached',
 		onSubmit : function(file, ext){
-			this.setData({ attached: $('#'+field).prop('value')} );
+			this.setData({
+				attached : field_data.prop('value'),
+				product : field_product
+			});
 			// cambiar el texto del boton cuando se selecicione la imagen
 			button.text('Subiendo');
 			// desabilitar el boton
@@ -120,12 +124,12 @@ function set_ajax_upload(field, product){
 			window.clearInterval(interval);
 			
 			// Habilitar boton otra vez
-			//this.enable();
-			//alert(response)
+			// this.enable();
+			// alert(response);
 			result = response.split('|');
 			
 			if(parseInt(result[0]) === 1){
-				$('#'+field).prop('value', result[1]);
+				field_data.prop('value', result[1]);
                 button.text('Archivo Subido con Exito');
 			}else{
                 button.text('Adjuntar documentación nuevamente');

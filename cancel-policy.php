@@ -2,13 +2,53 @@
 require('sibas-db.class.php');
 session_start();
 
-if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr'])){
+if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 	$link = new SibasDB();
 	
-	$ide = $link->real_escape_string(trim(base64_decode($_GET['ide'])));
-	$nc = $link->real_escape_string(trim(base64_decode($_GET['nc'])));
-	$pr = strtoupper($link->real_escape_string(trim(base64_decode($_GET['pr']))));
+	$ide 		= $link->real_escape_string(trim(base64_decode($_GET['ide'])));
+	$nc 		= $link->real_escape_string(trim(base64_decode($_GET['nc'])));
+	$pr 		= strtoupper($link->real_escape_string(trim(base64_decode($_GET['pr']))));
+	$token_an 	= $link->real_escape_string(trim(base64_decode($_GET['token_an'])));
+
+	$title = $title_btn = '';
+	if ($token_an === 'AN') {
+		$title = 'anulación';
+		$title_btn = 'Anular';
+	} elseif ($token_an === 'AS') {
+		$title = 'solicitud de anulación';
+		$title_btn = 'Solicitar';
+	}
 ?>
+<form id="form-cancel" name="form-cancel" class="f-process" style="width:570px; font-size:130%;">
+	<h4 class="h4">Formulario de <?= $title ;?> Póliza N <?=$pr.'-'.$nc;?></h4>
+	<label class="fp-lbl" style="text-align:left; width:auto;">Motivo de <?= $title ;?>: <span>*</span></label>
+	<textarea id="fp-obs" name="fp-obs" class="required"></textarea><br>
+	
+	<?php if ($token_an === 'AN'): ?>
+	<div style="font-size: 60%; text-align: center;">
+		<a href="javascript:;" id="a-attc-an" class="attached" data-product="AU">Adjuntar Anexo de Anulación</a>
+	</div>
+	<input type="hidden" id="attc-an" name="attc-an" value="" class="required">
+
+	<div style="font-size: 60%; text-align: center;">
+		<br>
+		<a href="javascript:;" id="a-attc-re" class="attached" data-product="AU">Adjuntar Anexo de Devolución</a>
+	</div>
+	<input type="hidden" id="attc-re" name="attc-re" value="">
+	<?php endif ?>
+
+    <div style="text-align:center">
+		<input type="hidden" id="fp-ide" name="fp-ide" value="<?=base64_encode($ide);?>">
+        <input type="hidden" id="idUser" name="idUser" value="<?=$_SESSION['idUser'];?>">
+        <input type="hidden" id="pr" name="pr" value="<?=base64_encode($pr);?>">
+        <input type="hidden" id="token_an" name="token_an" value="<?=base64_encode($token_an);?>">
+    	<input type="submit" id="fp-process" name="fp-process" value="<?= $title_btn ;?>" class="fp-btn">
+    </div>
+    
+    <div class="loading">
+        <img src="img/loading-01.gif" width="35" height="35" />
+    </div>
+</form>
 <script type="text/javascript">
 $(document).ready(function(e) {
     get_tinymce('fp-obs');
@@ -19,21 +59,12 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<form id="form-cancel" name="form-cancel" class="f-process" style="width:570px; font-size:130%;">
-	<h4 class="h4">Formulario de anulación Póliza N° <?=$pr.'-'.$nc;?></h4>
-	<label class="fp-lbl" style="text-align:left; width:auto;">Motivo de Anulación: <span>*</span></label>
-	<textarea id="fp-obs" name="fp-obs" class="required"></textarea><br>
-    <div style="text-align:center">
-		<input type="hidden" id="fp-ide" name="fp-ide" value="<?=base64_encode($ide);?>">
-        <input type="hidden" id="idUser" name="idUser" value="<?=$_SESSION['idUser'];?>">
-        <input type="hidden" id="pr" name="pr" value="<?=base64_encode($pr);?>">
-    	<input type="submit" id="fp-process" name="fp-process" value="Anular Certificado" class="fp-btn">
-    </div>
-    
-    <div class="loading">
-        <img src="img/loading-01.gif" width="35" height="35" />
-    </div>
-</form>
+<?php if ($token_an === 'AN'): ?>
+<script type="text/javascript">
+	set_ajax_upload('attc-an');
+	set_ajax_upload('attc-re');
+</script>
+<?php endif ?>
 <?php
 	
 	

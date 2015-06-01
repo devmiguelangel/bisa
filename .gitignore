@@ -1,4 +1,5 @@
 /db
+/files
 *.sublime-workspace
 *.sublime-project
 configuration.class.php

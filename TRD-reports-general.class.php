@@ -293,26 +293,26 @@ class ReportsGeneralTRD{
 					and stre.anulado like '%".$this->data['r-canceled']."%'
 					";
 		} elseif ($this->data['token_an'] === 'AN') {
-			$this->sql .= 'and sae.emitir = true
-					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+			$this->sql .= 'and stre.emitir = true
+					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"
 				        then
-				            if(curdate() = sae.fecha_emision,
+				            if(curdate() = stre.fecha_emision and stre.request = false,
 				                true,
 				                false)
 				        else false
 				    end) = true
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
-			$this->sql .= 'and sae.emitir = true
-					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+			$this->sql .= 'and stre.emitir = true
+					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"
 				        then
-				            if(sae.fecha_emision < curdate(),
+				            if(stre.fecha_emision < curdate(),
 				                true,
 				                false)
 				        else false
