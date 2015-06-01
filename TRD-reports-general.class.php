@@ -5,7 +5,7 @@ require_once 'sibas-db.class.php';
 
 class ReportsGeneralTRD{
 	private $cx, $sql, $rs, $row, $sqlpr, $rspr, $rowpr, $pr, 
-		$flag, $token, $nEF, $dataToken, $xls, $xlsTitle;
+		$flag, $token, $nEF, $dataToken, $xls, $xlsTitle, $data_user;
 	protected $data = array();
 	public $err;
 	
@@ -26,8 +26,7 @@ class ReportsGeneralTRD{
 	private function set_variable($data){
 		$this->data['ms'] = $this->cx->real_escape_string(trim($data['ms']));
 		$this->data['page'] = $this->cx->real_escape_string(trim($data['page']));
-		//$this->data[''] = $this->cx->real_escape_string(trim($data['']));
-		
+		$this->data['token_an'] = $this->cx->real_escape_string(trim(base64_decode($data['token_an'])));
 		$this->data['idef'] = $this->cx->real_escape_string(trim(base64_decode($data['idef'])));
 		$this->data['nc'] = $this->cx->real_escape_string(trim($data['r-nc']));
 		if(empty($this->data['nc']) === TRUE) $this->data['nc'] = '%%';
@@ -61,8 +60,9 @@ class ReportsGeneralTRD{
 				if($k < $this->nEF) $this->data['ef'] .= ' or ';
 			}
 			$rsEf->free();
-		}else
+		} else {
 			$this->data['ef'] = 'sef.id_ef like "%%"';
+		}
 	}
 	
 	private function get_query_report(){
@@ -292,28 +292,34 @@ class ReportsGeneralTRD{
 			            ''))) regexp '".$this->data['approved']."'
 					and stre.anulado like '%".$this->data['r-canceled']."%'
 					";
-		} elseif($this->token === 'AN'){
-			$this->sql .= "and stre.emitir = true
-					and stre.anulado like '%".$this->data['r-canceled']."%'
-					and (case '" . $this->data_user['u_tipo_codigo'] . "'
-				        when 'FAC' then true
+		} elseif ($this->data['token_an'] === 'AN') {
+			$this->sql .= 'and sae.emitir = true
+					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
-				            'LOG'
+				            "LOG"
 				        then
-				            if(curdate() = stre.fecha_emision,
+				            if(curdate() = sae.fecha_emision,
 				                true,
 				                false)
 				        else false
 				    end) = true
-					";
-		}/* elseif ($this->token === 'CP') {
-			$this->sql .= "and stre.emitir = true
-					and stre.aprobado = true
-					and stre.rechazado = false
-					and stre.anulado like '%".$this->data['r-canceled']."%'
-					and stre.certificado_provisional = true
-					";
-		}*/
+			';
+		} elseif ($this->data['token_an'] === 'AS') {
+			$this->sql .= 'and sae.emitir = true
+					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and (case "' . $this->data_user['u_tipo_codigo'] . '"
+				        when
+				            "LOG"
+				        then
+				            if(sae.fecha_emision < curdate(),
+				                true,
+				                false)
+				        else false
+				    end) = true
+			';
+		}
+
 		$this->sql .= "group by stre.id_emision
 		order by stre.id_emision desc
 		;";
@@ -597,7 +603,12 @@ $(document).ready(function(e) {
 						
 						$this->cx->get_state($arr_state, $this->row, 2, 'TRD', FALSE);
 ?>
-		<tr style=" <?=$bg;?> " class="row-au" rel="0" data-nc="<?=base64_encode($this->row['ide']);?>" data-token="<?=$this->dataToken;?>" data-pr="<?=base64_encode($this->rowpr['idPr']);?>" data-issue="<?=base64_encode(0);?>">
+		<tr style=" <?=$bg;?> " class="row-au" rel="0" 
+			data-nc="<?=base64_encode($this->row['ide']);?>" 
+			data-token="<?=$this->dataToken;?>" 
+			data-pr="<?=base64_encode($this->rowpr['idPr']);?>" 
+			data-issue="<?=base64_encode(0);?>"
+			data-an="<?=base64_encode($this->data['token_an']);?>">
         	<td <?=$rowSpan;?>>TRD-<?=$this->row['no_emision'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>

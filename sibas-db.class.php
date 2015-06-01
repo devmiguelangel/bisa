@@ -964,7 +964,8 @@ class SibasDB extends MySQLi
 				if($token < 2){
 					if ($issue && (boolean)$row['garantia'] === false) {
 						$arr_state['action'] = 'Emitir';
-						$arr_state['link'] = 'fac-issue-policy.php?ide='.base64_encode($row['ide']).'&pr='.base64_encode($product);
+						$arr_state['link'] = 'fac-issue-policy.php?ide=' 
+							. base64_encode($row['ide']) . '&pr=' . base64_encode($product);
 					}
 				}
 				$arr_state['obs'] = 'APROBADO';
@@ -972,11 +973,11 @@ class SibasDB extends MySQLi
 				
 				if($token === 4){
 					$arr_state['action'] = 'Anular Póliza';
-					$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
+					$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
+						. '&nc=' . base64_encode($row['r_no_emision']) . '&pr=' . base64_encode($product);
 				} elseif ($token === 3) {
 					goto EditData;
 				}
-				
 				break;
 			case 'R':
 				$arr_state['txt'] = 'RECHAZADO';
@@ -1124,13 +1125,21 @@ class SibasDB extends MySQLi
 		}
 		
 		if ($token === 4 && ($product === 'AU' || $product === 'TRD')) {
-			$arr_state['action'] = 'Anular Póliza';
-			$arr_state['link'] = 'cancel-policy.php?ide='.base64_encode($row['ide']).'&nc='.base64_encode($row['r_no_emision']).'&pr='.base64_encode($product);
+			if ($row['token_an'] === 'AN') {
+				$arr_state['action'] = 'Anular Póliza';
+			} elseif ($row['token_an'] === 'AS') {
+				$arr_state['action'] = 'Solicitar Anulación';
+			}
+			$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
+				. '&nc=' . base64_encode($row['r_no_emision']) 
+				. '&pr=' . base64_encode($product)
+				. '&token_an' . base64_encode($row['token_an']);
 		}
 
 		if ($token === 6 && ($product === 'AU' || $product === 'TRD')) {
 			$arr_state['action'] = '<br>Cambiar Póliza Provisional';
-			$arr_state['link'] = 'provisional-certificate.php?ide='.base64_encode($row['ide']).'&pr='.base64_encode($product);
+			$arr_state['link'] = 'provisional-certificate.php?ide=' . base64_encode($row['ide']) 
+				. '&pr=' . base64_encode($product);
 		}
 	}
 	

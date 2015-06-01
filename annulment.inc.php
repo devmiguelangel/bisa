@@ -3,21 +3,33 @@ require_once('sibas-db.class.php');
 $link = new SibasDB();
 
 $title = '';
+$title_rep = '';
 
 switch ($product) {
-	case 'AU':
-		$title = 'Automotores';
-		break;
-	case 'DE':
-		$title = 'Desgravamen';
-		break;
-	case 'TRD':
-		$title = 'Todo Riesgo Domiciliario';
-		break;
-	case 'TRM':
-		$title = 'Todo Riesgo Equipo Movil';
-		break;
+case 'AU':
+	$title = 'Automotores';
+	break;
+case 'DE':
+	$title = 'Desgravamen';
+	break;
+case 'TRD':
+	$title = 'Todo Riesgo Domiciliario';
+	break;
+case 'TRM':
+	$title = 'Todo Riesgo Equipo Movil';
+	break;
 }
+
+$token_an = base64_decode($_GET['token_an']);
+switch ($token_an) {
+case 'AN':
+	$title_rep = 'Anulación de Pólizas';
+	break;
+case 'AS':
+	$title_rep = 'Solicitar Anulación';
+	break;
+}
+
 ?>
 <style type="text/css">
 .rp-pr-container{
@@ -99,7 +111,7 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<h3 class="h3">Anulación de Pólizas</h3>
+<h3 class="h3"><?= $title_rep ;?></h3>
 <table class="rp-link-container">
 	<tr>
     	<td style="width:20%;">
@@ -209,6 +221,7 @@ $rsSt->free();
     
             <div align="center">
             	<input type="hidden" id="idef" name="idef" value="<?=$_SESSION['idEF'];?>">
+            	<input type="hidden" id="token_an" name="token_an" value="<?=base64_encode($token_an);?>">
                 <input type="submit" id="frp-search" name="frp-search" value="Buscar" class="frp-btn">
                 <input type="reset" id="frp-reset" name="frp-reset" value="Restablecer Campos" class="frp-btn">
             </div>

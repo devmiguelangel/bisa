@@ -10,7 +10,7 @@ class ReportsGeneralAU{
 	protected $data = array();
 	public $err;
 	
-	public function ReportsGeneralAU($data, $pr, $flag, $xls){
+	public function ReportsGeneralAU($data, $pr, $flag, $xls) {
 		$this->cx = new SibasDB();
 		$this->pr = $this->cx->real_escape_string(trim(base64_decode($pr)));
 		$this->flag = $this->cx->real_escape_string(trim($flag));
@@ -26,11 +26,10 @@ class ReportsGeneralAU{
 		
 	}
 	
-	private function set_variable($data){
+	private function set_variable($data) {
 		$this->data['ms'] = $this->cx->real_escape_string(trim($data['ms']));
 		$this->data['page'] = $this->cx->real_escape_string(trim($data['page']));
-		//$this->data[''] = $this->cx->real_escape_string(trim($data['']));
-		
+		$this->data['token_an'] = $this->cx->real_escape_string(trim(base64_decode($data['token_an'])));
 		$this->data['idef'] = $this->cx->real_escape_string(trim(base64_decode($data['idef'])));
 		$this->data['nc'] = $this->cx->real_escape_string(trim($data['r-nc']));
 		if(empty($this->data['nc']) === TRUE) $this->data['nc'] = '%%';
@@ -55,21 +54,22 @@ class ReportsGeneralAU{
 		
 		$this->data['ef'] = '';
 		$this->nEF = 0;
-		if(($rsEf = $this->cx->get_financial_institution_user(base64_encode($this->data['idUser']))) !== FALSE){
+		if(($rsEf = $this->cx->get_financial_institution_user(base64_encode($this->data['idUser']))) !== FALSE) {
 			$this->nEF = $rsEf->num_rows;
 			$k = 0;
-			while($rowEf = $rsEf->fetch_array(MYSQLI_ASSOC)){
+			while($rowEf = $rsEf->fetch_array(MYSQLI_ASSOC)) {
 				$k += 1;
 				$this->data['ef'] .= 'sef.id_ef like "'.$rowEf['idef'].'"';
 				if($k < $this->nEF) $this->data['ef'] .= ' or ';
 			}
 			$rsEf->free();
-		}else
+		} else {
 			$this->data['ef'] = 'sef.id_ef like "%%"';
+		}
 	}
 	
-	private function get_query_report(){
-		switch($this->flag){
+	private function get_query_report() {
+		switch($this->flag) {
 		case md5('RG'): $this->token = 'RG'; $this->xlsTitle = 'Automotores - Reporte General'; break;
 		case md5('RP'): $this->token = 'RP'; $this->xlsTitle = 'Automotores - Reporte Polizas Emitidas'; break;
 		case md5('RQ'): $this->token = 'RQ'; $this->xlsTitle = 'Automotores - Reporte Solicitudes'; break;
@@ -90,18 +90,18 @@ class ReportsGeneralAU{
             || $this->token === 'SP' 
             || $this->token === 'AN' 
             || $this->token === 'IM' 
-            || $this->token === 'AP' ){
+            || $this->token === 'AP' ) {
 			$this->set_query_au_report();
 		} elseif ($this->token === 'RQ'
             || $this->token === 'IQ'
             || $this->token === 'CP') {
 			$this->set_query_au_report_quote();
-		}else
+		} else
 			$this->err = TRUE;
 	}
 	
-	private function set_query_au_report(){
-		switch($this->token){
+	private function set_query_au_report() {
+		switch($this->token) {
 			case 'RG': $this->dataToken = 2; break;
 			case 'RP': $this->dataToken = 2; break;
 			case 'PA': $this->dataToken = 3; break;
@@ -232,7 +232,7 @@ class ReportsGeneralAU{
 			$this->sql .= "and sae.emitir = true
 					and sae.anulado like '%".$this->data['r-canceled']."%'
 					";
-		}elseif($this->token === 'PA'){
+		} elseif($this->token === 'PA') {
 			$this->sql .= "and sae.emitir = false
 							and (sae.facultativo = false
 								or (sae.facultativo = true
@@ -240,13 +240,13 @@ class ReportsGeneralAU{
 									and sae.estado = ''))
 							and sae.anulado like '%".$this->data['r-canceled']."%'
 							";
-		}elseif($this->token === 'SP'){
+		} elseif($this->token === 'SP') {
 			$this->sql .= "and sae.emitir = false
 							and sae.aprobado = false
                             and sae.rechazado = false
 							and sae.anulado like '%".$this->data['r-canceled']."%'
 							";
-		}elseif($this->token === 'AP'){
+		} elseif($this->token === 'AP') {
 			$this->sql .= "and sae.emitir = false
 					and (if(sae.aprobado = true and sae.rechazado = false,
 			        'A',
@@ -255,53 +255,33 @@ class ReportsGeneralAU{
 			            ''))) regexp '".$this->data['approved']."'
 					and sae.anulado like '%".$this->data['r-canceled']."%'
 					";
-		}elseif($this->token === 'AN'){
-			$this->sql .= "and sae.emitir = true
-					and sae.anulado like '%".$this->data['r-canceled']."%'
-					and (case '" . $this->data_user['u_tipo_codigo'] . "'
-				        when 'FAC' then true
+		} elseif ($this->data['token_an'] === 'AN') {
+			$this->sql .= 'and sae.emitir = true
+					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
-				            'LOG'
+				            "LOG"
 				        then
 				            if(curdate() = sae.fecha_emision,
 				                true,
 				                false)
 				        else false
 				    end) = true
-					";
-		}elseif($this->token === 'IM'){
-			$idUser = base64_encode($this->data['idUser']);
-			$idef = base64_encode($this->data['idef']);
-			$sqlAg = '';
-			if (($rsAg = $this->cx->get_agency_implant($idUser, $idef)) !== FALSE) {
-				$sqlAg = ' and (';
-				while ($rowAg = $rsAg->fetch_array(MYSQLI_ASSOC)) {
-					$sqlAg .= 'sag.id_agencia = "'.$rowAg['ag_id'].'" or ';
-				}
-				$sqlAg = trim($sqlAg, 'or ').') ';
-				$rsAg->free();
-			}
-			
-			$this->sql .= $sqlAg."and sae.emitir = false
-					and sae.anulado like '%".$this->data['r-canceled']."%'
-					and sae.aprobado = false
-					and sae.rechazado = false
-					and not exists( select 
-						saf2.id_emision, saf2.id_vehiculo
-					from
-						s_au_facultativo as saf2
-					where
-						saf2.id_emision = sae.id_emision
-							and saf2.id_vehiculo = sad.id_vehiculo)
-					";
-		} /*elseif ($this->token === 'CP') {
-			$this->sql .= "and sae.emitir = true
-					and sae.aprobado = true
-					and sae.rechazado = false
-					and sae.anulado like '%".$this->data['r-canceled']."%'
-					and sae.certificado_provisional = true
-					";
-		}*/
+			';
+		} elseif ($this->data['token_an'] === 'AS') {
+			$this->sql .= 'and sae.emitir = true
+					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and (case "' . $this->data_user['u_tipo_codigo'] . '"
+				        when
+				            "LOG"
+				        then
+				            if(sae.fecha_emision < curdate(),
+				                true,
+				                false)
+				        else false
+				    end) = true
+			';
+		}
 		
 		$this->sql .= "group by sae.id_emision ";
 		if ($this->token === 'AP') {
@@ -323,8 +303,8 @@ class ReportsGeneralAU{
 		}
 	}
 	
-	private function set_query_au_report_quote(){
-		switch($this->token){
+	private function set_query_au_report_quote() {
+		switch($this->token) {
 			case 'RQ': $this->dataToken = 2; break;
 			case 'IQ': $this->dataToken = 3; break;
             case 'CP': $this->dataToken = 6; break;
@@ -444,7 +424,7 @@ class ReportsGeneralAU{
 	}
 	
 	public function set_result() {
-		if($this->xls === TRUE){
+		if($this->xls === TRUE) {
 			header("Content-Type:   application/vnd.ms-excel; charset=iso-8859-1");
 			header("Content-Disposition: attachment; filename=".$this->xlsTitle.".xls");
 			header("Pragma: no-cache");
@@ -472,7 +452,7 @@ class ReportsGeneralAU{
 	}
 	
 	//EMISION
-	private function set_result_au(){
+	private function set_result_au() {
 		//echo $this->token;
 		//echo $this->data['idef'];
 ?>
@@ -525,15 +505,15 @@ $(document).ready(function(e) {
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$bgCheck = '';
-		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
+		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
 			$_APS = (int)$this->row['aprobado_si'];
 			$_APN = (int)$this->row['aprobado_no'];
 			
-			if($swBG === FALSE){
+			if($swBG === FALSE) {
 				$bg = 'background: #EEF9F8;';
-			}elseif($swBG === TRUE){
+			} elseif($swBG === TRUE) {
 				$bg = 'background: #D1EDEA;';
 			}
 						
@@ -614,7 +594,7 @@ $(document).ready(function(e) {
 			    s_estado as sds ON (sds.id_estado = sap.id_estado)
 			where
 			    sad.id_emision = '".$this->row['ide']."' ";
-			if($this->token === 'RG'){
+			if($this->token === 'RG') {
 				$this->sqlvh .= "and if(saf.aprobado is null,
 			        if(sap.id_pendiente is not null,
 			            case sap.respuesta
@@ -664,20 +644,20 @@ $(document).ready(function(e) {
 			
 			$this->sqlvh .= "order by sad.id_vehiculo asc ;";
 			//echo $this->sqlvh;
-			if(($this->rsvh = $this->cx->query($this->sqlvh,MYSQLI_STORE_RESULT))){
-				if($this->rsvh->num_rows <= $nVh){
+			if(($this->rsvh = $this->cx->query($this->sqlvh,MYSQLI_STORE_RESULT))) {
+				if($this->rsvh->num_rows <= $nVh) {
 					$nVh = $this->rsvh->num_rows;
 					
 					if ($this->token === 'AP') {
 						$nVh = $_APS;
 					}
 					
-					while($this->rowvh = $this->rsvh->fetch_array(MYSQLI_ASSOC)){
-						if($rowSpan === TRUE){
+					while($this->rowvh = $this->rsvh->fetch_array(MYSQLI_ASSOC)) {
+						if($rowSpan === TRUE) {
 							$rowSpan = 'rowspan="'.$nVh.'"';
-						}elseif($rowSpan === FALSE){
+						} elseif($rowSpan === FALSE) {
 							$rowSpan = '';
-						}elseif($rowSpan === 'rowspan="'.$nVh.'"'){
+						} elseif($rowSpan === 'rowspan="'.$nVh.'"') {
 							$rowSpan = 'style="display:none;"';
 						}
 						if($this->xls === TRUE) {
@@ -693,7 +673,8 @@ $(document).ready(function(e) {
             data-nc="<?=base64_encode($this->row['ide']);?>"
             data-token="<?=$this->dataToken;?>"
             data-vh="<?=base64_encode($this->rowvh['idVh']);?>"
-            data-issue="<?=base64_encode(0);?>">
+            data-issue="<?=base64_encode(0);?>"
+            data-an="<?=base64_encode($this->data['token_an']);?>">
         	<td <?=$rowSpan;?>>AU-<?=$this->row['no_emision'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
@@ -743,7 +724,7 @@ $(document).ready(function(e) {
     	<tr>
         	<td colspan="29" style="text-align:left;">
 <?php
-			if($this->xls === FALSE){
+			if($this->xls === FALSE) {
 ?>
 				<a href="rp-records.php?data-pr=<?=base64_encode($this->pr);?>&flag=<?=$this->flag;?>&ms=<?=$this->data['ms'];?>&page=<?=$this->data['page'];?>&xls=<?=md5('TRUE');?>&idef=<?=base64_encode($this->data['idef']);?>&frp-policy=<?=$this->data['policy'];?>&frp-nc=<?=$this->data['nc'];?>&frp-user=<?=$this->data['user'];?>&frp-client=<?=$this->data['client'];?>&frp-dni=<?=$this->data['dni'];?>&frp-comp=<?=$this->data['comp'];?>&frp-ext=<?=$this->data['ext'];?>&frp-date-b=<?=$this->data['date-begin'];?>&frp-date-e=<?=$this->data['date-end'];?>&frp-id-user=<?=base64_encode($this->data['idUser']);?>&frp-approved-p=<?=$this->data['approved'];?>&frp-pendant=<?=$this->data['r-pendant'];?>&frp-state=<?=$this->data['r-state'];?>&frp-free-cover=<?=$this->data['r-free-cover'];?>&frp-extra-premium=<?=$this->data['r-extra-premium'];?>&frp-issued=<?=$this->data['r-issued'];?>&frp-rejected=<?=$this->data['r-rejected'];?>&frp-canceled=<?=$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php
@@ -757,7 +738,7 @@ $(document).ready(function(e) {
 	}
 	
 	//COTIZACION
-	private function set_result_au_quote(){
+	private function set_result_au_quote() {
 ?>
 <script type="text/javascript">
 $(document).ready(function(e) {
@@ -800,11 +781,11 @@ $(document).ready(function(e) {
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$bgCheck = '';
-		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
+		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$nVh = (int)$this->row['noVh'];
-			if($swBG === FALSE){
+			if($swBG === FALSE) {
 				$bg = 'background: #EEF9F8;';
-			}elseif($swBG === TRUE){
+			} elseif($swBG === TRUE) {
 				$bg = 'background: #D1EDEA;';
 			}
 						
@@ -851,14 +832,14 @@ $(document).ready(function(e) {
 			order by sad.id_vehiculo asc;";
 			//echo $this->sqlvh;
 			
-			if(($this->rsvh = $this->cx->query($this->sqlvh, MYSQLI_STORE_RESULT))){
-				if($this->rsvh->num_rows <= $nVh){
-					while($this->rowvh = $this->rsvh->fetch_array(MYSQLI_ASSOC)){
-						if($rowSpan === TRUE){
+			if(($this->rsvh = $this->cx->query($this->sqlvh, MYSQLI_STORE_RESULT))) {
+				if($this->rsvh->num_rows <= $nVh) {
+					while($this->rowvh = $this->rsvh->fetch_array(MYSQLI_ASSOC)) {
+						if($rowSpan === TRUE) {
 							$rowSpan = 'rowspan="'.$nVh.'"';
-						}elseif($rowSpan === FALSE){
+						} elseif($rowSpan === FALSE) {
 							$rowSpan = '';
-						}elseif($rowSpan === 'rowspan="'.$nVh.'"'){
+						} elseif($rowSpan === 'rowspan="'.$nVh.'"') {
 							$rowSpan = 'style="display:none;"';
 						}
 						
@@ -910,7 +891,7 @@ $(document).ready(function(e) {
     	<tr>
         	<td colspan="29" style="text-align:left;">
 <?php
-			if($this->xls === FALSE){
+			if($this->xls === FALSE) {
 ?>
 				<a href="rp-records.php?data-pr=<?=base64_encode($this->pr);?>&flag=<?=$this->flag;?>&ms=<?=$this->data['ms'];?>&page=<?=$this->data['page'];?>&xls=<?=md5('TRUE');?>&idef=<?=base64_encode($this->data['idef']);?>&frp-policy=<?=$this->data['policy'];?>&frp-nc=<?=$this->data['nc'];?>&frp-user=<?=$this->data['user'];?>&frp-client=<?=$this->data['client'];?>&frp-dni=<?=$this->data['dni'];?>&frp-comp=<?=$this->data['comp'];?>&frp-ext=<?=$this->data['ext'];?>&frp-date-b=<?=$this->data['date-begin'];?>&frp-date-e=<?=$this->data['date-end'];?>&frp-id-user=<?=base64_encode($this->data['idUser']);?>&frp-pendant=<?=$this->data['r-pendant'];?>&frp-state=<?=$this->data['r-state'];?>&frp-free-cover=<?=$this->data['r-free-cover'];?>&frp-extra-premium=<?=$this->data['r-extra-premium'];?>&frp-issued=<?=$this->data['r-issued'];?>&frp-rejected=<?=$this->data['r-rejected'];?>&frp-canceled=<?=$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php

@@ -49,6 +49,7 @@ $.fn.extend({
 			if($(this).hasClass('quote') === true) {
 				quote = 1;
 			}
+			var token_an = $(this).attr('data-an');
 			
 			var ms = '';	var page = '';
 			
@@ -76,7 +77,10 @@ $.fn.extend({
 			
 			
 			$("."+option.id).html('');
-			$.get('get-contextmenu.php', 'product='+option.product+'&ide='+ide+'&idv='+idv+'&idp='+idp+'&idm='+idm+'&token='+token+'&ms='+ms+'&page='+page+'&quote='+quote+'&issue='+issue, function(data){
+			$.get('get-contextmenu.php', 'product=' + option.product + '&ide=' + ide 
+					+ '&idv=' + idv + '&idp=' + idp + '&idm=' + idm + '&token=' + token 
+					+ '&ms=' + ms + '&page=' + page + '&quote=' + quote + '&issue=' + issue
+					+ '&token_an=' + token_an, function(data){
 				$("."+option.id).css('background', '#FFFFFF');
 				$("."+option.id).html(data);
 			});

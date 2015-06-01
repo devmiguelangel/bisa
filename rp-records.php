@@ -31,6 +31,12 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	$arrData['r-ext'] = $_GET['frp-ext'];
 	$arrData['r-date-b'] = $_GET['frp-date-b'];
 	$arrData['r-date-e'] = $_GET['frp-date-e'];
+
+	$arrData['token_an'] = '';
+	if (isset($_GET['token_an'])) {
+		$arrData['token_an'] = $_GET['token_an'];
+	}
+
 	if(empty($arrData['r-date-b']) === TRUE) {
 		$arrData['r-date-b'] = '2000-01-01';
 	}
