@@ -49,6 +49,7 @@ class ReportsGeneralAU{
 		$this->data['r-issued'] = $this->cx->real_escape_string(trim($data['r-issued']));
 		$this->data['r-rejected'] = $this->cx->real_escape_string(trim($data['r-rejected']));
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
+		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
 		
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
@@ -176,7 +177,9 @@ class ReportsGeneralAU{
 				date_format(sae.fecha_anulado, '%d/%m/%Y'),
 				'') as a_anulado_fecha,
 		    sef.nombre as ef_nombre,
-		    sef.logo as ef_logo
+		    sef.logo as ef_logo,
+		    sae.request,
+		    sae.anulado
 		from
 		    s_au_em_cabecera as sae
 		        inner join
@@ -270,12 +273,12 @@ class ReportsGeneralAU{
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
 			$this->sql .= 'and sae.emitir = true
-					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"
 				        then
-				            if(sae.fecha_emision < curdate() and sae.request = false,
+				            if(sae.fecha_emision < curdate() 
+				            	or (sae.anulado = true and sae.request = true),
 				                true,
 				                false)
 						when 
@@ -286,6 +289,8 @@ class ReportsGeneralAU{
 								false)
 				        else false
 				    end) = true
+					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and sae.request like "%' . $this->data['request'] . '%"
 			';
 		}
 		
@@ -503,7 +508,11 @@ $(document).ready(function(e) {
             <td>Porcentaje Extraprima</td>
             <td><?=htmlentities('Fecha Respuesta final Compañia', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Duración total del caso', ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td>Días de Ultima Modificación</td>-->
+            <td>
+            	<?php if ($this->token === 'AN'): ?>
+            		Solicitud Enviada
+            	<?php endif ?>
+            </td>
         </tr>
     </thead>
     <tbody>
@@ -511,6 +520,7 @@ $(document).ready(function(e) {
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$bgCheck = '';
+		
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
@@ -712,7 +722,15 @@ $(document).ready(function(e) {
             <td><?=$this->rowvh['extra_prima'];?></td>
             <td><?=$this->rowvh['fecha_resp_final_cia'];?></td>
             <td><?=htmlentities($this->row['duracion_caso'].' días', ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td>Días de Ultima Modificación</td>-->
+            <td>
+	            <?php if ($this->token === 'AN'): ?>
+	            	<?php if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']): ?>
+	            		SI
+	            	<?php else: ?>
+	            		NO
+	            	<?php endif ?>
+	            <?php endif ?>
+            </td>
         </tr>
 <?php
 					}

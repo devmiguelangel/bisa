@@ -27,9 +27,11 @@ case 'AN':
 	break;
 case 'AS':
 	$title_rep = 'Solicitar Anulación';
+	if ($user_type === 'FAC') {
+		$title_rep = 'Solicitudes de Anulación';
+	}
 	break;
 }
-
 ?>
 <style type="text/css">
 .rp-pr-container{
@@ -50,6 +52,11 @@ $(document).ready(function(e) {
 	
 	$(".date").datepicker($.datepicker.regional[ "es" ]);
 	
+	$('input').iCheck({
+		checkboxClass: 'icheckbox_flat-green',
+		radioClass: 'iradio_flat-green'
+	});
+
     $(".rp-link").click(function(e){
 		e.preventDefault();
 		$(".rp-link").removeClass('rp-active');
@@ -107,7 +114,7 @@ $(document).ready(function(e) {
 		collapsible: true,
 		icons: icons,
 		heightStyle: "content",
-		active: 6
+		active: 0
 	});
 });
 </script>
@@ -170,7 +177,7 @@ if($rsEx->data_seek(0) === TRUE){
 }
 ?>
             </select><br>
-            <input type="hidden" id="frp-canceled-p" name="frp-canceled-p" value="0" >
+            <input type="hidden" id="frp-canceled-p" name="frp-canceled-p" value="" >
             
             <label style="">Fecha: </label>
             <label style="width:auto;">desde: </label>
@@ -185,22 +192,18 @@ if($rsEx->data_seek(0) === TRUE){
             <input type="hidden" id="data-pr" name="data-pr" value="<?=base64_encode($product);?>" >
             <input type="hidden" id="pr" name="pr" value="<?=$product;?>">
             <br>
-            <!--<div id="accordion">
-                <h5>Pendiente</h5>
+            
+            <?php if ($token_an === 'AS' && $user_type === 'LOG'): ?>
+            <div id="accordion">
+                <h5>Anulación</h5>
                 <div>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-pe" name="frp-pe" value="P">Pendiente</label>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-sp" name="frp-sp" value="S">Subsanado/Pendiente</label>
-                    <label class="lbl-cb"><input type="checkbox" id="frp-ob" name="frp-ob" value="O">Observado</label><br>
-<?php
-$sqlSt = 'SELECT id_estado, estado FROM s_estado WHERE producto = "DE" ORDER BY id_estado ASC ;';
-$rsSt = $link->query($sqlSt,MYSQLI_STORE_RESULT);
-while($rowSt = $rsSt->fetch_array(MYSQLI_ASSOC)){
-	echo '<label class="lbl-cb"><input type="checkbox" id="frp-estado-'.$rowSt['id_estado'].'" name="frp-estado-'.$rowSt['id_estado'].'" value="'.$rowSt['id_estado'].'">'.$rowSt['estado'].'</label> ';
-}
-$rsSt->free();
-?>
+                    <label class="lbl-cb">
+                    	<input type="checkbox" id="frp-canceled-p" name="frp-canceled-p" value="1">Anulados</label>
+                    <label class="lbl-cb">
+                    	<input type="checkbox" id="frp-request" name="frp-request" value="1">Solicitudes Enviadas</label>
+                    <br>
                 </div>
-                <h5>Aprobado</h5>
+                <!-- <h5>Aprobado</h5>
                 <div>
                 	<label class="lbl-cb"><input type="checkbox" id="frp-approved-fc" name="frp-approved-fc" value="FC">Free Cover</label>
                     <label class="lbl-cb"><input type="checkbox" id="frp-approved-nf" name="frp-approved-nf" value="NF">No Free Cover</label>
@@ -216,8 +219,9 @@ $rsSt->free();
                 <h5>Anulado</h5>
                 <div>
                 	<label class="lbl-cb"><input type="checkbox" id="frp-canceled" name="frp-canceled" value="AN">Anulado</label>
-                </div>
-            </div>-->
+                </div> -->
+            </div>
+            <?php endif ?>
     
             <div align="center">
             	<input type="hidden" id="idef" name="idef" value="<?=$_SESSION['idEF'];?>">

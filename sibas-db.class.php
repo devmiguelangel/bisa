@@ -972,9 +972,9 @@ class SibasDB extends MySQLi
 				$arr_state['bg'] = '';
 				
 				if($token === 4){
-					$arr_state['action'] = 'Anular Póliza';
+					/*$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
-						. '&nc=' . base64_encode($row['r_no_emision']) . '&pr=' . base64_encode($product);
+						. '&nc=' . base64_encode($row['r_no_emision']) . '&pr=' . base64_encode($product);*/
 				} elseif ($token === 3) {
 					goto EditData;
 				}
@@ -1074,11 +1074,11 @@ class SibasDB extends MySQLi
 						. base64_encode($row['ide']) . '&flag=' . md5('i-read') 
 						. '&cia=' . base64_encode($row['id_compania']);
 				} elseif($token === 4){
-					$arr_state['action'] = 'Anular Póliza';
+					/*$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide=' 
 						. base64_encode($row['ide']) . '&nc=' 
 						. base64_encode($row['r_no_emision']) 
-						. '&pr=' . base64_encode($product);
+						. '&pr=' . base64_encode($product);*/
 				} elseif ($token === 5) {
 					goto Approve;
 				} elseif ($token === 7) {
@@ -1129,12 +1129,13 @@ class SibasDB extends MySQLi
 				AnnulmentLabel:
 				$arr_state['action'] = 'Anular Póliza';
 			} elseif ($row['token_an'] === 'AS') {
-				if ($row['u_tipo_codigo'] === 'LOG') {
+				if ($row['u_tipo_codigo'] === 'LOG' && !(boolean)$row['request'] && !(boolean)$row['anulado']) {
 					$arr_state['action'] = 'Solicitar Anulación';
-				} else {
+				} elseif ($row['u_tipo_codigo'] === 'FAC' && (boolean)$row['request']) {
 					goto AnnulmentLabel;
 				}
 			}
+
 			$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
 				. '&nc=' . base64_encode($row['r_no_emision']) 
 				. '&pr=' . base64_encode($product)

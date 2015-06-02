@@ -111,86 +111,36 @@ if($token === TRUE){
 		}
 ?>
 <h3 id="issue-title">Póliza <?=$rowIs['prefijo'] . '-' . $rowIs['no_emision'];?></h3>
-<table border="0" cellpadding="0" cellspacing="0" style="width:1005;">
-  <tr>
-    <td style="width:60%; text-align:left;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleSlip;?></div>
-    </td>
-    <td style="width:40%; text-align:left;">
-       <a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=
-		base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-       </a> 
-    </td>
-  </tr>
-  <tr>
-    <td style="width:60%; text-align:left; padding-top:10px;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleCert;?></div>
-    </td>
-    <td style="width:40%; text-align:left; padding-top:10px;">
-       <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-		$pr;?>&category=<?=$category;?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-       </a> 
-    </td>
-  </tr>
-  <tr>
-    <td style="width:60%; text-align:left; padding-top:10px;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleCert3;?></div>
-    </td>
-    <td style="width:40%; text-align:left; padding-top:10px;">
-      <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-		$pr;?>&category=<?=base64_encode('FAT');?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-      </a>  
-    </td>
-  </tr>
-  <tr>
-    <td style="width:60%; text-align:left; padding-top:10px;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleCert4;?></div>
-    </td>
-    <td style="width:40%; text-align:left; padding-top:10px;">
-      <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-		$pr;?>&category=<?=base64_encode('UIF');?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-      </a>  
-    </td>
-  </tr>
-<?php if ((boolean)$rowIs['garantia']): ?>  
-  <tr>
-    <td style="width:60%; text-align:left; padding-top:10px;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleCert5;?></div>
-    </td>
-    <td style="width:40%; text-align:left; padding-top:10px;">
-      <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-		$pr;?>&category=<?=base64_encode('ASR');?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-      </a>  
-    </td>
-  </tr>
-<?php endif ?>  
-  <tr>
-    <td style="width:60%; text-align:left; padding-top:10px;">
-      <div class="view-detail" style="margin:0 0 0 360px;"><?=$titleCert6;?></div>
-    </td>
-    <td style="width:40%; text-align:left; padding-top:10px;">
-      <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-		$pr;?>&category=<?=base64_encode('CRT');?>" 
-		class="fancybox fancybox.ajax">
-        <img src="img/icon-print-01.png" alt="Imprimir" width="35"/>
-      </a>  
-    </td>
-  </tr>
-</table>
+
+<a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=
+	base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleSlip;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=$category;?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('FAT');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert3;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('UIF');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert4;?></a>
+
+<?php if ((boolean)$rowIs['garantia']): ?>
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('ASR');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert5;?></a>
+<?php endif ?>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('CRT');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
 
 <?php if ((boolean)$rowIs['garantia'] && !(boolean)$rowIs['emitir']): ?>
 	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 90%;">
-       Es obligatorio imprimir todos los documentos y hacerlos firmar con el cliente para su posterior entrega
+		Es obligatorio imprimir todos los documentos y hacerlos firmar con el cliente para su posterior entrega
     </div>
     <div class="fac-mess" style="width: 40%; text-align: center; font-size: 90%;">
 		Póliza emitida pendiente de vinculación de garantía

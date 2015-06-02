@@ -601,28 +601,15 @@ function confirmExit(){
 	$(".container-logo").show();
 }
 
-
-$(document).ready(function(e) {
-    var rel = "print";
-	var ficha = document.getElementById(rel);
-	var ventimp = window.open(' ','popimpr');
-	ventimp.document.write(ficha.innerHTML);
-	ventimp.document.close();
-	ventimp.print();
-	ventimp.close();
-});
-
 </script>
 <?php
 	}
 	
 	private function get_content_html(){
 ?>
-<!--
 <a href="#" title="Imprimir" class="link-cert" rel="print" id="send-print">
 	<img src="img/icon-print-01.png" width="50" height="50" alt="Imprimir" />
 </a>
--->
 <?php
 	if($this->category === 'SC' || $this->category === 'PES' || $this->product === 'TH') {
 		echo '<a href="' . $this->url . 'certificate-detail.php?idc=' 

@@ -13,10 +13,10 @@ require 'TRM-reports-general.class.php';
 
 if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	
-	$xls = FALSE;
+	$xls = false;
 	if(isset($_GET['xls'])) {
 		if($_GET['xls'] === md5('TRUE')) {
-			$xls = TRUE;
+			$xls = true;
 		}
 	}
 			
@@ -37,10 +37,10 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		$arrData['token_an'] = $_GET['token_an'];
 	}
 
-	if(empty($arrData['r-date-b']) === TRUE) {
+	if(empty($arrData['r-date-b']) === true) {
 		$arrData['r-date-b'] = '2000-01-01';
 	}
-	if(empty($arrData['r-date-e']) === TRUE) {
+	if(empty($arrData['r-date-e']) === true) {
 		$arrData['r-date-e'] = '2100-01-01';
 	}
 	
@@ -50,7 +50,7 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	$arrData['r-idUser'] = $_GET['frp-id-user'];
 	
 	$arrData['r-approved'] = $approved_p = '';
-	if ($xls === FALSE) {
+	if ($xls === false) {
 		if(isset($_GET['frp-approved-p'])) { $approved_p .= $_GET['frp-approved-p']; }
 		if($approved_p === '') {
 			$arrData['r-approved'] = '[AR]';
@@ -63,18 +63,18 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	}
 	
 	$arrData['r-pendant'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-pe'])) { $arrData['r-pendant'] .= $_GET['frp-pe']; }
 		if(isset($_GET['frp-sp'])) { $arrData['r-pendant'] .= $_GET['frp-sp']; }
 		if(isset($_GET['frp-ob'])) { $arrData['r-pendant'] .= $_GET['frp-ob']; }
-		if(empty($arrData['r-pendant']) === TRUE) { $arrData['r-pendant'] = '.'; }
+		if(empty($arrData['r-pendant']) === true) { $arrData['r-pendant'] = '.'; }
 		else { $arrData['r-pendant'] = '['.$arrData['r-pendant'].']'; }
 	}else{
 		if(isset($_GET['frp-pendant'])) $arrData['r-pendant'] .= $_GET['frp-pendant'];
 	}
 	
 	$arrData['r-state'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-estado-1'])) { $arrData['r-state'] .= $_GET['frp-estado-1']; }
 		if(isset($_GET['frp-estado-2'])) { $arrData['r-state'] .= $_GET['frp-estado-2']; }
 		if(isset($_GET['frp-estado-3'])) { $arrData['r-state'] .= $_GET['frp-estado-3']; }
@@ -92,61 +92,63 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		if(isset($_GET['frp-estado-13'])) { $arrData['r-state'] .= $_GET['frp-estado-13']; }
 		if(isset($_GET['frp-estado-14'])) { $arrData['r-state'] .= $_GET['frp-estado-14']; }
 		
-		if(empty($arrData['r-state']) === TRUE) { $arrData['r-state'] = '.'; }
+		if(empty($arrData['r-state']) === true) { $arrData['r-state'] = '.'; }
 		else { $arrData['r-state'] = '['.$arrData['r-state'].']'; }
 	}else{
 		if(isset($_GET['frp-state'])) { $arrData['r-state'] = $_GET['frp-state']; }
 	}
 	
 	$arrData['r-free-cover'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-approved-fc'])) { $arrData['r-free-cover'] .= $_GET['frp-approved-fc']; }
 		if(isset($_GET['frp-approved-nf'])) { $arrData['r-free-cover'] .= $_GET['frp-approved-nf']; }
-		if(empty($arrData['r-free-cover']) === TRUE) { $arrData['r-free-cover'] = '.'; }
+		if(empty($arrData['r-free-cover']) === true) { $arrData['r-free-cover'] = '.'; }
 		else { $arrData['r-free-cover'] = '['.$arrData['r-free-cover'].']{2}'; }
 	}else{
 		if(isset($_GET['frp-free-cover'])) { $arrData['r-free-cover'] = $_GET['frp-free-cover']; }
 	}
 	
 	$arrData['r-extra-premium'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-approved-ep'])) { $arrData['r-extra-premium'] .= $_GET['frp-approved-ep']; }
 		if(isset($_GET['frp-approved-np'])) { $arrData['r-extra-premium'] .= $_GET['frp-approved-np']; }
-		if(empty($arrData['r-extra-premium']) === TRUE) { $arrData['r-extra-premium'] = '.'; }
+		if(empty($arrData['r-extra-premium']) === true) { $arrData['r-extra-premium'] = '.'; }
 		else { $arrData['r-extra-premium'] = '['.$arrData['r-extra-premium'].']{2}'; }
 	}else{
 		if(isset($_GET['frp-extra-premium'])) { $arrData['r-extra-premium'] = $_GET['frp-extra-premium']; }
 	}
 	
 	$arrData['r-issued'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-approved-em'])) { $arrData['r-issued'] .= $_GET['frp-approved-em']; }
 		if(isset($_GET['frp-approved-ne'])) { $arrData['r-issued'] .= $_GET['frp-approved-ne']; }
-		if(empty($arrData['r-issued']) === TRUE) { $arrData['r-issued'] = '.'; }
+		if(empty($arrData['r-issued']) === true) { $arrData['r-issued'] = '.'; }
 		else { $arrData['r-issued'] = '['.$arrData['r-issued'].']{2}'; }
 	}else{
 		if(isset($_GET['frp-issued'])) { $arrData['r-issued'] = $_GET['frp-issued']; }
 	}
 	
 	$arrData['r-rejected'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-rejected'])) { $arrData['r-rejected'] .= $_GET['frp-rejected']; }
-		if(empty($arrData['r-rejected']) === TRUE) { $arrData['r-rejected'] = '.'; }
+		if(empty($arrData['r-rejected']) === true) { $arrData['r-rejected'] = '.'; }
 		else { $arrData['r-rejected'] = '['.$arrData['r-rejected'].']{2}'; }
 	}else{
 		if(isset($_GET['frp-rejected'])) { $arrData['r-rejected'] = $_GET['frp-rejected']; }
 	}
 	
 	$arrData['r-canceled'] = '';
-	if($xls === FALSE){
+	if($xls === false){
 		if(isset($_GET['frp-canceled'])) { $arrData['r-canceled'] .= $_GET['frp-canceled']; }
-		if(empty($arrData['r-canceled']) === TRUE) { $arrData['r-canceled'] = '.'; }
+		if(empty($arrData['r-canceled']) === true) { $arrData['r-canceled'] = '.'; }
 		else { $arrData['r-canceled'] = '['.$arrData['r-canceled'].']{2}'; }
 		if(isset($_GET['frp-canceled-p'])) { $arrData['r-canceled'] = $_GET['frp-canceled-p']; }	//Polizas
 	}else{
 		if(isset($_GET['frp-canceled'])) { $arrData['r-canceled'] = $_GET['frp-canceled'];}
 	}
-	
+
+	$arrData['r-request'] = '';
+	if(isset($_GET['frp-request'])) { $arrData['r-request'] = $_GET['frp-request'];}
 	//echo $arrData['r-canceled'];
 	
 	$arrData['ms'] = $_GET['ms'];
@@ -159,7 +161,7 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		case 'DE':
 			$rpde = new ReportsGeneralDE($arrData, $pr, $flag, $xls);
 			
-			if ($rpde->err === FALSE) {
+			if ($rpde->err === false) {
 				$rpde->set_result();
 			} else {
 				echo 'No se puede obtener el reporte';
@@ -168,7 +170,7 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		case 'AU':
 			$rpau = new ReportsGeneralAU($arrData, $pr, $flag, $xls);
 			
-			if ($rpau->err === FALSE) {
+			if ($rpau->err === false) {
 				$rpau->set_result();
 			} else {
 				echo 'No se puede obtener el reporte';
@@ -177,7 +179,7 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		case 'TRD':
 			$rptrd = new ReportsGeneralTRD($arrData, $pr, $flag, $xls);
 			
-			if ($rptrd->err === FALSE) {
+			if ($rptrd->err === false) {
 				$rptrd->set_result();
 			} else {
 				echo 'No se puede obtener el reporte';
@@ -186,7 +188,7 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 		case 'TRM':
 			$rptrm = new ReportsGeneralTRM($arrData, $pr, $flag, $xls);
 			
-			if ($rptrm->err === FALSE) {
+			if ($rptrm->err === false) {
 				$rptrm->set_result();
 			} else {
 				echo 'No se puede obtener el reporte';

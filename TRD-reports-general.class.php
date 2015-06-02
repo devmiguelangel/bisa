@@ -46,7 +46,8 @@ class ReportsGeneralTRD{
 		$this->data['r-issued'] = $this->cx->real_escape_string(trim($data['r-issued']));
 		$this->data['r-rejected'] = $this->cx->real_escape_string(trim($data['r-rejected']));
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
-		
+		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
+
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
 		$this->data['ef'] = '';
@@ -195,7 +196,9 @@ class ReportsGeneralTRD{
 		        1,
 		        if(stre.emitir = 1, 2, 3)) as estado_banco,
 		    null as observacion,
-		    stre.facultativo as estado_facultativo
+		    stre.facultativo as estado_facultativo,
+		    stre.request,
+		    stre.anulado
 		from
 		    s_trd_em_cabecera as stre
 		        inner join
@@ -307,12 +310,12 @@ class ReportsGeneralTRD{
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
 			$this->sql .= 'and stre.emitir = true
-					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"
 				        then
-				            if(stre.fecha_emision < curdate() and stre.request = false,
+				            if(stre.fecha_emision < curdate() 
+				            	or (stre.anulado = true and stre.request = true),
 				                true,
 				                false)
 						when 
@@ -323,6 +326,8 @@ class ReportsGeneralTRD{
 								false)
 				        else false
 				    end) = true
+					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
+					and stre.request like "%' . $this->data['request'] . '%"
 			';
 		}
 
@@ -533,7 +538,11 @@ $(document).ready(function(e) {
             <td>Estado Banco</td>
             <td><?=htmlentities('Motivo Estado Compañia', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Duración total del caso', ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td>Días de Ultima Modificación</td>-->
+            <td>
+            	<?php if ($this->token === 'AN'): ?>
+            		Solicitud Enviada
+            	<?php endif ?>
+            </td>
         </tr>
     </thead>
     <tbody>
@@ -647,7 +656,15 @@ $(document).ready(function(e) {
             <td><?=$arr_state['txt_bank'];?></td>
             <td><?=$arr_state['obs'];?></td>
             <td><?=htmlentities($this->row['duracion_caso'].' días', ENT_QUOTES, 'UTF-8');?></td>
-            <!--<td>Días de Ultima Modificación</td>-->
+            <td>
+	            <?php if ($this->token === 'AN'): ?>
+	            	<?php if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']): ?>
+	            		SI
+	            	<?php else: ?>
+	            		NO
+	            	<?php endif ?>
+	            <?php endif ?>
+            </td>
         </tr>
 <?php
 					}

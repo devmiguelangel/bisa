@@ -156,7 +156,9 @@ if(isset($_GET['ide'])){
 			    sad.leido,
 			    sae.apr_usuario as a_usuario,
 				sae.certificado_provisional as cp,
-				sae.garantia
+				sae.garantia,
+				sae.anulado,
+				sae.request
 			from
 			    s_au_em_detalle as sad
 			        inner join
@@ -229,7 +231,9 @@ if(isset($_GET['ide'])){
 			    stre.leido,
 			    stre.apr_usuario as a_usuario,
 				stre.certificado_provisional as cp,
-				stre.garantia
+				stre.garantia,
+				stre.anulado,
+				stre.request
 			from
 			    s_trd_em_cabecera as stre
 			    	left join
