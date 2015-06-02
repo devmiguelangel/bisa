@@ -81,17 +81,6 @@ switch($sw){
 		    scl.id_cliente as idcl,
 		    scl.ci as cl_dni,
 		    scl.extension as cl_extension,
-		    (case scl.tipo
-		        when 1 then scl.razon_social
-		        when
-		            0
-		        then
-		            concat(scl.nombre,
-		                    " ",
-		                    scl.paterno,
-		                    " ",
-		                    scl.materno)
-		    end) as facturacion_nombre,
 		    scl.razon_social as cl_razon_social,
 		    scl.nombre as cl_nombre,
 		    scl.paterno as cl_paterno,
@@ -175,7 +164,6 @@ if($sw !== 1){
 	    scl.id_cliente as idcl,
 	    scl.ci as cl_dni,
 	    scl.extension as cl_extension,
-	    stre.factura_nombre as facturacion_nombre,
 	    scl.razon_social as cl_razon_social,
 	    scl.nombre as cl_nombre,
 	    scl.paterno as cl_paterno,
@@ -224,7 +212,9 @@ if($sw !== 1){
 	    strd.tasa as pr_tasa,
     	strd.prima as pr_prima,
     	stre.aprobado,
-    	strf.aprobado as f_aprobado
+    	strf.aprobado as f_aprobado,
+    	stre.factura_nombre,
+		stre.factura_nit
 	from
 	    s_trd_em_cabecera as stre
 	        inner join
@@ -296,7 +286,7 @@ $YEAR_FINAL = 0;
 $cr_amount = 0;
 $cr_term = 0;
 $cr_type_term = $cr_method_payment = $cr_opp = $cr_policy = '';
-$taken_name = $taken_nit = $taken_code = '';
+$bill_name = $bill_nit = $taken_name = $taken_nit = $taken_code = '';
 $data = array();
 
 $display_nat = $display_jur = 'display: block;';
@@ -372,7 +362,9 @@ if($rs->data_seek(0) === TRUE){
 
 		$taken_code = $row['cl_tomador_code'];
 		$taken_name = $row['cl_tomador_nombre'];
-		$taken_nit = $row['cl_tomador_dni'];
+		$taken_nit 	= $row['cl_tomador_dni'];
+		$bill_name 	= $row['factura_nombre'];
+		$bill_nit 	= $row['factura_nit'];
 
 		$aux_account = json_decode($row['cl_cuenta'], true);
 		if (is_array($aux_account)) {
@@ -387,7 +379,8 @@ if($rs->data_seek(0) === TRUE){
 		}
 		
 		$taken_code = $cl_code;
-		$taken_nit = $row['cl_dni'];
+		$bill_name 	= $taken_name;
+		$bill_nit 	= $taken_nit = $row['cl_dni'];
 	}
 	
 	$YEAR_FINAL = $link->get_year_final($row['c_plazo'], $row['c_tipo_plazo']);
@@ -810,7 +803,20 @@ if ($rsDep->data_seek(0) === TRUE) {
             	class="required dni fbin field-company" <?=$read_save . $read_edit;?>>
         </div><br>
     </div><!--
-    --><div class="form-col"></div>
+    --><div class="form-col">
+    	<h4>Datos de Facturación</h4>
+		<label>Facturar a: <span>*</span></label><br>
+        <div class="content-input">
+            <textarea id="bl-name" name="bl-name" class="required fbin" 
+            	<?=$read_save . $read_edit;?>><?=trim($bill_name);?></textarea><br>
+        </div><br>
+    	
+    	<label>NIT: <span>*</span></label>
+        <div class="content-input">
+            <input type="text" id="bl-nit" name="bl-nit" autocomplete="off" value="<?=$bill_nit;?>" 
+            	class="required dni fbin field-company" <?=$read_save . $read_edit;?>>
+        </div><br>
+    </div>
 <?php
 }
 
@@ -1051,27 +1057,6 @@ if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 }
 ?>
 	</div>
-<?php
-$display_bll = 'display: none;';
-if(($BLL = $link->verify_billing('TRD', $_SESSION['idEF'])) !== FALSE) {
-	if($BLL === 'SI') { $display_bll = 'display: block'; }
-}
-?>
-	<div style=" <?=$display_bll;?> ">
-    	<h4>Datos de Facturación</h4>
-        <div class="form-col">
-            <label>Facturar a: <span>*</span></label><br>
-            <div class="content-input">
-                <textarea id="bl-name" name="bl-name" class="required fbin" <?=$read_new;?>><?=$row['facturacion_nombre'];?></textarea><br>
-            </div><br>
-        </div><!--
-        --><div class="form-col">
-            <label>NIT: <span>*</span></label><br>
-            <div class="content-input">
-                <input type="text" id="bl-nit" name="bl-nit" autocomplete="off" value="<?=$row['cl_dni'];?>" class="required dni fbin field-company" <?=$read_new;?>>
-            </div><br>
-        </div>
-    </div>
     
     <input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">
 	<input type="hidden" id="page" name="page" value="<?=$_GET['page'];?>">
