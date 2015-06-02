@@ -9,7 +9,8 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
 	$attached 	= $link->real_escape_string(trim(base64_decode($_POST['attached'])));
 	
 	$arr_type = array(
-        'application/pdf', 
+        'application/pdf',
+        'binary/octet-stream', 
         'image/jpeg', 
         'image/png', 
         'image/pjpeg', 

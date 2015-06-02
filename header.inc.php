@@ -400,7 +400,8 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_fac');?>" class="link-pr">
 						Registros Facultativos
 					</a></li>
-					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_cancel');?>" class="link-pr">
+					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=
+						md5('P_cancel');?>&token_an=<?=base64_encode('AS');?>" class="link-pr">
 						Solicitudes de Anulación
 					</a></li>
 <?php

@@ -315,6 +315,12 @@ class ReportsGeneralTRD{
 				            if(stre.fecha_emision < curdate() and stre.request = false,
 				                true,
 				                false)
+						when 
+							"FAC"
+						then
+							if(stre.request = true and stre.anulado = false, 
+								true, 
+								false)
 				        else false
 				    end) = true
 			';

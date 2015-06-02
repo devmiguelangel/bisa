@@ -311,7 +311,7 @@ if(isset($_GET['ide'])){
 		}
 		// echo $sql;
 		
-		if(($rs = $link->query($sql,MYSQLI_STORE_RESULT))){
+		if(($rs = $link->query($sql,MYSQLI_STORE_RESULT)) !== false){
 			if($rs->num_rows === 1){
 				$row = $rs->fetch_array(MYSQLI_ASSOC);
 				$rs->free();
@@ -319,6 +319,12 @@ if(isset($_GET['ide'])){
 				$idc = $row['idc'];
 				$cp = (boolean)$row['cp'];
 				$row['token_an'] = $token_an;
+
+				if (($data_user = $link->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) === false) {
+					$data_user['u_tipo_codigo'] = '';
+				}
+
+				$row['u_tipo_codigo'] = $data_user['u_tipo_codigo'];
 				
 				$category = base64_encode('CE');
 				$titleCert = 'Póliza';

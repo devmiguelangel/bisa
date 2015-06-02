@@ -15,7 +15,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 	$user 	= $link->real_escape_string(trim(base64_decode($_GET['idUser'])));
 	$obs 	= $link->real_escape_string(trim($_GET['fp-obs']));
 	$pr 	= strtoupper($link->real_escape_string(trim(base64_decode($_GET['pr']))));
-	$token_an = $link->real_escape_string(trim(base64_decode($_GET['token_an'])));
+	$token_an 	= $link->real_escape_string(trim(base64_decode($_GET['token_an'])));
+	$user_type 	= $link->real_escape_string(trim(base64_decode($_GET['utype'])));
 	
 	$files = array();
 	$file_annulment = $file_return = '';
@@ -23,29 +24,35 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 	$title = '';
 	if ($token_an === 'AN') {
 		$title = 'Anulacion';
-		$file_annulment	= $link->real_escape_string(trim(base64_decode($_GET['attc-an'])));
-		$file_return 	= $link->real_escape_string(trim(base64_decode($_GET['attc-re'])));
-
-		$files['file_annulment']	= $file_annulment;
-		$files['file_return'] 		= $file_return;
 	} elseif ($token_an === 'AS') {
 		$title = 'Solicitud de Anulacion';
+		
+		if ($user_type === 'FAC') {
+			$title = 'Anulacion';
+
+			$file_annulment	= $link->real_escape_string(trim(base64_decode($_GET['attc-an'])));
+			$file_return 	= $link->real_escape_string(trim(base64_decode($_GET['attc-re'])));
+			
+			$files['file_annulment']	= $file_annulment;
+			$files['file_return'] 		= $file_return;
+		}
 	}
 	
 	$files = json_encode($files);
 
 	$_TEXT = $obs;
-	$patrones = array('@<script[^>]*?>.*?</script>@si',  	// Strip out javascript
-			'@<colgroup[^>]*?>.*?</colgroup>@si',			// Strip out HTML tags
-			'@<style[^>]*?>.*?</style>@siU',				// Strip style tags properly
-			'@<style[^>]*>.*</style>@siU',					// Strip style
-			'@<![\s\S]*?--[ \t\n\r]*>@siU',					// Strip multi-line comments including CDATA,
-			'@width:[^>].*;@siU',							// Strip width
-			'@width="[^>].*"@siU',							// Strip width style
-			'@height="[^>].*"@siU',							// Strip height
-			'@class="[^>].*"@siU',							// Strip class
-			'@border="[^>].*"@siU',							// Strip border
-			'@font-family:[^>].*;@siU'						// Strip fonts
+	$patrones = array(
+		'@<script[^>]*?>.*?</script>@si',  				// Strip out javascript
+		'@<colgroup[^>]*?>.*?</colgroup>@si',			// Strip out HTML tags
+		'@<style[^>]*?>.*?</style>@siU',				// Strip style tags properly
+		'@<style[^>]*>.*</style>@siU',					// Strip style
+		'@<![\s\S]*?--[ \t\n\r]*>@siU',					// Strip multi-line comments including CDATA,
+		'@width:[^>].*;@siU',							// Strip width
+		'@width="[^>].*"@siU',							// Strip width style
+		'@height="[^>].*"@siU',							// Strip height
+		'@class="[^>].*"@siU',							// Strip class
+		'@border="[^>].*"@siU',							// Strip border
+		'@font-family:[^>].*;@siU'						// Strip fonts
 	);
 	$sus = array('', '', '', '', '', 'width: 500px;', 'width="500"', '', '', '', 'font-family: Helvetica, sans-serif, Arial;');
 	$obs = preg_replace($patrones,$sus,$_TEXT);
@@ -72,6 +79,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 
 	$sql = '';
 	if ($token_an === 'AN') {
+		AnnulmentQuery:
+
 		$sql = 'update ' . $table . ' as tbl1
 		set tbl1.anulado = true, 
 			tbl1.and_usuario = "' . $user . '", 
@@ -84,10 +93,14 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 		$sql = 'update ' . $table . ' as tbl1
 		set tbl1.request = true, 
 			tbl1.request_mess = "' . $obs . '", 
-			tbl1.request_date = curdate(),
+			tbl1.request_date = "' . date('Y-m-d H:i:s') . '",
 			tbl1.annulment_file = "' . $link->real_escape_string($files) . '"
 		where tbl1.id_emision = "' . $ide . '" 
 		;';
+
+		if ($user_type === 'FAC') {
+			goto AnnulmentQuery;
+		}
 	}
 	
 	if($link->query($sql)){
@@ -212,7 +225,7 @@ function get_html_body($rowEm, $pr){
 	</div>
     
     <div style="padding:5px 10px;">
-    <?php if ($rowEm['token_an'] === 'AN'): ?>
+    <?php if ($rowEm['token_an'] === 'AN' || ($rowEm['token_an'] === 'AS' && $user_type === 'FAC')): ?>
 		<?=$rowEm['motivo_anulado'];?>
     <?php elseif ($rowEm['token_an'] === 'AS'): ?>
 		<?=$rowEm['request_mess'];?>

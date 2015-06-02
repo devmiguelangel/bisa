@@ -1126,9 +1126,14 @@ class SibasDB extends MySQLi
 		
 		if ($token === 4 && ($product === 'AU' || $product === 'TRD')) {
 			if ($row['token_an'] === 'AN') {
+				AnnulmentLabel:
 				$arr_state['action'] = 'Anular Póliza';
 			} elseif ($row['token_an'] === 'AS') {
-				$arr_state['action'] = 'Solicitar Anulación';
+				if ($row['u_tipo_codigo'] === 'LOG') {
+					$arr_state['action'] = 'Solicitar Anulación';
+				} else {
+					goto AnnulmentLabel;
+				}
 			}
 			$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
 				. '&nc=' . base64_encode($row['r_no_emision']) 

@@ -278,6 +278,12 @@ class ReportsGeneralAU{
 				            if(sae.fecha_emision < curdate() and sae.request = false,
 				                true,
 				                false)
+						when 
+							"FAC"
+						then
+							if(sae.request = true and sae.anulado = false, 
+								true, 
+								false)
 				        else false
 				    end) = true
 			';
