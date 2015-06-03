@@ -378,7 +378,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 ?>
 					<li><a href="index.php?ms=<?=md5('MS_' . $rowMenu['producto']);?>&page=<?=
 						md5('P_cancel');?>&token_an=<?=base64_encode('AN');?>" class="link-pr">
-						Anular Póliza
+						Revertir Póliza
 					</a></li>
 					<li><a href="index.php?ms=<?=md5('MS_' . $rowMenu['producto']);?>&page=<?=
 						md5('P_cancel');?>&token_an=<?=base64_encode('AS');?>" class="link-pr">
@@ -406,7 +406,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					</a></li>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=
 						md5('P_cancel');?>&token_an=<?=base64_encode('AR');?>" class="link-pr">
-						Solicitudes Anuladas
+						Desanulación
 					</a></li>
 <?php
 				}

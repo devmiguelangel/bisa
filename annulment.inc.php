@@ -32,7 +32,7 @@ case 'AS':
 	}
 	break;
 case 'AR':
-	$title_rep = 'Solicitudes Anuladas';
+	$title_rep = 'Desanulación de Polizas';
 	break;
 }
 ?>
