@@ -1135,7 +1135,7 @@ class SibasDB extends MySQLi
 					goto AnnulmentLabel;
 				}
 			} elseif ($row['token_an'] === 'AR') {
-				$arr_state['action'] = 'Revertir Anulación';
+				$arr_state['action'] = 'Desanular';
 			}
 
 			$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
