@@ -824,16 +824,16 @@ input[type="password"].login-txt{
 /* ===========================FORMULARIOS - ARCHIVOS============================ */
 a.list-forms{
 	display:block;
-	width:70%;
+	width:60%;
 	height:auto;
 	margin:1px auto;
 	padding:5px 8px;
-	border:1px solid #666666;
-	border-radius:3px;
-	background:#00ACFF;
+	border-bottom: 2px solid #666666;
+	/*border-radius:3px;*/
+	/*background:#00ACFF;*/
 	font-size:70%;
 	font-weight:bold;
-	color:#FFF;
+	color:#000;
 	text-align:left;
 	text-decoration:none;
 }

@@ -2255,7 +2255,7 @@ function mostrar_lista_contenido_preg_frec($id_usuario_sesion, $tipo_sesion, $us
 									from
 									  s_sgc_home
 									where
-									  producto!='H' and id_ef='".$regief['id_ef']."';";
+									  producto!='H' and id_ef='".$regief['id_ef']."' and activado=true;";
 						$residh = $conexion->query($selectIdh,MYSQLI_STORE_RESULT);
 						$numidh = $residh->num_rows;
 										

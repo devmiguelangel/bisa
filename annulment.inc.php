@@ -31,6 +31,9 @@ case 'AS':
 		$title_rep = 'Solicitudes de Anulación';
 	}
 	break;
+case 'AR':
+	$title_rep = 'Solicitudes Anuladas';
+	break;
 }
 ?>
 <style type="text/css">

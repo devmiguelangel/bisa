@@ -36,6 +36,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 			$files['file_annulment']	= $file_annulment;
 			$files['file_return'] 		= $file_return;
 		}
+	} elseif ($token_an === 'AR') {
+		$title = 'Desanulación';
 	}
 	
 	$files = json_encode($files);
@@ -101,6 +103,16 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 		if ($user_type === 'FAC') {
 			goto AnnulmentQuery;
 		}
+	} elseif ($token_an === 'AR') {
+		$sql = 'update ' . $table . ' as tbl1
+		set tbl1.anulado = false, 
+			tbl1.revert = true,
+			tbl1.revert_user = "' . $user . '", 
+			tbl1.revert_mess = "' . $obs . '", 
+			tbl1.revert_date = "' . date('Y-m-d H:i:s') . '",
+			tbl1.request = false
+		where tbl1.id_emision = "' . $ide . '" 
+		;';
 	}
 	
 	if($link->query($sql)){
@@ -120,13 +132,19 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 		    sef.logo as ef_logo,
 		    sem.request,
 		    sem.request_mess,
-		    sem.request_date
+		    sem.request_date,
+		    sem.revert,
+		    sem.revert_user,
+		    sem.revert_mess,
+		    sem.revert_date
 		from
 			' . $table . ' as sem
 				inner join
 		    s_usuario as su2 ON (su2.id_usuario = sem.id_usuario)
 				inner join
 			s_usuario as su ON (su.id_usuario = sem.and_usuario)
+				left join
+			s_usuario as sur ON (sur.id_usuario = sem.revert_user)
 				inner join
 			s_departamento as sdep ON (sdep.id_depto = su.id_depto)
 				inner join 
@@ -134,7 +152,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 		where
 			sem.id_emision = "' . $ide . '"
 				and (sem.anulado = true
-					or sem.request = true)
+					or sem.request = true
+					or sem.revert = true)
 				and sem.emitir = true
 		limit 0 , 1
 		;';
@@ -172,7 +191,10 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				}
 			}
 			
-			$rowEm['token_an'] = $token_an;
+			$rowEm['token_an'] 	= $token_an;
+			$rowEm['title']		= $title;
+			$rowEm['user_type']	= $user_type;
+
 			$body = get_html_body($rowEm, $pr);
 			
 			$mail->Body = $body;
@@ -188,13 +210,13 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				$db->postLog(base64_encode($user), $log_msg);
 
 			} else {
-				$arrTR[2] = $title . 'no pudo ser procesada !';
+				$arrTR[2] = 'La ' . $title . ' no pudo ser procesada !';
 			}
 		} else {
-			$arrTR[2] = $title . 'no pudo ser procesada |';
+			$arrTR[2] = 'La ' . $title . ' no pudo ser procesada |';
 		}
 	} else {
-		$arrTR[2] = $title . 'no pudo ser procesada.';
+		$arrTR[2] = 'La ' . $title . ' no pudo ser procesada.';
 	}
 	echo json_encode($arrTR);
 } else {
@@ -211,7 +233,7 @@ function get_html_body($rowEm, $pr){
 	</div><br>
     
     <div style="padding:5px 10px;">
-		<?=htmlentities($title . ' de Poliza No. '.$pr.'-'.$rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
+		<?=htmlentities($rowEm['title'] . ' de Poliza No. '.$pr.'-'.$rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
 	</div>
     <div style="padding:5px 10px;">
 		<?=htmlentities('Usuario '.$rowEm['nombre'], ENT_QUOTES, 'UTF-8');?>
@@ -221,14 +243,16 @@ function get_html_body($rowEm, $pr){
 	</div><br><br>
 
 	<div style="padding:5px 10px; background:#006697; color:#FFFFFF;">
-    	<?=htmlentities('Motivo de ' . $title , ENT_QUOTES, 'UTF-8');?>
+    	<?=htmlentities('Motivo de ' . $rowEm['title'] , ENT_QUOTES, 'UTF-8');?>
 	</div>
     
     <div style="padding:5px 10px;">
-    <?php if ($rowEm['token_an'] === 'AN' || ($rowEm['token_an'] === 'AS' && $user_type === 'FAC')): ?>
+    <?php if ($rowEm['token_an'] === 'AN' || ($rowEm['token_an'] === 'AS' && $rowEm['user_type'] === 'FAC')): ?>
 		<?=$rowEm['motivo_anulado'];?>
     <?php elseif ($rowEm['token_an'] === 'AS'): ?>
 		<?=$rowEm['request_mess'];?>
+	<?php elseif ($rowEm['token_an'] === 'AR'): ?>
+		<?=$rowEm['revert_mess'];?>
     <?php endif ?>
 	</div>
 </div>

@@ -329,6 +329,11 @@ class ReportsGeneralTRD{
 					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
 					and stre.request like "%' . $this->data['request'] . '%"
 			';
+		} elseif ($this->data['token_an'] === 'AR') {
+			$this->sql .= 'and stre.emitir = true
+				and (stre.anulado = true and stre.request = true)
+				and stre.revert = false
+			';
 		}
 
 		$this->sql .= "group by stre.id_emision

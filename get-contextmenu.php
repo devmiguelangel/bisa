@@ -158,7 +158,8 @@ if(isset($_GET['ide'])){
 				sae.certificado_provisional as cp,
 				sae.garantia,
 				sae.anulado,
-				sae.request
+				sae.request,
+				sae.revert
 			from
 			    s_au_em_detalle as sad
 			        inner join
@@ -233,7 +234,8 @@ if(isset($_GET['ide'])){
 				stre.certificado_provisional as cp,
 				stre.garantia,
 				stre.anulado,
-				stre.request
+				stre.request,
+				stre.revert
 			from
 			    s_trd_em_cabecera as stre
 			    	left join

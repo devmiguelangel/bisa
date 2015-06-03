@@ -292,6 +292,11 @@ class ReportsGeneralAU{
 					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
 					and sae.request like "%' . $this->data['request'] . '%"
 			';
+		} elseif ($this->data['token_an'] === 'AR') {
+			$this->sql .= 'and sae.emitir = true
+				and (sae.anulado = true and sae.request = true)
+				and sae.revert = false
+			';
 		}
 		
 		$this->sql .= "group by sae.id_emision ";

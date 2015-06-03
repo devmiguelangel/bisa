@@ -404,6 +404,10 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 						md5('P_cancel');?>&token_an=<?=base64_encode('AS');?>" class="link-pr">
 						Solicitudes de Anulación
 					</a></li>
+					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=
+						md5('P_cancel');?>&token_an=<?=base64_encode('AR');?>" class="link-pr">
+						Solicitudes Anuladas
+					</a></li>
 <?php
 				}
 			} elseif ($user_type === 'IMP' && $link->verify_implant($_SESSION['idEF'], $rowMenu['producto']) === true) {

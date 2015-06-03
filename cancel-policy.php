@@ -27,6 +27,9 @@ if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GE
 		if ($data_user['u_tipo_codigo'] === 'FAC') {
 			goto AnnulmentLabel;
 		}
+	} elseif ($token_an === 'AR') {
+		$title = 'desanulación';
+		$title_btn = 'Desanular';
 	}
 
 ?>
