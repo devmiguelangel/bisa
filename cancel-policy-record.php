@@ -37,7 +37,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 			$files['file_return'] 		= $file_return;
 		}
 	} elseif ($token_an === 'AR') {
-		$title = 'Desanulación';
+		$title = 'Desanulacion';
 	}
 	
 	$files = json_encode($files);
@@ -136,7 +136,10 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 		    sem.revert,
 		    sem.revert_user,
 		    sem.revert_mess,
-		    sem.revert_date
+		    sem.revert_date,
+		    sur.usuario as usuario_r,
+		    sur.email as email_r,
+		    sur.nombre as nombre_r
 		from
 			' . $table . ' as sem
 				inner join
@@ -163,30 +166,48 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 			$rsEm->free();
 			
 			$mail = new PHPMailer();
-			$mail->Host = $rowEm['email'];
-			$mail->From = $rowEm['email'];
 			$mail->FromName = $rowEm['ef_nombre'];
 			$mail->Subject = $rowEm['ef_nombre'] . ': ' . $title . ' Poliza No. ' . $pr . '-' . $rowEm['no_emision'];
 			
-			$mail->addAddress($rowEm['email_c'], $rowEm['nombre_c']);
-			$mail->addCC($rowEm['email'], $rowEm['nombre']);
+			$email_from = '';
+
+			if ($token_an === 'AN' or ($token_an === 'AS' and $user_type === 'FAC')) {
+				$email_from = $rowEm['email'];
+
+				UserCot:
+				$mail->addAddress($rowEm['email_c'], $rowEm['nombre_c']);
+			} elseif ($token_an === 'AS' and $user_type === 'LOG') {
+				$email_from = $rowEm['email_c'];
+			} elseif ($token_an === 'AR') {
+				$email_from = $rowEm['email_r'];
+				goto UserCot;
+			}
+
+			$mail->Host = $email_from;
+			$mail->From = $email_from;
+
+			// $mail->addCC($rowEm['email'], $rowEm['nombre']);
 			
-			$sqlc = 'select sc.correo, sc.nombre 
+			$sqlc = 'select sc.correo, sc.nombre, sc.producto
 			from 
 				s_correo as sc
 					inner join 
 				s_entidad_financiera as sef ON (sef.id_ef = sc.id_ef)
 			where 
 				(sc.producto = "' . $pr . '" 
-						or sc.producto = "' . $pr . '")
+						or sc.producto = "F' . $pr . '")
 					and sef.id_ef = "' . $rowEm['idef'] . '" 
 					and sef.activado = true
 			;';
 
-			if(($rsc = $link->query($sqlc, MYSQLI_STORE_RESULT))){
-				if($rsc->num_rows > 0){
-					while($rowc = $rsc->fetch_array(MYSQLI_ASSOC)){
-						$mail->addCC($rowc['correo'], $rowc['nombre']);
+			if (($rsc = $link->query($sqlc, MYSQLI_STORE_RESULT)) !== false) {
+				if ($rsc->num_rows > 0) {
+					while ($rowc = $rsc->fetch_array(MYSQLI_ASSOC)) {
+						if ($token_an === 'AS' && $user_type === 'LOG' && $rowc['producto'] === 'F' . $pr) {
+							$mail->addAddress($rowc['correo'], $rowc['nombre']);
+						} else {
+							$mail->addCC($rowc['correo'], $rowc['nombre']);
+						}
 					}
 				}
 			}

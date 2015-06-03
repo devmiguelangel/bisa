@@ -260,7 +260,7 @@ class ReportsGeneralAU{
 					";
 		} elseif ($this->data['token_an'] === 'AN') {
 			$this->sql .= 'and sae.emitir = true
-					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+					and sae.anulado = false
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"

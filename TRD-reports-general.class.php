@@ -297,7 +297,7 @@ class ReportsGeneralTRD{
 					";
 		} elseif ($this->data['token_an'] === 'AN') {
 			$this->sql .= 'and stre.emitir = true
-					and stre.anulado like "%' . $this->data['r-canceled'] . '%"
+					and stre.anulado = false
 					and (case "' . $this->data_user['u_tipo_codigo'] . '"
 				        when
 				            "LOG"

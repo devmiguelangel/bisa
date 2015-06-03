@@ -57,12 +57,8 @@ if (isset($_POST['l-user']) && isset($_POST['l-pass'])) {
 			$rs->free();
 			
 			$token = false;
-			if ((int)$rowUSR['tipo_codigo'] === 'ROOT') {
+			if ((boolean)$rowUSR['activado']) {
 				$token = true;
-			} else {
-				if ((boolean)$rowUSR['activado']) {
-					$token = true;
-				}
 			}
 			
 			if ($token) {
