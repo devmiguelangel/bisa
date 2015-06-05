@@ -1129,9 +1129,16 @@ class SibasDB extends MySQLi
 				AnnulmentLabel:
 				$arr_state['action'] = 'Revertir Póliza';
 			} elseif ($row['token_an'] === 'AS') {
+				if ((boolean)$row['anulado'] && $row['u_tipo_codigo'] === 'LOG') {
+					$arr_state['obs'] = 1;
+				} elseif ((boolean)$row['revert']) {
+					$arr_state['obs'] = 3;
+				}
+
 				if ($row['u_tipo_codigo'] === 'LOG' && !(boolean)$row['request'] && !(boolean)$row['anulado']) {
 					$arr_state['action'] = 'Solicitar Anulación';
 				} elseif ($row['u_tipo_codigo'] === 'FAC' && (boolean)$row['request']) {
+					$arr_state['obs'] = 2;
 					goto AnnulmentLabel;
 				}
 			} elseif ($row['token_an'] === 'AR') {

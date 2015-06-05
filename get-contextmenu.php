@@ -346,7 +346,26 @@ if(isset($_GET['ide'])){
 				$menu .= '<li><span class="cm-link"><span class="view-ste">Estado => ' 	
 					. $arr_state['txt'] . '</span></span></li>';
 				
-				if ($arr_state['obs'] === 'NINGUNA' || (boolean)$row['estado_facultativo'] === false) {
+				if (is_int($arr_state['obs'])) {
+					$obs = $arr_state['obs'];
+
+					switch ($arr_state['obs']) {
+					case 1:
+						$arr_state['obs'] = 'Reversión';
+						break;
+					case 2:
+						$arr_state['obs'] = 'Solicitud de Anulación';
+						break;
+					case 3:
+						$arr_state['obs'] = 'Desanulación';
+						break;
+					}
+					
+					$menu .= '<li><a href="cancel_observation.php?ide=' . base64_encode($ide) 
+						.'&obs=' . $obs . '&pr=' . base64_encode($pr) . '" class="fancybox fancybox.ajax observation">
+						<span class="view-obs">Observación => ' 
+						. $arr_state['obs'] . '</span></a></li>';
+				} elseif ($arr_state['obs'] === 'NINGUNA' || (boolean)$row['estado_facultativo'] === false) {
 					$menu .= '<li><span class="cm-link"><span class="view-obs">Observación => ' 
 						. $arr_state['obs'] . '</span></span></li>';
 				} else {
@@ -356,6 +375,8 @@ if(isset($_GET['ide'])){
 						<span class="view-obs">Observación => ' 
 						. $arr_state['obs'] . '</span></a></li>';
 				}
+				
+
 				//echo $token.' - '.$row['observacion'].' - '.(int)$issue;
 				if (empty($arr_state['action']) === false) {
 					$fancybox = 'fancybox fancybox.ajax observation';
