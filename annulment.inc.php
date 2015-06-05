@@ -23,7 +23,7 @@ case 'TRM':
 $token_an = base64_decode($_GET['token_an']);
 switch ($token_an) {
 case 'AN':
-	$title_rep = 'Anulación de Pólizas';
+	$title_rep = 'Revertir Pólizas';
 	break;
 case 'AS':
 	$title_rep = 'Solicitar Anulación';

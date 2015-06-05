@@ -23,7 +23,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 
 	$title = '';
 	if ($token_an === 'AN') {
-		$title = 'Anulacion';
+		$title = 'Reversion';
 	} elseif ($token_an === 'AS') {
 		$title = 'Solicitud de Anulacion';
 		

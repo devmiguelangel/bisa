@@ -18,8 +18,8 @@ if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GE
 	if ($token_an === 'AN') {
 		AnnulmentLabel:
 
-		$title = 'anulación';
-		$title_btn = 'Anular';
+		$title = 'reversión';
+		$title_btn = 'Revertir';
 	} elseif ($token_an === 'AS') {
 		$title = 'solicitud de anulación';
 		$title_btn = 'Solicitar';
@@ -86,5 +86,5 @@ $(document).ready(function(e) {
 	
 	
 }else
-	echo 'No se puede anular la Póliza';
+	echo 'No se puede procesar la Póliza';
 ?>
