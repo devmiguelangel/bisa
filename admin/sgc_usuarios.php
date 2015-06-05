@@ -265,7 +265,7 @@ $selectUs="select
 			  left join s_departamento as dep on (dep.id_depto=su.id_depto)
 			  left join s_agencia as ag on (ag.id_agencia=su.id_agencia)
 			where
-			  ef.activado=1 ";
+			  ef.activado=1 and su.usuario!='root' ";
 			  if($tipo_user!=md5('ROOT')){
 					$selectUs.="and su.id_usuario='".$id_usuario_sesion."' ";
 			  }
