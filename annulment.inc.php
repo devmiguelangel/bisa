@@ -13,7 +13,7 @@ case 'DE':
 	$title = 'Desgravamen';
 	break;
 case 'TRD':
-	$title = 'Todo Riesgo Domiciliario';
+	$title = 'Todo Riesgo de Daños a la Propiedad';
 	break;
 case 'TRM':
 	$title = 'Todo Riesgo Equipo Movil';
@@ -137,18 +137,6 @@ $(document).ready(function(e) {
 <div class="rc-records">
 	<div class="rp-pr-container" id="rp-tab-1" style="display:block;">
     	<form class="f-reports">
-        	<!--<label>N° de Póliza: </label>
-            <select id="frp-policy" name="frp-policy">
-                <option value="">Seleccione...</option>
-<?php
-if (($rsPo = $link->get_policy($_SESSION['idEF'], $product)) !== FALSE) {
-	while($rowPo = $rsPo->fetch_array(MYSQLI_ASSOC)){
-		echo '<option value="'.base64_encode($rowPo['id_poliza']).'">'.$rowPo['no_poliza'].'</option>';
-	}
-}
-?>
-            </select>-->
-            
             <label>N° de Póliza: </label>
             <input type="text" id="frp-nc" name="frp-nc" value="" autocomplete="off">
     
@@ -200,10 +188,27 @@ if($rsEx->data_seek(0) === TRUE){
             <div id="accordion">
                 <h5>Anulación</h5>
                 <div>
-                    <label class="lbl-cb">
-                    	<input type="checkbox" id="frp-canceled-p" name="frp-canceled-p" value="1">Anulados</label>
-                    <label class="lbl-cb">
-                    	<input type="checkbox" id="frp-request" name="frp-request" value="1">Solicitudes Enviadas</label>
+                	<table style="width: 100%;">
+                		<tr>
+                			<td style="width: 40%;">
+                				<label class="lbl-cb">
+                    				<input type="checkbox" id="frp-canceled-p" name="frp-canceled-p" 
+                    					value="1">Anulados</label>
+                				<label class="lbl-cb">
+                    				<input type="checkbox" id="frp-request" name="frp-request" 
+                    					value="1">Solicitudes Enviadas</label>
+                			</td>
+                			<td style="width: 25%;"></td>
+                			<td style="width: 35%;">
+                				<div class="mess-oc" style="font-size: 90%;">
+									<span class="days-process" style="background: #18b745;"></span> Anulado
+	                				<span class="days-process" style="background: #f31d1d;"></span> Solicitud Enviada
+                				</div>
+                			</td>
+                		</tr>
+                	</table>
+                    
+                    
                     <br>
                 </div>
                 <!-- <h5>Aprobado</h5>

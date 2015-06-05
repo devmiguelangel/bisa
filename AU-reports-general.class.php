@@ -292,6 +292,9 @@ class ReportsGeneralAU{
 					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
 					and sae.request like "%' . $this->data['request'] . '%"
 			';
+			if (!empty($this->data['request'])) {
+				$this->sql .= 'and sae.anulado = false ';
+			}
 		} elseif ($this->data['token_an'] === 'AR') {
 			$this->sql .= 'and sae.emitir = true
 				and (sae.anulado = true and sae.request = true)
@@ -513,20 +516,25 @@ $(document).ready(function(e) {
             <td>Porcentaje Extraprima</td>
             <td><?=htmlentities('Fecha Respuesta final Compañia', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Duración total del caso', ENT_QUOTES, 'UTF-8');?></td>
+            <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
             <td>
-            	<?php if ($this->token === 'AN'): ?>
-            		Solicitud Enviada
-            	<?php endif ?>
+            	Solicitud Enviada
             </td>
+            <?php endif ?>
         </tr>
     </thead>
     <tbody>
 <?php
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
-		$bgCheck = '';
+		
+		$bgCheck 		= '';
 		
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
+			$request_bg 	= '';
+			$request_txt	= '';
+			$ann_bg			= '';
+
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
 			$_APS = (int)$this->row['aprobado_si'];
@@ -718,7 +726,12 @@ $(document).ready(function(e) {
             <td><?=$this->row['u_sucursal'];?></td>
             <td><?=htmlentities($this->row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['fecha_ingreso'];?></td>
-            <td><?=$this->row['a_anulado'];?></td>
+            <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
+            	<?php if ((boolean)$this->row['anulado']): 
+            		$ann_bg = 'background: #18b745; color: #FFF;'; ?>
+            	<?php endif ?>
+            <?php endif ?>
+            <td style="<?= $ann_bg ;?>"><?=$this->row['a_anulado'];?></td>
             <td><?=htmlentities($this->row['a_anulado_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['a_anulado_fecha'];?></td>
             <td><?=htmlentities($arr_state['txt'], ENT_QUOTES, 'UTF-8');?></td>
@@ -727,15 +740,15 @@ $(document).ready(function(e) {
             <td><?=$this->rowvh['extra_prima'];?></td>
             <td><?=$this->rowvh['fecha_resp_final_cia'];?></td>
             <td><?=htmlentities($this->row['duracion_caso'].' días', ENT_QUOTES, 'UTF-8');?></td>
-            <td>
-	            <?php if ($this->token === 'AN'): ?>
-	            	<?php if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']): ?>
-	            		SI
-	            	<?php else: ?>
-	            		NO
-	            	<?php endif ?>
-	            <?php endif ?>
+            <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
+            	<?php if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']): 
+            		$request_bg = 'background: #f31d1d; color: #FFF;';
+            		$request_txt = 'SI'; ?>
+            	<?php endif ?>
+            <td style="<?= $request_bg ;?>">
+            	<?= $request_txt ;?>
             </td>
+            <?php endif ?>
         </tr>
 <?php
 					}
