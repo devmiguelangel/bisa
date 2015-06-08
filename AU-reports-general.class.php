@@ -531,9 +531,8 @@ $(document).ready(function(e) {
 		$bgCheck 		= '';
 		
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
-			$request_bg 	= '';
 			$request_txt	= '';
-			$ann_bg			= '';
+			$bg_req_ann		= '';
 
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
@@ -697,6 +696,17 @@ $(document).ready(function(e) {
 						$arr_state['obs'] = '';		$arr_state['link'] = '';	$arr_state['bg'] = '';
 						
 						$this->cx->get_state($arr_state, $this->rowvh, 2, 'AU', FALSE);
+
+						if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG') {
+							if ((boolean)$this->row['anulado']) {
+		            			$bg_req_ann = 'background: #18b745; color: #FFF;';
+							}
+
+							if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']) {
+	            				$bg_req_ann = 'background: #f31d1d; color: #FFF;';
+	            				$request_txt = 'SI';
+							}
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row-au" rel="0"
             data-nc="<?=base64_encode($this->row['ide']);?>"
@@ -704,7 +714,7 @@ $(document).ready(function(e) {
             data-vh="<?=base64_encode($this->rowvh['idVh']);?>"
             data-issue="<?=base64_encode(0);?>"
             data-an="<?=base64_encode($this->data['token_an']);?>">
-        	<td <?=$rowSpan;?>>AU-<?=$this->row['no_emision'];?></td>
+        	<td <?=$rowSpan;?> style="<?= $bg_req_ann ;?>">AU-<?=$this->row['no_emision'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_ci'].$this->row['cl_complemento'].' '.$this->row['cl_extension'];?></td>
@@ -726,12 +736,7 @@ $(document).ready(function(e) {
             <td><?=$this->row['u_sucursal'];?></td>
             <td><?=htmlentities($this->row['u_agencia'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['fecha_ingreso'];?></td>
-            <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
-            	<?php if ((boolean)$this->row['anulado']): 
-            		$ann_bg = 'background: #18b745; color: #FFF;'; ?>
-            	<?php endif ?>
-            <?php endif ?>
-            <td style="<?= $ann_bg ;?>"><?=$this->row['a_anulado'];?></td>
+            <td><?=$this->row['a_anulado'];?></td>
             <td><?=htmlentities($this->row['a_anulado_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['a_anulado_fecha'];?></td>
             <td><?=htmlentities($arr_state['txt'], ENT_QUOTES, 'UTF-8');?></td>
@@ -741,11 +746,7 @@ $(document).ready(function(e) {
             <td><?=$this->rowvh['fecha_resp_final_cia'];?></td>
             <td><?=htmlentities($this->row['duracion_caso'].' días', ENT_QUOTES, 'UTF-8');?></td>
             <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
-            	<?php if ((boolean)$this->row['request'] && !(boolean)$this->row['anulado']): 
-            		$request_bg = 'background: #f31d1d; color: #FFF;';
-            		$request_txt = 'SI'; ?>
-            	<?php endif ?>
-            <td style="<?= $request_bg ;?>">
+            <td>
             	<?= $request_txt ;?>
             </td>
             <?php endif ?>
@@ -754,11 +755,13 @@ $(document).ready(function(e) {
 					}
 				}
 			}
-			if($swBG === FALSE)
+			if($swBG === FALSE) {
 				$swBG = TRUE;
-			elseif($swBG === TRUE)
+			} elseif($swBG === TRUE) {
 				$swBG = FALSE;
+			}
 		}
+
 		$this->rs->free();
 ?>
     </tbody>
@@ -766,9 +769,33 @@ $(document).ready(function(e) {
     	<tr>
         	<td colspan="29" style="text-align:left;">
 <?php
-			if($this->xls === FALSE) {
+			if($this->xls === false && $this->token !== 'AN') {
 ?>
-				<a href="rp-records.php?data-pr=<?=base64_encode($this->pr);?>&flag=<?=$this->flag;?>&ms=<?=$this->data['ms'];?>&page=<?=$this->data['page'];?>&xls=<?=md5('TRUE');?>&idef=<?=base64_encode($this->data['idef']);?>&frp-policy=<?=$this->data['policy'];?>&frp-nc=<?=$this->data['nc'];?>&frp-user=<?=$this->data['user'];?>&frp-client=<?=$this->data['client'];?>&frp-dni=<?=$this->data['dni'];?>&frp-comp=<?=$this->data['comp'];?>&frp-ext=<?=$this->data['ext'];?>&frp-date-b=<?=$this->data['date-begin'];?>&frp-date-e=<?=$this->data['date-end'];?>&frp-id-user=<?=base64_encode($this->data['idUser']);?>&frp-approved-p=<?=$this->data['approved'];?>&frp-pendant=<?=$this->data['r-pendant'];?>&frp-state=<?=$this->data['r-state'];?>&frp-free-cover=<?=$this->data['r-free-cover'];?>&frp-extra-premium=<?=$this->data['r-extra-premium'];?>&frp-issued=<?=$this->data['r-issued'];?>&frp-rejected=<?=$this->data['r-rejected'];?>&frp-canceled=<?=$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
+				<a href="rp-records.php?data-pr=<?=
+					base64_encode($this->pr);?>&flag=<?=
+					$this->flag;?>&ms=<?=
+					$this->data['ms'];?>&page=<?=
+					$this->data['page'];?>&xls=<?=
+					md5('TRUE');?>&idef=<?=
+					base64_encode($this->data['idef']);?>&frp-policy=<?=
+					$this->data['policy'];?>&frp-nc=<?=
+					$this->data['nc'];?>&frp-user=<?=
+					$this->data['user'];?>&frp-client=<?=
+					$this->data['client'];?>&frp-dni=<?=
+					$this->data['dni'];?>&frp-comp=<?=
+					$this->data['comp'];?>&frp-ext=<?=
+					$this->data['ext'];?>&frp-date-b=<?=
+					$this->data['date-begin'];?>&frp-date-e=<?=
+					$this->data['date-end'];?>&frp-id-user=<?=
+					base64_encode($this->data['idUser']);?>&frp-approved-p=<?=
+					$this->data['approved'];?>&frp-pendant=<?=
+					$this->data['r-pendant'];?>&frp-state=<?=
+					$this->data['r-state'];?>&frp-free-cover=<?=
+					$this->data['r-free-cover'];?>&frp-extra-premium=<?=
+					$this->data['r-extra-premium'];?>&frp-issued=<?=
+					$this->data['r-issued'];?>&frp-rejected=<?=
+					$this->data['r-rejected'];?>&frp-canceled=<?=
+					$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php
 			}
 ?>

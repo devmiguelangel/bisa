@@ -13,7 +13,7 @@ case 'DE':
 	$title = 'Desgravamen';
 	break;
 case 'TRD':
-	$title = 'Todo Riesgo de Daños a la Propiedad';
+	$title = 'Todo Riesgo';
 	break;
 case 'TRM':
 	$title = 'Todo Riesgo Equipo Movil';

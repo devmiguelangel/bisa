@@ -11,7 +11,7 @@ switch ($product) {
 		$title = 'Desgravamen';
 		break;
 	case 'TRD':
-		$title = 'Todo Riesgo Domiciliario';
+		$title = 'Todo Riesgo';
 		break;
 	case 'TRM':
 		$title = 'Todo Riesgo Equipo Movil';

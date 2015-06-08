@@ -71,7 +71,7 @@ $(document).ready(function(e) {
 	}
 }
 ?>
-<h3>Registros Facultativos - Todo Riesgo de Daños a la Propiedad</h3>
+<h3>Registros Facultativos - Todo Riesgo</h3>
 <div class="fac-records">
 	<form class="f-records">
     	<label style="width:auto;">Entidad Financiera: </label>
