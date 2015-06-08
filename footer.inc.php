@@ -5,6 +5,11 @@
 	<a href="#" class="about">
 		© 2013 SIBAS Todos los derechos reservados| Diseño: SIBAS| Imágenes + Icono 
 	</a>
+	<span id="siteseal">
+		<script type="text/javascript" 
+			src="https://seal.starfieldtech.com/getSeal?sealID=yERNvREj9qyjNv2dhSOBWRqLnFvfDUmWPL1hTLyAaI75aFLUPaH6HGzmdJNI">
+		</script>
+	</span>
 </footer>
 </body>
 </html>
