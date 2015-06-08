@@ -49,6 +49,11 @@ if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GE
 		<a href="javascript:;" id="a-attc-re" class="attached" data-product="AU">Adjuntar Anexo de Devolución</a>
 	</div>
 	<input type="hidden" id="attc-re" name="attc-re" value="">
+
+	<div class="attached-mess">
+		El tamaño máximo de cada archivo es de 3Mb. <br>
+		El formato del archivo a subir debe ser JPG, ó PDF
+	</div>
 	<?php endif ?>
 
     <div style="text-align:center">

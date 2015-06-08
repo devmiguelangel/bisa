@@ -12,12 +12,13 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
         'application/pdf',
         'binary/octet-stream', 
         'image/jpeg', 
-        'image/png', 
+        // 'image/png', 
         'image/pjpeg', 
-        'image/x-png'
+        // 'image/x-png',
 	);
     
-    $arr_extension = array('rar', 'zip');
+    $arr_extension = array();
+    // $arr_extension = array('rar', 'zip');
 	
 	$sw = false;
 	if (!empty($attached)) {
@@ -37,8 +38,8 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
 	if ($_FILES['attached']['error'] > 0) {
 		echo '0|' . fileUploadErrorMsg($_FILES['attached']['error']);
 	} else {
-		if ((20 * 1024 * 1024) >= $file_size 
-            && (in_array($file_type, $arr_type) === true 
+		if ((3 * 1024 * 1024) >= $file_size 
+            && (in_array($file_type, $arr_type) 
                 || in_array($file_extension, $arr_extension))) {
             
 			$dir = 'files/';
