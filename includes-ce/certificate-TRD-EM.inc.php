@@ -84,6 +84,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -94,6 +95,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -104,6 +106,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DE ACUERDO A DECLARACIONES DE CADA PRESTATARIO.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -114,6 +117,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DIRECCIÓN LEGAL DEL ASEGURADO
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -124,6 +128,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         BIENES INMUEBLES U OTRA PROPIEDAD QUE SEA OBJETO  DE GARANTÍA A FAVOR DEL CONTRATANTE.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -134,6 +139,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA PRESTATARIO.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -157,6 +163,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -167,6 +174,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -177,6 +185,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DE ACUERDO A DECLARACIONES DE CADA CLIENTE.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -187,6 +196,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         DIRECCIÓN LEGAL DEL ASEGURADO
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -197,6 +207,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         BIENES INMUEBLES U OTRA PROPIEDAD DE CLIENTES DEL BANCO BISA.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -204,9 +215,10 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA CLIENTE.
+                        DE ACUERDO A DECLARACIÓN QUE REALICE CADA CLIENTE.
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -214,7 +226,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA CLIENTE.
+                        DE ACUERDO A DECLARACIÓN QUE REALICE CADA CLIENTE.
                       </td>  
                     </tr> 
 <?php
@@ -362,6 +374,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         </table>     
                       </td>  
                     </tr>
+                    <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
                     <tr>
                       <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                         border:0px solid #0081C2;" valign="top">
@@ -404,7 +417,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                                       RIESGOS DOMICILIARIOS
                                   </td>
                                   <td style="width:25%; font-weight:bold; text-align:center;">
-                                      POR EVENTO Y/O RECLAMO
+                                      RIESGOS COMERCIALES
                                   </td>
                                 </tr>
                                 <tr>
@@ -672,7 +685,22 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     </table>     
                   </td>  
                 </tr>
-              
+<?php
+            if((boolean)$row['garantia']===true){
+?>                 
+                <tr>
+                  <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
+                    border:0px solid #0081C2; padding-bottom:10px;" valign="top">
+                    INFRA SEGURO:
+                  </td>
+                  <td style="width:65%; text-align: justify; padding-left:5px; 
+                    border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
+                    PARA PÓLIZAS SUBROGADAS NO SE APLICARA INFRA SEGURO        
+                  </td>  
+                </tr>
+<?php
+			}
+?>                        
                 <tr>
                    <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">

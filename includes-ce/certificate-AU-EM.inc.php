@@ -105,7 +105,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                             &nbsp;<?=$cliente_fono?></td>
                           </tr>
                           <tr>
-                            <td style="width:60%; text-align:left; padding-top:5px;"><b>Pagador:</b> </td>
+                            <td style="width:60%; text-align:left; padding-top:5px;"><b>Asegurado:</b> </td>
                             <td style="width:40%; text-align:left; padding-top:5px;"><b>NIT o CI:</b></td>
                           </tr>
                           <tr>
@@ -831,6 +831,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                       En caso que el pago no sea efectuado en el plazo estipulado, la vigencia del presente seguro quedara suspendida y por tanto, cualquier siniestro ocurrido, cuando la póliza este impaga o en mora no será cubierto, según lo estipulado en el artículo 58 inciso d) de la .Ley de Seguros 1883. Asimismo cabe denotar que la Poliza sera anulada luego de pasados 60 dias del no pago de las primas establecidas.
                     </td>
                   </tr>
+<?php
+             if((boolean)$row['garantia']===true){
+?>                       
                   <tr>
                     <td style="width:100%; text-align:left; font-weight:bold; 
                       border-bottom: 1px solid #333; border-top: 1px solid #333;">
@@ -843,6 +846,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      Monto a Subrogar:
                     </td>
                   </tr>
+<?php
+			 }
+?>                  
                   <tr>
                     <td style="width:100%; text-align:left; font-weight:bold; 
                       border-bottom: 1px solid #333; border-top: 1px solid #333;">
@@ -851,7 +857,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </tr>
                   <tr>
                     <td style="width:100%; text-align:left; padding-top:5px; padding-bottom:5px;">
-                     *Los accesorios instalados al momento de asegurar el vehículo quedan automáticamente cubiertos sin costo adicional hasta los límites establecidos en el Anexo para Robo de LLantas, Equipos de Música y Otras Piezas. En caso que el accesorio supere los límites establecidos, el Aseguirado puede incluir mediante anexo y pago de prima adicional.<br>
+                     *Los accesorios instalados al momento de asegurar el vehículo quedan automáticamente cubiertos sin costo adicional hasta los límites establecidos en el Anexo para Robo de LLantas, Equipos de Música y Otras Piezas. En caso que el accesorio supere los límites establecidos, el Asegurado puede incluir mediante anexo y pago de prima adicional.<br>
                     Los accesorios que se instalen con posterioridad deben incluirse mediante anexo y pago de prima adicional.<br>              *En caso de anulación de la Póliza la prima será devuelta a prorrata. (descontando los impuestos de Ley)<br><br>
                     <b>Extraterritorialidad</b><br><br>
                     Se otorga la cobertura de Extraterritorialidad anualmente cubriendo al vehículo asegurado mientras se encuentra fuera del Territorio de Bolivia máximo 60 días por cada viaje y de acuerdo a condiciones del anexo respectivo.
@@ -927,7 +933,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   <tr>
                     <td style="width:100%; text-align:left; font-weight:bold; 
                       border-bottom: 1px solid #333; border-top: 1px solid #333;">
-                      CONDICIONES ESPECIALES:
+                      NOTAS ESPECIALES:
                     </td>
                   </tr>
                   <tr>
