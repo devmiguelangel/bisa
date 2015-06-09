@@ -139,12 +139,17 @@ if($token === TRUE){
 	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
 
 <?php if ((boolean)$rowIs['garantia'] && !(boolean)$rowIs['emitir']): ?>
-	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 90%;">
+	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 80%;">
 		Es obligatorio imprimir todos los documentos y hacerlos firmar con el cliente para su posterior entrega
     </div>
-    <div class="fac-mess" style="width: 40%; text-align: center; font-size: 90%;">
+    <div class="fac-mess" style="width: 40%; text-align: center; font-size: 80%;">
 		Póliza emitida pendiente de vinculación de garantía
 	</div>
+<?php elseif ((boolean)$rowIs['garantia'] && (boolean)$rowIs['emitir']): ?>
+	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 80%; 
+		border: 1px solid #096; background: #afffaa; color: #494949; font-weight: bold;">
+		Póliza se vinculó correctamente
+    </div>
 <?php endif ?>
 <?php
 	} else {
