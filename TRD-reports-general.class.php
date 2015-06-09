@@ -47,6 +47,7 @@ class ReportsGeneralTRD{
 		$this->data['r-rejected'] = $this->cx->real_escape_string(trim($data['r-rejected']));
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
+		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
 
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
@@ -198,7 +199,10 @@ class ReportsGeneralTRD{
 		    null as observacion,
 		    stre.facultativo as estado_facultativo,
 		    stre.request,
-		    stre.anulado
+		    stre.anulado,
+		    stre.garantia,
+		    stre.facultativo,
+		    stre.emitir
 		from
 		    s_trd_em_cabecera as stre
 		        inner join
@@ -253,12 +257,13 @@ class ReportsGeneralTRD{
 				 ";
 		} elseif($this->token === 'PA'){
 			$this->sql .= "and stre.emitir = false
-							and (stre.facultativo = false
-								or (stre.facultativo = true
-									and strf.aprobado = 'SI'
-									and stre.estado = ''))
-							and stre.anulado like '%".$this->data['r-canceled']."%'
-							";
+				and stre.garantia = true
+				and (stre.facultativo = false
+					or (stre.facultativo = true
+						and strf.aprobado = 'SI'
+						and stre.estado = ''))
+				and stre.anulado like '%".$this->data['r-canceled']."%'
+				";
 		} elseif($this->token === 'SP'){
 			$this->sql .= "and stre.emitir = false
 							and stre.aprobado = false
@@ -284,9 +289,23 @@ class ReportsGeneralTRD{
 					and stre.rechazado = false
 					";
 		} if ($this->token === 'RP') {
-			$this->sql .= "and stre.emitir = true
-					and stre.anulado like '%".$this->data['r-canceled']."%'
-					";
+			$this->sql .= "and stre.anulado like '%" . $this->data['r-canceled'] . "%' ";
+			switch ($this->data['warranty']) {
+			case 1:
+				$this->sql .= 'and stre.garantia = true 
+					and stre.emitir = true ';
+				break;
+			case 0:
+				$this->sql .= 'and stre.garantia = true
+					and stre.emitir = false ';
+				break;
+			default:
+				$this->sql .= "and (stre.emitir = true 
+					or (stre.emitir = false 
+						and stre.garantia = true))
+				";
+				break;
+			}
 		} elseif($this->token === 'AP'){
 			$this->sql .= "and (if(stre.aprobado = true and stre.rechazado = false,
 			        'A',
@@ -551,6 +570,11 @@ $(document).ready(function(e) {
             	Solicitud Enviada
             </td>
             <?php endif ?>
+            <?php if ($this->token === 'RP'): ?>
+            <td>
+            	Vinculado
+            </td>
+            <?php endif ?>
         </tr>
     </thead>
     <tbody>
@@ -561,6 +585,7 @@ $(document).ready(function(e) {
 		while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$request_txt	= '';
 			$bg_req_ann		= '';
+			$warranty_txt	= '';
 
 			$nPr = (int)$this->row['noPr'];
 			
@@ -639,6 +664,19 @@ $(document).ready(function(e) {
 	            				$request_txt = 'SI';
 							}
 						}
+
+						if ($this->token === 'RP') {
+							if ((boolean)$this->row['garantia']) {
+								switch ((boolean)$this->row['emitir']) {
+								case true:
+									$warranty_txt = 'SI';
+									break;
+								case false:
+									$warranty_txt = 'NO';
+									break;
+								}
+							}
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row-au" rel="0" 
 			data-nc="<?=base64_encode($this->row['ide']);?>" 
@@ -683,6 +721,11 @@ $(document).ready(function(e) {
             	<?= $request_txt ;?>
             </td>
             <?php endif ?>
+            <?php if ($this->token === 'RP'): ?>
+            <td>
+            	<?= $warranty_txt ;?>
+            </td>
+            <?php endif ?>
         </tr>
 <?php
 					}
@@ -704,30 +747,31 @@ $(document).ready(function(e) {
 			if($this->xls === false && $this->token !== 'AN'){
 ?>
 				<a href="rp-records.php?data-pr=<?=
-				base64_encode($this->pr);?>&flag=<?=
-				$this->flag;?>&ms=<?=
-				$this->data['ms'];?>&page=<?=
-				$this->data['page'];?>&xls=<?=
-				md5('TRUE');?>&idef=<?=
-				base64_encode($this->data['idef']);?>&frp-policy=<?=
-				$this->data['policy'];?>&frp-nc=<?=
-				$this->data['nc'];?>&frp-user=<?=
-				$this->data['user'];?>&frp-client=<?=
-				$this->data['client'];?>&frp-dni=<?=
-				$this->data['dni'];?>&frp-comp=<?=
-				$this->data['comp'];?>&frp-ext=<?=
-				$this->data['ext'];?>&frp-date-b=<?=
-				$this->data['date-begin'];?>&frp-date-e=<?=
-				$this->data['date-end'];?>&frp-id-user=<?=
-				base64_encode($this->data['idUser']);?>&frp-approved-p=<?=
-				$this->data['approved'];?>&frp-pendant=<?=
-				$this->data['r-pendant'];?>&frp-state=<?=
-				$this->data['r-state'];?>&frp-free-cover=<?=
-				$this->data['r-free-cover'];?>&frp-extra-premium=<?=
-				$this->data['r-extra-premium'];?>&frp-issued=<?=
-				$this->data['r-issued'];?>&frp-rejected=<?=
-				$this->data['r-rejected'];?>&frp-canceled=<?=
-				$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
+					base64_encode($this->pr);?>&flag=<?=
+					$this->flag;?>&ms=<?=
+					$this->data['ms'];?>&page=<?=
+					$this->data['page'];?>&xls=<?=
+					md5('TRUE');?>&idef=<?=
+					base64_encode($this->data['idef']);?>&frp-policy=<?=
+					$this->data['policy'];?>&frp-nc=<?=
+					$this->data['nc'];?>&frp-user=<?=
+					$this->data['user'];?>&frp-client=<?=
+					$this->data['client'];?>&frp-dni=<?=
+					$this->data['dni'];?>&frp-comp=<?=
+					$this->data['comp'];?>&frp-ext=<?=
+					$this->data['ext'];?>&frp-date-b=<?=
+					$this->data['date-begin'];?>&frp-date-e=<?=
+					$this->data['date-end'];?>&frp-id-user=<?=
+					base64_encode($this->data['idUser']);?>&frp-approved-p=<?=
+					$this->data['approved'];?>&frp-pendant=<?=
+					$this->data['r-pendant'];?>&frp-state=<?=
+					$this->data['r-state'];?>&frp-free-cover=<?=
+					$this->data['r-free-cover'];?>&frp-extra-premium=<?=
+					$this->data['r-extra-premium'];?>&frp-issued=<?=
+					$this->data['r-issued'];?>&frp-rejected=<?=
+					$this->data['r-rejected'];?>&frp-canceled=<?=
+					$this->data['r-canceled'];?>&frp-warranty=<?=
+					$this->data['warranty'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php
 			}
 ?>

@@ -50,6 +50,7 @@ class ReportsGeneralAU{
 		$this->data['r-rejected'] = $this->cx->real_escape_string(trim($data['r-rejected']));
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
+		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
 		
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
@@ -179,7 +180,10 @@ class ReportsGeneralAU{
 		    sef.nombre as ef_nombre,
 		    sef.logo as ef_logo,
 		    sae.request,
-		    sae.anulado
+		    sae.anulado,
+		    sae.garantia,
+		    sae.facultativo,
+		    sae.emitir
 		from
 		    s_au_em_cabecera as sae
 		        inner join
@@ -232,17 +236,32 @@ class ReportsGeneralAU{
 		        and sae.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."' ";
 		if ($this->token === 'RP') {
 			// and sae.id_poliza like '%".$this->data['policy']."%'
-			$this->sql .= "and sae.emitir = true
-					and sae.anulado like '%".$this->data['r-canceled']."%'
-					";
+			$this->sql .= "and sae.anulado like '%" . $this->data['r-canceled'] . "%' ";
+			switch ($this->data['warranty']) {
+			case 1:
+				$this->sql .= 'and sae.garantia = true 
+					and sae.emitir = true ';
+				break;
+			case 0:
+				$this->sql .= 'and sae.garantia = true
+					and sae.emitir = false ';
+				break;
+			default:
+				$this->sql .= "and (sae.emitir = true 
+					or (sae.emitir = false 
+						and sae.garantia = true))
+				";
+				break;
+			}
 		} elseif($this->token === 'PA') {
 			$this->sql .= "and sae.emitir = false
-							and (sae.facultativo = false
-								or (sae.facultativo = true
-									and saf.aprobado = 'SI'
-									and sae.estado = ''))
-							and sae.anulado like '%".$this->data['r-canceled']."%'
-							";
+				and sae.garantia = true
+				and (sae.facultativo = false
+					or (sae.facultativo = true
+						and saf.aprobado = 'SI'
+						and sae.estado = ''))
+				and sae.anulado like '%".$this->data['r-canceled']."%'
+				";
 		} elseif($this->token === 'SP') {
 			$this->sql .= "and sae.emitir = false
 							and sae.aprobado = false
@@ -521,6 +540,11 @@ $(document).ready(function(e) {
             	Solicitud Enviada
             </td>
             <?php endif ?>
+            <?php if ($this->token === 'RP'): ?>
+            <td>
+            	Vinculado
+            </td>
+            <?php endif ?>
         </tr>
     </thead>
     <tbody>
@@ -533,6 +557,7 @@ $(document).ready(function(e) {
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$request_txt	= '';
 			$bg_req_ann		= '';
+			$warranty_txt	= '';
 
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
@@ -707,6 +732,19 @@ $(document).ready(function(e) {
 	            				$request_txt = 'SI';
 							}
 						}
+
+						if ($this->token === 'RP') {
+							if ((boolean)$this->row['garantia']) {
+								switch ((boolean)$this->row['emitir']) {
+								case true:
+									$warranty_txt = 'SI';
+									break;
+								case false:
+									$warranty_txt = 'NO';
+									break;
+								}
+							}
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row-au" rel="0"
             data-nc="<?=base64_encode($this->row['ide']);?>"
@@ -748,6 +786,11 @@ $(document).ready(function(e) {
             <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
             <td>
             	<?= $request_txt ;?>
+            </td>
+            <?php endif ?>
+            <?php if ($this->token === 'RP'): ?>
+            <td>
+            	<?= $warranty_txt ;?>
             </td>
             <?php endif ?>
         </tr>
@@ -795,7 +838,8 @@ $(document).ready(function(e) {
 					$this->data['r-extra-premium'];?>&frp-issued=<?=
 					$this->data['r-issued'];?>&frp-rejected=<?=
 					$this->data['r-rejected'];?>&frp-canceled=<?=
-					$this->data['r-canceled'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
+					$this->data['r-canceled'];?>&frp-warranty=<?=
+					$this->data['warranty'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php
 			}
 ?>

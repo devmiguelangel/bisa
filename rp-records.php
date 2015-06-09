@@ -150,6 +150,9 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	$arrData['r-request'] = '';
 	if(isset($_GET['frp-request'])) { $arrData['r-request'] = $_GET['frp-request'];}
 	//echo $arrData['r-canceled'];
+
+	$arrData['r-warranty'] = '';
+	if(isset($_GET['frp-warranty'])) { $arrData['r-warranty'] = $_GET['frp-warranty']; }
 	
 	$arrData['ms'] = $_GET['ms'];
 	$arrData['page'] = $_GET['page'];

@@ -183,8 +183,14 @@ if($rsEx->data_seek(0) === TRUE){
             <label class="lbl-cb"><input type="radio" id="frp-canceled-si" name="frp-canceled-p" value="1">&nbsp;SI</label>
 			<label class="lbl-cb"><input type="radio" id="frp-canceled-no" name="frp-canceled-p" value="0">&nbsp;NO</label>
             <label class="lbl-cb"><input type="radio" id="frp-canceled-both" name="frp-canceled-p" value="" checked>&nbsp;Todos</label>
-            
-            <label style="">Fecha: </label>
+
+            <label style="">Vinculados: </label>
+            <label class="lbl-cb"><input type="radio" id="frp-warranty-si" name="frp-warranty" value="1">&nbsp;SI</label>
+			<label class="lbl-cb"><input type="radio" id="frp-warranty-no" name="frp-warranty" value="0">&nbsp;NO</label>
+            <label class="lbl-cb"><input type="radio" id="frp-warranty-both" name="frp-warranty" value="2" checked>&nbsp;Todos</label>
+            <br>
+
+            <label style="width: au">Fecha: </label>
             <label style="width:auto;">desde: </label>
             <input type="text" id="frp-date-b" name="frp-date-b" value="" autocomplete="off" class="date" readonly>
             
