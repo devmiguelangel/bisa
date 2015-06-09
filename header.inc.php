@@ -389,7 +389,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 			} elseif ($user_type === 'PA') {
 ?>
 				<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_app_ok');?>" class="link-pr">
-					Solicitudes Preaprobadas
+					Vincular Operación
 				</a></li>
 <?php
 			}

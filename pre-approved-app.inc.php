@@ -11,7 +11,7 @@ switch ($product) {
 		$title = 'Desgravamen';
 		break;
 	case 'TRD':
-		$title = 'Todo Riesgo Domiciliario';
+		$title = 'Todo Riesgo';
 		break;
 	case 'TRM':
 		$title = 'Todo Riesgo Equipo Movil';
@@ -98,7 +98,7 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<h3 class="h3">Solicitudes Preaprobadas</h3>
+<h3 class="h3">Emisiones pendientes de vinculación</h3>
 <table class="rp-link-container">
 	<tr>
     	<td style="width:20%;">

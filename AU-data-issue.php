@@ -1059,9 +1059,9 @@ for($i = 0; $i < count($arr_traction); $i++){
 			<div class="content-input" style="width: auto;">
 				<input type="text" id="di-term" name="di-term" autocomplete="off" 
 					value="<?=$row['c_plazo'];?>" style="width:30px;" maxlength="" 
-					class="required number fbin" <?=$read_save;?>>
+					class="required number fbin" <?=$read_save . ' ' . $read_edit;?>>
 				<select id="di-type-term" name="di-type-term" 
-					class="required fbin " <?=$read_save;?> style="width: 132px;">
+					class="required fbin <?= $read_edit ;?>" <?=$read_save;?> style="width: 132px;">
 					<option value="">Seleccione...</option>
 					<?php foreach ($link->typeTerm as $key => $value): $selected = ''; ?>
 						<?php if ($key === $row['c_tipo_plazo']): $selected = 'selected'; ?>
