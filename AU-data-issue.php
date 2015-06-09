@@ -51,6 +51,10 @@ switch($flag){
 		$read_new = 'disabled';
 		$read_save = 'disabled';
 		$sw = 2;
+
+		if ($user_type === 'PA') {
+			$title_btn = 'Vincular';
+		}
 		break;
 	case md5('i-edit'):
 		$action = 'AU-issue-record.php';
