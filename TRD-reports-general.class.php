@@ -31,6 +31,11 @@ class ReportsGeneralTRD{
 		$this->data['nc'] = $this->cx->real_escape_string(trim($data['r-nc']));
 		if(empty($this->data['nc']) === TRUE) $this->data['nc'] = '%%';
 		$this->data['user'] = $this->cx->real_escape_string(trim($data['r-user']));
+		$this->data['subsidiary'] = $this->cx->real_escape_string(trim(base64_decode($data['r-subsidiary'])));
+		if (empty($this->data['subsidiary']) === true) {
+			$this->data['subsidiary'] = '%' . $this->data['subsidiary'] . '%';
+		}
+		$this->data['agency'] = $this->cx->real_escape_string(trim(base64_decode($data['r-agency'])));
 		$this->data['client'] = $this->cx->real_escape_string(trim($data['r-client']));
 		$this->data['dni'] = $this->cx->real_escape_string(trim($data['r-dni']));
 		$this->data['comp'] = $this->cx->real_escape_string(trim($data['r-comp']));
@@ -245,7 +250,9 @@ class ReportsGeneralTRD{
 	        and scl.ci like '%".$this->data['dni']."%'
 	        and scl.complemento like '%".$this->data['comp']."%'
 	        and scl.extension like '%".$this->data['ext']."%'
-	        and stre.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."' ";
+	        and stre.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."'
+	        and sdepu.id_depto like '" . $this->data['subsidiary'] . "'
+			and sag.id_agencia like '%" . $this->data['agency'] . "%' ";
 		if ($this->token === 'RG') {
 			// and stre.id_poliza like '%".$this->data['policy']."%'
 			$this->sql .= "

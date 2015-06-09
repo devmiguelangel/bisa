@@ -187,9 +187,13 @@ class SibasDB extends MySQLi
 		    su.id_usuario as u_id,
 		    su.usuario as u_usuario,
 		    su.nombre as u_nombre,
+		    su.cambio_password as cw,
 		    sut.tipo as u_tipo,
 		    sut.codigo as u_tipo_codigo,
-		    sdep.id_depto as u_depto
+		    sdep.id_depto as u_depto,
+		    sdep.departamento as u_nombre_depto,
+		    sa.id_agencia,
+		    sa.agencia
 		from
 		    s_usuario as su
 		        inner join
@@ -200,6 +204,8 @@ class SibasDB extends MySQLi
 		    s_usuario_tipo as sut ON (sut.id_tipo = su.id_tipo)
 				left join
 			s_departamento as sdep ON (sdep.id_depto = su.id_depto)
+				left join
+			s_agencia as sa ON (sa.id_agencia = su.id_agencia)
 		where
 		    su.id_usuario = "' . base64_decode($idUser) . '"
 		        and su.activado = true
@@ -218,6 +224,72 @@ class SibasDB extends MySQLi
 
 		return false;
 	}
+
+	public function getAgencySubsidiary($idef, $subsidiary)
+    {
+    	if (empty($subsidiary) === true) {
+    		$subsidiary = '%' . $subsidiary . '%';
+    	}
+    	
+    	$this->sql = 'select 
+    		sa.id_agencia,
+    		sa.agencia,  
+    		sa.codigo
+    	from 
+    		s_agencia as sa
+    			inner join
+    		s_departamento as sd ON (sd.id_depto = sa.id_depto)
+    			inner join
+    		s_entidad_financiera as sef ON (sef.id_ef = sa.id_ef)
+    	where 
+    		sd.id_depto like "' . $subsidiary . '"
+    			and sef.id_ef = "' . base64_decode($idef) . '" 
+    	order by sa.agencia asc 
+    	;';
+
+    	if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
+    		if ($this->rs->num_rows > 0) {
+    			return $this->rs;
+    		}
+    	}
+
+    	return false;
+    }
+
+    public function getUserSubsidiary($idef, $subsidiary, $agency = '', $user = '')
+    {
+    	if (empty($subsidiary) === true) {
+    		$subsidiary = '%' . $subsidiary . '%';
+    	}
+
+    	$this->sql = 'select 
+    		su.id_usuario,
+    		su.usuario,
+    		su.nombre 
+    	from 
+    		s_usuario as su
+    			inner join
+    		s_departamento as sd ON (sd.id_depto = su.id_depto)
+    			left join
+    		s_agencia as sa ON (sa.id_agencia = su.id_agencia)
+    			inner join 
+    		s_entidad_financiera as sef ON (sef.id_ef = sa.id_ef)
+    	where 
+    		sef.id_ef = "' . base64_decode($idef) . '"
+    			and sd.id_depto like "' . $subsidiary . '"
+    			and sa.id_agencia like "%' . $agency . '%"
+    			and su.id_usuario != "' . $user . '"
+    	;';
+    	//echo $this->sql;
+
+    	if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
+    		if ($this->rs->num_rows > 0) {
+    			return $this->rs;
+    		}
+    	}
+
+    	return false;
+    }
 
 	public function get_data_user($idUser, $idef) 
 	{

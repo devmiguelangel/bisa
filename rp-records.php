@@ -24,13 +24,25 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	
 	$arrData['idef'] = $_GET['idef'];
 	$arrData['r-nc'] = $_GET['frp-nc'];
-	$arrData['r-user'] = $_GET['frp-user'];
 	$arrData['r-client'] = $_GET['frp-client'];
 	$arrData['r-dni'] = $_GET['frp-dni'];
 	$arrData['r-comp'] = $_GET['frp-comp'];
 	$arrData['r-ext'] = $_GET['frp-ext'];
 	$arrData['r-date-b'] = $_GET['frp-date-b'];
 	$arrData['r-date-e'] = $_GET['frp-date-e'];
+	
+	$arrData['r-user'] = '';
+	if (isset($_GET['frp-user'])) {
+		$arrData['r-user'] = $_GET['frp-user'];
+	}
+	$arrData['r-subsidiary'] = '';
+	if (isset($_GET['frp-subsidiary'])) {
+		$arrData['r-subsidiary'] = $_GET['frp-subsidiary'];
+	}
+	$arrData['r-agency'] = '';
+	if (isset($_GET['frp-agency'])) {
+		$arrData['r-agency'] = $_GET['frp-agency'];
+	}
 
 	$arrData['token_an'] = '';
 	if (isset($_GET['token_an'])) {
