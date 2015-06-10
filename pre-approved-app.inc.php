@@ -168,8 +168,8 @@ if (($rsPo = $link->get_policy($_SESSION['idEF'], $product)) !== FALSE) {
 			}
 ?>
             </select>
+            <br>
 
-            <br>            
             <label>Cliente: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             

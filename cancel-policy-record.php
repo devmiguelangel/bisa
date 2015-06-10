@@ -88,7 +88,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 			tbl1.and_usuario = "' . $user . '", 
 			tbl1.motivo_anulado = "' . $obs . '", 
 			tbl1.fecha_anulado = curdate(),
-			tbl1.annulment_file = "' . $link->real_escape_string($files) . '"
+			tbl1.annulment_file = "' . $link->real_escape_string($files) . '",
+			tbl1.revert = false
 		where tbl1.id_emision = "' . $ide . '" 
 		;';
 	} elseif ($token_an === 'AS') {

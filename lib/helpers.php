@@ -24,6 +24,7 @@ function getSubAgencyUser($link, &$data_subsidiary, &$data_agency, &$data_user) 
 				);
 			break;
 		case 'PA':
+			RepFull:
 			$data_user[] = array(
 				'id' 	=> '', 
 				'user' 	=> '',
@@ -119,6 +120,12 @@ function getSubAgencyUser($link, &$data_subsidiary, &$data_agency, &$data_user) 
 					}
 				}
 			}
+			break;
+		case 'REP':
+			goto RepFull;
+			break;
+		case 'FAC':
+			goto RepFull;
 			break;
 		}
 	}

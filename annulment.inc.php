@@ -1,5 +1,8 @@
 <?php
-require_once('sibas-db.class.php');
+
+require_once 'sibas-db.class.php';
+require_once 'lib/helpers.php';
+
 $link = new SibasDB();
 
 $title = '';
@@ -35,6 +38,15 @@ case 'AR':
 	$title_rep = 'Desanulación de Polizas';
 	break;
 }
+
+$data_subsidiary 	= array();
+$data_agency 		= array();
+$data_user 			= array();
+
+if (isset($_SESSION['idUser']) && isset($_SESSION['idEF'])) {
+	getSubAgencyUser($link, $data_subsidiary, $data_agency, $data_user);
+}
+
 ?>
 <style type="text/css">
 .rp-pr-container{
@@ -139,10 +151,36 @@ $(document).ready(function(e) {
     	<form class="f-reports">
             <label>N° de Póliza: </label>
             <input type="text" id="frp-nc" name="frp-nc" value="" autocomplete="off">
+            <br>
+
+            <label>Sucursal: </label>
+            <select id="frp-subsidiary" name="frp-subsidiary">
+<?php
+			foreach ($data_subsidiary as $key => $value) {
+				echo '<option value="' . $value['id'] . '">' . $value['depto'] . '</option>';
+			}
+?>
+            </select>
+
+            <label style="width: auto;">Agencia: </label>
+            <select id="frp-agency" name="frp-agency">
+<?php
+			foreach ($data_agency as $key => $value) {
+				echo '<option value="' . $value['id'] . '">' . $value['agency'] . '</option>';
+			}
+?>
+            </select>
+
+            <label style="width: auto;">Usuario: </label>
+            <select id="frp-user" name="frp-user">
+<?php
+			foreach ($data_user as $key => $value) {
+				echo '<option value="' . $value['user'] . '">' . $value['name'] . '</option>';
+			}
+?>
+            </select>
+            <br>
     
-            <label>Usuario: </label>
-            <input type="text" id="frp-user" name="frp-user" value="" autocomplete="off">
-            <br>            
             <label>Cliente: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             
