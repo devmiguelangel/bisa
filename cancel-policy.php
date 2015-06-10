@@ -16,8 +16,6 @@ if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GE
 
 	$title = $title_btn = '';
 	if ($token_an === 'AN') {
-		AnnulmentLabel:
-
 		$title = 'reversión';
 		$title_btn = 'Revertir';
 	} elseif ($token_an === 'AS') {
@@ -25,7 +23,8 @@ if(isset($_GET['ide']) && isset($_GET['nc']) && isset($_GET['pr']) && isset($_GE
 		$title_btn = 'Solicitar';
 
 		if ($data_user['u_tipo_codigo'] === 'FAC') {
-			goto AnnulmentLabel;
+			$title = 'anulación';
+			$title_btn = 'Anular';
 		}
 	} elseif ($token_an === 'AR') {
 		$title = 'desanulación';

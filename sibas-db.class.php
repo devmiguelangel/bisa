@@ -1198,7 +1198,6 @@ class SibasDB extends MySQLi
 		
 		if ($token === 4 && ($product === 'AU' || $product === 'TRD')) {
 			if ($row['token_an'] === 'AN') {
-				AnnulmentLabel:
 				$arr_state['action'] = 'Revertir Póliza';
 			} elseif ($row['token_an'] === 'AS') {
 				if ((boolean)$row['anulado'] && $row['u_tipo_codigo'] === 'LOG') {
@@ -1210,8 +1209,8 @@ class SibasDB extends MySQLi
 				if ($row['u_tipo_codigo'] === 'LOG' && !(boolean)$row['request'] && !(boolean)$row['anulado']) {
 					$arr_state['action'] = 'Solicitar Anulación';
 				} elseif ($row['u_tipo_codigo'] === 'FAC' && (boolean)$row['request']) {
+					$arr_state['action'] = 'Anular Póliza';
 					$arr_state['obs'] = 2;
-					goto AnnulmentLabel;
 				}
 			} elseif ($row['token_an'] === 'AR') {
 				$arr_state['action'] = 'Desanular';
