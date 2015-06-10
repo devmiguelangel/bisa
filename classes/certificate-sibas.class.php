@@ -617,20 +617,30 @@ function confirmExit(){
 			. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
 			. '&cia=' . base64_encode($this->idcia) . '&category=' 
 			. base64_encode($this->category).$this->linkExtra . '" 
-			target="_blank" title="Exportar a PDF" class="link-cert">';
+			target="_blank" title="Exportar a PDF" class="link-cert">
+			  <img src="img/icon-pdf-01.png" width="50" height="50" alt="Exportar a PDF" />';
 	} else {
-		echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
-			. base64_encode($this->rowPo['id_emision']) . '&type=' 
-			. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
-			. '&category=' . base64_encode($this->category) . '" 
-			target="_blank" title="Exportar a PDF" class="link-cert">';
+		if($this->category !== 'VT'){
+			echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
+				. base64_encode($this->rowPo['id_emision']) . '&type=' 
+				. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
+				. '&category=' . base64_encode($this->category) . '" 
+				target="_blank" title="Exportar a PDF" class="link-cert">
+				  <img src="img/icon-pdf-01.png" width="50" height="50" alt="Exportar a PDF" />';
+		}
 	}
 ?>  
-	<img src="img/icon-pdf-01.png" width="50" height="50" alt="Exportar a PDF" />
+	
 </a>
-<a href="#" target="_blank" title="Enviar por Correo Electronico" id="send-mail" class="link-cert">
-	<img src="img/icon-mail-01.png" width="50" height="50" alt="Enviar por Correo Electronico" />
-</a>
+<?php
+if($this->category !== 'VT'){
+?>
+    <a href="#" target="_blank" title="Enviar por Correo Electronico" id="send-mail" class="link-cert">
+        <img src="img/icon-mail-01.png" width="50" height="50" alt="Enviar por Correo Electronico" />
+    </a>
+<?php
+}
+?>    
 <div class="loading-resp" id="response-cert">
 	<form id="view-form" name="view-form" action="" method="get" style="display:none;">
 		<input id="email" name="email" value="" type="text" class="required"/>

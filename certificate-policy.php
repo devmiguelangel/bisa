@@ -26,6 +26,7 @@ $titleCert3 = 'Formulario de Autorización';
 $titleCert4 = 'Formulario UIF';
 $titleCert5 = 'Anexo de Subrogación';
 $titleCert6 = 'Carta Sudamericana';
+$titleCert7 = 'Todos';
 
 if($token === TRUE){
 	$sqlIs = '';
@@ -137,6 +138,10 @@ if($token === TRUE){
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=base64_encode('CRT');?>" 
 	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
+
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('VT');?>" 
+	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert7;?></a>
 
 <?php if ((boolean)$rowIs['garantia'] && !(boolean)$rowIs['emitir']): ?>
 	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 80%;">

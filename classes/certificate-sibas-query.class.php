@@ -33,7 +33,10 @@ class CertificateQuery extends CertificateHtml {
 			break;
 		case 'CRT':  //Formulario Carta Sudamericana
 		    $this->get_query_ce();		
-			break;		
+			break;
+		case 'VT':  //Formulario Carta Sudamericana
+		    $this->get_query_ce();		
+			break;			
 		}
 		
 		if ($this->error === FALSE) {
@@ -1349,6 +1352,7 @@ class CertificateQuery extends CertificateHtml {
 			  sclie.actividad,
 			  sef.nombre as ef_nombre,
 			  sef.logo as logo_ef,
+			  sc.id_compania,
 			  sc.nombre as compania,
 			  sc.logo as logo_cia,
 			  su.nombre as u_nombre,
@@ -1589,6 +1593,7 @@ class CertificateQuery extends CertificateHtml {
 				sef.id_ef as idef,
 				sef.nombre as ef_nombre,
 				sef.logo as ef_logo,
+				scia.id_compania,
 				scia.nombre as cia_nombre,
 				scia.logo as cia_logo,
 				stre.no_emision,

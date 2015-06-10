@@ -1217,7 +1217,6 @@ class SibasDB extends MySQLi
 			}
 
 			$arr_state['link'] = 'cancel-policy.php?ide=' . base64_encode($row['ide']) 
-				. '&nc=' . base64_encode($row['r_no_emision']) 
 				. '&pr=' . base64_encode($product)
 				. '&token_an=' . base64_encode($row['token_an']);
 		}

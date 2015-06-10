@@ -20,6 +20,9 @@ require('includes-ce/formulario-ASR-TRD.inc.php');
 require('includes-ce/formulario-CRT-AU.inc.php');
 require('includes-ce/formulario-CRT-TRD.inc.php');
 
+require('includes-ce/formulario-VT-AU.inc.php');
+require('includes-ce/formulario-VT-TRD.inc.php');
+
 
 /**
  * 
@@ -70,7 +73,10 @@ class CertificateHtml{
 			break;
 		case 'CRT':  //Carta de Sudamericana
 		    $this->html = $this->get_html_crt();
-			break;	
+			break;
+		case 'VT':  //Visualizar todos los certificados
+		    $this->html = $this->get_html_vt();
+			break;		
 		}
 	}
 	
@@ -157,6 +163,18 @@ class CertificateHtml{
 		    break;
 		case 'TRD':
 		    return $this->set_html_trd_crt();
+		    break;	
+		} 
+	}
+	
+	//VER TODOS LOS CERTIFICADOS
+	private function get_html_vt(){
+		switch ($this->product){
+		case 'AU':
+		    return $this->set_html_au_vt();
+		    break;
+		case 'TRD':
+		    return $this->set_html_trd_vt();
 		    break;	
 		} 
 	}
@@ -303,6 +321,15 @@ class CertificateHtml{
 								$this->implant, $this->fac, $this->reason);
 	}
 	
+	//VER TODOS LOS CERTIFICADOS
+	private function set_html_au_vt() { //Automotores
+		return au_formulario_vt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason, $this->product);
+	}
+	private function set_html_trd_vt() { //Todo Riesgo Domiciliario
+		return trd_formulario_vt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason, $this->product);
+	}
 }
 
 ?>
