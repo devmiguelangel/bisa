@@ -188,7 +188,8 @@ class ReportsGeneralAU{
 		    sae.anulado,
 		    sae.garantia,
 		    sae.facultativo,
-		    sae.emitir
+		    sae.emitir,
+		    datediff(curdate(), sae.fecha_creacion) as days_link
 		from
 		    s_au_em_cabecera as sae
 		        inner join
@@ -546,6 +547,10 @@ $(document).ready(function(e) {
             <td>
             	Solicitud Enviada
             </td>
+        	<?php elseif ($this->token === 'PA' && $this->data_user['u_tipo_codigo'] === 'PA'): ?>
+        	<td>
+            	Días sin vincular
+            </td>
             <?php endif ?>
             <?php if ($this->token === 'RP'): ?>
             <td>
@@ -565,6 +570,7 @@ $(document).ready(function(e) {
 			$request_txt	= '';
 			$bg_req_ann		= '';
 			$warranty_txt	= '';
+			$bg_days_link	= '';
 
 			$nVh = (int)$this->row['noVh'];
 			$_PEN = (int)$this->row['pendiente'];
@@ -752,6 +758,10 @@ $(document).ready(function(e) {
 								}
 							}
 						}
+
+						if ((int)$this->row['days_link'] > 5) {
+	            			$bg_days_link = 'background: #f31d1d; color: #FFF;';
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row-au" rel="0"
             data-nc="<?=base64_encode($this->row['ide']);?>"
@@ -793,6 +803,10 @@ $(document).ready(function(e) {
             <?php if ($this->data['token_an'] === 'AS' && $this->data_user['u_tipo_codigo'] === 'LOG'): ?>
             <td>
             	<?= $request_txt ;?>
+            </td>
+            <?php elseif ($this->token === 'PA' && $this->data_user['u_tipo_codigo'] === 'PA'): ?>
+        	<td style="<?= $bg_days_link ;?>">
+            	<?= $this->row['days_link'] ;?>
             </td>
             <?php endif ?>
             <?php if ($this->token === 'RP'): ?>
