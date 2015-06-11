@@ -642,6 +642,9 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                 </tr>   
             </table>
+<?php
+          if((boolean)$row['garantia']===true){
+?>            
             <br>
             <span style="font-weight:bold; font-size:80%;">Requiere este Seguro subrogación de Derechos:   </span> 
             <table 
@@ -655,7 +658,10 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                </tr>
                <tr><td style="width:100%; border-bottom: 1px solid #333;" colspan="2">&nbsp;</td></tr>
-            </table>     
+            </table>
+<?php
+		  }
+?>                 
             <br><br><br><br><br>
             <div style="font-size: 80%; text-align:center;">  
                 • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 

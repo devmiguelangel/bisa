@@ -811,7 +811,6 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                 <tr>
                   <td style="width:50%; font-size:80%; text-align: justify; padding-right:5px; 
                   border:0px solid #333;" valign="top">
-                    <b>Coberturas</b><br>
                     <b>Sección I</b>
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                         <tr>
