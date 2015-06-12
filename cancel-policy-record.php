@@ -4,11 +4,11 @@ require __DIR__ . '/classes/Logs.php';
 require 'sibas-db.class.php';
 require 'PHPMailer/class.phpmailer.php';
 
-$arrTR = array(0 => 0, 1 => 'R', 2 => '');
+$arrTR = array(0 => 0, 1 => 'R', 2 => 'Error.');
 $log_msg = '';
 
 if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs']) 
-		&& isset($_GET['pr']) && isset($_GET['token_an'])){
+		&& isset($_GET['pr']) && isset($_GET['token_an'])) {
 	$link = new SibasDB();
 
 	$ide 	= $link->real_escape_string(trim(base64_decode($_GET['fp-ide'])));
@@ -145,6 +145,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				$sqlEm = 'select 
 					sem.id_emision as ide,
 					sem.no_emision,
+					sem.garantia,
 					su.usuario,
 					su.email,
 					su.nombre,
@@ -165,7 +166,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				    sem.revert_date,
 				    sur.usuario as usuario_r,
 				    sur.email as email_r,
-				    sur.nombre as nombre_r
+				    sur.nombre as nombre_r,
+				    sem.annulment_file
 				from
 					' . $table . ' as sem
 						inner join
@@ -190,6 +192,8 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				if(($rsEm = $link->query($sqlEm,MYSQLI_STORE_RESULT))){
 					$rowEm = $rsEm->fetch_array(MYSQLI_ASSOC);
 					$rsEm->free();
+
+					$client_files = json_decode($rowEm['annulment_file'], true);
 					
 					$mail = new PHPMailer();
 					$mail->FromName = $rowEm['ef_nombre'];
@@ -246,6 +250,23 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 					
 					$mail->Body = $body;
 					$mail->AltBody = $body;
+
+					if ($token_an === 'AS') {
+						if ($user_type === 'FAC') {
+							$mail->addAttachment('files/' . $client_files['file_annulment']);
+
+							if (!empty($client_files['file_return'])) {
+								$mail->addAttachment('files/' . $client_files['file_return']);
+							}
+						} elseif ($user_type === 'LOG') {
+							if (!(boolean)$rowEm['garantia']) {
+								$mail->addAttachment('files/' . $client_files['file_client']);
+							}
+
+							/*
+							*/
+						}
+					}
 					
 					if ($mail->send()) {
 						$arrTR[0] = 1;
@@ -265,18 +286,11 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 			} else {
 				$arrTR[2] = 'La ' . $title . ' no pudo ser procesada.';
 			}
-			echo json_encode($arrTR);
-			
-
-			
-			
-
 		}
 	}
-} else {
-	$arrTR[2] = 'Error.';
-	echo json_encode($arrTR);
-}	
+}
+
+echo json_encode($arrTR);
 
 function get_html_body($rowEm, $pr){
 	ob_start();
@@ -287,13 +301,13 @@ function get_html_body($rowEm, $pr){
 	</div><br>
     
     <div style="padding:5px 10px;">
-		<?=htmlentities($rowEm['title'] . ' de Poliza No. '.$pr.'-'.$rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
+		<?=htmlentities($rowEm['title'] . ' de Poliza No. ' . $pr . '-' . $rowEm['no_emision'], ENT_QUOTES, 'UTF-8');?>
 	</div>
     <div style="padding:5px 10px;">
-		<?=htmlentities('Usuario '.$rowEm['nombre'], ENT_QUOTES, 'UTF-8');?>
+		<?=htmlentities('Usuario ' . $rowEm['nombre'], ENT_QUOTES, 'UTF-8');?>
 	</div>
     <div style="padding:5px 10px;">
-		<?=htmlentities('Departamento '.$rowEm['departamento'], ENT_QUOTES, 'UTF-8');?>
+		<?=htmlentities('Departamento ' . $rowEm['departamento'], ENT_QUOTES, 'UTF-8');?>
 	</div><br><br>
 
 	<div style="padding:5px 10px; background:#006697; color:#FFFFFF;">
@@ -314,4 +328,5 @@ function get_html_body($rowEm, $pr){
 	$html = ob_get_clean();
 	return $html;
 }
+
 ?>
