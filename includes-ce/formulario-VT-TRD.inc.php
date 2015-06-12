@@ -120,7 +120,10 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
         font-family: Arial, Helvetica, sans-serif; color: #000000;">
 <?php
      $j = 0;
-	 $text = ''; 
+	 $text = '';
+	 
+	 $poliza = (92).''.plaza_trd_vt($row['u_depto']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);
+	  
      $num_titulares=$rsDt->num_rows;
 			
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
@@ -1246,7 +1249,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                 <tr>
                   <td style="width:100%; font-weight:bold; text-align:center; font-size: 90%;">
                      SEGURO DE TODO RIESGO DE DAÑOS A LA PROPIEDAD<br>
-                     POLIZA No<br>  
+                     POLIZA No&nbsp;<?=$poliza;?><br>  
                      CONDICIONES PARTICULARES<br>
                   </td> 
                 </tr>
@@ -3430,6 +3433,38 @@ function get_month_espanol_trd_vt($month){
 			break;
 		case 'December':
 			return 'Diciembre';
+			break;
+	}
+}
+
+function plaza_trd_vt($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
 			break;
 	}
 }

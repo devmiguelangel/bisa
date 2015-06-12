@@ -23,6 +23,8 @@ require('includes-ce/formulario-CRT-TRD.inc.php');
 require('includes-ce/formulario-VT-AU.inc.php');
 require('includes-ce/formulario-VT-TRD.inc.php');
 
+require('includes-ce/carta-anulacion-AU.inc.php');
+require('includes-ce/carta-anulacion-TRD.inc.php');
 
 /**
  * 
@@ -76,7 +78,10 @@ class CertificateHtml{
 			break;
 		case 'VT':  //Visualizar todos los certificados
 		    $this->html = $this->get_html_vt();
-			break;		
+			break;
+		case 'CA':  //Carta de Anulacion
+		    $this->html = $this->get_html_ca();
+			break;			
 		}
 	}
 	
@@ -175,6 +180,18 @@ class CertificateHtml{
 		    break;
 		case 'TRD':
 		    return $this->set_html_trd_vt();
+		    break;	
+		} 
+	}
+	
+	//CARTA DE ANULACION
+	private function get_html_ca(){
+		switch ($this->product){
+		case 'AU':
+		    return $this->set_html_au_ca();
+		    break;
+		case 'TRD':
+		    return $this->set_html_trd_ca();
 		    break;	
 		} 
 	}
@@ -318,7 +335,7 @@ class CertificateHtml{
 	}
 	private function set_html_trd_crt() { //Todo Riesgo Domiciliario
 		return trd_formulario_crt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
-								$this->implant, $this->fac, $this->reason);
+								$this->implant, $this->fac, $this->reason);					
 	}
 	
 	//VER TODOS LOS CERTIFICADOS
@@ -328,6 +345,16 @@ class CertificateHtml{
 	}
 	private function set_html_trd_vt() { //Todo Riesgo Domiciliario
 		return trd_formulario_vt($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason, $this->product);
+	}
+	
+	//CARTA DE ANULACION
+	private function set_html_au_ca() { //Automotores
+		return carta_anulacion_au($this->cx, $this->rowPo, $this->rsDt, $this->url, 
+								$this->implant, $this->fac, $this->reason, $this->product);
+	}
+	private function set_html_trd_ca() { //Todo Riesgo Domiciliario
+		return carta_anulacion_trd($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 								$this->implant, $this->fac, $this->reason, $this->product);
 	}
 }

@@ -11,6 +11,8 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
      $j = 0;
 	 $text = ''; 
      $num_titulares=$rsDt->num_rows;
+	 
+	 $poliza = (92).''.plaza_trd($row['u_depto']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);
 			
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
 		 if($row['tipo_cliente']=='J'){
@@ -39,7 +41,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 <tr>
                   <td style="width:100%; font-weight:bold; text-align:center; font-size: 90%;">
                      SEGURO DE TODO RIESGO DE DAÑOS A LA PROPIEDAD<br>
-                     POLIZA No<br>  
+                     POLIZA No&nbsp;<?=$poliza;?><br>  
                      CONDICIONES PARTICULARES<br>
                   </td> 
                 </tr>
@@ -857,6 +859,38 @@ function get_month_espanol_trd_em($month){
 			break;
 		case 'December':
 			return 'Diciembre';
+			break;
+	}
+}
+
+function plaza_trd($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
 			break;
 	}
 }

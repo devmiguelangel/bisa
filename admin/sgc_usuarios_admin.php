@@ -483,8 +483,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$encrip_pass=crypt_blowfish_bycarluys($_POST['txtPassword']);
 			$histories = setHistoryPassword($history_password, $encrip_pass);
 			$histories = $conexion->real_escape_string($histories); 
-			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
-			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
+			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, signature, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
+			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".base64_decode($_POST['dc-attached'])."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 			//echo $insert;
 			if($conexion->query($insert)===TRUE){
 				//INSERTAMOS LA ENTIDAD FINANCIERA
@@ -680,6 +680,11 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 							}
 					   });
 				   }
+				   if(vec[1]=='LOG' || vec[1]=='PA'){
+					  $('.add_file').css({'display':''}); 
+				   }else{
+					  $('.add_file').css({'display':'none'}); 
+				   }
 			   }else{
 				   $('#content-agency').fadeOut('slow');
 				   $('#departamento option[value=""]').prop('selected',true);
@@ -705,8 +710,9 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			  var nombre = $('#txtNombre').prop('value');
 			  var fonoagencia = $('#txtFonoAgencia').prop('value');
 			  var email = $('#txtEmail').prop('value');
+			  var dc_attached = $('#dc-attached').prop('value');
 			  var sum=0;
-			 
+			  
 			  var chek=0;
 			  $(this).find('.requerid').each(function(){
 				   if(tipousuario!=''){
@@ -783,8 +789,16 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					   $('#erroremail').html('ingrese correo electronico');
 				   }
 				   
-				  
-  
+				   if(vec[1]=='LOG' || vec[1]=='PA'){
+					   if(dc_attached!=''){
+						   $('#error_dcattached').slideUp('slow');
+					   }else{
+						  sum++; 
+						  $('#error_dcattached').slideDown('slow');
+						  $('#error_dcattached').html('archivo requerido');
+					   }
+				   }
+				   
 			  });
 			  if(sum==0){
 				  
@@ -864,6 +878,8 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 		   });
        });
     </script>
+    <script type="text/javascript" src="js/ajaxupload.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
  
  <?php
   //VARIABLES DE INICIO
@@ -1048,12 +1064,33 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						<span class="errorMessage" id="erroremail"></span>
 					</div>
 				</div>
+				<div class="da-form-row add_file" style="display:none;">
+					<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+					<div class="da-form-item large">
+					  <div class="content-input" style="width:auto;">
+						  <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+						  <div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+							 El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+                             El formato del archivo a subir debe ser JPG &oacute; PNG
+						  </div>
+						  <span class="errorMessage" id="erro_file"></span>';
+						  ?>
+						  <script type="text/javascript">
+						  set_ajax_upload('dc-attached', 'USI');
+						  </script>
+						  <?php
+					 echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+						  <div id="add_img"></div>';
+				  echo'</div>
+					</div>
+				</div>
 				<div class="da-button-row">
 					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
 					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario" disabled/>
 					<input type="hidden" id="identidadf" value="'.$regi1['id_ef'].'"/>
 					<input type="hidden" id="tipo_sesion" value="'.$_SESSION['tipo_sesion'].'"/>
 					<input type="hidden" id="id_usuario_sesion" value="'.$_SESSION['id_usuario_sesion'].'"/>
+					<input type="hidden" id="dc-attached" name="dc-attached" value="" class="requerid"/>
 					<input type="hidden" name="accionUsuarios" value="checkdatos"/>
 				</div>
 			</form>
@@ -1115,12 +1152,22 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $id_e
 					
 				}    
 				$fono_agencia = $conexion->real_escape_string($_POST['txtFonoAgencia']);
+				
+				if($tipouser_text=='LOG' || $tipouser_text=='PA'){
+					if(empty($_POST['signature'])){
+					   $signature = base64_decode($_POST['dc-attached']); 	
+					}else{
+					   $signature = base64_decode($_POST['signature']);	
+					}
+				}else{
+					$signature='';
+				}
 
 				$update = "UPDATE s_usuario as su 
 				           inner join s_ef_usuario as efu on (efu.id_usuario=su.id_usuario)
 						   SET su.nombre='".$nombre."',";
 				$update .= " su.id_tipo=".$id_tipo.", su.id_depto=".$depto_regional.", su.id_agencia=".$id_agencia.",";
-				$update .= " su.email='".$email."', su.fono_agencia='".$fono_agencia."' "
+				$update .= " su.email='".$email."', signature='".$signature."', su.fono_agencia='".$fono_agencia."' "
 				."WHERE su.id_usuario='".$idusuario."' and efu.id_ef='".$_POST['id_ef']."';";
 		
                  
@@ -1302,6 +1349,11 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 							}
 					   });
 				   }
+				   if(vec[1]=='LOG' || vec[1]=='PA'){
+					  $('.add_file').css({'display':''}); 
+				   }else{
+					  $('.add_file').css({'display':'none'}); 
+				   }
 			   }else{
 				   $('#content-agency').fadeOut('slow');
 				   $('#departamento option[value=""]').prop('selected',true);
@@ -1322,6 +1374,9 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  var nombre = $('#txtNombre').prop('value');
 			  var fonoagencia = $('#txtFonoAgencia').prop('value');
 			  var email = $('#txtEmail').prop('value');
+			  var signature = $('#signature').prop('value');
+			  var dc_attached = $('#dc-attached').prop('value');
+			  
 			  var sum=0;
 			  
 			  var chek=0;
@@ -1346,7 +1401,17 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 					   $('#errortipousuario').html('seleccione tipo de usuario');
 				   }
 				   
-				   
+				   if(vec[1]=='LOG' || vec[1]=='PA'){
+					   if(signature==''){
+						  if(dc_attached!=''){
+							 $('#error_dcattached').slideUp('slow');
+						  }else{
+							 sum++; 
+							 $('#error_dcattached').slideDown('slow');
+							 $('#error_dcattached').html('archivo requerido');
+						  }
+				       }
+				   }
 				   
 				   if(departamento!=''){
 					   $('#errordepartamento').hide('slow');
@@ -1408,7 +1473,8 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		       
 	   });
     </script>
- 
+    <script type="text/javascript" src="js/ajaxupload.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
  <?php
 	
 	//SEGURIDAD
@@ -1429,6 +1495,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 					su.nombre,
 					su.fono_agencia,
 					su.email,
+					su.signature,
 					su.id_agencia,
 					sup.pagina,
 					sut.codigo,
@@ -1653,13 +1720,52 @@ echo'<div class="da-panel" style="width:650px;">
 						<span class="errorMessage" id="erroremail"></span>
 					</div>
 				</div>';
-					
+				if(empty($fila['signature'])){
+				   if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || $fila['codigo']=='PA'){
+					  $display = '';
+				   }else{
+					  $display = 'display:none;'; 
+				   }	
+				   echo'<div class="da-form-row add_file" style="'.$display.'">
+							<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+							<div class="da-form-item large">
+							  <div class="content-input" style="width:auto;">
+								  <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+								  <div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+									 El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+									 El formato del archivo a subir debe ser JPG &oacute; PNG
+								  </div>
+								  <span class="errorMessage" id="erro_file"></span>';
+								  ?>
+								  <script type="text/javascript">
+								  set_ajax_upload('dc-attached', 'USI');
+								  </script>
+								  <?php
+							 echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+								  <div id="add_img"></div>';
+						  echo'</div>
+							</div>
+						</div>';
+				}else{
+					if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || $fila['codigo']=='PA'){
+						echo'<div class="da-form-row">
+								<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+								<div class="da-form-item large">
+								  <div class="content-input" style="width:auto;">
+								    <img src="../files/'.$fila['signature'].'" width="200"/>
+								  </div>
+								</div>
+							 </div>';
+					}
+				}	
 		   echo'<div class="da-button-row">
 					<input type="button" value="Cancelar" class="da-button gray left" id="btnCancelar"/>
 					<input type="submit" value="Guardar" class="da-button green" name="btnUsuario" id="btnUsuario"/>
 					<input type="hidden" value="'.base64_decode($_GET['id_ef_sesion']).'" id="identidadf"/>
 					<input type="hidden" id="tipo_sesion" value="'.$_SESSION['tipo_sesion'].'"/>
 					<input type="hidden" id="id_usuario_sesion" value="'.$_SESSION['id_usuario_sesion'].'"/>
+					<input type="hidden" id="signature" name="signature" value="'.base64_encode($fila['signature']).'" class="requerid"/>
+					<input type="hidden" id="dc-attached" name="dc-attached" value="" class="requerid"/>
 					<input type="hidden" name="accionEditar" value="checkdatos"/>
 				</div>
 			</form>

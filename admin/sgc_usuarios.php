@@ -337,7 +337,7 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 										<td>'.$regi['nombre_usuario'].'</td>
 										<td>'.$regi['email'].'</td>';
 								   echo'<td>';
-											if(($regi['codigo']!='REP') && ($regi['codigo']!='PA')){
+											if(($regi['codigo']!='REP') && ($regi['codigo']!='PA') && ($regi['codigo']!='FAC')){
 											  echo $regi['departamento'];
 											}else{
 												if(!empty($regi['departamento'])){
@@ -349,7 +349,7 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 								   echo'</td>';
 								   echo'<td>';
 										   if($regi['codigo']!='IMP'){
-											  if(($regi['codigo']!='REP') && ($regi['codigo']!='PA')){
+											  if(($regi['codigo']!='REP') && ($regi['codigo']!='PA') && ($regi['codigo']!='FAC')){
 											      echo $regi['agencia'];
 											  }else{
 												  if(!empty($regi['agencia'])){
@@ -467,7 +467,7 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			$id_tipo = $conexion->real_escape_string($vec2[0]);
 			$tipouser_text=$vec2[1];
 			if($tipouser_text!='IMP'){
-				if($tipouser_text=='REP' || $tipouser_text=='PA'){
+				if($tipouser_text=='REP' || $tipouser_text=='PA' || $tipouser_text=='FAC'){
 				   if(!empty($_POST['departamento'])){
 						$depto_regional = $_POST['departamento'];
 					}else{
@@ -530,8 +530,8 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 								 
 					}
 					//INSERTAMOS LOS DATOS DEL USUARIO
-					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
-					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
+					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, signature, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
+					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".base64_decode($_POST['dc-attached'])."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 			        echo $insert_us;
 					if($conexion->query($insert_us) === TRUE){ 
 					    $resultado=TRUE; 
@@ -856,6 +856,8 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 			  var fonoagencia = $('#txtFonoAgencia').prop('value');
 			  var email = $('#txtEmail').prop('value');
 			  var cargo = $('#txtCargo').prop('value');
+			  var dc_attached = $('#dc-attached').prop('value');
+			  
 			  var sum=0;
 			  var miarray = new Array();
 			  miarray=[ "cbIni", "cbFor", "cbCia", "cbDes", "cbPol", "cbCreaU", "cbEmail", "cbAgen", "cbAuto", "cbTrd", "cbTrem", "cbDepSuc", "cbTipc", "cbTh" ];
@@ -898,7 +900,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					   if(departamento!=''){
 						   $('#errordepartamento').hide('slow');
 					   }else{
-						   if((tipousuario!='REP') && (tipousuario!='PA')){
+						   if((tipousuario!='REP') && (tipousuario!='PA') && (tipousuario!='FAC')){
 							   sum++;
 							   $('#errordepartamento').show('slow');
 							   $('#errordepartamento').html('seleccione departamento');
@@ -936,6 +938,16 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 							  $('#error_newagency').slideDown('slow');
 							  $('#error_newagency').html('campo requerido');
 						   }
+					   }
+				   }
+				   
+				   if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='PA'){
+					   if(dc_attached!=''){
+						   $('#error_dcattached').slideUp('slow');
+					   }else{
+						  sum++; 
+						  $('#error_dcattached').slideDown('slow');
+						  $('#error_dcattached').html('archivo requerido');
 					   }
 				   }
 				   
@@ -1033,7 +1045,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					  $('#errorseleccion').hide('slow');
 				  }
 
-				  if(tipousuario=='REP' || tipousuario=='PA'){
+				  if(tipousuario=='REP' || tipousuario=='PA' || tipousuario=='FAC'){
 					    $('#departamento option').each(function(index) {
 							//var option = $(this).text().toLowerCase();
 							var option = $(this).prop('value');
@@ -1067,6 +1079,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					  $('#content-agency').fadeOut('slow');
 				  }
 				  $('#content-entidadf').fadeIn('slow');
+				  
 				  var dataString = 'tipousuario='+tipousuario+'&opcion=buscar_entidad';
 				   $.ajax({
 						 async: true,
@@ -1079,6 +1092,12 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 							  $('#entidad-loading').html(datareturn);
 						 }
 				   });
+				   
+				   if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='PA'){
+					  $('.add_file').css({'display':''}); 
+				   }else{
+					  $('.add_file').css({'display':'none'}); 
+				   }
 			  }else{
 				  $('#content-entidadf').fadeOut('slow');
 				  $('#departamento option[value=""]').prop('selected',true);
@@ -1117,7 +1136,8 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 
        });
     </script>
-
+    <script type="text/javascript" src="js/ajaxupload.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
  <?php
   //VARIABLES DE INICIO
 	$admiope='';
@@ -1395,6 +1415,26 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 						<span class="errorMessage" id="erroremail" lang="es"></span>
 					</div>
 				</div>
+				<div class="da-form-row add_file" style="display:none;">
+					<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+					<div class="da-form-item large">
+					  <div class="content-input" style="width:auto;">
+						  <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+						  <div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+							 El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+                             El formato del archivo a subir debe ser JPG &oacute; PNG
+						  </div>
+						  <span class="errorMessage" id="erro_file"></span>';
+						  ?>
+						  <script type="text/javascript">
+						  set_ajax_upload('dc-attached', 'USI');
+						  </script>
+						  <?php
+					 echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+						  <div id="add_img"></div>';
+				  echo'</div>
+					</div>
+				</div>
 				<div class="da-form-row" style="display:none;">
 					<label style="text-align:right;"><b><span lang="es">Cargo</span></b></label>
 					<div class="da-form-item large">
@@ -1437,6 +1477,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
 					<input type="hidden" id="tipo_sesion" value="'.$_SESSION['tipo_sesion'].'"/>
 					<input type="hidden" id="id_usuario_sesion" value="'.$_SESSION['id_usuario_sesion'].'"/>
 					<input type="hidden" name="accionUsuarios" value="checkdatos"/>
+					<input type="hidden" id="dc-attached" name="dc-attached" value="" class="requerid"/>
 				</div>
 			</form>
 		</div>
@@ -1808,14 +1849,14 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 					$id_tipo = $conexion->real_escape_string($vec2[0]);
 					$tipouser_text=$vec2[1];
 					if($tipouser_text!='IMP'){
-						 if(($tipouser_text!='REP') && ($tipouser_text!='PA')){
+						 if(($tipouser_text!='REP') && ($tipouser_text!='PA') && ($tipouser_text!='FAC')){
 							 $depto_regional = $_POST['departamento'];
 						 }else{
-							if(!empty($_POST['departamento'])){
+							 if(!empty($_POST['departamento'])){
 								$depto_regional = $_POST['departamento'];
-							}else{
+							 }else{
 								$depto_regional = 'null';
-							}
+							 }
 						 }
 					}else{
 						$depto_regional=$_POST['regional'];
@@ -1840,7 +1881,17 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 				}else{
 					$id_agencia = 'null';
 				}
-
+                
+				if($tipouser_text=='FAC' || $tipouser_text=='LOG' || $tipouser_text=='PA'){
+					if(empty($_POST['signature'])){
+					   $signature = base64_decode($_POST['dc-attached']); 	
+					}else{
+					   $signature = base64_decode($_POST['signature']);	
+					}
+				}else{
+					$signature='';
+				}
+				 
 				$fono_agencia = $conexion->real_escape_string($_POST['txtFonoAgencia']);
 
 
@@ -1848,7 +1899,7 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 				if($idusuario!=$id_usuario_sesion) {
 				   $update .= " id_tipo=".$id_tipo.", id_depto=".$depto_regional.", id_agencia=".$id_agencia.",";
 				}
-				$update .= " email='".$email."', fono_agencia='".$fono_agencia."', usuario='".$usuario."' "
+				$update .= " email='".$email."', signature='".$signature."', fono_agencia='".$fono_agencia."', usuario='".$usuario."' "
 				."WHERE id_usuario='".$idusuario."' LIMIT 1";
 				if($conexion->query($update) === TRUE){ $resultado=TRUE;}else{ $resultado=FALSE;}
 
@@ -2098,7 +2149,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		}
     </style>
 	<script type="text/javascript">
-       $(document).ready(function(e) {
+       $(document).ready(function() {
 		   $('#btnCancelar').click(function(){
 			   $(location).prop('href','index.php?l=usuarios');
 		   });
@@ -2110,7 +2161,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			   }else{
 				  $('.new-agency').css({"display":"none"});  
 			   } 
-			});
+		   });
 		    
 		   //SELECT DEPARTAMANTO - FUNCION QUE PERMITE BUSCAR LA AGENCIA DE UN
 		   //DETERMINADO DEPARTAMENTO O REGION
@@ -2244,6 +2295,8 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  var id_usuario_sesion = $('#idusuariosesion').prop('value');
 			  var tipo_sesion = $('#tipo_sesion').prop('value');
 			  var usuario_name =$('#txtUsuario').prop('value');
+			  var signature = $('#signature').prop('value');
+			  var dc_attached = $('#dc-attached').prop('value');
 
 			  var sum=0;
 			  var miarray = new Array();
@@ -2254,7 +2307,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  //alert('regional:'+regional);
 			  //alert('id_agencia = '+agencia)
 			  //alert('nueva agencia = '+nuevo_agencia);
-			  
+			  //alert(signature);
 			  var chek=0; var ds=0; var cell=0;
 			  $(this).find('.requerid').each(function(){
 				   if(idusuario!=id_usuario_sesion && tipo_sesion=='ROOT') {
@@ -2293,7 +2346,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						   if(departamento!=''){
 							   $('#errordepartamento').hide('slow');
 						   }else{
-							   if((tipousuario!='REP') && (tipousuario!='PA')){
+							   if((tipousuario!='REP') && (tipousuario!='PA') && (tipousuario!='FAC')){
 								   sum++;
 								   $('#errordepartamento').show('slow');
 								   $('#errordepartamento').html('seleccione departamento');
@@ -2336,7 +2389,19 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						   }
 					   }
 				   }
-				   
+				     
+				   if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='PA'){
+					   if(signature==''){
+						  if(dc_attached!=''){
+							 $('#error_dcattached').slideUp('slow');
+						  }else{
+							 sum++; 
+							 $('#error_dcattached').slideDown('slow');
+							 $('#error_dcattached').html('archivo requerido');
+						  }
+				       }
+				   }
+				   				   			   
 				   if(usuario!=''){
 					   $('#error_usuario').hide('slow');
 				   }else{
@@ -2377,11 +2442,11 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 						   $('#erroremail').show('slow');
 						   $('#erroremail').html('ingrese correo electronico');
 					   }
-				   }/*else{
+				   }else{
 					   sum++;
 					   $('#erroremail').show('slow');
 					   $('#erroremail').html('ingrese correo electronico');
-				   }*/
+				   }
 
 				   if(tipo_sesion=='ROOT' && idusuario!=id_usuario_sesion) {
 					   $.each( miarray, function( i, l ){
@@ -2429,6 +2494,8 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 					   $('#errorusuario').slideDown('slow');
 					   $('#errorusuario').html('campo requerido');
 				   }
+				   
+				   
 
 			  });
 			  if(sum==0){
@@ -2461,7 +2528,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 					  $('#errorseleccion').hide('slow');
 				  }
 
-				  if((tipousuario=='REP') || (tipousuario=='PA')){
+				  if((tipousuario=='REP') || (tipousuario=='PA') || (tipousuario=='FAC')){
 					    $('#departamento option').each(function(index) {
 							//var option = $(this).text().toLowerCase();
 							var option = $(this).prop('value');
@@ -2505,6 +2572,12 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 							  $('#entidad-loading').html(datareturn);
 						 }
 				   });
+				   
+				   if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='PA'){
+					  $('.add_file').css({'display':''}); 
+				   }else{
+					  $('.add_file').css({'display':'none'}); 
+				   }
 			  }else{
 				  $('#content-entidadf').fadeOut('slow');
 				  $('#departamento option[value=""]').prop('selected',true);
@@ -2568,7 +2641,8 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 
 	   });
     </script>
-
+    <script type="text/javascript" src="js/ajaxupload.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
  <?php
 
 	//SEGURIDAD
@@ -2589,6 +2663,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 					su.fono_agencia,
 					su.email,
 					su.id_agencia,
+					su.signature,
 					ut.tipo as tipo_usuario,
 					su.id_usuario,
 					ut.codigo
@@ -2909,7 +2984,7 @@ echo'<div class="da-panel" style="width:650px;">
 										  tipo_dp=1;";
 						$rsdep = $conexion->query($selectDep,MYSQLI_STORE_RESULT);
 						echo'<select name="departamento" id="departamento" class="requerid">';
-						      if(($fila['codigo']!='REP') && ($fila['codigo']!='PA')){
+						      if(($fila['codigo']!='REP') && ($fila['codigo']!='PA') && ($fila['codigo']!='FAC')){
 							     echo'<option value="" lang="es">Seleccione...</option>';
 							  }else{
 								 echo'<option value="" lang="es">Todos</option>';
@@ -3145,6 +3220,44 @@ echo'<div class="da-panel" style="width:650px;">
 						<span class="errorMessage" id="erroremail" lang="es"></span>
 					</div>
 				</div>';
+		        if(empty($fila['signature'])){
+				   if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || $fila['codigo']=='PA'){
+					  $display = '';
+				   }else{
+					  $display = 'display:none;'; 
+				   }	
+				   echo'<div class="da-form-row add_file" style="'.$display.'">
+							<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+							<div class="da-form-item large">
+							  <div class="content-input" style="width:auto;">
+								  <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+								  <div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+									 El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+									 El formato del archivo a subir debe ser JPG &oacute; PNG
+								  </div>
+								  <span class="errorMessage" id="erro_file"></span>';
+								  ?>
+								  <script type="text/javascript">
+								  set_ajax_upload('dc-attached', 'USI');
+								  </script>
+								  <?php
+							 echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+								  <div id="add_img"></div>';
+						  echo'</div>
+							</div>
+						</div>';
+				}else{
+					if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || $fila['codigo']=='PA'){
+						echo'<div class="da-form-row">
+								<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
+								<div class="da-form-item large">
+								  <div class="content-input" style="width:auto;">
+								    <img src="../files/'.$fila['signature'].'" width="200"/>
+								  </div>
+								</div>
+							 </div>';
+					}
+				}
 				if($tipo_sesion=='ROOT' && $idusuario<>$id_usuario_sesion) {
 					$selectEf="select
 								  id_eu,
@@ -3232,6 +3345,8 @@ echo'<div class="da-panel" style="width:650px;">
 					<input type="hidden" id="idusuario" value="'.$idusuario.'" class="requerid"/>
 					<input type="hidden" id="idusuariosesion" value="'.$id_usuario_sesion.'" class="requerid"/>
 					<input type="hidden" id="tipo_sesion" value="'.$tipo_sesion.'" class="requerid"/>
+					<input type="hidden" id="signature" name="signature" value="'.base64_encode($fila['signature']).'" class="requerid"/>
+					<input type="hidden" id="dc-attached" name="dc-attached" value="" class="requerid"/>
 				</div>
 			</form>
 		</div>

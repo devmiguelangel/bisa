@@ -211,10 +211,10 @@ class CertificateSibas extends CertificateQuery{
 					$this->namePdf = 'slip_cotizacion_DE.pdf';
 					break;
 				case 'AU':
-					$this->namePdf = 'slip_cotizacion_AU.pdf';
+					$this->namePdf = 'solicitud_cotizacion_AU.pdf';
 					break;
 				case 'TRD':
-					$this->namePdf = 'slip_cotizacion_TRD.pdf';
+					$this->namePdf = 'solicitud_cotizacion_TRD.pdf';
 					break;
 				case 'TRM':
 					$this->namePdf = 'slip_cotizacion_TRM.pdf';
@@ -262,7 +262,43 @@ class CertificateSibas extends CertificateQuery{
 					$this->namePdf = 'poliza_vida_grupo_DE.pdf';
 					break;
 				}
-			}
+			} elseif ($this->category === 'FAT') {
+				switch ($this->product) {
+				case 'AU':
+					$this->namePdf = 'formulario_de_autorizacion.pdf';
+					break;
+				case 'TRD':
+					$this->namePdf = 'formulario_de_autorizacion.pdf';
+					break;	
+				}
+			} elseif ($this->category === 'UIF') {
+				switch ($this->product) {
+				case 'AU':
+					$this->namePdf = 'formulario_UIF.pdf';
+					break;
+				case 'TRD':
+					$this->namePdf = 'formulario_UIF.pdf';
+					break;	
+				}
+			} elseif ($this->category === 'CRT') {
+				switch ($this->product) {
+				case 'AU':
+					$this->namePdf = 'carta_sudamericana.pdf';
+					break;
+				case 'TRD':
+					$this->namePdf = 'carta_sudamericana.pdf';
+					break;	
+				}
+			} elseif ($this->category === 'CA') {
+				switch ($this->product) {
+				case 'AU':
+					$this->namePdf = 'carta_de_anulacion.pdf';
+					break;
+				case 'TRD':
+					$this->namePdf = 'carta_de_anulacion.pdf';
+					break;	
+				}
+			} 
 			
 			$html2pdf = new HTML2PDF('P', $this->formatPdf, 'en', true, 'UTF-8', 2);
 			$html2pdf->WriteHTML($content);
@@ -341,59 +377,11 @@ class CertificateSibas extends CertificateQuery{
 			$html2pdf = new HTML2PDF('P', $this->formatPdf, 'en', true, 'UTF-8', 2);
 		    $html2pdf->WriteHTML($content);
 			
-			$attached = $html2pdf->Output('','S');
+			$attached = $html2pdf->Output('', 'S');
 			
-			$mail = new PHPMailer();
-			if (is_array($this->host) === TRUE) {
-				$mail->Host = $this->host['from'];
-				$mail->From = $this->host['from'];
-				$mail->FromName = $this->host['fromName'];
-			} else{
-				$mail->Host = $this->rowPo['u_email'];
-				$mail->From = $this->rowPo['u_email'];
-				$mail->FromName = $this->rowPo['ef_nombre'];
-			}
-			
-			$mail->Subject = $this->subject;
-			
-			if (is_array($this->address) === TRUE) {
-				for ($i = 0; $i < count($this->address); $i++) {
-					$mail->addAddress($this->address[$i]['address'], $this->address[$i]['name']);
-				}
-			}
+			return $attached;
 
-			$mail->addAddress($this->rowPo['u_email'], $this->rowPo['u_nombre']);
-		
-			if (($rsc = $this->email_copy()) !== FALSE) {
-				while($rowc = $rsc->fetch_array(MYSQLI_ASSOC)){
-					if ($this->fac === TRUE 
-						&& $this->implant === FALSE 
-						&& $rowc['producto'] === 'F' . $this->product) {
-						$mail->addAddress($rowc['correo'], $rowc['nombre']);
-					} else {
-						$mail->addCC($rowc['correo'], $rowc['nombre']);
-					}
-				}
-			}
-
-			//$mail->addCC($this->rowPo['u_email'], $this->rowPo['u_nombre']);
-			if (is_array($this->host) === TRUE) {
-				$mail->addCC($this->host['from'], $this->host['fromName']);
-			}
-			
-			//$mail->AddAttachment($attached,'Detalle-Certificado-Automotores.pdf','base64','application/pdf');
-			$mail->AddStringAttachment($attached, $this->title . '.pdf', 'base64', 'application/pdf');
-			
-			$mail->Body = $this->html;
-			$mail->AltBody = $this->html;
-			
-			if($mail->Send()){
-				return TRUE;
-			}else{
-				return FALSE;
-			}
-		}
-		catch(HTML2PDF_exception $e) {
+		} catch(HTML2PDF_exception $e) {
 		    //echo $e;
 		    return FALSE;
 		    exit;

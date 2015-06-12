@@ -91,7 +91,7 @@ function go_to_home(){
 
 function set_ajax_upload(field, product){
 	var action = '';
-	if(product === 'AU' || product === 'TRM' || product === 'DE' || product === 'US'){
+	if(product === 'AU' || product === 'TRM' || product === 'DE' || product === 'US' || product === 'USI'){
 		//action = 'upload-file.php?product='+product+'&attached='+attached;
 		action = 'upload-file.php?product='+product;
 	}
@@ -120,13 +120,17 @@ function set_ajax_upload(field, product){
 			window.clearInterval(interval);
 			
 			// Habilitar boton otra vez
-			//this.enable();
+			if(product==='USI') this.enable();
 			//alert(response)
 			result = response.split('|');
 			
 			if(parseInt(result[0]) === 1){
 				$('#'+field).prop('value', result[1]);
 				$('#dc-attached-copy').prop('value', result[1]);
+				if(product==='USI'){
+					$('#error_dcattached').slideUp('slow');
+					$('#add_img').html('<img src="../files/'+result[3]+'" width="200">');
+				}
                 button.text('Archivo Subido con Exito');
 			}else{
                 button.text('Adjuntar documentación nuevamente');

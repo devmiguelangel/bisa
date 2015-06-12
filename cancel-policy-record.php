@@ -3,6 +3,7 @@
 require __DIR__ . '/classes/Logs.php';
 require 'sibas-db.class.php';
 require 'PHPMailer/class.phpmailer.php';
+require 'classes/certificate-sibas.class.php';
 
 $arrTR = array(0 => 0, 1 => 'R', 2 => 'Error.');
 $log_msg = '';
@@ -145,6 +146,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				$sqlEm = 'select 
 					sem.id_emision as ide,
 					sem.no_emision,
+					sem.id_compania,
 					sem.garantia,
 					su.usuario,
 					su.email,
@@ -253,18 +255,28 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 
 					if ($token_an === 'AS') {
 						if ($user_type === 'FAC') {
-							$mail->addAttachment('files/' . $client_files['file_annulment']);
+							$file_extension = end(explode(".", $client_files['file_annulment']));
+							$mail->addAttachment('files/' 
+								. $client_files['file_annulment'], 'Anexo_Anulacion.' . $file_extension);
 
 							if (!empty($client_files['file_return'])) {
-								$mail->addAttachment('files/' . $client_files['file_return']);
+								$file_extension = end(explode(".", $client_files['file_return']));
+								$mail->addAttachment('files/' 
+									. $client_files['file_return'], 'Anexo_Devolucion.' . $file_extension);
 							}
 						} elseif ($user_type === 'LOG') {
 							if (!(boolean)$rowEm['garantia']) {
-								$mail->addAttachment('files/' . $client_files['file_client']);
+								$file_extension = end(explode(".", $client_files['file_client']));
+								$mail->addAttachment('files/' 
+									. $client_files['file_client'], 'Carta_Cliente.' . $file_extension);
 							}
 
-							/*
-							*/
+							$ce = new CertificateSibas($rowEm['ide'], null, 
+								$rowEm['id_compania'], $pr, 'ATCH', 'CA', 1, 0, false);
+
+							if (($attached = $ce->Output()) !== false) {
+								$mail->addStringAttachment($attached, 'Carta_Anulacion.pdf', 'base64', 'application/pdf');
+							}
 						}
 					}
 					

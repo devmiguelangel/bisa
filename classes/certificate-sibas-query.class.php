@@ -36,7 +36,10 @@ class CertificateQuery extends CertificateHtml {
 			break;
 		case 'VT':  //Formulario Carta Sudamericana
 		    $this->get_query_ce();		
-			break;			
+			break;
+		case 'CA':  //Formulario Carta Anulacion
+		    $this->get_query_ce();		
+			break;				
 		}
 		
 		if ($this->error === FALSE) {
@@ -1357,6 +1360,7 @@ class CertificateQuery extends CertificateHtml {
 			  sc.logo as logo_cia,
 			  su.nombre as u_nombre,
 			  su.email as u_email,
+			  su.signature as u_firma,
 			  sdu.departamento as u_departamento,
               aucot.no_cotizacion
 			from
@@ -1632,6 +1636,7 @@ class CertificateQuery extends CertificateHtml {
 				trdf.observacion as f_observacion,
 				su.nombre as u_nombre,
 				su.email as u_email,
+				su.signature as u_firma,
 				sdeu.departamento as u_depto,
 				(case scl.tipo
 					when 0 then 'N'

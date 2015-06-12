@@ -19,6 +19,12 @@ if(isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attach
 		$arr_type = array(
 				'application/vnd.ms-excel',
 				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+	}elseif($_GET['product'] === 'USI'){
+		$arr_type = array(
+				'image/jpeg', 
+				'image/png', 
+				'image/pjpeg', 
+				'image/x-png');
 	}
 	
 	$sw = FALSE;
@@ -37,11 +43,9 @@ if(isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attach
 	if($_FILES['attached']['error'] > 0){
 		echo '0|'.fileUploadErrorMsg($_FILES['attached']['error']);
 	}else{
-		if((20 * 1024 * 1024) >= $file_size 
-            && (in_array($file_type, $arr_type) === TRUE 
+		if((20 * 1024 * 1024) >= $file_size && (in_array($file_type, $arr_type) === TRUE 
                 || in_array($file_extension, $arr_extension))){
-            
-			$dir = 'files/';
+            if($_GET['product'] !== 'USI') $dir = 'files/'; else $dir = '../files/'; 
 			if(!is_dir($dir))
 				mkdir($dir, 0777);
 			else
@@ -71,7 +75,7 @@ if(isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attach
 				}
 				
 				if (move_uploaded_file($file_tmp, $dir . $file_new) === TRUE) {
-					echo '1|'.base64_encode($file_new).'|'.$attached;
+					echo '1|'.base64_encode($file_new).'|'.$attached.'|'.$file_new;
 				} else {
 					echo '0|El Archivo no pudo ser subido';
 				}

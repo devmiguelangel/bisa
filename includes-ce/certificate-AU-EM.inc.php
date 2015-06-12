@@ -11,6 +11,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 <?php
      $j = 0;
      $num_titulares = $rsDt->num_rows;
+	 
+	 $poliza = (91).''.plaza_au($row['u_departamento']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);
+	 
 	 $text = '';		
      while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
 		   if($row['tipo_cliente']=='J'){
@@ -68,7 +71,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 100%;">
                           <tr>
                             <td style="width:100%; text-align:left;">
-                               <b>POLIZA NRO.:</b>&nbsp; <?=$row['no_emision'];?> 
+                               <b>POLIZA NRO.:</b>&nbsp; <?=$poliza;?> 
                             </td>
                           </tr>
                           <tr>
@@ -1015,7 +1018,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                            Código ASFI: 109-910502-2007 12 311-2046<br>
                            R.A. 436/2010
                         </div>
-                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$poliza;?>	
                         <br><br>
                         <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>
                         <br><br>
@@ -1076,7 +1079,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                            CÓDIGOAPS:109-910502-2007 12 311 2052<br>
                            R.A. 136/11<br>
                         </div>
-                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$poliza;?>	
                         <br><br>
                         <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>
                         <br><br>
@@ -1236,7 +1239,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                            CÓDIGO SPVS No. 109-910502-2007 12 311 - 2015<br>
                            R.A. 014/08
                         </div>
-                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$poliza;?>	
                         <br><br>
                         <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>	
                         <br><br>
@@ -1290,7 +1293,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                            CÓDIGO SPVS No. 109-910502-2007 12 311 - 2017<br>
                            R.A. 014/08
                         </div>
-                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$row['no_emision'];?>	
+                        <b>PÓLIZA Nro.:</b>&nbsp;<?=$poliza;?>	
                         <br><br>
                         <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>	
                         <br><br>
@@ -1414,4 +1417,35 @@ function get_month_espanol($month){
 	}
 }
 
+function plaza_au($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
+			break;
+	}
+}
 ?>
