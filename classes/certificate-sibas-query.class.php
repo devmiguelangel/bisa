@@ -1712,6 +1712,7 @@ class CertificateQuery extends CertificateHtml {
 						strd.localidad as pr_localidad, 
 						strd.direccion as pr_direccion,
 						strd.valor_asegurado as pr_valor_asegurado,
+						strd.valor_contenido as pr_valor_contenido,
 						strd.prima as pr_prima,
 						strd.tasa as pr_tasa
 					from

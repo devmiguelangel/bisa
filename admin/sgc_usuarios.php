@@ -248,6 +248,7 @@ $selectUs="select
 			  su.email,
 			  su.id_depto,
 			  su.id_agencia,
+			  su.usuario as tipo_usuario,
 			  case su.activado
 				when 1 then 'activo'
 				when 0 then 'inactivo'
@@ -265,7 +266,7 @@ $selectUs="select
 			  left join s_departamento as dep on (dep.id_depto=su.id_depto)
 			  left join s_agencia as ag on (ag.id_agencia=su.id_agencia)
 			where
-			  ef.activado=1 and su.usuario!='root' ";
+			  ef.activado=1 ";
 			  if($tipo_user!=md5('ROOT')){
 					$selectUs.="and su.id_usuario='".$id_usuario_sesion."' ";
 			  }
@@ -318,6 +319,7 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 					  $num = $res->num_rows;
 					  if($num>0){
 							while($regi = $res->fetch_array(MYSQLI_ASSOC)){
+							  if($regi['tipo_usuario']!='root'){ 	
 								echo'<tr ';
 										 if($regi['activado']=='inactivo'){
 											echo'style="background:#FD2F18; color:#ffffff;"';
@@ -404,6 +406,7 @@ $res = $conexion->query($selectUs,MYSQLI_STORE_RESULT);
 										echo'
 										</td>
 									</tr>';
+							  }
 							}
 							$res->free();
 					  }else{

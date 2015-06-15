@@ -5,7 +5,7 @@ require __DIR__ . '/../nusoap/nusoap.php';
 class BisaWs
 {
 	private $soapAction = 'http://aqua.bisa.com/servicios/swissre/ws/';
-	private $wsdl = 'http://10.200.3.82:8810/AquaWar/soap/definition-sudprueba.wsdl';
+	private $wsdl = 'https://10.200.3.152/AquaWar/soap/definition-sudprueba.wsdl';
 	private 
 		$cx,
 		$client,
@@ -63,8 +63,10 @@ class BisaWs
 	{
 		$this->client = new nusoap_client($this->wsdl, false);
 
+		$client->authtype = 'certificate';
 		$this->client->soap_defencoding = 'UTF-8';
 		$this->client->setCredentials('sudprueba', 'HZ+hRGJnkiCK5bRsnnQcpw==');
+		$client->certRequest['sslcertfile'] = 'desarrolloBisa.cer';
 		
 		$this->err = $this->client->getError();
 

@@ -172,6 +172,11 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 			 $cliente_nitci = $row['cl_ci'].$row['cl_complemento'].' '.$row['cl_extension'];
 			 $cliente_direccion = $row['cl_direccion'];
 		 }
+		 $ubicacion_riesgo = $rowDt['pr_departamento'].' '.$rowDt['pr_zona'].' '.$rowDt['pr_localidad'].' '.$rowDt['pr_direccion'];
+		 $materia_seguro = $rowDt['pr_tipo_inmueble'].' '.$rowDt['pr_uso_inmueble'];
+		 $valor_total_riesgo = number_format($rowDt['pr_valor_asegurado']+$rowDt['pr_valor_contenido'], 2, '.', ',').' $us.';
+		 $valores_asegurados = 'Valor Asegurado: '.number_format($rowDt['pr_valor_asegurado'],2,'.',',').' $us.<br>'.'Valor Muebles y/o contenido: '.number_format($rowDt['pr_valor_contenido'],2,'.',',').' $us.';
+		 
 		 $j += 1;
 		 if($row['no_copia']>0){
 			 if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
@@ -1291,7 +1296,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
+                        <?=$cliente_nombre;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1302,7 +1307,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        PERSONAS O EMPRESAS (PRESTATARIOS) QUE RECIBEN UN CREDITO OTORGADO POR EL BANCO BISA S.A.
+                        <?=$cliente_nombre;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1313,7 +1318,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A DECLARACIONES DE CADA PRESTATARIO.
+                        <?=$ubicacion_riesgo;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1324,7 +1329,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DIRECCIÓN LEGAL DEL ASEGURADO
+                        <?=$cliente_direccion;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1335,7 +1340,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        BIENES INMUEBLES U OTRA PROPIEDAD QUE SEA OBJETO  DE GARANTÍA A FAVOR DEL CONTRATANTE.
+                        <?=$materia_seguro;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1346,7 +1351,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA PRESTATARIO.
+                        <?=$valor_total_riesgo;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1357,7 +1362,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A CADA OPERACIÓN QUE REALICE EL BANCO BISA CON CADA PRESTATARIO.
+                        <?=$valores_asegurados;?>
                       </td>  
                     </tr>
 <?php
@@ -1370,7 +1375,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
+                        <?=$cliente_nombre;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1381,7 +1386,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        PERSONAS O EMPRESAS QUE SON CLIENTES DEL BANCO BISA S.A.
+                        <?=$cliente_nombre;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1392,7 +1397,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A DECLARACIONES DE CADA CLIENTE.
+                        <?=$ubicacion_riesgo;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1403,7 +1408,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DIRECCIÓN LEGAL DEL ASEGURADO
+                        <?=$cliente_direccion;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1414,7 +1419,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        BIENES INMUEBLES U OTRA PROPIEDAD DE CLIENTES DEL BANCO BISA.
+                        <?=$materia_seguro;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1425,7 +1430,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A DECLARACIÓN QUE REALICE CADA CLIENTE.
+                        <?=$valor_total_riesgo;?>
                       </td>  
                     </tr>
                     <tr><td style="width:100%;" colspan="2">&nbsp;</td></tr>
@@ -1872,10 +1877,16 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                     EL ASEGURADO AUTORIZA A LA COMPAÑÍA DE SEGUROS A ENVIAR EL REPORTE A LA CENTRAL DE RIESGOS DEL MERCADO DE SEGUROS, ACORDE A LAS NORMATIVAS REGLAMENTARIAS DE LA AUTORIDAD DE FISCALIZACIÓN Y CONTROL DE PENSIONES Y SEGUROS - APS.<br>
                     EL ASEGURADO DEBERÁ PRESENTAR:
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+<?php
+                      if((boolean)$row['garantia']===true){
+?>                    
                          <tr>
                            <td style="width:2%; font-weight:bold;">o</td>
                            <td style="width:98%;">UNA COPIA DEL AVALÚO TÉCNICO DEL INMUEBLE A ASEGURAR, EN CASO QUE EL BIEN ASEGURADO SEA SUBROGADO.</td>
                          </tr>
+<?php
+					  }
+?>                         
                          <tr>
                            <td style="width:2%; font-weight:bold;">o</td>
                            <td style="width:98%;">FOTOCOPIA DEL DOCUMENTO DE IDENTIDAD Y/O NIT DEL ASEGURADO, SEGÚN CORRESPONDA.</td>
