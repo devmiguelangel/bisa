@@ -127,6 +127,8 @@ switch($sw){
 			"" as vh_cap_ton,
 			sad.no_asiento as vh_no_asiento,
 			sad.modalidad as vh_modalidad,
+			sad.plaza as vh_plaza,
+			sad.cilindrada as vh_displacement,
 			sad.valor_asegurado as vh_valor_asegurado,
 			sad.tasa as vh_tasa,
 			sad.prima as vh_prima,
@@ -219,6 +221,8 @@ if($sw !== 1){
 		sad.cap_ton as vh_cap_ton,
 		sad.no_asiento as vh_no_asiento,
 		sad.modalidad as vh_modalidad,
+		sad.plaza as vh_plaza,
+		sad.cilindrada as vh_displacement,
 		sad.valor_asegurado as vh_valor_asegurado,
 		sad.tasa as vh_tasa,
 		sad.prima as vh_prima,
@@ -986,8 +990,8 @@ for($i = 0; $i < count($arr_traction); $i++){
             <td>Chasis</td>
             <td>Cap/Ton</td>
             <td>N° Asientos</td>
-            <td>Valor Asegurado</td>
-            <td colspan="2">Prima</td>
+            <td>Cilindrada</td>
+            <td colspan="2">Plaza de Circulación</td>
         </tr>
         <tr valign="top">
         	<td>
@@ -1016,11 +1020,34 @@ for($i = 0; $i < count($arr_traction); $i++){
             		class="required number fbin" <?=$read_save;?>>
             </td>
             <td>	
+            	<input type="text" id="dv-<?=$k;?>-displacement" name="dv-<?=$k;?>-displacement" 
+            		autocomplete="off" value="<?=$row['vh_displacement'];?>" 
+            		class="required text-2 fbin" <?= $read_save ;?>>
+            </td>
+            <td colspan="2">
+				<select id="dv-<?=$k;?>-plaza" name="dv-<?=$k;?>-plaza" 
+					class="<?=$read_new . $read_edit;?> required fbin" <?= $read_save ;?>>
+	                <option value="">Seleccione...</option>
+	                <?php foreach ($link->plaza as $key => $value): $selected = ''; ?>
+	                	<?php if ($row['vh_plaza'] === $key): $selected = 'selected'; ?>
+	                	<?php endif ?>
+	                  	<option value="<?= $key ;?>" <?= $selected ;?>><?= $value ;?></option>';
+	                <?php endforeach ?>
+	            </select>
+			</td>
+        </tr>
+        <tr class="title-vh">
+            <td>Valor Asegurado</td>
+            <td>Prima</td>
+        	<td></td><td></td><td></td><td></td><td colspan="2"></td>
+        </tr>
+        <tr class="title-vh">
+            <td>
             	<span class="value">
             		<?=number_format($rowVh['vh_valor_asegurado'], 2, '.', ',');?> USD.
         		</span>
             </td>
-            <td colspan="2">
+            <td>
 <?php
 	$TASA = $rowVh['vh_tasa'];
 	$PRIMA = $rowVh['vh_prima'];
@@ -1032,7 +1059,8 @@ for($i = 0; $i < count($arr_traction); $i++){
                 	value="<?=base64_encode($TASA);?>" class="required">
                 <input type="hidden" id="dv-<?=$k;?>-premium" name="dv-<?=$k;?>-premium" 
                 	value="<?=base64_encode($PRIMA);?>" class="required">
-			</td>
+            </td>
+        	<td></td><td></td><td></td><td></td><td colspan="2"></td>
         </tr>
 <?php
 	}

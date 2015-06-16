@@ -217,7 +217,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                             </td>
                             <td style="width:13%; text-align:left; font-weight:bold;">Cilindrada:</td>
                             <td style="width:16%;">&nbsp;
-                                
+                                <?= $rowDt['cilindrada'] ;?>
                             </td>   
                           </tr>
                           <tr>
@@ -227,8 +227,11 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                    <td style="width:55%; text-align:left;">
                                       <b>Caracteristicas especiales:</b>
                                    </td>
-                                   <td style="width:45%; text-align:left;">
+                                   <td style="width:15%; text-align:left;">
                                       <b>Plaza de Circulación:</b>
+                                   </td>
+                                   <td style="width:30%; text-align:left;">
+                                      <?= $link->plaza[$rowDt['plaza']] ;?>
                                    </td>
                                  </tr>
                                </table> 

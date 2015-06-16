@@ -267,15 +267,18 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					} else { $arr_vh[$k]['idvh'] = uniqid('@S#2$2013'.$k, true); }
 					
 					$arr_vh[$k]['type-vehicle'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-type-vehicle'])));
+					$arr_vh[$k]['plaza'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-plaza']));
 					$arr_vh[$k]['category'] = '';
 					$arr_vh[$k]['make'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-make'])));
 					$arr_vh[$k]['model'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-model'])));
 					$arr_vh[$k]['year'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-year'])));
+					$arr_vh[$k]['displacement'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-displacement']));
 					$arr_vh[$k]['use'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-use'])));
 					$arr_vh[$k]['plate'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-plate']));
 					$arr_vh[$k]['traction'] = $link->real_escape_string(trim(base64_decode($_POST['dv-'.$k.'-traction'])));
 					$arr_vh[$k]['km'] = '';
 					
+					$arr_vh[$k]['color'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-color']));
 					$arr_vh[$k]['color'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-color']));
 					$arr_vh[$k]['motor'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-motor']));
 					$arr_vh[$k]['chassis'] = $link->real_escape_string(trim($_POST['dv-'.$k.'-chassis']));
@@ -417,8 +420,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						
 						$sqlVh = 'insert into s_au_em_detalle 
 						(id_vehiculo, id_emision, no_detalle, 
-							prefijo, prefix, id_tipo_vh, categoria,  
-							id_marca, id_modelo, anio, placa, uso, 
+							prefijo, prefix, id_tipo_vh, plaza, categoria,  
+							id_marca, id_modelo, anio, placa, cilindrada, uso, 
 							traccion, km, color, motor, chasis, 
 							cap_ton, no_asiento, modalidad, valor_asegurado, 
 							tasa, prima, facultativo, motivo_facultativo, 
@@ -447,10 +450,11 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							
 							$sqlVh .= '("'.$arr_vh[$k]['idvh'].'", "'.$ide.'",
 							'.$record_det.', "'.$prefix[0].'", '.$arrPrefix.', 
-							"'.$arr_vh[$k]['type-vehicle'].'", 
+							"'.$arr_vh[$k]['type-vehicle'].'", "'.$arr_vh[$k]['plaza'].'", 
 							"'.$arr_vh[$k]['category'].'", "'.$arr_vh[$k]['make'].'", 
 							"'.$arr_vh[$k]['model'].'", '.$arr_vh[$k]['year'].', 
-							"'.$arr_vh[$k]['plate'].'", "'.$arr_vh[$k]['use'].'", 
+							"'.$arr_vh[$k]['plate'].'", "'.$arr_vh[$k]['displacement'].'", 
+							"'.$arr_vh[$k]['use'].'",
 							"'.$arr_vh[$k]['traction'].'", "'.$arr_vh[$k]['km'].'", 
 							"'.$arr_vh[$k]['color'].'", "'.$arr_vh[$k]['motor'].'", 
 							"'.$arr_vh[$k]['chassis'].'", "'.$arr_vh[$k]['capton'].'", 
@@ -545,19 +549,33 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						$sqlVh = '';
 						for($k = 1; $k <= $nVh; $k++) {
 							$sqlVh .= 'update s_au_em_detalle 
-							set id_tipo_vh = "'.$arr_vh[$k]['type-vehicle'].'", 
-								categoria = "'.$arr_vh[$k]['category'].'", id_marca = "'.$arr_vh[$k]['make'].'", 
-								id_modelo = "'.$arr_vh[$k]['model'].'", anio = '.$arr_vh[$k]['year'].', 
-								placa = "'.$arr_vh[$k]['plate'].'", uso = "'.$arr_vh[$k]['use'].'", 
-								traccion = "'.$arr_vh[$k]['traction'].'", km = "'.$arr_vh[$k]['km'].'", 
-								color = "'.$arr_vh[$k]['color'].'", motor = "'.$arr_vh[$k]['motor'].'", 
-								chasis = "'.$arr_vh[$k]['chassis'].'", cap_ton = "'.$arr_vh[$k]['capton'].'", 
-								no_asiento = "'.$arr_vh[$k]['nseat'].'",modalidad = '.$arr_vh[$k]['modality'].',
-								valor_asegurado = '.$arr_vh[$k]['value-insured'].', tasa = '.$arr_vh[$k]['rate'].',
-								prima = '.$arr_vh[$k]['premium'].', facultativo = '.(int)$arr_vh[$k]['FAC'].',
-								motivo_facultativo = "'.$arr_vh[$k]['reason'].'", aprobado = '.(int)$arr_vh[$k]['approved'].',
+							set id_tipo_vh = "'.$arr_vh[$k]['type-vehicle'].'",
+								plaza =  "'.$arr_vh[$k]['plaza'].'",
+								categoria = "'.$arr_vh[$k]['category'].'", 
+								id_marca = "'.$arr_vh[$k]['make'].'", 
+								id_modelo = "'.$arr_vh[$k]['model'].'", 
+								anio = '.$arr_vh[$k]['year'].', 
+								placa = "'.$arr_vh[$k]['plate'].'", 
+								cilindrada = "'.$arr_vh[$k]['displacement'].'", 
+								uso = "'.$arr_vh[$k]['use'].'", 
+								traccion = "'.$arr_vh[$k]['traction'].'", 
+								km = "'.$arr_vh[$k]['km'].'", 
+								color = "'.$arr_vh[$k]['color'].'", 
+								motor = "'.$arr_vh[$k]['motor'].'", 
+								chasis = "'.$arr_vh[$k]['chassis'].'", 
+								cap_ton = "'.$arr_vh[$k]['capton'].'", 
+								no_asiento = "'.$arr_vh[$k]['nseat'].'",
+								modalidad = '.$arr_vh[$k]['modality'].',
+								valor_asegurado = '.$arr_vh[$k]['value-insured'].', 
+								tasa = '.$arr_vh[$k]['rate'].',
+								prima = '.$arr_vh[$k]['premium'].', 
+								facultativo = '.(int)$arr_vh[$k]['FAC'].',
+								motivo_facultativo = "'.$arr_vh[$k]['reason'].'", 
+								aprobado = '.(int)$arr_vh[$k]['approved'].',
 								leido = FALSE, vh_archivo = "'.$arr_vh[$k]['attached'].'"
-							where id_vehiculo = "'.$arr_vh[$k]['idvh'].'" and id_emision = "'.$ide.'" ;';
+							where 
+								id_vehiculo = "'.$arr_vh[$k]['idvh'].'" 
+									and id_emision = "'.$ide.'" ;';
 						}
 						
 						if($link->multi_query($sqlVh) === TRUE) {
