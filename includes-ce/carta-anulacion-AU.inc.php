@@ -70,7 +70,7 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 ?>                  
                      De nuestra consideración:<br><br>
 
-                     Mediante la presente solicitamos y autorizamos se proceda a la anulación del Seguro subrogado a favor del Banco Bisa N° <?=$poliza;?>, perteneciente al Cliente <?=$cliente_nombre;?> por motivo de XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.
+                     Mediante la presente solicitamos y autorizamos se proceda a la anulación del Seguro subrogado a favor del Banco Bisa N° <?=$poliza;?>, perteneciente al Cliente <?=$cliente_nombre;?> por motivo de <?= $row['request_mess'] ;?>.
                        <br><br> 
                      Agradeciendo su atención a la presente, nos despedimos atentamente.
 <?php
@@ -78,7 +78,7 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 ?>					
 	                 De mi consideración:<br><br>
 
-                     Mediante la presente, Yo, <?=$cliente_nombre;?> solicito se proceda a la anulación del Seguro N° <?=$poliza;?>, por motivo de XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.<br><br>
+                     Mediante la presente, Yo, <?=$cliente_nombre;?> solicito se proceda a la anulación del Seguro N° <?=$poliza;?>, por motivo de <?= $row['request_mess'] ;?>.<br><br>
                     
                      Agradeciendo su atención a la presente, me despido atentamente.
 
