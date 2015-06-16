@@ -658,7 +658,17 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    AL CONTADO O CON DEBITO EN CUENTA 
+<?php
+            if((boolean)$row['garantia']===true){
+?>                   
+                   DEBITO EN CUENTA 
+<?php
+			}else{
+?>                
+                   AL CONTADO O CON DEBITO EN CUENTA
+<?php
+			}
+?>    
                   </td>  
                 </tr>
                 <tr>

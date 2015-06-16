@@ -20,7 +20,7 @@ function carta_anulacion_trd($link, $row, $rsDt, $url, $implant, $fac, $reason =
 		 $cliente_nombre = $row['cl_nombre'].' '.$row['cl_paterno'].' '.$row['cl_materno'];
 		 $cliente_nitci = $row['cl_ci'].$row['cl_complemento'].' '.$row['cl_extension'];
 	 }
-	 $poliza = (92).''.plaza_trd_ca($row['u_depto']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);		
+	 $poliza = (92).''.plaza($row['u_depto']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);		
      $correlativo = str_pad($row['no_emision'],3,'0',STR_PAD_LEFT);
 	 $prefijo = prefijo($row['u_depto']);
 	ob_start();

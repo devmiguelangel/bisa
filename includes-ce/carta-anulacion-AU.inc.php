@@ -20,9 +20,9 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 		 $cliente_nombre = $row['nombre'].' '.$row['paterno'].' '.$row['materno'];
 		 $cliente_nitci = $row['ci'].$row['complemento'].' '.$row['extension'];
 	 }
-	 $poliza = (91).''.plaza_trd_ca($row['u_departamento']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);		
+	 $poliza = (91).''.plaza($row['u_departamento']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);		
      $correlativo = str_pad($row['no_emision'],3,'0',STR_PAD_LEFT);
-	 $prefijo = prefijo_au($row['u_departamento']);
+	 $prefijo = prefijo($row['u_departamento']);
 	 
 	ob_start();
 ?>
@@ -41,7 +41,7 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 </tr>
                 <tr>
                   <td style="width:100%; text-align:left; font-size: 90%;">
-                     La Paz, <?=get_date_format_ca_au($fecha_em)?><br>
+                     La Paz, <?=get_date_format_ca($fecha_em)?><br>
                      <?=$prefijo;?>-<?=$correlativo;?>/<?=$anio;?><br><br><br>
                      Señores<br>
                      <b>BISA SEGUROS Y REASEGUROS S.A.</b><br>
@@ -70,7 +70,7 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 ?>                  
                      De nuestra consideración:<br><br>
 
-                     Mediante la presente solicitamos y autorizamos se proceda a la anulación del Seguro subrogado a favor del Banco Bisa N° <?=$poliza;?>, perteneciente al Cliente <?=$cliente_nombre;?> por motivo de <?= $row['request_mess'] ;?>.
+                     Mediante la presente solicitamos y autorizamos se proceda a la anulación del Seguro subrogado a favor del Banco Bisa N° <?=$poliza;?>, perteneciente al Cliente <?=$cliente_nombre;?> por motivo de XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.
                        <br><br> 
                      Agradeciendo su atención a la presente, nos despedimos atentamente.
 <?php
@@ -78,7 +78,7 @@ function carta_anulacion_au($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 ?>					
 	                 De mi consideración:<br><br>
 
-                     Mediante la presente, Yo, <?=$cliente_nombre;?> solicito se proceda a la anulación del Seguro N° <?=$poliza;?>, por motivo de <?= $row['request_mess'] ;?>.<br><br>
+                     Mediante la presente, Yo, <?=$cliente_nombre;?> solicito se proceda a la anulación del Seguro N° <?=$poliza;?>, por motivo de XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.<br><br>
                     
                      Agradeciendo su atención a la presente, me despido atentamente.
 
@@ -195,6 +195,38 @@ function get_month_es_ca($month){
 			break;
 		case 'December':
 			return 'Diciembre';
+			break;
+	}
+}
+
+function plaza($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
 			break;
 	}
 }

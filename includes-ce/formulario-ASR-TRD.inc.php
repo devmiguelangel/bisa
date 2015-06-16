@@ -20,8 +20,10 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 	 }else{
 		$fecha_em = $row['fecha_creacion'];
 	 }
+	 $poliza = (91).''.plaza_trd_asr($row['u_depto']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);
 	 while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){ 
-	    $materia_seguro = $rowDt['pr_departamento'].' '.$rowDt['pr_tipo_inmueble'].' '.$rowDt['pr_uso_inmueble'].' '.$rowDt['pr_zona'].' '.$rowDt['pr_localidad'].' '.$rowDt['pr_direccion'];
+	    $materia_seguro = $rowDt['pr_tipo_inmueble'].' '.$rowDt['pr_uso_inmueble'];
+		$ubicacion_riesgo = $rowDt['pr_departamento'].' '.$rowDt['pr_zona'].' '.$rowDt['pr_localidad'].' '.$rowDt['pr_direccion'];
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -52,9 +54,9 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 <tr> 
                   <td style="width:100%; padding-bottom:4px;">
                     <b>Asegurado:</b>&nbsp;<?=$cliente_nombre;?><br>
-                    <b>Póliza Nro.:</b>&nbsp;<?=$row['no_emision'];?><br>
+                    <b>Póliza Nro.:</b>&nbsp;<?=$poliza;?><br>
                     <b>Materia del Seguro Subrogada:</b>&nbsp;<?=$materia_seguro;?><br>
-                    <b>Ubicación del Riesgo:</b><br>
+                    <b>Ubicación del Riesgo:</b>&nbsp;<?=$ubicacion_riesgo;?><br>
                     <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['ini_vigencia'];?> hasta <?=$row['fin_vigencia'];?><br>
                     <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                     <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
@@ -68,7 +70,7 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 </tr>   
                 <tr>
                   <td style="width:100%; padding-bottom:4px; text-align:justify;">
-                    Se deja constancia por el presente anexo, que a solicitud expresa de los tomadores y/o contratantes y/o asegurados, “EL ACREEDOR” será considerado como beneficiario hasta por el importe de su acreencia sin exceder la suma asegurada de la Póliza Nro. <?=$row['no_emision'];?>.
+                    Se deja constancia por el presente anexo, que a solicitud expresa de los tomadores y/o contratantes y/o asegurados, “EL ACREEDOR” será considerado como beneficiario hasta por el importe de su acreencia sin exceder la suma asegurada de la Póliza Nro. <?=$poliza;?>.
                     <br><br>
                     En consecuencia, el Asegurado no podrá ejercitar sus derechos, sino por intermedio del Acreedor.
                     <br><br>
@@ -134,6 +136,38 @@ function trd_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 <?php
 	$html = ob_get_clean();
 	return $html;
+}
+
+function plaza_trd_asr($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
+			break;
+	}
 }
 /*
 function get_date_format_fat_au($fecha){
