@@ -1362,7 +1362,8 @@ class CertificateQuery extends CertificateHtml {
 			  su.email as u_email,
 			  su.signature as u_firma,
 			  sdu.departamento as u_departamento,
-              aucot.no_cotizacion
+              aucot.no_cotizacion,
+              auec.request_mess
 			from
 			  s_au_em_cabecera as auec
 				  inner join
@@ -1665,7 +1666,8 @@ class CertificateQuery extends CertificateHtml {
 				scl.estado_civil as cl_estado_civil,
 				scl.ingreso_mensual,
 				scl.actividad,
-				scl.ejecutivo
+				scl.ejecutivo,
+				stre.request_mess
 			from
 				s_trd_em_cabecera as stre
 					inner join
