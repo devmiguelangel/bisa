@@ -154,7 +154,9 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 					su2.nombre as usuario_c,
 				    su2.email as email_c,
 					su2.nombre as nombre_c,
-					sdep.departamento,
+					if(sdep.departamento is not null, 
+						sdep.departamento, 
+						"Ninguno") as departamento,
 					sem.motivo_anulado,
 					sef.id_ef as idef,
 					sef.nombre as ef_nombre,
@@ -178,7 +180,7 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 					s_usuario as su ON (su.id_usuario = sem.and_usuario)
 						left join
 					s_usuario as sur ON (sur.id_usuario = sem.revert_user)
-						inner join
+						left join
 					s_departamento as sdep ON (sdep.id_depto = su.id_depto)
 						inner join 
 					s_entidad_financiera as sef ON (sef.id_ef = sem.id_ef)
@@ -191,106 +193,110 @@ if(isset($_GET['fp-ide']) && isset($_GET['idUser']) && isset($_GET['fp-obs'])
 				limit 0 , 1
 				;';
 				
-				if(($rsEm = $link->query($sqlEm,MYSQLI_STORE_RESULT))){
-					$rowEm = $rsEm->fetch_array(MYSQLI_ASSOC);
-					$rsEm->free();
+				if (($rsEm = $link->query($sqlEm,MYSQLI_STORE_RESULT)) !== false) {
+					if ($rsEm->num_rows === 1) {
+						$rowEm = $rsEm->fetch_array(MYSQLI_ASSOC);
+						$rsEm->free();
 
-					$client_files = json_decode($rowEm['annulment_file'], true);
-					
-					$mail = new PHPMailer();
-					$mail->FromName = $rowEm['ef_nombre'];
-					$mail->Subject = $rowEm['ef_nombre'] . ': ' . $title . ' Poliza No. ' . $pr . '-' . $rowEm['no_emision'];
-					
-					$email_from = '';
+						$client_files = json_decode($rowEm['annulment_file'], true);
+						
+						$mail = new PHPMailer();
+						$mail->FromName = $rowEm['ef_nombre'];
+						$mail->Subject = $rowEm['ef_nombre'] . ': ' . $title . ' Poliza No. ' . $pr . '-' . $rowEm['no_emision'];
+						
+						$email_from = '';
 
-					if ($token_an === 'AN' or ($token_an === 'AS' and $user_type === 'FAC')) {
-						$email_from = $rowEm['email'];
+						if ($token_an === 'AN' or ($token_an === 'AS' and $user_type === 'FAC')) {
+							$email_from = $rowEm['email'];
 
-						UserCot:
-						$mail->addAddress($rowEm['email_c'], $rowEm['nombre_c']);
-					} elseif ($token_an === 'AS' and $user_type === 'LOG') {
-						$email_from = $rowEm['email_c'];
-					} elseif ($token_an === 'AR') {
-						$email_from = $rowEm['email_r'];
-						goto UserCot;
-					}
+							UserCot:
+							$mail->addAddress($rowEm['email_c'], $rowEm['nombre_c']);
+						} elseif ($token_an === 'AS' and $user_type === 'LOG') {
+							$email_from = $rowEm['email_c'];
+						} elseif ($token_an === 'AR') {
+							$email_from = $rowEm['email_r'];
+							goto UserCot;
+						}
 
-					$mail->Host = $email_from;
-					$mail->From = $email_from;
+						$mail->Host = $email_from;
+						$mail->From = $email_from;
+						
+						// $mail->addCC($rowEm['email'], $rowEm['nombre']);
+						
+						$sqlc = 'select sc.correo, sc.nombre, sc.producto
+						from 
+							s_correo as sc
+								inner join 
+							s_entidad_financiera as sef ON (sef.id_ef = sc.id_ef)
+						where 
+							(sc.producto = "' . $pr . '" 
+									or sc.producto = "F' . $pr . '")
+								and sef.id_ef = "' . $rowEm['idef'] . '" 
+								and sef.activado = true
+						;';
 
-					// $mail->addCC($rowEm['email'], $rowEm['nombre']);
-					
-					$sqlc = 'select sc.correo, sc.nombre, sc.producto
-					from 
-						s_correo as sc
-							inner join 
-						s_entidad_financiera as sef ON (sef.id_ef = sc.id_ef)
-					where 
-						(sc.producto = "' . $pr . '" 
-								or sc.producto = "F' . $pr . '")
-							and sef.id_ef = "' . $rowEm['idef'] . '" 
-							and sef.activado = true
-					;';
-
-					if (($rsc = $link->query($sqlc, MYSQLI_STORE_RESULT)) !== false) {
-						if ($rsc->num_rows > 0) {
-							while ($rowc = $rsc->fetch_array(MYSQLI_ASSOC)) {
-								if ($token_an === 'AS' && $user_type === 'LOG' && $rowc['producto'] === 'F' . $pr) {
-									$mail->addAddress($rowc['correo'], $rowc['nombre']);
-								} else {
-									$mail->addCC($rowc['correo'], $rowc['nombre']);
+						if (($rsc = $link->query($sqlc, MYSQLI_STORE_RESULT)) !== false) {
+							if ($rsc->num_rows > 0) {
+								while ($rowc = $rsc->fetch_array(MYSQLI_ASSOC)) {
+									if ($token_an === 'AS' && $user_type === 'LOG' && $rowc['producto'] === 'F' . $pr) {
+										$mail->addAddress($rowc['correo'], $rowc['nombre']);
+									} else {
+										$mail->addCC($rowc['correo'], $rowc['nombre']);
+									}
 								}
 							}
 						}
-					}
-					
-					$rowEm['token_an'] 	= $token_an;
-					$rowEm['title']		= $title;
-					$rowEm['user_type']	= $user_type;
 
-					$body = get_html_body($rowEm, $pr);
-					
-					$mail->Body = $body;
-					$mail->AltBody = $body;
+						$rowEm['token_an'] 	= $token_an;
+						$rowEm['title']		= $title;
+						$rowEm['user_type']	= $user_type;
 
-					if ($token_an === 'AS') {
-						if ($user_type === 'FAC') {
-							$file_extension = end(explode(".", $client_files['file_annulment']));
-							$mail->addAttachment('files/' 
-								. $client_files['file_annulment'], 'Anexo_Anulacion.' . $file_extension);
+						$body = get_html_body($rowEm, $pr);
+						
+						$mail->Body = $body;
+						$mail->AltBody = $body;
 
-							if (!empty($client_files['file_return'])) {
-								$file_extension = end(explode(".", $client_files['file_return']));
+						if ($token_an === 'AS') {
+							if ($user_type === 'FAC') {
+								$file_extension = end(explode(".", $client_files['file_annulment']));
 								$mail->addAttachment('files/' 
-									. $client_files['file_return'], 'Anexo_Devolucion.' . $file_extension);
-							}
-						} elseif ($user_type === 'LOG') {
-							if (!(boolean)$rowEm['garantia']) {
-								$file_extension = end(explode(".", $client_files['file_client']));
-								$mail->addAttachment('files/' 
-									. $client_files['file_client'], 'Carta_Cliente.' . $file_extension);
-							}
+									. $client_files['file_annulment'], 'Anexo_Anulacion.' . $file_extension);
 
-							$ce = new CertificateSibas($rowEm['ide'], null, 
-								$rowEm['id_compania'], $pr, 'ATCH', 'CA', 1, 0, false);
+								if (!empty($client_files['file_return'])) {
+									$file_extension = end(explode(".", $client_files['file_return']));
+									$mail->addAttachment('files/' 
+										. $client_files['file_return'], 'Anexo_Devolucion.' . $file_extension);
+								}
+							} elseif ($user_type === 'LOG') {
+								if (!(boolean)$rowEm['garantia']) {
+									$file_extension = end(explode(".", $client_files['file_client']));
+									$mail->addAttachment('files/' 
+										. $client_files['file_client'], 'Carta_Cliente.' . $file_extension);
+								}
 
-							if (($attached = $ce->Output()) !== false) {
-								$mail->addStringAttachment($attached, 'Carta_Anulacion.pdf', 'base64', 'application/pdf');
+								$ce = new CertificateSibas($rowEm['ide'], null, 
+									$rowEm['id_compania'], $pr, 'ATCH', 'CA', 1, 0, false);
+
+								if (($attached = $ce->Output()) !== false) {
+									$mail->addStringAttachment($attached, 'Carta_Anulacion.pdf', 'base64', 'application/pdf');
+								}
 							}
 						}
-					}
+						
+						if ($mail->send()) {
+							$arrTR[0] = 1;
+							$arrTR[2] = 'La ' . $title . ' fue procesada exitosamente';
+
+							$log_msg = $pr . ' - ' . $title . ' Em. ' . $rowEm['no_emision'];
 					
-					if ($mail->send()) {
-						$arrTR[0] = 1;
-						$arrTR[2] = 'La ' . $title . ' fue procesada exitosamente';
+							$db = new Log($link);
+							$db->postLog(base64_encode($user), $log_msg);
 
-						$log_msg = $pr . ' - ' . $title . ' Em. ' . $rowEm['no_emision'];
-				
-						$db = new Log($link);
-						$db->postLog(base64_encode($user), $log_msg);
-
+						} else {
+							$arrTR[2] = 'La ' . $title . ' no pudo ser procesada !';
+						}
 					} else {
-						$arrTR[2] = 'La ' . $title . ' no pudo ser procesada !';
+						$arrTR[2] = 'La ' . $title . ' no pudo ser procesada. !';
 					}
 				} else {
 					$arrTR[2] = 'La ' . $title . ' no pudo ser procesada |';
