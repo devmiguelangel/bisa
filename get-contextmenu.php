@@ -412,7 +412,8 @@ if(isset($_GET['ide'])){
 		}
 		//echo $product;
 		$link->close();
-		if ($token !== 3 && $token !== 7) {
+
+		if ($token !== 3 && $token !== 7 && $token !== 0 && $token !== 1) {
 			$menu .= '<li><a href="certificate-detail.php?ide=' 
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . $category 
@@ -440,12 +441,12 @@ if(isset($_GET['ide'])){
 				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('CRT') 
 				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert6 . '</a></li>';
 			
-			if ($product === 'DE' && $modality === false) {
+			/*if ($product === 'DE' && $modality === false) {
 				$menu .= '<li><a href="certificate-detail.php?ide=' . base64_encode($ide) 
 					. '&pr=' . base64_encode($product) . '&type=' 
 					. base64_encode('PRINT') . '&category=' . $category2 
 					. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert2 . '</a></li>';
-			}
+			}*/
 		}
 		
 		if ($product !== 'DE') {
