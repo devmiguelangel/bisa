@@ -16,6 +16,7 @@ $record = 0;
 if ($token) {
 	require('sibas-db.class.php');
 	$link = new SibasDB();
+	$db = new Log($link);
 
 	if(isset($_POST['flag']) && isset($_POST['de-ide']) 
 			&& isset($_POST['ms']) && isset($_POST['page']) 
@@ -32,9 +33,12 @@ if ($token) {
 					sae.prima_total,
 					sae.fecha_emision,
 					sae.garantia,
-					sae.operacion
+					sae.operacion,
+					su.usuario as u_usuario
 				from 
 					s_au_em_cabecera as sae
+						inner join
+					s_usuario as su ON (su.id_usuario = sae.id_usuario)
 				where
 					sae.id_emision = "' . $ID . '"
 				limit 0, 1
@@ -56,6 +60,15 @@ if ($token) {
 							if (count($operation) > 0) {
 								$req = array(
 									'operacion' 	=> $operation['operacion'],
+								);
+
+								$req_lu = array(
+									'operacion' 	=> $operation['operacion'],
+									'garantia' 		=> $operation['garantia'],
+									'tipoSeguro' 	=> 'A',
+									'usuario' 		=> $row['u_usuario'],
+									'ip' 			=> $db->getUserIP(),
+									'accion' 		=> 'A'
 								);
 
 								$ws = new BisaWs($link, 'PP', $req);
@@ -82,15 +95,21 @@ if ($token) {
 								$arrAU[2] = 'LA PÓLIZA FUE EMITIDA CON EXITO !!!';
 
 								if ($ws_db && (boolean)$row['garantia']) {
-									$arrAU[2] = 'LA PÓLIZA FUE VINCULADA CON EXITO !!!';
+									$ws = new BisaWs($link, 'LU', $req_lu);
 
-									goto Issue2;
+									if ($ws->postLinkUp()) {
+										$arrAU[2] = 'LA PÓLIZA FUE VINCULADA CON EXITO !!!';
+										
+										goto Issue2;
+									} else {
+										$arrAU[0] = 0;
+										$arrAU[2] = 'LA PÓLIZA NO PUDO SER VINCULADA';
+									}
 								} else {
 									Issue2:
 																		
 									$log_msg = 'AU - Em. ' . $record . ' / Emision';
 
-									$db = new Log($link);
 									$db->postLog($_SESSION['idUser'], $log_msg);
 								}
 							} else {

@@ -35,6 +35,10 @@ class BisaWs
 			'method'	=> 'planDePagosRequest',
 			'var' 		=> array()
 		),
+		'LU' => array(
+			'method'	=> 'vinculacionRequest',
+			'var' 		=> array()
+		),
 	);
 
 	public 
@@ -210,6 +214,19 @@ class BisaWs
 					if (count($this->data) > 0) {
 						return true;
 					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public function postLinkUp()
+	{
+		if ($this->wsConnect()) {
+			if (count($this->data) > 0) {
+				if ($this->data['resultado']['codigo'] === '0000') {
+					return true;
 				}
 			}
 		}
