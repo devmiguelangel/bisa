@@ -2,6 +2,7 @@
 
 require __DIR__ . '/classes/Logs.php';
 require __DIR__ . '/classes/Collections.php';
+require __DIR__ . '/classes/BisaWs.php';
 require 'session.class.php';
 
 $session = new Session();
@@ -30,7 +31,8 @@ if ($token) {
 					sae.forma_pago, 
 					sae.prima_total,
 					sae.fecha_emision,
-					sae.garantia
+					sae.garantia.
+					sae.operacion
 				from 
 					s_au_em_cabecera as sae
 				where
@@ -46,9 +48,26 @@ if ($token) {
 						$record = $row['no_emision'];
 
 						$ws_db = $link->checkWebService($_SESSION['idEF'], 'AU');
+						$row['ws_db'] = $ws_db;
 						
 						if ($ws_db && (boolean)$row['garantia']) {
-							goto Issue;
+							$operation = json_decode($row['operacion'], true);
+
+							if (count($operation) > 0) {
+								$req = array(
+									'operacion' 	=> $operation['operacion'],
+								);
+
+								$ws = new BisaWs($link, 'PP', $req);
+
+								if ($ws->getPaymentPlan()) {
+									$row['data'] = $ws->data;
+								} else {
+									$arrAU[2] = 'No se pudo obtener el plan de pagos.';
+								}
+							} else {
+								$arrAU[2] = 'No se tiene una operacion asociada.';
+							}
 						} else {
 							Issue:
 

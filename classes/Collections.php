@@ -13,7 +13,8 @@ class Collection
 		$no_transaction = 0,
 		$fecha_trans 	= '',
 		$monto_trans 	= 0,
-		$cashed 		= 0
+		$cashed 		= 0,
+		$ws_token		= false
 		;
 
 	public
@@ -88,6 +89,11 @@ class Collection
 			$this->prima = $this->row['prima_total'];
 			break;
 		}
+		
+		if ($this->row['ws_db'] && (boolean)$this->row['garantia']) {
+			$nc = count($this->row['data']);
+			$this->ws_token = true;
+		}
 
 		$idc = date('U');
 
@@ -103,6 +109,11 @@ class Collection
 				$this->fecha_trans 		= '';
 				$this->monto_trans 		= 0;
 				$this->cashed 			= 0;
+			}
+
+			if ($this->ws_token) {
+				$fecha_cuota = $this->row['data'][$i - 1]['fecVctoCuota'];
+				$this->prima = $this->row['data'][$i - 1]['prima'];
 			}
 
 			$queryset .= '

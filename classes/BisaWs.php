@@ -5,7 +5,7 @@ require __DIR__ . '/../nusoap/nusoap.php';
 class BisaWs
 {
 	private $soapAction = 'http://aqua.bisa.com/servicios/swissre/ws/';
-	private $wsdl = 'https://10.200.3.152/AquaWar/soap/definition-sudprueba.wsdl';
+	private $wsdl = 'https://10.200.3.152/AquaWar/soap/definition-sudamericana.wsdl';
 	private 
 		$cx,
 		$client,
@@ -28,7 +28,11 @@ class BisaWs
 			'var' 		=> array()
 		),
 		'WD' => array(
-			'method'	=> 'operacionesyGarantiasRequest',
+			'method'	=> 'operacionesYGarantiasRequest',
+			'var' 		=> array()
+		),
+		'PP' => array(
+			'method'	=> 'planDePagosRequest',
 			'var' 		=> array()
 		),
 	);
@@ -44,10 +48,9 @@ class BisaWs
 		$this->op = $op;
 		$this->method[$this->op]['var'] = $req;
 
-		$this->message = "<soapenv:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
-			xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+		$this->message = "<soapenv:Envelope
 			xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' 
-			xmlns:ws='http://aqua.bisa.com/servicios/swissre/ws'>
+			xmlns:ws='http://aqua.bisa.com/servicios/seguros/sudamericana/ws'>
 			<soapenv:Header/>
 			<soapenv:Body>
 				<ws:" . $this->method[$this->op]['method'] . ">";
@@ -63,10 +66,10 @@ class BisaWs
 	{
 		$this->client = new nusoap_client($this->wsdl, false);
 
-		$client->authtype = 'certificate';
+		$this->client->authtype = 'certificate';
 		$this->client->soap_defencoding = 'UTF-8';
-		$this->client->setCredentials('sudprueba', 'HZ+hRGJnkiCK5bRsnnQcpw==');
-		$client->certRequest['sslcertfile'] = 'desarrolloBisa.cer';
+		$this->client->setCredentials('sudamericana', 'sudamericana');
+		$this->client->certRequest['sslcertfile'] = 'desarrolloBisa.cer';
 		
 		$this->err = $this->client->getError();
 
@@ -93,9 +96,11 @@ class BisaWs
 	public function getDataCustomer()
 	{
 		if ($this->wsConnect()) {
-			if (count($this->data) > 2) {
+			$this->data = $this->data['cliente'];
+
+			if (!empty($this->data)) {
 				$aux = $this->data;
-			
+				
 				foreach ($aux as $key => $value) {
 					$this->data[$key] = trim($value);
 				}
@@ -131,18 +136,22 @@ class BisaWs
 	public function getDataAccount()
 	{
 		if ($this->wsConnect()) {
-			$accounts = $this->data;
-			$this->data = array();
+			$this->data = $this->data['cuentas'];
 
-			if (is_array($accounts)) {
-				foreach ($accounts['cuenta'] as $key => $value) {
-					if (is_array($value)) {
-						$value['account'] = serialize($value);
-						$this->data[] = $value;
-					} else {
-						$accounts['cuenta']['account'] = serialize($accounts['cuenta']);
-						$this->data[] = $accounts['cuenta'];
-						break;
+			if (!empty($this->data)) {
+				$accounts = $this->data;
+				$this->data = array();
+
+				if (is_array($accounts)) {
+					foreach ($accounts['cuenta'] as $key => $value) {
+						if (is_array($value)) {
+							$value['account'] = serialize($value);
+							$this->data[] = $value;
+						} else {
+							$accounts['cuenta']['account'] = serialize($accounts['cuenta']);
+							$this->data[] = $accounts['cuenta'];
+							break;
+						}
 					}
 				}
 			}
@@ -152,24 +161,60 @@ class BisaWs
 	public function getDataOperation()
 	{
 		if ($this->wsConnect()) {
-			$ops = $this->data;
-			$this->data = array();
+			$this->data = $this->data['operacionesYGarantias'];
 
-			if (is_array($ops)) {
-				foreach ($ops['operacga'] as $key => $value) {
-					if (is_array($value)) {
-						$value['moneda'] = $this->currency[$value['moneda']];
-						$value['opperation'] = serialize($value);
-						$this->data[] = $value;
-					} else {
-						$ops['operacga']['moneda'] = $this->currency[$ops['operacga']['moneda']];
-						$ops['operacga']['opperation'] = serialize($ops['operacga']);
-						$this->data[] = $ops['operacga'];
-						break;
+			if (!empty($this->data)) {
+				$ops = $this->data;
+				$this->data = array();
+
+				if (is_array($ops)) {
+					foreach ($ops['registro'] as $key => $value) {
+						if (is_array($value)) {
+							$value['moneda'] = $this->currency[$value['moneda']];
+							$value['opperation'] = serialize($value);
+							$this->data[] = $value;
+						} else {
+							$ops['registro']['moneda'] = $this->currency[$ops['registro']['moneda']];
+							$ops['registro']['opperation'] = serialize($ops['registro']);
+							$this->data[] = $ops['registro'];
+							break;
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	public function getPaymentPlan()
+	{
+		if ($this->wsConnect()) {
+			$this->data = $this->data['plan'];
+
+			if (!empty($this->data)) {
+				$payment_plan = $this->data;
+				$this->data = array();
+
+				if (is_array($payment_plan)) {
+					foreach ($payment_plan['pago'] as $key => $value) {
+						if (is_array($value)) {
+							$value['payment_plan'] = serialize($value);
+							$this->data[] = $value;
+						} else {
+							$payment_plan['pago']['payment_plan'] = serialize($payment_plan['pago']);
+							$this->data[] = $payment_plan['pago'];
+							break;
+						}
+					}
+
+					if (count($this->data) > 0) {
+						return true;
 					}
 				}
 			}
 		}
+
+		return false;
 	}
 
 }
