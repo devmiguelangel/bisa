@@ -31,7 +31,7 @@ if ($token) {
 					sae.forma_pago, 
 					sae.prima_total,
 					sae.fecha_emision,
-					sae.garantia.
+					sae.garantia,
 					sae.operacion
 				from 
 					s_au_em_cabecera as sae
@@ -62,6 +62,7 @@ if ($token) {
 
 								if ($ws->getPaymentPlan()) {
 									$row['data'] = $ws->data;
+									goto Issue;
 								} else {
 									$arrAU[2] = 'No se pudo obtener el plan de pagos.';
 								}
@@ -80,10 +81,18 @@ if ($token) {
 									. '&ide=' . base64_encode($ID);
 								$arrAU[2] = 'LA PÓLIZA FUE EMITIDA CON EXITO !!!';
 
-								$log_msg = 'AU - Em. ' . $record . ' / Emision';
+								if ($ws_db && (boolean)$row['garantia']) {
+									$arrAU[2] = 'LA PÓLIZA FUE VINCULADA CON EXITO !!!';
 
-								$db = new Log($link);
-								$db->postLog($_SESSION['idUser'], $log_msg);
+									goto Issue2;
+								} else {
+									Issue2:
+																		
+									$log_msg = 'AU - Em. ' . $record . ' / Emision';
+
+									$db = new Log($link);
+									$db->postLog($_SESSION['idUser'], $log_msg);
+								}
 							} else {
 								$arrAU[2] = $collection->mess;
 							}

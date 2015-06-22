@@ -2,6 +2,7 @@
 
 require __DIR__ . '/classes/Logs.php';
 require __DIR__ . '/classes/Collections.php';
+require __DIR__ . '/classes/BisaWs.php';
 require 'session.class.php';
 
 $session = new Session();
@@ -25,16 +26,17 @@ if ($token) {
 
 			if (empty($ID) === false) {
 				$sql = 'select 
-					sae.id_emision as ide,
-					sae.no_emision,
-					sae.forma_pago, 
-					sae.prima_total,
-					sae.fecha_emision,
-					sae.garantia
+					stre.id_emision as ide,
+					stre.no_emision,
+					stre.forma_pago, 
+					stre.prima_total,
+					stre.fecha_emision,
+					stre.garantia,
+					stre.operacion
 				from 
-					s_trd_em_cabecera as sae
+					s_trd_em_cabecera as stre
 				where
-					sae.id_emision = "' . $ID . '"
+					stre.id_emision = "' . $ID . '"
 				limit 0, 1
 				;';
 
@@ -46,9 +48,27 @@ if ($token) {
 						$record = $row['no_emision'];
 
 						$ws_db = $link->checkWebService($_SESSION['idEF'], 'TRD');
+						$row['ws_db'] = $ws_db;
 						
 						if ($ws_db && (boolean)$row['garantia']) {
-							goto Issue;
+							$operation = json_decode($row['operacion'], true);
+
+							if (count($operation) > 0) {
+								$req = array(
+									'operacion' 	=> $operation['operacion'],
+								);
+
+								$ws = new BisaWs($link, 'PP', $req);
+
+								if ($ws->getPaymentPlan()) {
+									$row['data'] = $ws->data;
+									goto Issue;
+								} else {
+									$arrAU[2] = 'No se pudo obtener el plan de pagos.';
+								}
+							} else {
+								$arrAU[2] = 'No se tiene una operacion asociada.';
+							}
 						} else {
 							Issue:
 
@@ -61,10 +81,18 @@ if ($token) {
 									. '&ide=' . base64_encode($ID);
 								$arrTR[2] = 'LA PÓLIZA FUE EMITIDA CON EXITO !!!';
 
-								$log_msg = 'TRD - Em. ' . $record . ' / Emision';
+								if ($ws_db && (boolean)$row['garantia']) {
+									$arrAU[2] = 'LA PÓLIZA FUE VINCULADA CON EXITO !!!';
 
-								$db = new Log($link);
-								$db->postLog($_SESSION['idUser'], $log_msg);
+									goto Issue2;
+								} else {
+									Issue2:
+									
+									$log_msg = 'TRD - Em. ' . $record . ' / Emision';
+
+									$db = new Log($link);
+									$db->postLog($_SESSION['idUser'], $log_msg);
+								}
 							} else {
 								$arrTR[2] = $collection->mess;
 							}
