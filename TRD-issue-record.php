@@ -257,7 +257,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				}
 			}
 			
-			$arr_pr = array();
+			$arr_pr 	= array();
+			$adjacent 	= array();
 			
 			if($nPr <= $max_item){
 				for($k = 1; $k <= $nPr; $k++){
@@ -300,6 +301,18 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$PRIMA += $arr_pr[$k]['premium'];
 					$TASA = $arr_pr[$k]['rate'];
 				}
+
+				$dp_nort		= $link->real_escape_string(trim($_POST['dp-nort']));
+				$dp_south		= $link->real_escape_string(trim($_POST['dp-south']));
+				$dp_east		= $link->real_escape_string(trim($_POST['dp-east']));
+				$dp_westerly	= $link->real_escape_string(trim($_POST['dp-westerly']));
+
+				$adjacent = array(
+					'N' => $dp_nort,
+					'S' => $dp_south,
+					'E' => $dp_east,
+					'W' => $dp_westerly
+				);
 			} else {
 				$arrTR[2] = 'Los Inmuebles no pueden ser Registrados';
 			}
@@ -402,9 +415,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						(id_inmueble, id_emision, no_detalle, 
 							prefijo, prefix, tipo_in, 
 							uso, uso_otro, estado, departamento, 
-							zona, localidad, direccion,modalidad, 
-							valor_asegurado, valor_contenido, tasa, 
-							prima, facultativo, motivo_facultativo, 
+							zona, localidad, direccion, adjacent,
+							modalidad, valor_asegurado, valor_contenido, 
+							tasa, prima, facultativo, motivo_facultativo, 
 							aprobado, leido, in_archivo, created_at) 
 						VALUES ';
 						
@@ -434,6 +447,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							"'.$arr_pr[$k]['use-other'].'", "'.$arr_pr[$k]['state'].'", 
 							'.$arr_pr[$k]['depto'].', "'.$arr_pr[$k]['zone'].'", 
 							"'.$arr_pr[$k]['locality'].'", "'.$arr_pr[$k]['address'].'",
+							"' . $link->real_escape_string(json_encode($adjacent)) . '",
 							'.$arr_pr[$k]['modality'].', "'.$arr_pr[$k]['value-insured'].'", 
 							"'.$arr_pr[$k]['value-content'].'",
 							'.$arr_pr[$k]['rate'].', '.$arr_pr[$k]['premium'].', 
@@ -526,16 +540,27 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						$sqlPr = '';
 						for($k = 1; $k <= $nPr; $k++) {//
 							$sqlPr .= 'update s_trd_em_detalle
-							set tipo_in = "'.$arr_pr[$k]['type'].'", uso = "'.$arr_pr[$k]['use'].'",
-								uso_otro = "'.$arr_pr[$k]['use-other'].'", estado = "'.$arr_pr[$k]['state'].'",
-								departamento = '.$arr_pr[$k]['depto'].', zona = "'.$arr_pr[$k]['zone'].'",
-								localidad = "'.$arr_pr[$k]['locality'].'", direccion = "'.$arr_pr[$k]['address'].'",
-								modalidad = '.$arr_pr[$k]['modality'].', valor_asegurado = "'.$arr_pr[$k]['value-insured'].'",
+							set tipo_in = "'.$arr_pr[$k]['type'].'", 
+								uso = "'.$arr_pr[$k]['use'].'",
+								uso_otro = "'.$arr_pr[$k]['use-other'].'", 
+								estado = "'.$arr_pr[$k]['state'].'",
+								departamento = '.$arr_pr[$k]['depto'].', 
+								zona = "'.$arr_pr[$k]['zone'].'",
+								localidad = "'.$arr_pr[$k]['locality'].'", 
+								direccion = "'.$arr_pr[$k]['address'].'",
+								adjacent = "' . $link->real_escape_string(json_encode($adjacent)) . '",
+								modalidad = '.$arr_pr[$k]['modality'].', 
+								valor_asegurado = "'.$arr_pr[$k]['value-insured'].'",
 								valor_contenido = "'.$arr_pr[$k]['value-content'].'", 
-								tasa = '.$arr_pr[$k]['rate'].', prima = '.$arr_pr[$k]['premium'].', 
-								facultativo = '.(int)$arr_pr[$k]['FAC'].', motivo_facultativo = "'.$arr_pr[$k]['reason'].'", 
+								tasa = '.$arr_pr[$k]['rate'].', 
+								prima = '.$arr_pr[$k]['premium'].', 
+								facultativo = '.(int)$arr_pr[$k]['FAC'].', 
+								motivo_facultativo = "'.$arr_pr[$k]['reason'].'", 
 								aprobado = '.(int)$arr_pr[$k]['approved'].' 
-							where id_inmueble = "'.$arr_pr[$k]['idpr'].'" and id_emision = "'.$ide.'" ;';
+							where 
+								id_inmueble = "'.$arr_pr[$k]['idpr'].'" 
+									and id_emision = "'.$ide.'" 
+							;';
 						}
 						
 						if($link->multi_query($sqlPr) === TRUE) {

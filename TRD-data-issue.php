@@ -121,6 +121,7 @@ switch($sw){
 		    strd.zona as pr_zona,
 		    strd.localidad as pr_localidad,
 		    strd.direccion as pr_direccion,
+		    "" as pr_adjacent,
 		    strd.modalidad as pr_modalidad,
 		    strd.valor_asegurado as pr_valor_asegurado,
 		    strd.valor_contenido as pr_valor_contenido,
@@ -209,6 +210,7 @@ if($sw !== 1){
 	    strd.zona as pr_zona,
 	    strd.localidad as pr_localidad,
 	    strd.direccion as pr_direccion,
+	    strd.adjacent as pr_adjacent,
 	    strd.modalidad as pr_modalidad,
 	    strd.valor_asegurado as pr_valor_asegurado,
 	    strd.valor_contenido as pr_valor_contenido,
@@ -829,6 +831,8 @@ if ($rsDep->data_seek(0) === TRUE) {
         
     <h4>Datos del Inmueble</h4>
 <?php
+$adjacent = array();
+
 if($rs->data_seek(0) === TRUE){
 	$k = 0;
 ?>
@@ -836,6 +840,14 @@ if($rs->data_seek(0) === TRUE){
 <?php
 	while($rowPr = $rs->fetch_array(MYSQLI_ASSOC)){
 		$k += 1;
+		
+		$adjacent = json_decode($rowPr['pr_adjacent'], true);
+		if (count($adjacent) !== 4) {
+			$adjacent['N'] = '';
+			$adjacent['S'] = '';
+			$adjacent['E'] = '';
+			$adjacent['W'] = '';
+		}
 ?>
         <tr class="title-vh" valign="top">
 			<td style="width:20%;">Departamento</td>
@@ -943,10 +955,40 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 	}
 ?>
 	 </table>
+	<br>
 <?php
 }
 ?>
+
+	<h4>Descripción de colindancias</h4>
+	<table class="list-cl list-vh">
+		<tr class="title-vh" valign="top">
+			<td style="width:25%;">Norte</td>
+			<td style="width:25%;">Sur</td>
+			<td style="width:25%;">Este</td>
+			<td style="width:25%;">Oeste</td>
+        </tr>
+        <tr valign="top">
+        	<td>
+            	<textarea id="dp-nort" name="dp-nort" 
+            		class="not-required fbin" <?= $read_save;?>><?=$adjacent['N'];?></textarea>
+            </td>
+            <td>
+            	<textarea id="dp-south" name="dp-south" 
+            		class="not-required fbin" <?= $read_save;?>><?=$adjacent['S'];?></textarea>
+            </td>
+            <td>
+            	<textarea id="dp-east" name="dp-east" 
+            		class="not-required fbin" <?= $read_save;?>><?=$adjacent['E'];?></textarea>
+            </td>
+            <td>
+            	<textarea id="dp-westerly" name="dp-westerly" 
+            		class="not-required fbin" <?= $read_save;?>><?=$adjacent['W'];?></textarea>
+            </td>
+        </tr>
+	</table>
 	<br>
+
 	<h4>Datos del Crédito Solicitado</h4>
 	<div class="form-col">
     	<input type="hidden" id="nPr" name="nPr" value="<?=base64_encode($nPr);?>">
