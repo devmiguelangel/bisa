@@ -11,6 +11,36 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 <?php
    $j = 1;
    $num_titulares=$rsDt->num_rows;
+
+   $query="select 
+			stec.id_emision,
+			stec.no_emision,
+			stec.id_ef,
+			stec.id_cotizacion,
+			sted.adjacent
+		from
+			s_trd_em_cabecera as stec
+				inner join
+			s_trd_em_detalle as sted ON (sted.id_emision = stec.id_emision)
+		where
+			stec.id_cotizacion = '".$row['id_cotizacion']."'
+				and stec.id_ef = '".$row['idef']."'
+				and stec.emitir = true
+				and stec.anulado = false;";
+   $consult = $link->query($query,MYSQLI_STORE_RESULT);
+   if($consult->num_rows>0){
+	  $rowCld = $consult->fetch_array(MYSQLI_ASSOC);
+	  $arrCld = json_decode($rowCld['adjacent'],true);
+	  $norte = $arrCld['N'];
+	  $este = $arrCld['E'];
+	  $sur = $arrCld['S'];
+	  $oeste = $arrCld['W']; 
+   }else{
+	  $norte = '';
+	  $este = '';
+	  $sur = '';
+	  $oeste = ''; 
+   }			
 			
    while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
 	    if($row['tipo_cliente']==='Juridico'){
@@ -470,25 +500,25 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                         <tr>
                           <td style="width:5%;">Norte: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                            <?=$norte;?>  
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Sur: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$sur;?>  
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Este: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$este;?> 
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Oeste: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$oeste;?>  
                           </td>
                         </tr>
                      </table>
