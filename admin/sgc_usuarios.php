@@ -216,8 +216,13 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 <script type="text/javascript" src="plugins/ambience/jquery.ambiance.js"></script>
 <script type="text/javascript">
   <?php
-    $op = $_GET["op"];
-    $msg = $_GET["msg"];
+    if(isset($_GET["op"])&&isset($_GET["msg"])){
+      $op = $_GET["op"];
+      $msg = $_GET["msg"];
+	}else{
+	  $op = '';
+      $msg = '';	
+	}
 	if($op==1){$valor='success';}elseif($op==2){$valor='error';}
   ?>
   $(function(){
@@ -1889,7 +1894,11 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 					if(empty($_POST['signature'])){
 					   $signature = base64_decode($_POST['dc-attached']); 	
 					}else{
-					   $signature = base64_decode($_POST['signature']);	
+					   if(empty($_POST['file-exists'])){
+					      $signature = base64_decode($_POST['dc-attached']); 	
+					   }else{
+					      $signature = base64_decode($_POST['signature']);	
+					   }
 					}
 				}else{
 					$signature='';
@@ -2300,6 +2309,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  var usuario_name =$('#txtUsuario').prop('value');
 			  var signature = $('#signature').prop('value');
 			  var dc_attached = $('#dc-attached').prop('value');
+			  var file_exists = $('#file-exists').prop('value');
 
 			  var sum=0;
 			  var miarray = new Array();
@@ -2310,7 +2320,9 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 			  //alert('regional:'+regional);
 			  //alert('id_agencia = '+agencia)
 			  //alert('nueva agencia = '+nuevo_agencia);
-			  //alert(signature);
+			  //alert('signature= '+signature);
+			  //alert('dc_attached= '+dc_attached);
+			  
 			  var chek=0; var ds=0; var cell=0;
 			  $(this).find('.requerid').each(function(){
 				   if(idusuario!=id_usuario_sesion && tipo_sesion=='ROOT') {
@@ -2394,7 +2406,18 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				   }
 				     
 				   if(tipousuario=='FAC' || tipousuario=='LOG' || tipousuario=='PA'){
-					   if(signature==''){
+					   if(signature!=''){
+						   if(file_exists==0){
+							  if(dc_attached!=''){
+								 $('#error_dcattached').slideUp('slow');
+							  }else{
+								 sum++; 
+								 $('#error_dcattached').slideDown('slow');
+								 $('#error_dcattached').html('archivo requerido');
+							  } 
+						   }
+					   }
+					   /*if(signature==''){
 						  if(dc_attached!=''){
 							 $('#error_dcattached').slideUp('slow');
 						  }else{
@@ -2402,7 +2425,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 							 $('#error_dcattached').slideDown('slow');
 							 $('#error_dcattached').html('archivo requerido');
 						  }
-				       }
+				       }*/
 				   }
 				   				   			   
 				   if(usuario!=''){
@@ -3224,7 +3247,7 @@ echo'<div class="da-panel" style="width:650px;">
 					</div>
 				</div>';
 		        if(empty($fila['signature'])){
-				   if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || $fila['codigo']=='PA'){
+				   if(($fila['codigo']=='LOG') || ($fila['codigo']=='FAC') || ($fila['codigo']=='PA')){
 					  $display = '';
 				   }else{
 					  $display = 'display:none;'; 
@@ -3254,9 +3277,27 @@ echo'<div class="da-panel" style="width:650px;">
 						echo'<div class="da-form-row">
 								<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
 								<div class="da-form-item large">
-								  <div class="content-input" style="width:auto;">
-								    <img src="../files/'.$fila['signature'].'" width="200"/>
-								  </div>
+								  <div class="content-input" style="width:auto;">';
+								     if(file_exists('../files/'.$fila['signature']))
+									   echo'<img src="../files/'.$fila['signature'].'" width="200"/>
+									        <input type="hidden" name="file-exists" id="file-exists" value="1"/>';
+									 else
+									   echo'no existe el archivo fisico<br>
+									        <input type="hidden" name="file-exists" id="file-exists" value="0"/>
+									        <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+											<div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+											   El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+											   El formato del archivo a subir debe ser JPG &oacute; PNG
+											</div>
+											<span class="errorMessage" id="erro_file"></span>';
+											?>
+											<script type="text/javascript">
+											   set_ajax_upload('dc-attached', 'USI');
+											</script>
+											<?php
+									   echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+											<div id="add_img"></div>';  
+							 echo'</div>
 								</div>
 							 </div>';
 					}
