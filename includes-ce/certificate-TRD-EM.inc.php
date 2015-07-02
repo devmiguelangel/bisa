@@ -32,6 +32,12 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 		 if($row['no_copia']>0){
 			 if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
 		 }
+		 
+		 if($row['fecha_emision']!=='0000-00-00'){
+			$fecha_em = $row['fecha_emision'];
+		 }else{
+			$fecha_em = $row['fecha_creacion'];
+		 }
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -775,7 +781,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                <tr>
                 <td style="width:25%;"></td>
                 <td style="width:50%; text-align:center;">
-                  <?=$row['u_depto']?>, <?=strtoupper(get_date_format_trd_em($row['fecha_emision']));?>
+                  <?=$row['u_depto']?>, <?=strtoupper(get_date_format_trd_em($fecha_em));?>
                   <br>
                   <br>
                   <b>BISA SEGUROS Y REASEGUROS S.A.</b>

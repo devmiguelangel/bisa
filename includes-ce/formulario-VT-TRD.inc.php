@@ -111,7 +111,40 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 			  trdd.id_cotizacion = '".$row['idc']."';";
 	$consultDtSc = $link->query($queryDtSc, MYSQLI_STORE_RESULT);
 	$rowDtSc = $consultDtSc->fetch_array(MYSQLI_ASSOC);		  
-	 				
+	
+	$query="select 
+			  stec.id_emision,
+			  stec.no_emision,
+			  stec.id_ef,
+			  stec.id_cotizacion,
+			  sted.adjacent
+		  from
+			  s_trd_em_cabecera as stec
+				  inner join
+			  s_trd_em_detalle as sted ON (sted.id_emision = stec.id_emision)
+		  where
+			stec.id_cotizacion = '".$row['idc']."'
+				and stec.id_ef = '".$row['idef']."' ";
+			  if((boolean)$row['garantia']===false){ 	
+			    $query.="and stec.emitir = true
+				         and stec.anulado = false;";
+			  }
+	 $consult = $link->query($query,MYSQLI_STORE_RESULT);
+	 if($consult->num_rows>0){
+		$rowCld = $consult->fetch_array(MYSQLI_ASSOC);
+		$arrCld = json_decode($rowCld['adjacent'],true);
+		$norte = $arrCld['N'];
+		$este = $arrCld['E'];
+		$sur = $arrCld['S'];
+		$oeste = $arrCld['W']; 
+	 }else{
+		$norte = '';
+		$este = '';
+		$sur = '';
+		$oeste = ''; 
+	 }			
+	 
+	 		
 	ob_start();
 ?>
   <div id="container-c" style="width: 785px; height: auto; 
@@ -181,6 +214,43 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		 if($row['no_copia']>0){
 			 if($row['no_copia']>1) $text='COPIA'; else $text='ORIGINAL';
 		 }
+		 
+		 if($row['forma_pago']=='CR'){
+			 $forma_pago_cr = number_format($rowDt['pr_prima'],2,'.',',').' $us.';
+			 $forma_pago_co = '';
+			 if((boolean)$row['garantia']===true){
+			  
+				  $sqlCu="select 
+							count(stec.id_emision) as num_cuotas
+						from
+							s_trd_em_cabecera as stec
+								inner join
+							s_trd_cobranza as strc ON (strc.id_emision = stec.id_emision)
+						where
+							stec.id_cotizacion = '".$row['idc']."'
+								and stec.id_ef = '".$row['idef']."'
+								and stec.emitir = true
+								and stec.anulado = false;"; 				
+				  $consult_cu = $link->query($sqlCu,MYSQLI_STORE_RESULT);
+				  if($consult_cu->num_rows>0){
+					  $row_cu = $consult_cu->fetch_array(MYSQLI_ASSOC);
+					  if($row_cu['num_cuotas']>0){
+						$num_cuotas = $row_cu['num_cuotas'];  
+					  }else{
+						$num_cuotas = '';  
+					  }
+				  }
+			  			   
+		     }else{
+			   $num_cuotas = 12; 
+		     }
+		 }elseif($row['forma_pago']=='CO'){
+			 $forma_pago_co = number_format($rowDt['pr_prima'],2,'.',',').' $us.';
+			 $forma_pago_cr = '';
+			 $num_cuotas = '';
+		 }
+		 
+		 
 ?>
         <!--SOLICITUD-->
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
@@ -205,8 +275,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
         <br/>
         
         <div style="width: 775px; border: 0px solid #FFFF00;">
-			<span style="font-weight:bold; font-size:80%;">
-          INFORMACION GENERAL:</span> 
+			<span style="font-weight:bold; font-size:80%;">INFORMACION GENERAL:</span> 
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
@@ -605,25 +674,25 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                         <tr>
                           <td style="width:5%;">Norte: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$norte;?> 
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Sur: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$sur;?> 
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Este: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                             <?=$este;?>  
                           </td>
                         </tr>
                         <tr>
                           <td style="width:5%;">Oeste: </td>
                           <td style="border-bottom: 1px solid #333; width:95%;">&nbsp;
-                              
+                              <?=$oeste;?>
                           </td>
                         </tr>
                      </table>
@@ -639,11 +708,11 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           </td>
                           <td style="width:5%;">Desde: </td>
                           <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
-                              <?=$rowsc['ini_vigencia'];?>
+                              <?=date("d-m-Y", strtotime($row['ini_vigencia']));?>
                           </td>
                           <td style="width:5%;">Hasta: </td>
                           <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
-                              <?=$rowsc['fin_vigencia'];?>
+                              <?=date("d-m-Y", strtotime($row['fin_vigencia']));?>
                           </td>
                         </tr>
                       </table>                                  
@@ -1085,8 +1154,8 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                 </tr>
                 <tr><td style="width:100%;">&nbsp;</td></tr>
                 <tr>
-                  <td style="width:100%; text-align:left; font-weight:bold;">
-                     Al Contado:
+                  <td style="width:100%; text-align:left;">
+                     <b>Al Contado:</b>&nbsp;<?=$forma_pago_co;?>
                   </td>
                 </tr>
                 <tr><td style="width:100%;">&nbsp;</td></tr>
@@ -1095,11 +1164,11 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                            <td style="width:8%; text-align:left; font-weight:bold;">Al Crédito: </td>
-                           <td style="width:15%;">&nbsp;
+                           <td style="width:15%;">&nbsp;<?=$forma_pago_cr;?>
                              
                            </td>
                            <td style="width:10%; text-align:left; font-weight:bold;">Nro de Cuotas: </td>
-                           <td style="width:25%; border-bottom: 1px solid #333;">&nbsp;</td>
+                           <td style="width:25%; border-bottom: 1px solid #333;">&nbsp;<?=$num_cuotas;?></td>
                            <td style="width:42%;">&nbsp;</td>
                          </tr>
                      </table>      
@@ -1158,7 +1227,9 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
 			 $fecha_em = $row['fecha_emision'];
 		 }else{
 			 $fecha_em = $row['fecha_creacion'];
-		 } 
+		 }
+		 
+		 
 ?>        
         <!--FORMULARIO AUTORIZACION-->
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
@@ -1240,7 +1311,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
         <!--FIN FORMULARIO AUTORIZACION-->
         
         <page><div style="page-break-before: always;">&nbsp;</div></page>
-        
+      
         <!--EMISION--> 
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -1971,7 +2042,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                <tr>
                 <td style="width:25%;"></td>
                 <td style="width:50%; text-align:center;">
-                  <?=$row['u_depto']?>, <?=strtoupper(get_date_format_trd_vt($row['fecha_emision']));?>
+                  <?=$row['u_depto']?>, <?=strtoupper(get_date_format_trd_vt($fecha_em));?>
                   <br>
                   <br>
                   <b>BISA SEGUROS Y REASEGUROS S.A.</b>
@@ -2007,6 +2078,8 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
 			}else{
 				$fecha_em = $row['fecha_creacion'];
 			}
+			
+			
 ?>
             <page><div style="page-break-before: always;">&nbsp;</div></page>
             
@@ -2040,13 +2113,13 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                     <tr> 
                       <td style="width:100%; padding-bottom:4px;">
                         <b>Asegurado:</b>&nbsp;<?=$cliente_nombre;?><br>
-                        <b>Póliza Nro.:</b>&nbsp;<?=$row['no_emision'];?><br>
+                        <b>Póliza Nro.:</b>&nbsp;<?=$poliza;?><br>
                         <b>Materia del Seguro Subrogada:</b>&nbsp;<?=$materia_seguro;?><br>
-                        <b>Ubicación del Riesgo:</b><br>
-                        <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['ini_vigencia'];?> hasta <?=$row['fin_vigencia'];?><br>
+                        <b>Ubicación del Riesgo:</b>&nbsp;<?=$ubicacion_riesgo;?><br>
+                        <b>Vigencia del Seguro:</b>&nbsp;desde <?=date("Y-m-d", strtotime($row['ini_vigencia']));?> hasta <?=date("Y-m-d", strtotime($row['fin_vigencia']));?><br>
                         <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                         <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                        <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.$fecha_em;?> 
+                        <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.date("Y-m-d", strtotime($fecha_em));?> 
                       </td>      
                     </tr>
                     <tr>
@@ -2056,7 +2129,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                     </tr>   
                     <tr>
                       <td style="width:100%; padding-bottom:4px; text-align:justify;">
-                        Se deja constancia por el presente anexo, que a solicitud expresa de los tomadores y/o contratantes y/o asegurados, “EL ACREEDOR” será considerado como beneficiario hasta por el importe de su acreencia sin exceder la suma asegurada de la Póliza Nro. <?=$row['no_emision'];?>.
+                        Se deja constancia por el presente anexo, que a solicitud expresa de los tomadores y/o contratantes y/o asegurados, “EL ACREEDOR” será considerado como beneficiario hasta por el importe de su acreencia sin exceder la suma asegurada de la Póliza Nro. <?=$poliza;?>.
                         <br><br>
                         En consecuencia, el Asegurado no podrá ejercitar sus derechos, sino por intermedio del Acreedor.
                         <br><br>
@@ -3146,7 +3219,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                 <tr>
                   <td style="width:100%; text-align:right;">
                      La Paz, <?=get_date_format_trd_vt($fecha_em)?><br><br>
-                     SUD/<?=$mes;?>/<?=$digi;?>
+                     BI-TR-SUD/<?=str_pad($row['no_emision'],4,'0',STR_PAD_LEFT);?>
 
                   </td> 
                 </tr>
@@ -3155,7 +3228,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                      Señor<br>
                      <?=$cliente_nombre;?><br>
                      Presente.-<br><br>
-                     Ref.:	Póliza Multiriesgo N° <?=$row['no_emision'];?>
+                     Ref.:	Póliza Multiriesgo N° <?=$poliza;?>
                   </td> 
                 </tr>
             </table>     
@@ -3190,7 +3263,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                       <tr>
                         <td style="width:2%; font-weight:bold;" valign="top">1.&nbsp;</td>
                         <td style="width:98%;">
-                           <b>PÓLIZA <?=$row['no_emision'];?></b>
+                           <b>PÓLIZA <?=$poliza;?></b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
                                 <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>

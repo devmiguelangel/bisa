@@ -1142,7 +1142,10 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                   </td>
                   <td style="width:82%; border-top:1px solid #333; border-right:1px solid #333;
                      border-bottom: 1px solid #333;">&nbsp;
-                     <?=$rowsc['u_departamento'].' '.$rowsc['fecha_creacion'];?>
+                     <?php
+                        $fecha = date("d-m-Y", strtotime($row['fecha_creacion']));
+						echo $rowsc['u_departamento'].' '.$fecha;
+					 ?>
                   </td>
                 </tr>  
             </table>
@@ -1339,7 +1342,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                           </tr>
                           <tr>
                             <td style="width:100%; text-align:left;">
-                               <b>LUGAR Y FECHA:</b>&nbsp; <?=strtoupper($row['u_departamento']);?>, <?=strtoupper(get_date_format_au_vt($row['fecha_emision']));?> 
+                               <b>LUGAR Y FECHA:</b>&nbsp; <?=strtoupper($row['u_departamento']);?>, <?=strtoupper(get_date_format_au_vt($fecha_em));?> 
                             </td>
                           </tr>
                        </table>
@@ -1919,12 +1922,14 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                               Forma Pago:
                             </td>
                           </tr>
+                          <!--
                           <tr>
                             <td style="width:20%; text-align:left;">CONTADO</td>
                             <td style="width:20%; text-align:left;">$US&nbsp;<?=$prima_co;?></td>
                             <td style="width:25%;"></td>
                             <td style="width:35%;"></td>
                           </tr>
+                          -->
                        </table>
                     </td>
                   </tr>
@@ -2632,13 +2637,13 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                   <tr> 
                     <td style="width:100%; padding-bottom:4px;">
                       <b>Asegurado:</b>&nbsp;<?=$cliente_nombre;?><br>
-                      <b>Póliza Nro.:</b>&nbsp;<?=$row['no_emision'];?><br>
+                      <b>Póliza Nro.:</b>&nbsp;<?=$poliza;?><br>
                       <b>Materia del Seguro Subrogada:</b>&nbsp;<?=$materia_seguro;?><br>
                       <b>Ubicación del Riesgo:</b><br>
-                      <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['fecha_iniv'];?> hasta <?=$row['fecha_finv'];?><br>
+                      <b>Vigencia del Seguro:</b>&nbsp;desde <?=date("d-m-Y", strtotime($row['fecha_iniv']));?> hasta <?=date("d-m-Y", strtotime($row['fecha_finv']));?><br>
                       <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                       <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                      <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.$fecha_em;?> 
+                      <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.date("d-m-Y", strtotime($fecha_em));?> 
                     </td>      
                   </tr>
                   <tr>
@@ -2702,8 +2707,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                         </table> 
                     </td> 
                   </tr>
-              </table>
-                  
+              </table>       
           </div>
           <!--FIN ANEXO SUBROGACION-->
           
@@ -3553,7 +3557,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                 <tr>
                   <td style="width:100%; text-align:right;">
                      La Paz, <?=get_date_format_au_vt($fecha_em)?><br><br>
-                     SUD/<?=$mes;?>/<?=$digi;?>
+                     BI-AU-SUD/<?=str_pad($row['no_emision'],4,'0',STR_PAD_LEFT);?>
 
                   </td> 
                 </tr>
@@ -3562,7 +3566,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                      Señor(a)<br>
                      <?=$cliente_nombre;?><br>
                      Presente.-<br><br>
-                     Ref.:	Póliza Automotor  N° <?=$row['no_emision'];?>
+                     Ref.:	Póliza Automotor  N° <?=$poliza;?>
                   </td> 
                 </tr>
             </table>     
@@ -3597,7 +3601,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                       <tr>
                         <td style="width:2%; font-weight:bold;" valign="top">1.&nbsp;</td>
                         <td style="width:98%;">
-                          <b>PÓLIZA <?=$row['no_emision'];?></b>
+                          <b>PÓLIZA <?=$poliza;?></b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
                                 <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
@@ -3789,7 +3793,7 @@ function au_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = ''
                 </td> 
                </tr>
             </table>   	
-        </div>
+          </div>
           <!--FIN CARTA SUDAMERICANA-->
 <?php		
 		

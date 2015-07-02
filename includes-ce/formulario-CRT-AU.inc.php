@@ -30,6 +30,8 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 		$anio = $fecha->format('Y');
 		$digi = substr($anio, -2);*/
 	 }
+	 
+	 $poliza = (91).''.plaza_au_crt($row['u_departamento']).''.$row['garantia'].''.str_pad($row['no_emision'],7,'0',STR_PAD_LEFT);
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -38,7 +40,7 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                 <tr>
                   <td style="width:100%; text-align:right;">
                      La Paz, <?=get_date_format_crt($fecha_em)?><br><br>
-                     SUD/<?=$mes;?>/<?=$digi;?>
+                     BI-AU-SUD/<?=str_pad($row['no_emision'],4,'0',STR_PAD_LEFT);?>
 
                   </td> 
                 </tr>
@@ -47,7 +49,7 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      Señor(a)<br>
                      <?=$cliente_nombre;?><br>
                      Presente.-<br><br>
-                     Ref.:	Póliza Automotor  N° <?=$row['no_emision'];?>
+                     Ref.:	Póliza Automotor  N° <?=$poliza;?>
                   </td> 
                 </tr>
             </table>     
@@ -82,7 +84,7 @@ function au_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                       <tr>
                         <td style="width:2%; font-weight:bold;" valign="top">1.&nbsp;</td>
                         <td style="width:98%;">
-                          <b>PÓLIZA <?=$row['no_emision'];?></b>
+                          <b>PÓLIZA <?=$poliza;?></b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
                                 <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
@@ -332,6 +334,38 @@ function get_month_es_crt($month){
 			break;
 		case 'December':
 			return 'Diciembre';
+			break;
+	}
+}
+
+function plaza_au_crt($sucursal){
+  	switch ($sucursal) {
+		case 'La Paz':
+			return 1;
+			break;
+		case 'Santa Cruz':
+			return 2;
+			break;
+		case 'Cochabamba':
+			return 3;
+			break;
+		case 'Chuquisaca':
+			return 4;
+			break;
+		case 'Tarija':
+			return 5;
+			break;
+		case 'Oruro':
+			return 6;
+			break;
+		case 'Potosí':
+			return 7;
+			break;
+		case 'Beni':
+			return 8;
+			break;
+		case 'Pando':
+			return 9;
 			break;
 	}
 }

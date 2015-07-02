@@ -56,10 +56,10 @@ function au_formulario_asr($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     <b>Póliza Nro.:</b>&nbsp;<?=$poliza;?><br>
                     <b>Materia del Seguro Subrogada:</b>&nbsp;<?=$materia_seguro;?><br>
                     <b>Ubicación del Riesgo:</b><br>
-                    <b>Vigencia del Seguro:</b>&nbsp;desde <?=$row['fecha_iniv'];?> hasta <?=$row['fecha_finv'];?><br>
+                    <b>Vigencia del Seguro:</b>&nbsp;desde <?=date("d-m-Y", strtotime($row['fecha_iniv']));?> hasta <?=date("d-m-Y", strtotime($row['fecha_finv']));?><br>
                     <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
                     <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.$fecha_em;?> 
+                    <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_departamento'].' '.date("d-m-Y", strtotime($fecha_em));?> 
                   </td>      
                 </tr>
                 <tr>

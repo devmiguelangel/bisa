@@ -1,18 +1,18 @@
 <?php
 function carta_anulacion_trd($link, $row, $rsDt, $url, $implant, $fac, $reason = '') {
 	if($row['fecha_emision']!=='0000-00-00'){
-	    $fecha_em = $row['fecha_emision'];
-		$vec_f = explode('-',$fecha_em);
+	    $fecha_canceled = $row['fecha_anulado'];
+		$vec_f = explode('-',$fecha_canceled);
 		//$digi = substr($vec_f[0], -2);
 		$anio = $vec_f[0];
 		$mes = $vec_f[1];
-	 }else{
-		$fecha_em = $row['fecha_creacion'];
-		$vec_f = explode('-',$fecha_em);
+	 }/*else{
+		$fecha_canceled = $row['fecha_creacion'];
+		$vec_f = explode('-',$fecha_canceled);
 		//$digi = substr($vec_f[0], -2);
 		$anio = $vec_f[0];
 		$mes = $vec_f[1];
-	 }
+	 }*/
 	 if($row['tipo_cliente']=='J'){
 		 $cliente_nombre = $row['cl_razon_social'];
 		 $cliente_nitci = $row['cl_ci'];
@@ -40,7 +40,7 @@ function carta_anulacion_trd($link, $row, $rsDt, $url, $implant, $fac, $reason =
                 </tr>
                 <tr>
                   <td style="width:100%; text-align:left; font-size: 100%;">
-                     La Paz, <?=get_date_format_ca($fecha_em)?><br>
+                     La Paz, <?=get_date_format_ca($fecha_canceled)?><br>
                      <?=$prefijo;?>-<?=$correlativo;?>/<?=$anio;?><br><br><br><br>
                      Señores<br>
                      <b>BISA SEGUROS Y REASEGUROS S.A.</b><br>

@@ -24,9 +24,11 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 			s_trd_em_detalle as sted ON (sted.id_emision = stec.id_emision)
 		where
 			stec.id_cotizacion = '".$row['id_cotizacion']."'
-				and stec.id_ef = '".$row['idef']."'
-				and stec.emitir = true
-				and stec.anulado = false;";
+				and stec.id_ef = '".$row['idef']."' ";
+			  if((boolean)$row['garantia']===false){ 	
+			    $query.="and stec.emitir = true
+				         and stec.anulado = false;";
+			  }
    $consult = $link->query($query,MYSQLI_STORE_RESULT);
    if($consult->num_rows>0){
 	  $rowCld = $consult->fetch_array(MYSQLI_ASSOC);
@@ -41,7 +43,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 	  $sur = '';
 	  $oeste = ''; 
    }			
-			
+         			
    while($rowDt = $rsDt->fetch_array(MYSQLI_ASSOC)){
 	    if($row['tipo_cliente']==='Juridico'){
 		   $razon_social = $row['razon_social'];
@@ -77,6 +79,42 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
 		   $actividad = '';
 		   
 	   }
+	   
+	   if($row['forma_pago']=='CR'){
+		   $forma_pago_cr = number_format($rowDt['prima'],2,'.',',').' $us.';
+		   $forma_pago_co = '';
+		   if((boolean)$row['garantia']===true){
+			  
+			  $sqlCu="select 
+						count(stec.id_emision) as num_cuotas
+					from
+						s_trd_em_cabecera as stec
+							inner join
+						s_trd_cobranza as strc ON (strc.id_emision = stec.id_emision)
+					where
+						stec.id_cotizacion = '".$row['id_cotizacion']."'
+							and stec.id_ef = '".$row['idef']."'
+							and stec.emitir = true
+							and stec.anulado = false;"; 				
+			  $consult_cu = $link->query($sqlCu,MYSQLI_STORE_RESULT);
+			  if($consult_cu->num_rows>0){
+				  $row_cu = $consult_cu->fetch_array(MYSQLI_ASSOC);
+				  if($row_cu['num_cuotas']>0){
+					$num_cuotas = $row_cu['num_cuotas'];  
+				  }else{
+				    $num_cuotas = '';  
+			      }
+			  }
+			  			   
+		   }else{
+			  $num_cuotas = 12; 
+		   }
+	   }elseif($row['forma_pago']=='CO'){
+		   $forma_pago_co = number_format($rowDt['prima'],2,'.',',').' $us.';
+		   $forma_pago_cr = '';
+		   $num_cuotas = '';
+	   }
+	     
 ?>
         <div style="width: 775px; border: 0px solid #FFFF00; text-align:center;">
             <table 
@@ -534,11 +572,11 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                           </td>
                           <td style="width:5%;">Desde: </td>
                           <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
-                              <?=$row['ini_vigencia'];?>
+                              <?=date("d-m-Y", strtotime($row['ini_vigencia']));?>
                           </td>
                           <td style="width:5%;">Hasta: </td>
                           <td style="width:25%; border-bottom: 1px solid #333; text-align:center;">
-                              <?=$row['fin_vigencia'];?>
+                              <?=date("d-m-Y", strtotime($row['fin_vigencia']));?>
                           </td>
                         </tr>
                       </table>                                  
@@ -981,7 +1019,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 <tr><td style="width:100%;">&nbsp;</td></tr>
                 <tr>
                   <td style="width:100%; text-align:left; font-weight:bold;">
-                     Al Contado:
+                     Al Contado:&nbsp;<?=$forma_pago_co;?>
                   </td>
                 </tr>
                 <tr><td style="width:100%;">&nbsp;</td></tr>
@@ -990,11 +1028,11 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                            <td style="width:8%; text-align:left; font-weight:bold;">Al Crédito: </td>
-                           <td style="width:15%;">&nbsp;
+                           <td style="width:15%;">&nbsp;<?=$forma_pago_cr;?>
                              
                            </td>
                            <td style="width:10%; text-align:left; font-weight:bold;">Nro de Cuotas: </td>
-                           <td style="width:25%; border-bottom: 1px solid #333;">&nbsp;</td>
+                           <td style="width:25%; border-bottom: 1px solid #333;">&nbsp;<?=$num_cuotas;?></td>
                            <td style="width:42%;">&nbsp;</td>
                          </tr>
                      </table>      
