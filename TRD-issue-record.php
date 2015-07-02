@@ -4,6 +4,7 @@ require __DIR__ . '/classes/Logs.php';
 require __DIR__ . '/classes/BisaWs.php';
 require 'sibas-db.class.php';
 require 'session.class.php';
+require 'lib/helpers.php';
 
 $session = new Session();
 $session->getSessionCookie();
@@ -94,9 +95,9 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				$dcr_opp = $link->real_escape_string(json_encode($dcr_opp));
 			}
 			$dcr_policy = 'null';
-			if (isset($_POST['di-policy'])) {
+			/*if (isset($_POST['di-policy'])) {
 				$dcr_policy = '"' . $link->real_escape_string(trim(base64_decode($_POST['di-policy']))) . '"';
-			}
+			}*/
 			
 			$prefix = array();
 			$arrPrefix = 'null';
@@ -383,10 +384,12 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 				}
 					
 				if($link->query($sqlCl)) {
-					$record = $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 1, 'TRD');
+					$record 	= $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 1, 'TRD');
+					$no_policy 	= getDeptoCodePolicy($link, $_SESSION['idUser']);
+					$no_policy 	= '92' . $no_policy . $dcr_warranty . str_pad($record, 7, '0', STR_PAD_LEFT);
 					
 					$sql = 'insert into s_trd_em_cabecera 
-					(id_emision, no_emision, id_ef, id_cotizacion, 
+					(id_emision, no_emision, no_poliza, id_ef, id_cotizacion, 
 						certificado_provisional, garantia, tipo, id_cliente, 
 						operacion, prefijo, ini_vigencia, fin_vigencia, 
 						forma_pago, plazo, tipo_plazo, factura_nombre, 
@@ -396,7 +399,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						fecha_emision, id_compania, id_poliza, no_copia, 
 						facultativo, motivo_facultativo, tasa, prima_total, 
 						leido, created_at) 
-					values ("'.$ide.'", '.$record.', 
+					values ("' . $ide . '", "' . $record . '", "' . $no_policy . '", 
 						"'.base64_decode($_SESSION['idEF']).'", "'.$idc.'", 
 						'.$cp.', "'.$dcr_warranty.'", '.(int)$cl_type_client.', 
 						"'.$idcl.'", "'.$dcr_opp.'", "TRD", "'.$dcr_date_begin.'", 

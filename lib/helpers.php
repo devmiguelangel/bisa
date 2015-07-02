@@ -131,4 +131,57 @@ function getSubAgencyUser($link, &$data_subsidiary, &$data_agency, &$data_user) 
 	}
 }
 
+function getDeptoCodePolicy($link, $id_user) {
+	$sql = 'select 
+		su.id_usuario,
+		sdep.id_depto 
+	from 
+		s_usuario as su
+			inner join
+		s_departamento as sdep ON (sdep.id_depto = su.id_depto)
+	where
+		su.id_usuario = "' . base64_decode($id_user) . '"
+	limit 0, 1
+	;';
+
+	if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
+		if ($rs->num_rows === 1) {
+			$row = $rs->fetch_array(MYSQLI_ASSOC);
+			$rs->free();
+
+			switch ($row['id_depto']) {
+			case 1:			// La Paz
+				return 1;
+				break;
+			case 7:			// Santa Cruz
+				return 2;
+				break;
+			case 4:			// Cochabamba
+				return 3;
+				break;
+			case 5:			// Chuquisaca
+				return 4;
+				break;
+			case 6:			// Tarija
+				return 5;
+				break;
+			case 2:			// Oruro
+				return 6;
+				break;
+			case 3:			// Potosi
+				return 7;
+				break;
+			case 8:			// Beni
+				return 8;
+				break;
+			case 9:			// Pando
+				return 9;
+				break;
+			}
+		}
+
+		return 0;
+	}
+}
+
 ?>

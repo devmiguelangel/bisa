@@ -1038,27 +1038,6 @@ if(($rsDp = $link->get_depto()) !== FALSE){
 	</div><!--
 	--><div class="form-col">
 <?php
-if ($swMo === false) {
-?>
-		<label>Número de Póliza: <span>*</span></label>
-		<div class="content-input">
-			<select id="di-policy" name="di-policy" class="required fbin" <?=$read_save;?>>
-				<option value="">Seleccione...</option>
-<?php
-if (($rsPl = $link->get_policy($_SESSION['idEF'], 'TRD')) !== FALSE) {
-	while($rowPl = $rsPl->fetch_array(MYSQLI_ASSOC)){
-		if($rowPl['id_poliza'] == $cr_policy) {
-			echo '<option value="'.base64_encode($rowPl['id_poliza']).'" selected>'.$rowPl['no_poliza'].'</option>';
-		} else {
-			echo '<option value="'.base64_encode($rowPl['id_poliza']).'">'.$rowPl['no_poliza'].'</option>';
-		}
-	}
-}
-?>
-			</select>
-		</div><br>
-<?php
-}
 
 if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 	$req = array(
