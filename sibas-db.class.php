@@ -1192,7 +1192,7 @@ class SibasDB extends MySQLi
 			switch($state_bank){
 				case 1: $arr_state['txt_bank'] = 'ANULADO'; break;
 				case 2: $arr_state['txt_bank'] = 'EMITIDO'; break;
-				case 3: $arr_state['txt_bank'] = 'NO EMITIDO'; break;
+				case 3: $arr_state['txt_bank'] = 'NO VINCULADO'; break;
 			}
 		}
 		

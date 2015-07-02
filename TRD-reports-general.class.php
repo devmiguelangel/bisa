@@ -134,6 +134,7 @@ class ReportsGeneralTRD{
 		    count(strd.id_emision) as noPr,
 		    stre.prefijo,
 		    stre.no_emision,
+		    stre.no_poliza,
 			stre.id_compania,
 		    stre.plazo as r_plazo,
 		    stre.tipo_plazo as r_tipo_plazo,
@@ -232,7 +233,7 @@ class ReportsGeneralTRD{
 		        inner join
 		    s_usuario as sua ON (sua.id_usuario = stre.and_usuario)
 		where sef.id_ef = '".$this->data['idef']."'
-	        and stre.no_emision like '%".$this->data['nc']."%'
+	        and stre.no_poliza like '%".$this->data['nc']."%'
 	        and (".$this->data['ef'].")
 	        and (su.usuario like '%".$this->data['user']."%'
 	        or su.id_usuario = '".$this->data['user']."'
@@ -701,7 +702,7 @@ $(document).ready(function(e) {
 			data-pr="<?=base64_encode($this->rowpr['idPr']);?>" 
 			data-issue="<?=base64_encode(0);?>"
 			data-an="<?=base64_encode($this->data['token_an']);?>">
-        	<td <?=$rowSpan;?> style="<?= $bg_req_ann ;?>">TRD-<?=$this->row['no_emision'];?></td>
+        	<td <?=$rowSpan;?> style="<?= $bg_req_ann ;?>"><?= $this->row['no_poliza'] ;?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_ci'].$this->row['cl_complemento'].' '.$this->row['cl_extension'];?></td>

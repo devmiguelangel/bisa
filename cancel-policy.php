@@ -13,6 +13,7 @@ if(isset($_GET['ide']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 	$sql = 'select 
 		tbl.id_emision,
 		tbl.no_emision,
+		tbl.no_poliza,
 		tbl.garantia,
 		tbl.emitir,
 		tbl.anulado
@@ -28,7 +29,7 @@ if(isset($_GET['ide']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 			$row = $rs->fetch_array(MYSQLI_ASSOC);
 			$rs->free();
 
-			$nc = $row['no_emision'];
+			$nc = $row['no_poliza'];
 
 			if (($data_user = $link->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) === false) {
 				$data_user['u_tipo_codigo'] = '';
@@ -52,7 +53,7 @@ if(isset($_GET['ide']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 			}
 ?>
 <form id="form-cancel" name="form-cancel" class="f-process" style="width:570px; font-size:130%;">
-	<h4 class="h4">Formulario de <?= $title ;?> Póliza No <?=$pr . '-' . $nc;?></h4>
+	<h4 class="h4">Formulario de <?= $title ;?> Póliza No <?= $nc ;?></h4>
 	<label class="fp-lbl" style="text-align:left; width:auto;">Motivo de <?= $title ;?>: <span>*</span></label>
 	<textarea id="fp-obs" name="fp-obs" class="required"></textarea><br>
 	

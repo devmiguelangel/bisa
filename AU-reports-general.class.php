@@ -135,6 +135,7 @@ class ReportsGeneralAU{
 		    sum(if(saf.aprobado = 'NO', 1, 0)) as aprobado_no,
 		    sae.prefijo,
 		    sae.no_emision,
+		    sae.no_poliza,
 		    sae.plazo as r_plazo,
 			sae.tipo_plazo as r_tipo_plazo,
 			sae.forma_pago as r_forma_pago,
@@ -220,7 +221,7 @@ class ReportsGeneralAU{
 			s_usuario as sua ON (sua.id_usuario = sae.and_usuario)
 		where
 		    sef.id_ef = '".$this->data['idef']."'
-		        and sae.no_emision like '%".$this->data['nc']."%'
+		        and sae.no_poliza like '%".$this->data['nc']."%'
 		        and (".$this->data['ef'].")
 		        and (su.usuario like '%".$this->data['user']."%'
 		        or su.id_usuario = '".$this->data['user']."'
@@ -769,7 +770,7 @@ $(document).ready(function(e) {
             data-vh="<?=base64_encode($this->rowvh['idVh']);?>"
             data-issue="<?=base64_encode(0);?>"
             data-an="<?=base64_encode($this->data['token_an']);?>">
-        	<td <?=$rowSpan;?> style="<?= $bg_req_ann ;?>">AU-<?=$this->row['no_emision'];?></td>
+        	<td <?=$rowSpan;?> style="<?= $bg_req_ann ;?>"><?= $this->row['no_poliza'] ;?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_ci'].$this->row['cl_complemento'].' '.$this->row['cl_extension'];?></td>
