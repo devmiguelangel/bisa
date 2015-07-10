@@ -3365,13 +3365,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                         </td>
                       </tr>
                       <tr>
-                        <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">3.&nbsp;</td>
-                        <td style="width:98%; text-align:justify; padding-top:10px;">
-                           <b>AVISO DE VENCIMIENTO:</b> 
-                        </td>
-                      </tr>
-                      <tr>
-                         <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">4.&nbsp;</td>
+                         <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">3.&nbsp;</td>
                          <td style="width:98%; padding-top:10px;">
                            <b>NOTA ACLARATORIA:</b>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
@@ -3408,7 +3402,7 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                      border-right: 1px solid #000; border-bottom: 1px solid #000;" valign="top">
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                        <tr>
-                         <td style="width:2%; font-weight:bold;" valign="top">5.&nbsp;</td>
+                         <td style="width:2%; font-weight:bold;" valign="top">4.&nbsp;</td>
                          <td style="width:98%;" valign="top">
                            <b>ASPECTOS RELEVANTES DE LA NORMA VIGENTE:  (CÓDIGO DE COMERCIO)</b><br><br>
                            <b>Art. 1000.- (OBLIGACIÓN DE MANTENER EL ESTADO DE RIESGO).</b> El asegurado está obligado

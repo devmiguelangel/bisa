@@ -466,6 +466,7 @@ class CertificateSibas extends CertificateQuery{
 	
 	private function get_script(){
 ?>
+<script type="text/javascript" src="../js/jquery.PrintArea.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 	//VISUALIZAR FORMULARIO
@@ -567,6 +568,9 @@ $(document).ready(function(){
 	
 	//IMPRIMIR PAGINA
 	$("#send-print").click(function(e){
+		var rel = $(this).prop("rel");
+		$("div#"+rel).printArea();
+		/*
 		e.preventDefault();
 		var rel = $(this).prop("rel");
 		
@@ -580,6 +584,7 @@ $(document).ready(function(){
 		ventimp.print();
 		ventimp.close();
 		//ventimp.document.onbeforeunload = confirmExit();
+		*/
 	});
 	
 });
@@ -595,7 +600,7 @@ function confirmExit(){
 	
 	private function get_content_html(){
 ?>
-<a href="#" title="Imprimir" class="link-cert" rel="print" id="send-print">
+<a href="javascript:void(0)" title="Imprimir" class="link-cert" rel="print" id="send-print">
 	<img src="img/icon-print-01.png" width="50" height="50" alt="Imprimir" />
 </a>
 <?php
