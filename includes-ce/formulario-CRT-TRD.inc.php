@@ -186,26 +186,25 @@ function trd_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                            encuentren impagas, el mismo no estará cubierto.
                         </td>
                       </tr>
+<?php
+             if((boolean)$row['garantia']===true){
+?>                         
                       <tr>
                          <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">3.&nbsp;</td>
                          <td style="width:98%; padding-top:10px;">
                            <b>NOTA ACLARATORIA:</b>
+                           NOTA ACLARATORIA:<br><br>
                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                               <tr>
                                 <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">&bull;</td>
                                 <td style="width:98%; padding-top:10px;">
-                                    Se aclara que esta póliza no se renovará posteriormente a la cancelación total de 
-                                    la operación crediticia del asegurado con el contratante, de acuerdo al monto 
-                                    subrogado y declarado en la póliza
+                                    Se aclara que esta póliza no se renovará posteriormente a la cancelación total de la operación crediticia del asegurado con el contratante, de acuerdo al monto subrogado y declarado en la póliza
                                 </td>
                               </tr>
                               <tr>
                                 <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
                                 <td style="width:98%;">
-                                    Se aclara que la vigencia de la póliza podrá terminar en forma anticipada, cuando 
-                                    el Asegurado realice el pago anticipado del monto total de su operación crediticia
-                                    adeudada al Contratante. Sin embargo, si la prima fue pagada al contado, la póliza
-                                    se mantendrá vigente hasta su finalización.
+                                    Se aclara que la vigencia de la póliza podrá terminar en forma anticipada, cuando el Asegurado realice el pago anticipado del monto total de su operación crediticia adeudada al Contratante. Sin embargo, si la prima fue pagada al contado, la póliza se mantendrá vigente hasta su finalización.
                                 </td>
                               </tr>
                            </table>
@@ -213,11 +212,22 @@ function trd_formulario_crt($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                        </tr>
                       <tr>
                         <td colspan="2" style="width:100%; font-weight:bold; text-align:justify;">
-                           <u>En tal sentido al ser una póliza que no cuenta con renovación posterior al pago de la deuda 
-                        con el contratante y siendo este el tomador de la póliza, Sudamericana no enviara aviso de 
-                        vencimiento para la renovación o finalización de vigencia.</u>    
+                           <u>En tal sentido al ser una póliza que no cuenta con renovación posterior al pago de la deuda con el contratante y siendo este el tomador de la póliza, Sudamericana no enviara aviso de vencimiento para la renovación o finalización de vigencia.</u>    
                         </td>
                       </tr>
+<?php
+			 }else{
+?>                 
+                      <tr>
+                         <td style="width:2%; font-weight:bold; padding-top:10px;" valign="top">3.&nbsp;</td>
+                         <td style="width:98%; padding-top:10px;">
+                           <b>AVISO DE VENCIMIENTO:</b><br><br>
+                           Sudamericana SRL Corredores y Asesores de Seguros no realizará la gestión de cobranza. El pago de la prima  será efectuado mediante débito automático de su cuenta autorizada, en ese sentido <b>Sudamericana SRL no enviará aviso de vencimiento para la renovación o finalización de vigencia.</b>
+                         </td>
+                      </tr>
+<?php
+			 }
+?>     
                      </table>
                   </td>
                   <td style="width: 50%; text-align: justify; padding: 5px; border-top: 1px solid #000;
