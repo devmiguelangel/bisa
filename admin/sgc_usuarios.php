@@ -729,7 +729,7 @@ function mostrar_crear_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion
            $('#btnCancelar').click(function(){
 			   $(location).prop('href','index.php?l=usuarios');
 		   });
-
+           		   
 		   //SELECT DEPARTAMANTO - FUNCION QUE PERMITE BUSCAR LA AGENCIA DE UN
 		   //DETERMINADO DEPARTAMENTO O REGION
 		   $('#departamento').change(function(e) {
@@ -1507,38 +1507,71 @@ function importar_archivo_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_se
 			$id_tipo = $conexion->real_escape_string($vec2[0]);
 			$identidadf = $conexion->real_escape_string($_POST['identidadf']);
 			$depto_regional = $_POST['departamento'];
-			$id_agencia = 'null';
+			$insert_ag = "INSERT INTO s_agencia(id_agencia, agencia, id_depto, id_ef, emision) VALUES ";
 			$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, id_tipo, id_depto, activado, cambio_password, id_agencia, fono_agencia, fecha_creacion) VALUES ";
 			$insert_ef = "INSERT INTO s_ef_usuario(id_eu, usuario, id_usuario, id_ef) VALUES ";
-
+			
+			$lista = array();
+			
 			//recorremos las filas obtenidas
 			foreach($objHoja as $iIndice => $objCelda){
-				$name = $objCelda['B'];
-				$user = $objCelda['E'];
-				$password = $objCelda['F'];
+				//echo count($lista); echo'<br>';
+				//echo $objCelda['A']; echo'<br>';
+				$prefijo = '@S#1$2015';
+				$id_unico = '';
+				$id_agencia = "'".uniqid($prefijo,true)."'";
+				$sw=0;
+				foreach($lista as $clave => $value){
+					if($value['agencia']==$objCelda['A']){
+						$id_agencia=$value['id_agencia'];
+						$sw=1;
+						break;			  			  
+					}
+				}
+				$lista[]=array(
+							   'agencia'=>$objCelda['A'],
+							   'id_agencia'=>$id_agencia,
+							   'usuario'=>$objCelda['B'],
+							   'nombre'=>$objCelda['C'],
+							   'email'=>$objCelda['D'],
+							   'contrasenia'=>'Bisa123'
+							  );
+				if($sw==0){
+					$insert = "INSERT INTO s_agencia(id_agencia, agencia, id_depto, id_ef, emision) "
+							 ."VALUES(".$id_agencia.", '".$objCelda['A']."', ".$depto_regional.", '".$identidadf."', 0)";
+					$conexion->query($insert);
+				}			  
 
+			}
+			//var_dump($lista);
+			
+			foreach($lista as $key => $val){
+								
 				//generamos un idusuario unico encriptado
 			    $prefijo = '@S#1$2013';
                 $id_unico = '';
                 $id_unico = uniqid($prefijo,true);
 
 			    //encriptamos el password del usuario
-			    $encrip_pass = crypt_blowfish_bycarluys($password);
+			    $encrip_pass = crypt_blowfish_bycarluys($val['contrasenia']);
 
-				$insert_us.="('".$id_unico."', '".$user."', '".$encrip_pass."', '".$name."', '', ".$id_tipo.", ".$depto_regional.", 1, 0, ".$id_agencia.", '', curdate()), ";
-
+				$insert_us.="('".$id_unico."', '".$val['usuario']."', '".$encrip_pass."', '".$val['nombre']."', '".$val['email']."', ".$id_tipo.", ".$depto_regional.", 1, 0, ".$val['id_agencia'].", '', curdate()), ";
+				
 				//INSERTAMOS LA ENTIDAD FINANCIERA
 				$prefijo2 = '@S#1$2013';
 				$id_unico2 = '';
 				$id_unico2 = uniqid($prefijo2,true);
-				$insert_ef.="('".$id_unico2."', '".$user."', '".$id_unico."', '".$identidadf."'), ";
-
+				
+				$insert_ef.="('".$id_unico2."', '".$val['usuario']."', '".$id_unico."', '".$identidadf."'), ";
+				
 			}
+			
 			$insert_us = trim(trim($insert_us),',');
 			$insert_ef = trim(trim($insert_ef),',');
 			if($conexion->query($insert_us)===TRUE){
 				if($conexion->query($insert_ef)===TRUE){
-					$mensaje="Se registro correctamente los datos del usuario ".$user;
+					unlink('files/'.base64_decode($_POST['dc-attached']));
+					$mensaje="Se registro correctamente los datos de los usuarios ";
 					header('Location: index.php?l=usuarios&op=1&msg='.base64_encode($mensaje));
 					exit;
 				}else{
@@ -1551,8 +1584,8 @@ function importar_archivo_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_se
 				header('Location: index.php?l=usuarios&op=2&msg='.base64_encode($mensaje));
 				exit;
 			}
-
-			unlink('files/'.base64_decode($_POST['dc-attached']));
+			
+				
 	}else{
 		mostrar_importar_archivo_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion);
 	}
