@@ -341,7 +341,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dddddd', end
 	background: -ms-linear-gradient(top,  #ffffff 8%,#cccccc 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #ffffff 8%,#cccccc 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#cccccc',GradientType=0 ); /* IE6-8 */
-	z-index: 200;
+	z-index: 300;
 }
 
 #main-menu li ul li{
@@ -2180,7 +2180,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbdbdb', end
 	text-align: center;
 	bottom: 20px;
 	width: 290px;
-	z-index: 300;
+	z-index: 400;
 }
 
 /* ===========================TOMADOR============================ */
