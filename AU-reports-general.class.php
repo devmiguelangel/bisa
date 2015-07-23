@@ -947,7 +947,9 @@ $(document).ready(function(e) {
 					$this->data['r-issued'];?>&frp-rejected=<?=
 					$this->data['r-rejected'];?>&frp-canceled=<?=
 					$this->data['r-canceled'];?>&frp-warranty=<?=
-					$this->data['warranty'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
+					$this->data['warranty'];?>&frp-state-account=<?=
+					$this->data['r-state-account'];?>&frp-mora=<?=
+					$this->data['r-mora'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php
 			}
 ?>
