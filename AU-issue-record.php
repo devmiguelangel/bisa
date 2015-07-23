@@ -586,11 +586,13 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 							do{
 								if($link->errno !== 0)
 									$swVh = TRUE;
-							}while($link->next_result());
+							}while($link->more_results() && $link->next_result());
 							
 							if($swVh === FALSE) {
 								$swReg = TRUE;
-								$arrAU[1] = 'au-quote.php?ms='.$ms.'&page='.$page.'&pr='.$pr.'&ide='.base64_encode($ide).'&flag='.md5('i-read').'&cia='.base64_encode($idcia).$target;
+								$arrAU[1] = 'au-quote.php?ms=' . $ms . '&page=' . $page 
+									. '&pr=' . $pr . '&ide=' . base64_encode($ide) 
+									. '&flag=' . md5('i-read') . '&cia=' . base64_encode($idcia) . $target;
 								$arrAU[2] = 'La Póliza fue actualizada correctamente !';
 
 								$log_msg = 'AU - Em. ' . $record . ' / Update Certificate Client, Vehicles';

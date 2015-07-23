@@ -53,6 +53,8 @@ class ReportsGeneralTRD{
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
 		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
+		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
+		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
 
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
@@ -96,6 +98,9 @@ class ReportsGeneralTRD{
 			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Preaprobadas'; break;
 		case md5('CP'): $this->token = 'CP'; 
 			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Certificados Provisionales'; break;
+		case md5('RC'):
+			$this->token = 'RC';
+			$this->xlsTitle = 'Todo Riesgo de Daños a la Propiedad - Reporte Cobranzas'; break;
 		}
 		
 		if($this->token === 'RG' 
@@ -105,7 +110,7 @@ class ReportsGeneralTRD{
            || $this->token === 'AN' 
            || $this->token === 'IM' 
            || $this->token === 'AP' 
-           //|| $this->token === 'CP'
+           || $this->token === 'RC'
         ){
 			$this->set_query_trd_report();
 		}elseif($this->token === 'RQ'
@@ -125,13 +130,43 @@ class ReportsGeneralTRD{
 			case 'AN': $this->dataToken = 4; break;
 			case 'IM': $this->dataToken = 5; break;
 			case 'AP': $this->dataToken = 2; break;
+			case 'RC': $this->dataToken = 2; break;
 			//case 'CP': $this->dataToken = 6; break;
 		}
 		
 		$this->sql = "select 
 		    stre.id_emision as ide,
-		    stre.id_cotizacion as idc,
-		    count(strd.id_emision) as noPr,
+		    stre.id_cotizacion as idc, ";
+	    if ($this->token === 'RC') {
+			$this->sql .= "sco.numero_cuota,
+			sco.fecha_transaccion,
+			sco.numero_transaccion,
+			sco.monto_transaccion,
+			sco.cobrado, ";
+
+			if ($this->token === 'RC') {
+				$this->sql .= "date_format(sco.fecha_cuota, '%d/%m/%Y') as fecha_cuota,
+				if(sco.fecha_transaccion = '0000-00-00', 
+					'', 
+					date_format(sco.fecha_transaccion, '%d/%m/%Y')) as fecha_transaccion,
+				if(datediff(curdate(), sco.fecha_cuota) > 0 
+						and sco.fecha_transaccion = '0000-00-00', 
+					datediff(curdate(), sco.fecha_cuota), 0) as dias_mora,
+				(case
+					when sco.fecha_transaccion != '0000-00-00'
+						then 'P'
+					when datediff(curdate(), sco.fecha_cuota) < 0
+						then 'V'
+					when datediff(curdate(), sco.fecha_cuota) > 90
+						then 'N'
+					when datediff(curdate(), sco.fecha_cuota) >= 0
+						then 'M'
+					else
+						''
+				end) as estado_cuenta, ";
+			}
+		}
+		$this->sql .= "count(strd.id_emision) as noPr,
 		    stre.prefijo,
 		    stre.no_emision,
 		    stre.no_poliza,
@@ -213,7 +248,12 @@ class ReportsGeneralTRD{
 		from
 		    s_trd_em_cabecera as stre
 		        inner join
-		    s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision)
+		    s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision) ";
+    	if ($this->token === 'RC') {
+			$this->sql .= "inner join
+			s_trd_cobranza as sco ON (sco.id_emision = stre.id_emision) ";
+		}
+		$this->sql .= "
 		        inner join
 		    s_cliente as scl ON (scl.id_cliente = stre.id_cliente)
 		    	left join
@@ -365,10 +405,36 @@ class ReportsGeneralTRD{
 				and (stre.anulado = true and stre.request = true)
 				and stre.revert = false
 			';
+		} elseif ($this->token === 'RC') {
+			$this->sql .= "and stre.emitir = true
+				and stre.anulado = false
+				and (case
+					when sco.fecha_transaccion != '0000-00-00'
+						then 'P'
+					when datediff(curdate(), sco.fecha_cuota) < 0
+						then 'V'
+					when datediff(curdate(), sco.fecha_cuota) > 90
+						then 'N'
+					when datediff(curdate(), sco.fecha_cuota) >= 0
+						then 'M'
+					else
+						''
+				end) regexp '" . $this->data['r-state-account'] . "'
+			";
+			if (!empty($this->data['r-mora'])) {
+				$this->sql .= "and datediff(curdate(), sco.fecha_cuota) 
+					between " . $this->cx->days_mora[$this->data['r-mora']][0] . " 
+						and " . $this->cx->days_mora[$this->data['r-mora']][1] . " 
+				";
+			}
 		}
 
-		$this->sql .= "group by stre.id_emision
-		order by stre.id_emision desc
+		if ($this->token === 'RC') {
+			$this->sql .= "group by sco.id ";
+		} else {
+			$this->sql .= "group by stre.id_emision ";
+		}
+		$this->sql .= "order by stre.id_emision desc
 		;";
 		
 		// echo $this->sql;
@@ -519,7 +585,7 @@ class ReportsGeneralTRD{
            || $this->token === 'AN' 
            || $this->token === 'IM' 
            || $this->token === 'AP' 
-           //|| $this->token === 'CP'
+           || $this->token === 'RC'
         ){
 			$this->set_result_trd();
 		}elseif($this->token === 'RQ'
@@ -548,11 +614,19 @@ $(document).ready(function(e) {
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
+<?php if ($this->token === 'RC'): ?>
+            <td>No. Cuota</td>
+            <td>Fecha de Pago</td>
+            <td><?=htmlentities('Fecha de Transacción');?></td>
+            <td><?=htmlentities('Días en Mora');?></td>
+            <td>Estado</td>
+<?php else: ?>
             <td>Ciudad</td>
             <td><?=htmlentities('Género', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Teléfono', ENT_QUOTES, 'UTF-8');?></td>
             <td>Celular</td>
             <td>Email</td>
+<?php endif ?>
             <td><?=htmlentities('Plazo Crédito', ENT_QUOTES, 'UTF-8');?></td>
             <td>Forma de Pago</td>
             <td>Tipo</td>
@@ -706,11 +780,19 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_ci'].$this->row['cl_complemento'].' '.$this->row['cl_extension'];?></td>
+<?php if ($this->token === 'RC'): ?>
+			<td><?=$this->row['numero_cuota'];?></td>
+			<td><?=$this->row['fecha_cuota'];?></td>
+            <td><?=$this->row['fecha_transaccion'];?></td>
+            <td><?=$this->row['dias_mora'];?></td>
+            <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
+<?php else: ?>
             <td <?=$rowSpan;?>><?=$this->row['cl_ciudad'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_genero'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
+<?php endif ?>
             <td <?=$rowSpan;?>>
             	<?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?>
             </td>

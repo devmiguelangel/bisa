@@ -55,6 +55,7 @@ if($token === TRUE){
 					sac.id_cotizacion as idc, 
 					sae.prefijo,
 					sae.no_emision,
+					sae.no_poliza,
 					sae.id_compania,
 					sae.certificado_provisional as cp,
 					sae.garantia,
@@ -70,6 +71,7 @@ if($token === TRUE){
 					strc.id_cotizacion as idc, 
 					stre.prefijo,
 					stre.no_emision,
+					stre.no_poliza,
 					stre.id_compania,
 					stre.certificado_provisional as cp,
 					stre.garantia,
@@ -111,7 +113,7 @@ if($token === TRUE){
 			}
 		}
 ?>
-<h3 id="issue-title">Póliza <?=$rowIs['prefijo'] . '-' . $rowIs['no_emision'];?></h3>
+<h3 id="issue-title">Póliza <?= $rowIs['no_poliza'] ;?></h3>
 
 <a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=
 	base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" 

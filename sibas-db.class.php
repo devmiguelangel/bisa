@@ -123,6 +123,18 @@ class SibasDB extends MySQLi
 				24 => 'De Bs. 150,001 a Bs 200,000',
 				25 => 'De 200,001 en adelante',
 			),
+		),
+		$state_account = array(
+			'P' => 'Pagado',
+			'V' => 'Vigente',
+			'N' => 'No Vigente',
+			'M' => 'Mora',
+			),
+		$days_mora = array(
+			1 => array(0, 30),
+			2 => array(31, 60),
+			3 => array(61, 90),
+			4 => array(90, 1000000000),
 		)
 		
 		;

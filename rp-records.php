@@ -165,6 +165,21 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 
 	$arrData['r-warranty'] = '';
 	if(isset($_GET['frp-warranty'])) { $arrData['r-warranty'] = $_GET['frp-warranty']; }
+
+	$arrData['r-state-account'] = '';
+	if ($xls === false) {
+		if(isset($_GET['frp-state-account-p'])) { $arrData['r-state-account'] .= $_GET['frp-state-account-p']; }
+		if(isset($_GET['frp-state-account-v'])) { $arrData['r-state-account'] .= $_GET['frp-state-account-v']; }
+		if(isset($_GET['frp-state-account-n'])) { $arrData['r-state-account'] .= $_GET['frp-state-account-n']; }
+		if(isset($_GET['frp-state-account-m'])) { $arrData['r-state-account'] .= $_GET['frp-state-account-m']; }
+		if(empty($arrData['r-state-account']) === true) { $arrData['r-state-account'] = '.'; }
+		else { $arrData['r-state-account'] = '['.$arrData['r-state-account'].']{1}'; }
+	} else {
+		if(isset($_GET['frp-state-account'])) { $arrData['r-state-account'] = $_GET['frp-state-account'];}
+	}
+
+	$arrData['r-mora'] = '';
+	if(isset($_GET['frp-mora'])) { $arrData['r-mora'] = $_GET['frp-mora']; }
 	
 	$arrData['ms'] = $_GET['ms'];
 	$arrData['page'] = $_GET['page'];

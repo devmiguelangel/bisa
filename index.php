@@ -230,6 +230,9 @@ if($token === TRUE){
 		case md5('P_quote'):
 			require('RP-quote.inc.php');
 			break;
+		case md5('P_collection'):
+			require('RP-collection.inc.php');
+			break;
 		default:
 			echo '<meta http-equiv="refresh" content="0;url=index.php" >';
 			break;

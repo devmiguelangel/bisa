@@ -455,6 +455,9 @@ if($tokenM === TRUE){
         <ul>
 			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_general');?>">Generales</a></li>
 			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_policy');?>">Pólizas Emitidas</a></li>
+			<?php if ($user_type !== 'FAC'): ?>
+				<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_collection');?>">Reporte de Cobranzas</a></li>
+			<?php endif ?>
 			<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_quote');?>">Solicitudes</a></li>
         </ul>
     </li>

@@ -46,7 +46,7 @@ switch($flag){
 		break;
 	case md5('i-read'):
 		$action = 'TRD-policy-record.php';
-		$title = 'Póliza No. TRD - ';
+		$title = 'Póliza No. ';
 		$title_btn = 'Emitir';
 		$read_new = 'disabled';
 		$read_save = 'disabled';
@@ -58,7 +58,7 @@ switch($flag){
 		break;
 	case md5('i-edit'):
 		$action = 'TRD-issue-record.php';
-		$title = 'Póliza No. TRD - ';
+		$title = 'Póliza No. ';
 		$title_btn = 'Actualizar Datos';
 		$read_edit = 'readonly';
 		$sw = 3;
@@ -154,6 +154,7 @@ if($sw !== 1){
 	    stre.certificado_provisional as cp,
 	    stre.garantia as c_garantia,
 	    stre.no_emision,
+	    stre.no_poliza,
 	    stre.ini_vigencia as c_ini_vigencia,
 	    stre.fin_vigencia as c_fin_vigencia,
 	    stre.plazo as c_plazo,
@@ -354,7 +355,7 @@ if($rs->data_seek(0) === TRUE){
 	}
 	
 	if ($sw !== 1) {
-		$idNE = $row['no_emision'];
+		$idNE = $row['no_poliza'];
 		
 		$cr_opp = $row['c_no_operacion'];
 		$cr_policy = $row['c_poliza'];

@@ -46,7 +46,7 @@ switch($flag){
 		break;
 	case md5('i-read'):
 		$action = 'AU-policy-record.php';
-		$title = 'Póliza No. AU - ';
+		$title = 'Póliza No. ';
 		$title_btn = 'Emitir';
 		$read_new = 'disabled';
 		$read_save = 'disabled';
@@ -58,7 +58,7 @@ switch($flag){
 		break;
 	case md5('i-edit'):
 		$action = 'AU-issue-record.php';
-		$title = 'Póliza No. AU - ';
+		$title = 'Póliza No. ';
 		$title_btn = 'Actualizar Datos';
 		$read_edit = 'readonly';
 		$sw = 3;
@@ -159,6 +159,7 @@ if($sw !== 1){
 		sae.certificado_provisional as cp,
 		sae.garantia as c_garantia,
 		sae.no_emision,
+		sae.no_poliza,
 		sae.ini_vigencia as c_ini_vigencia,
 		sae.fin_vigencia as c_fin_vigencia,
 		sae.plazo as c_plazo,
@@ -364,7 +365,7 @@ if($rs->data_seek(0) === TRUE){
 	}
 	
 	if ($sw !== 1) {
-		$idNE = $row['no_emision'];
+		$idNE = $row['no_poliza'];
 		
 		$cr_opp = $row['c_no_operacion'];
 		$cr_policy = $row['c_poliza'];

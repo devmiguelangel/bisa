@@ -38,8 +38,8 @@ $(document).ready(function(e) {
 	});
 });
 </script>
-<input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">
-<input type="hidden" id="page" name="page" value="<?=$_GET['page'];?>">
+<input type="hidden" id="ms" name="ms" value="<?=@$_GET['ms'];?>">
+<input type="hidden" id="page" name="page" value="<?=@$_GET['page'];?>">
 <table class="result-list">
 	<thead>
     	<tr>
@@ -171,7 +171,8 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 	    sag.agencia as u_agencia,
 	    date_format(sae.fecha_creacion, '%d/%m/%Y') as fecha_ingreso,
 	    sef.nombre as ef_nombre,
-	    sef.logo as ef_logo
+	    sef.logo as ef_logo,
+	    sae.leido
 	from
 	    s_au_em_cabecera as sae
 	        inner join

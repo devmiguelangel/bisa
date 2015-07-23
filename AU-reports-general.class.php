@@ -56,7 +56,9 @@ class ReportsGeneralAU{
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
 		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
-		
+		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
+		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
+
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 		
 		$this->data['ef'] = '';
@@ -89,6 +91,9 @@ class ReportsGeneralAU{
 		
 		case md5('IM'): $this->token = 'IM'; $this->xlsTitle = 'Automotores - Preaprobadas'; break;
 		case md5('CP'): $this->token = 'CP'; $this->xlsTitle = 'Automotores - Certificados Provisionales'; break;
+		case md5('RC'):
+			$this->token = 'RC';
+			$this->xlsTitle = 'Automotores - Reporte Cobranzas'; break;
 		}
 		
 		if ($this->token === 'RG'
@@ -97,7 +102,8 @@ class ReportsGeneralAU{
             || $this->token === 'SP' 
             || $this->token === 'AN' 
             || $this->token === 'IM' 
-            || $this->token === 'AP' ) {
+            || $this->token === 'AP'
+            || $this->token === 'RC' ) {
 			$this->set_query_au_report();
 		} elseif ($this->token === 'RQ'
             || $this->token === 'IQ'
@@ -116,13 +122,44 @@ class ReportsGeneralAU{
 			case 'AN': $this->dataToken = 4; break;
 			case 'IM': $this->dataToken = 5; break;
 			case 'AP': $this->dataToken = 2; break;
+			case 'RC': $this->dataToken = 2; break;
 			//case 'CP': $this->dataToken = 6; break;
 		}
 		
 		$this->sql = "select 
 		    sae.id_emision as ide,
-		    sae.id_cotizacion as idc,
-		    count(sad.id_emision) as noVh,
+		    sae.id_cotizacion as idc, ";
+	    if ($this->token === 'RC') {
+			$this->sql .= "sco.numero_cuota,
+			sco.fecha_transaccion,
+			sco.numero_transaccion,
+			sco.monto_transaccion,
+			sco.cobrado, ";
+
+			if ($this->token === 'RC') {
+				$this->sql .= "date_format(sco.fecha_cuota, '%d/%m/%Y') as fecha_cuota,
+				if(sco.fecha_transaccion = '0000-00-00', 
+					'', 
+					date_format(sco.fecha_transaccion, '%d/%m/%Y')) as fecha_transaccion,
+				if(datediff(curdate(), sco.fecha_cuota) > 0 
+						and sco.fecha_transaccion = '0000-00-00', 
+					datediff(curdate(), sco.fecha_cuota), 0) as dias_mora,
+				(case
+					when sco.fecha_transaccion != '0000-00-00'
+						then 'P'
+					when datediff(curdate(), sco.fecha_cuota) < 0
+						then 'V'
+					when datediff(curdate(), sco.fecha_cuota) > 90
+						then 'N'
+					when datediff(curdate(), sco.fecha_cuota) >= 0
+						then 'M'
+					else
+						''
+				end) as estado_cuenta, ";
+			}
+		}
+
+		$this->sql .= "count(sad.id_emision) as noVh,
 		    sum(if((saf.id_facultativo is null
 		            and sad.facultativo = true)
 		            and sad.aprobado = false,
@@ -194,7 +231,12 @@ class ReportsGeneralAU{
 		from
 		    s_au_em_cabecera as sae
 		        inner join
-		    s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
+		    s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision) ";
+		if ($this->token === 'RC') {
+			$this->sql .= "inner join
+			s_au_cobranza as sco ON (sco.id_emision = sae.id_emision) ";
+		}
+		$this->sql .= "
 		        left join
 		    s_au_facultativo as saf ON (saf.id_vehiculo = sad.id_vehiculo
 		        and saf.id_emision = sae.id_emision)
@@ -328,9 +370,36 @@ class ReportsGeneralAU{
 				and (sae.anulado = true and sae.request = true)
 				and sae.revert = false
 			';
+		} elseif ($this->token === 'RC') {
+			$this->sql .= "and sae.emitir = true
+				and sae.anulado = false
+				and (case
+					when sco.fecha_transaccion != '0000-00-00'
+						then 'P'
+					when datediff(curdate(), sco.fecha_cuota) < 0
+						then 'V'
+					when datediff(curdate(), sco.fecha_cuota) > 90
+						then 'N'
+					when datediff(curdate(), sco.fecha_cuota) >= 0
+						then 'M'
+					else
+						''
+				end) regexp '" . $this->data['r-state-account'] . "'
+			";
+			if (!empty($this->data['r-mora'])) {
+				$this->sql .= "and datediff(curdate(), sco.fecha_cuota) 
+					between " . $this->cx->days_mora[$this->data['r-mora']][0] . " 
+						and " . $this->cx->days_mora[$this->data['r-mora']][1] . " 
+				";
+			}
 		}
 		
-		$this->sql .= "group by sae.id_emision ";
+		if ($this->token === 'RC') {
+			$this->sql .= "group by sco.id ";
+		} else {
+			$this->sql .= "group by sae.id_emision ";
+		}
+
 		if ($this->token === 'AP') {
 			$this->sql .= "having sum(if((saf.id_facultativo is null
 				        and sad.facultativo = true)
@@ -489,7 +558,8 @@ class ReportsGeneralAU{
             || $this->token === 'SP' 
             || $this->token === 'AN' 
             || $this->token === 'IM' 
-            || $this->token === 'AP' ) {
+            || $this->token === 'AP'
+            || $this->token === 'RC' ) {
 			$this->set_result_au();
 		} elseif ($this->token === 'RQ'
             || $this->token === 'IQ'
@@ -517,11 +587,19 @@ $(document).ready(function(e) {
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
+<?php if ($this->token === 'RC'): ?>
+            <td>No. Cuota</td>
+            <td>Fecha de Pago</td>
+            <td><?=htmlentities('Fecha de Transacción');?></td>
+            <td><?=htmlentities('Días en Mora');?></td>
+            <td>Estado</td>
+<?php else: ?>
             <td>Ciudad</td>
             <td><?=htmlentities('Género', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Teléfono', ENT_QUOTES, 'UTF-8');?></td>
             <td>Celular</td>
             <td>Email</td>
+<?php endif ?>
             <td>Modalidad de Pago</td>
             <td><?=htmlentities('Tipo Vehículo', ENT_QUOTES, 'UTF-8');?></td>
             <td>Marca</td>
@@ -774,11 +852,19 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
             <td <?=$rowSpan;?>><?=htmlentities($this->row['cl_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_ci'].$this->row['cl_complemento'].' '.$this->row['cl_extension'];?></td>
+<?php if ($this->token === 'RC'): ?>
+			<td><?=$this->row['numero_cuota'];?></td>
+			<td><?=$this->row['fecha_cuota'];?></td>
+            <td><?=$this->row['fecha_transaccion'];?></td>
+            <td><?=$this->row['dias_mora'];?></td>
+            <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
+<?php else: ?>
             <td <?=$rowSpan;?>><?=$this->row['cl_ciudad'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_genero'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
+<?php endif ?>
             <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
