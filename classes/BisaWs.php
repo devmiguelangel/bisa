@@ -39,6 +39,10 @@ class BisaWs
 			'method'	=> 'vinculacionRequest',
 			'var' 		=> array()
 		),
+		'AI' => array(
+			'method'	=> 'datosComplementariosGarantiaRequest',
+			'var' 		=> array()
+		),
 	);
 
 	public 

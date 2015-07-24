@@ -186,6 +186,17 @@ if($swPr === FALSE){
 }
 if($nPr < $max_item || $swPr === true){
 ?>
+	<div class="accordion">
+		<h5>Datos complementarios de Garantía</h5>
+       	<div style="text-align: center;">
+       		<label style="width: auto;">Nro. de Folio: </label>
+       		<input type="text" style="width: 150px;" id="no_cf" data-pr="T">
+       		<button class="btn-issue" style="width: 150px; margin: 0 5px; background: #23abea;" 
+       			class="add-inf">Buscar</button>
+       	</div>
+	</div>
+	<br>
+
     <div class="form-col">
         <label>Departamento: <span>*</span></label>
         <div class="content-input">
@@ -366,6 +377,16 @@ if (isset($_GET['idc'])) {
 <?php
 }
 ?>
+	var icons = {
+      header: "ui-icon-circle-arrow-e",
+      activeHeader: "ui-icon-circle-arrow-s"
+    };
 	
+	$(".accordion" ).accordion({
+		collapsible: true,
+		icons: icons,
+		heightStyle: "content",
+		active: 6
+	});
 });
 </script>
