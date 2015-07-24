@@ -97,10 +97,3 @@ if (($rsCia = $link->query($sqlCia, MYSQLI_STORE_RESULT)) !== false) {
 	echo 'No se puede obtener las Compañias';
 }
 ?>
-<br>
-<br>
-
-<div class="contact-phone">
-	Todas las ofertas tienen las mismas condiciones, elige la compañía de tu elección<br><br>
-	* Para cualquier duda o consulta, contacta a la Línea Gratuita de Sudamericana S.R.L. 800-10-3070
-</div>
