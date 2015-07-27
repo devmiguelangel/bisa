@@ -316,21 +316,35 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 		}
 	}
 }
+
+$rsDep = null;
+if(($rsDep = $link->get_depto()) === FALSE) {
+	$rsDep = null;
+}
 ?>
 
 <h3>Datos del Cliente</h3>
 <div style="text-align:center;">
-	<form id="fau-sc" name="fau-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> font-size: 80%;">
+	<form id="fau-sc" name="fau-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> font-size: 70%;">
         <label style="width: auto;">Documento de Identidad: <span>*</span></label>
         <div class="content-input" style="width:auto;">
             <input type="text" id="dsc-dni" name="dsc-dni" autocomplete="off" 
-            	value="" style="width:120px;" class="required text fbin">
+            	value="" style="width:100px;" class="required text fbin">
         </div>
 
         <label style="width: auto;">Extensión: <span>*</span></label>
         <div class="content-input" style="width:auto;">
-            <input type="text" id="dsc-ext" name="dsc-ext" autocomplete="off" 
-            	value="" style="width:30px;" class="required text fbin">
+        	<select id="dsc-ext" name="dsc-ext" style="width: 100px;" class="required text fbin">
+        		<option>Seleccione...</option>
+				<?php if ($rsDep->data_seek(0)): ?>
+					<?php while ($rowDep = $rsDep->fetch_array(MYSQLI_ASSOC)): $px_code = ''; ?>
+						<?php if ((boolean)$rowDep['tipo_ci'] && (boolean)$rowDep['tipo_dp']): $px_code = 'C'; ?>
+						<?php endif ?>
+						<option value="<?= $px_code . $rowDep['codigo'] ;?>"><?= $rowDep['departamento'] ;?></option>
+					<?php endwhile ?>
+				<option value="NIT">Persona Jurídica</option>
+        		<?php endif ?>        		
+        	</select>
         </div>
         <input type="hidden" id="dsc-type-client" name="dsc-type-client" value="<?=$_TYPE_CLIENT;?>">
         <input type="submit" id="dsc-sc" name="dsc-sc" value="Buscar Cliente" class="btn-search-cs">
@@ -403,11 +417,6 @@ for($i = 0; $i < count($arr_type_client); $i++){
                 <select id="dc-ext" name="dc-ext" class="<?=$require_nat;?> fbin field-person">
                     <option value="">Seleccione...</option>
 <?php
-$rsDep = null;
-if(($rsDep = $link->get_depto()) === FALSE) {
-	$rsDep = null;
-}
-
 if ($rsDep->data_seek(0) === TRUE) {
 	while($rowDep = $rsDep->fetch_array(MYSQLI_ASSOC)){
 		if((boolean)$rowDep['tipo_ci'] === TRUE){
