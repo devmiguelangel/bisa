@@ -31,6 +31,7 @@ $title = '';
 $title_btn = '';
 $link_save = 'index.php';
 $token_issue = true;
+$req_cap_ton = 'not-required';
 
 $sw = 0;
 $swMo = false;
@@ -872,6 +873,9 @@ if(($rsTv = $link->get_type_vehicle($_SESSION['idEF'])) !== FALSE){
 	while($rowTv = $rsTv->fetch_array(MYSQLI_ASSOC)){
 		if($rowTv['id_vh'] === $rowVh['vh_tipo_vehiculo']) {
 			echo '<option value="'.base64_encode($rowTv['id_vh']).'" selected>'.$rowTv['vehiculo'].'</option>';
+			if ($rowTv['categoria'] === 'P') {
+				$req_cap_ton = 'required';
+			}
 		} else {
 			echo '<option value="'.base64_encode($rowTv['id_vh']).'">'.$rowTv['vehiculo'].'</option>';
 		}
@@ -1013,7 +1017,7 @@ for($i = 0; $i < count($arr_traction); $i++){
             <td>
             	<input type="text" id="dv-<?=$k;?>-capton" name="dv-<?=$k;?>-capton" 
             		autocomplete="off" value="<?=$rowVh['vh_cap_ton'];?>" 
-            		class="required text-2 fbin" <?=$read_save;?>>
+            		class="<?= $req_cap_ton ;?> text-2 fbin" <?=$read_save;?>>
             </td>
             <td>
             	<input type="text" id="dv-<?=$k;?>-nseat" name="dv-<?=$k;?>-nseat" 

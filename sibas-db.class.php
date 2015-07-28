@@ -1388,7 +1388,9 @@ class SibasDB extends MySQLi
 	public function get_type_vehicle($idef)
 	{
 		$this->sql = 'select 
-				stv.id_tipo_vh as id_vh, stv.vehiculo
+				stv.id_tipo_vh as id_vh,
+				stv.vehiculo,
+				stv.categoria
 			from
 				s_au_tipo_vehiculo as stv
 					inner join
