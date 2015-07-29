@@ -41,7 +41,7 @@ if ($token) {
 				from 
 					s_trd_em_cabecera as stre
 						inner join
-					s_au_em_detalle as strd ON (strd.id_emision = sae.id_emision)
+					s_trd_em_detalle as strd ON (strd.id_emision = stre.id_emision)
 						inner join
 					s_usuario as su ON (su.id_usuario = stre.id_usuario)
 				where

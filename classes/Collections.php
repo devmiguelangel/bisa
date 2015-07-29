@@ -93,6 +93,7 @@ class Collection
 			$nc = 12;
 			$this->prima = $this->row['prima_total'] / $nc;
 			$prima_month = round($this->prima, 2);
+			// $prima_month = round(($this->row['prima_total'] / 12), 2);
 			break;
 		case 'Y':
 			$nc = 1;
