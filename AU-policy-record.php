@@ -31,12 +31,17 @@ if ($token) {
 					sae.no_emision,
 					sae.forma_pago, 
 					sae.prima_total,
+					sae.fecha_creacion,
 					sae.fecha_emision,
 					sae.garantia,
 					sae.operacion,
+					sad.valor_asegurado,
+					(sad.tasa / 100) as tasa,
 					su.usuario as u_usuario
 				from 
 					s_au_em_cabecera as sae
+						inner join
+					s_au_em_detalle as sad ON (sad.id_emision = sae.id_emision)
 						inner join
 					s_usuario as su ON (su.id_usuario = sae.id_usuario)
 				where

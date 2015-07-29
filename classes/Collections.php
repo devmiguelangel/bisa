@@ -10,6 +10,7 @@ class Collection
 		$payment 		= '',
 		$period 		= '',
 		$prima			= 0,
+		$depreciation	= 10 / 100,
 		$no_transaction = 0,
 		$fecha_trans 	= '',
 		$monto_trans 	= 0,
@@ -61,6 +62,13 @@ class Collection
 
 	private function postCollection($ide)
 	{
+		$days_linkup 		= 0;			// Dias transcurridos hasta la vinculacion
+		$prima_linkup 		= 0;			// Prima transcurrido hasta la vinculacion
+		$diff_rounding 		= 0;			// Cobro pro diferencia de redondeo
+		$prima_month	 	= 0;			// Prima Mensual
+		$prima_year			= 0;			// Prima Anual
+		$value_insured		= 0;			// Valor Asegurado
+
 		switch ($this->row['forma_pago']) {
 		case 'CO':
 			$this->period = 'Y';
@@ -79,10 +87,12 @@ class Collection
 
 		$nc = 0;
 		$this->prima = 0;
+		$prima_year = $this->row['prima_total'];
 		switch ($this->period) {
 		case 'M':
 			$nc = 12;
 			$this->prima = $this->row['prima_total'] / $nc;
+			$prima_month = round($this->prima, 2);
 			break;
 		case 'Y':
 			$nc = 1;
@@ -90,9 +100,21 @@ class Collection
 			break;
 		}
 		
-		if ($this->row['ws_db'] && (boolean)$this->row['garantia']) {
-			$nc = count($this->row['data']);
-			$this->ws_token = true;
+		if ((boolean)$this->row['garantia']) {
+			if ($this->row['ws_db']) {
+				$this->ws_token = true;
+				
+				$nc = count($this->row['data']);
+			}
+
+			$datetime1 = new DateTime($this->row['fecha_creacion']);
+			$datetime2 = new DateTime($this->fecha_emision);
+			$interval = $datetime1->diff($datetime2);
+			$days_linkup = $interval->d;
+
+			$prima_linkup 	= ($prima_month / 30) * $days_linkup;
+			$diff_rounding 	= ($prima_month * 12) - $prima_year;
+			$value_insured 	= $this->row['valor_asegurado'];
 		}
 
 		$idc = date('U');
@@ -101,8 +123,11 @@ class Collection
 		$fecha_cuota 	= strtotime('+0 day', strtotime($fecha));
 		$fecha_cuota 	= date('Y-m-d', $fecha_cuota);
 		
+		$count_nc = 0;
+
 		for ($i = 1; $i <= $nc ; $i++) {
 			$idc += $i;
+			$count_nc += 1;
 
 			if ($i !== 1) {
 				$this->no_transaction	= 0;
@@ -111,9 +136,27 @@ class Collection
 				$this->cashed 			= 0;
 			}
 
-			if ($this->ws_token) {
-				$fecha_cuota = $this->row['data'][$i - 1]['fecVctoCuota'];
-				$this->prima = $this->row['data'][$i - 1]['prima'];
+			if ((boolean)$this->row['garantia']) {
+				if ($this->ws_token) {
+					$fecha_cuota = $this->row['data'][$i - 1]['fecVctoCuota'];
+				}
+
+				if ($i === 1) {
+					$this->prima = $prima_month + $diff_rounding + $prima_linkup;
+				} else {
+					if ($count_nc > 12) {
+						$value_insured 	= $value_insured - ($this->row['valor_asegurado'] * $this->depreciation);
+						$prima_year 	= $value_insured * $this->row['tasa'];
+						$prima_month	= round(($prima_year / 12), 2);
+						$diff_rounding 	= ($prima_month * 12) - $prima_year;
+
+						$this->prima	= $prima_month + $diff_rounding;
+						
+						$count_nc = 1;
+					} elseif ($count_nc <= 12) {
+						$this->prima = $prima_month;
+					}
+				}
 			}
 
 			$queryset .= '

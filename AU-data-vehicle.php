@@ -318,8 +318,10 @@ if($nVh < $max_item || $swVh === true){
 	<div class="accordion">
 		<h5>Datos complementarios de Garantía</h5>
        	<div style="text-align: center;">
+       		<label style="width: auto;">Cod. de Cliente: </label>
+       		<input type="text" style="width: 100px;" id="no_cl" autocomplete="off">
        		<label style="width: auto;">Nro. de Chasis: </label>
-       		<input type="text" style="width: 150px;" id="no_cf" data-pr="A">
+       		<input type="text" style="width: 100px;" id="no_cf" data-pr="A" autocomplete="off">
        		<button class="btn-issue" style="width: 150px; margin: 0 5px; background: #23abea;"
        			class="add-inf">Buscar</button>
        	</div>
