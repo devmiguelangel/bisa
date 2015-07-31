@@ -238,6 +238,26 @@ class BisaWs
 		return false;
 	}
 
+	public function getDataWarranty($pr)
+	{
+		$res = array(
+			'A' => 'datosAutomotor',
+			'T' => 'datosTodoRiesgo',
+		);
+
+		if ($this->wsConnect()) {
+			if (count($this->data) > 0) {
+				if (is_array($this->data[$res[$pr]])) {
+					$this->data = $this->data[$res[$pr]]['registro'];
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 }
 
 ?>

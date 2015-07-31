@@ -190,11 +190,10 @@ if($nPr < $max_item || $swPr === true){
 		<h5>Datos complementarios de Garantía</h5>
        	<div style="text-align: center;">
        		<label style="width: auto;">Cod. de Cliente: </label>
-       		<input type="text" style="width: 100px;" id="no_cl" autocomplete="off">
+       		<input type="text" style="width: 100px;" id="cod_cl" autocomplete="off">
        		<label style="width: auto;">Nro. de Folio: </label>
        		<input type="text" style="width: 100px;" id="no_cf" data-pr="T">
-       		<button class="btn-issue" style="width: 150px; margin: 0 5px; background: #23abea;" 
-       			class="add-inf">Buscar</button>
+       		<button class="btn-issue add-inf" style="width: 150px; margin: 0 5px; background: #23abea;">Buscar</button>
        	</div>
 	</div>
 	<br>

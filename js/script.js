@@ -163,3 +163,25 @@ function redirect(url, delay) {
 		location.href = url;
 	}, delay);
 }
+
+function data_warranty () {
+	$('.add-inf').click(function (e) {
+		e.preventDefault();
+
+		var cod_cl	= $('#no_cl').prop('value');
+		var data 	= $('#no_cf');
+		var value 	= data.prop('value');
+		var product	= data.attr('data-pr');
+
+		$.getJSON('helpers/data_warranty.php', {
+			cod_cl: cod_cl,
+			value: value,
+			product: product
+		}, function (res) {
+			console.log(res);
+		})
+		.fail(function(err) {
+			console.log(err);
+		});
+	});
+}
