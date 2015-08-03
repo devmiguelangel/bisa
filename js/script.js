@@ -179,6 +179,8 @@ function data_warranty () {
 			product: product
 		}, function (res) {
 			console.log(res);
+
+			
 		})
 		.fail(function(err) {
 			console.log(err);
