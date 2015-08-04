@@ -168,7 +168,9 @@ function data_warranty () {
 	$('.add-inf').click(function (e) {
 		e.preventDefault();
 
-		var cod_cl	= $('#no_cl').prop('value');
+		$('.dw-loading').slideDown();
+
+		var cod_cl	= $('#cod_cl').prop('value');
 		var data 	= $('#no_cf');
 		var value 	= data.prop('value');
 		var product	= data.attr('data-pr');
@@ -178,12 +180,33 @@ function data_warranty () {
 			value: value,
 			product: product
 		}, function (res) {
-			console.log(res);
-
+			// console.log(res);
 			
+			if (res['status'] === 200) {
+				$('.dw-mess').html('').removeClass('error-text');
+
+				$.each(res['data'][product], function (index, value) {
+					var field = '#' + index.replace(/_/gi, '-');
+					field = $(field);
+
+					if (field.prop('type') === 'select-one') {
+						var ids = field.prop('id');
+
+						$('#' + ids + ' option[value="' + value +'"]').prop('selected', true);
+					} else {
+						$(field).prop('value', value);
+					}
+				});
+			} else {
+				$('.dw-mess').html(res['error']).addClass('error-text');
+			}
 		})
-		.fail(function(err) {
-			console.log(err);
+		.always(function() {
+			$('.dw-loading').slideUp();
+		})
+		.fail(function (err) {
+			// console.log(err);
+			$('.dw-mess').html(res['error']).addClass('error-text');
 		});
 	});
 }

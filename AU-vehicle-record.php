@@ -85,8 +85,6 @@ if(isset($_POST['dv-token']) && isset($_POST['ms']) && isset($_POST['page']) && 
             $dv_year_other = $dv_year;
             $_FAC = TRUE;
             $reason .= '| El Vehículo tiene una antiguedad mayor a '.$max_anio.' años';
-        } else {
-            $dv_year = base64_decode($dv_year);
         }
         $dv_plate = $link->real_escape_string(trim($_POST['dv-plate']));
         $dv_displacement = $link->real_escape_string(trim($_POST['dv-displacement']));

@@ -325,6 +325,12 @@ if($nVh < $max_item || $swVh === true){
        		<label style="width: auto;">Nro. de Chasis: </label>
        		<input type="text" style="width: 100px;" id="no_cf" data-pr="A" autocomplete="off">
        		<button class="btn-issue add-inf" style="width: 150px; margin: 0 5px; background: #23abea;">Buscar</button>
+       		<br><br>
+			
+			<div>
+       			<img src="img/loading-04.GIF" class="dw-loading">
+				<div class="dw-mess" style="width: 50%; margin: 0 auto;"></div>
+			</div>
        	</div>
 	</div>
 	<br>
@@ -481,9 +487,9 @@ if($nVh < $max_item || $swVh === true){
 
                     for($i = $year_max; $i >= $year_min; $i--){
                         if($i === $dv_year) {
-                            echo '<option value="'.base64_encode($i).'" selected>'.$i.'</option>';
+                            echo '<option value="'.$i.'" selected>'.$i.'</option>';
                         } else {
-                            echo '<option value="'.base64_encode($i).'">'.$i.'</option>';
+                            echo '<option value="'.$i.'">'.$i.'</option>';
                         }
                     }
 

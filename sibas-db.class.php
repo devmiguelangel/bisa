@@ -737,8 +737,9 @@ class SibasDB extends MySQLi
 		}
 	}
 	
-	public function get_depto($idef = NULL)
+	public function get_depto($idef = NULL, $flag = false)
 	{
+		$data = array();
 		$where = 'sef.id_ef = "'.base64_decode($idef).'"';
 		if (is_null($idef) === TRUE) {
 			$where = 'sef.id_ef is null';
@@ -751,6 +752,7 @@ class SibasDB extends MySQLi
 		    sdep.tipo_ci,
 		    sdep.tipo_re,
 		    sdep.tipo_dp,
+		    sdep.codigo_ws,
 		    sdep.id_ef
 		FROM
 		    s_departamento as sdep
@@ -762,13 +764,19 @@ class SibasDB extends MySQLi
 		//echo $this->sql;
 		if (($this->rs = $this->query($this->sql,MYSQLI_STORE_RESULT))) {
 			if ($this->rs->num_rows > 0) {
-				return $this->rs;
-			} else {
-				return FALSE;
+				if ($flag) {
+					while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
+						$data[] = $this->row;
+					}
+
+					return $data;
+				} else {
+					return $this->rs;
+				}
 			}
-		} else {
-			return FALSE;
 		}
+		
+		return FALSE;
 	}
 	
 	public function get_policy($idef, $product = 'DE')
@@ -1385,30 +1393,39 @@ class SibasDB extends MySQLi
 			return 0;
 	}
 	
-	public function get_type_vehicle($idef)
+	public function get_type_vehicle($idef, $flag = false)
 	{
+		$data = array();
+
 		$this->sql = 'select 
-				stv.id_tipo_vh as id_vh,
-				stv.vehiculo,
-				stv.categoria
-			from
-				s_au_tipo_vehiculo as stv
-					inner join
-				s_entidad_financiera as sef ON (sef.id_ef = stv.id_ef)
-			where
-				sef.id_ef = "'.base64_decode($idef).'"
-					and sef.activado = true
-			order by stv.id_tipo_vh asc;';
+			stv.id_tipo_vh as id_vh,
+			stv.vehiculo,
+			stv.categoria
+		from
+			s_au_tipo_vehiculo as stv
+				inner join
+			s_entidad_financiera as sef ON (sef.id_ef = stv.id_ef)
+		where
+			sef.id_ef = "' . base64_decode($idef) . '"
+				and sef.activado = true
+		order by stv.id_tipo_vh asc
+		;';
 		
-		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT))) {
+		if(($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if($this->rs->num_rows > 0) {
-				return $this->rs;
-			} else {
-				return FALSE;
+				if ($flag) {
+					while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
+						$data[] = $this->row;
+					}
+
+					return $data;
+				} else {
+					return $this->rs;
+				}
 			}
-		} else {
-			return FALSE;
 		}
+
+		return FALSE;
 	}
 	
 	public function get_make($idef, $first = FALSE)

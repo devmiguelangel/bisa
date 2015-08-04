@@ -10,7 +10,7 @@ class Collection
 		$payment 		= '',
 		$period 		= '',
 		$prima			= 0,
-		$depreciation	= 10 / 100,
+		$depreciation	= 10,
 		$no_transaction = 0,
 		$fecha_trans 	= '',
 		$monto_trans 	= 0,
@@ -26,6 +26,7 @@ class Collection
 		$this->cx 	= $cx;
 		$this->row 	= $row;
 		$this->pr	= strtolower($pr);
+		$this->depreciation = $this->depreciation / 100;
 	}
 
 	public function putPolicy($ide, $idef)

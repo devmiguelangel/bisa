@@ -194,6 +194,11 @@ if($nPr < $max_item || $swPr === true){
        		<label style="width: auto;">Nro. de Folio: </label>
        		<input type="text" style="width: 100px;" id="no_cf" data-pr="T">
        		<button class="btn-issue add-inf" style="width: 150px; margin: 0 5px; background: #23abea;">Buscar</button>
+
+       		<div>
+       			<img src="img/loading-04.GIF" class="dw-loading">
+				<div class="dw-mess" style="width: 50%; margin: 0 auto;"></div>
+			</div>
        	</div>
 	</div>
 	<br>
@@ -389,5 +394,7 @@ if (isset($_GET['idc'])) {
 		heightStyle: "content",
 		active: 6
 	});
+
+	data_warranty();
 });
 </script>
