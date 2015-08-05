@@ -59,12 +59,12 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
                   <td style="width:100%; padding-bottom:4px; text-align:justify;">
                      En razón que el CLIENTE ha decidido contratar de forma voluntaria una póliza de seguros de la empresa BISA SEGUROS Y REASEGUROS S.A., el CLIENTE instruye al Banco BISA S.A. a proporcionar su información con la que cuenta el Banco, a la Aseguradora referida y a la empresa Sudamericana S.R.L. Corredores de Seguros y Reaseguros, para la obtención de la póliza de seguros escogida por el propio CLIENTE.
                      <br><br>
-                     Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº._____<?=$data_count['numero'];?>_____ a nombre de ______<?=$row['tomador_nombre'];?>______
+                     Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº.&nbsp;<?=$data_count['numero'];?>&nbsp; a nombre de &nbsp;<?=$row['tomador_nombre'];?>&nbsp;
                      <br><br><br>
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                           <td style="width:20%;">CLIENTE: </td>
-                          <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
+                          <td style="width:50%; border-bottom: 0px solid #333;">&nbsp;
                              <?=$cliente_nombre;?>
                           </td>
                           <td style="width:30%;"></td>
@@ -72,7 +72,7 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
                          <tr><td colspan="3" style="width:100%;">&nbsp;</td></tr>
                          <tr> 
                           <td style="width:20%;">LUGAR Y FECHA: </td>
-                          <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
+                          <td style="width:50%; border-bottom: 0px solid #333;">&nbsp;
                              <?=strtoupper(get_date_format_fat_au($fecha_em));?>
                           </td>
                           <td style="width:30%;"></td>  
@@ -101,6 +101,12 @@ function au_formulario_autorizacion($link, $row, $rsDt, $url, $implant, $fac, $r
                </tr>  
             </table>
             
+            <br><br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                 • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 • La Paz – Bolivia.<br> 
+• Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de Pensiones Valores y Seguros.
+            </div>
+              
         </div>    
         
       </div>

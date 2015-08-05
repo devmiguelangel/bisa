@@ -261,7 +261,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Perdidas y/o Daños Directos ocasionados por Caídas de Rocas</td>
+                              <td style="width:98%;">Pérdidas y/o Daños Directos ocasionados por Caídas de Rocas</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -269,7 +269,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Perdidas y Daños Directamente ocasionados por Derrumbe, Deslizamiento y Asentamiento</td>
+                              <td style="width:98%;">Pérdidas y Daños Directamente ocasionados por Derrumbe, Deslizamiento y Asentamiento</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -289,7 +289,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Pérdidas u Daños ocasionados por Aeronaves, Artefactos Aéreos u Objetos que caigan de ellos</td>
+                              <td style="width:98%;">Pérdidas o Daños ocasionados por Aeronaves, Artefactos Aéreos u Objetos que caigan de ellos</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -394,7 +394,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        (SEGÚN TARIFICADOR)
+                        <?=number_format($row['prima_total'],2,'.',',').' $us.';?>
                       </td>  
                     </tr>
               </table>
@@ -615,9 +615,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     -DINERO, JOYAS Y/O VALORES         
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?> 
+
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -625,12 +623,18 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    SE ACLARA QUE ESTA PÓLIZA NO SE RENOVARÁ POSTERIORMENTE A LA CANCELACIÓN TOTAL DE LA OPERACIÓN CREDITICIA DEL ASEGURADO CON EL CONTRATANTE, DE ACUERDO AL MONTO SUBROGADO Y DECLARADO EN LA PÓLIZA. SE ACLARA QUE LA VIGENCIA DE LA PÓLIZA PODRÁ TERMINAR EN FORMA ANTICIPADA, CUANDO EL ASEGURADO REALICE EL PAGO ANTICIPADO DEL MONTO TOTAL DE SU OPERACIÓN CREDITICIA ADEUDADA AL CONTRATANTE.  SIN EMBARGO, SI LA PRIMA FUE PAGADA AL CONTADO, LA PÓLIZA SE MANTENDRÁ VIGENTE HASTA SU FINALIZACIÓN.         
-                  </td>  
-                </tr>
 <?php
+            if((boolean)$row['garantia']===true){
+?> 
+                    SE ACLARA QUE ESTA PÓLIZA NO SE RENOVARÁ POSTERIORMENTE A LA CANCELACIÓN TOTAL DE LA OPERACIÓN CREDITICIA DEL ASEGURADO CON EL CONTRATANTE, DE ACUERDO AL MONTO SUBROGADO Y DECLARADO EN LA PÓLIZA. SE ACLARA QUE LA VIGENCIA DE LA PÓLIZA PODRÁ TERMINAR EN FORMA ANTICIPADA, CUANDO EL ASEGURADO REALICE EL PAGO ANTICIPADO DEL MONTO TOTAL DE SU OPERACIÓN CREDITICIA ADEUDADA AL CONTRATANTE.  SIN EMBARGO, SI LA PRIMA FUE PAGADA AL CONTADO, LA PÓLIZA SE MANTENDRÁ VIGENTE HASTA SU FINALIZACIÓN.   
+<?php
+			}else{
+			    echo'&nbsp;';	
 			}
 ?>                
+      
+                  </td>  
+                </tr>
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -640,10 +644,7 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
                     ANUAL CON RENOVACIÓN AUTOMÁTICA.         
                   </td>  
-                </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?>                 
+                </tr>                
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -651,12 +652,15 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    CLAUSULA ADJUNTA A LA PRESENTE PÓLIZA        
-                  </td>  
-                </tr>
+<?php
+            if((boolean)$row['garantia']===true){
+?> 
+                    CLAUSULA ADJUNTA A LA PRESENTE PÓLIZA 
 <?php
 			}
-?>                
+?>                             
+                  </td>  
+                </tr>              
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -688,14 +692,14 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     EL ASEGURADO DEBERÁ PRESENTAR:
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
 <?php
-                      if((boolean)$row['garantia']===true){
+                      //if((boolean)$row['garantia']===true){
 ?>                    
                          <tr>
-                           <td style="width:2%; font-weight:bold;">o</td>
+                           <td style="width:2%; font-weight:bold;" valign="top">o</td>
                            <td style="width:98%;">UNA COPIA DEL AVALÚO TÉCNICO DEL INMUEBLE A ASEGURAR, EN CASO QUE EL BIEN ASEGURADO SEA SUBROGADO.</td>
                          </tr>
 <?php
-					  }
+					  //}
 ?>                         
                          <tr>
                            <td style="width:2%; font-weight:bold;">o</td>
@@ -713,22 +717,24 @@ function trd_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     </table>     
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?>                 
+               
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
-                    INFRA SEGURO:
+                    INFRASEGURO:
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    PARA PÓLIZAS SUBROGADAS NO SE APLICARA INFRA SEGURO        
-                  </td>  
-                </tr>
+<?php
+            if((boolean)$row['garantia']===true){//SUBROGADO
+?>                      
+                    PARA PÓLIZAS SUBROGADAS NO SE APLICARA INFRASEGURO        
 <?php
 			}
 ?>                        
+                  </td>  
+                </tr>
+                    
                 <tr>
                    <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">

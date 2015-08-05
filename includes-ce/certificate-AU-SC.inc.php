@@ -393,14 +393,11 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                   <tr>
                                     <td style="width:11%; border: 1px solid #333; background:#d8d8d8;">
                                        Año Comercial: 
-                                     </td>
+                                    </td>
                                     <td style="width:15%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333;">&nbsp;
                                         <?=$rowDt['anio'];?>
                                     </td>
-<?php
-                               if((boolean)$row['garantia']===false){//no subrogado
-?>                                    
                                     <td style="width:6%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; background:#d8d8d8;">
                                         Uso:
@@ -410,17 +407,8 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                         Particular
                                     </td>
                                     <td style="width:60%; text-align:left;">
-                                        (Particular/Publico)
+                                        &nbsp;(Particular/Publico)
                                     </td>
-<?php
-							   }else{// subrogado
-?>                                   
-                                    <td style="width:74%;" colspan="3">&nbsp;
-                                        
-                                    </td>
-<?php
-							   }
-?>                                    
                                   </tr>
                                 </table>                                  
                             </td>
@@ -466,7 +454,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                     </td>
                                     <td style="width:15%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; text-align:center;">
-                                       <?=$row['ini_vigencia'];?>
+                                       <?=date('d/m/Y',strtotime($row['ini_vigencia']));?>
                                     </td>
                                     <td style="width:15%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; background:#d8d8d8;">
@@ -478,7 +466,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                     </td>
                                     <td style="width:14%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; text-align:center;">
-                                       <?=$row['fin_vigencia'];?>  
+                                       <?=date('d/m/Y',strtotime($row['fin_vigencia']));?>  
                                     </td>   
                                   </tr>
                                   <tr>
@@ -574,18 +562,26 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                Detallar Nombres y montos:
                             </td>
                             <td style="width:82%; border-top:1px solid #333; border-right:1px solid #333;
-                               border-bottom: 1px solid #333;">&nbsp;
-                               
+                               border-bottom: 1px solid #333;">&nbsp;                            
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width:100%; text-align:left; border-bottom:1px solid #333;
+                               border-left:1px solid #333; border-right:1px solid #333;" colspan="2">
+<?php
+                               if((boolean)$row['garantia']===true){//subrogado 
+								   echo 'BANCO BISA S.A.';
+							   }else{
+								   echo'&nbsp;';   
+							   }
+?>   
                             </td>
                           </tr>  
-                       </table><br>
+                     </table><br>
                      <table 
                         cellpadding="0" cellspacing="0" border="0" 
                         style="width: 100%; height: auto; font-size: 100%; font-family: Arial; 
                         padding-top:0px; padding-bottom:3px;">
-                        <tr>
-                          <td style="width:100%; border-top:1px solid #333;" colspan="2">&nbsp;</td>
-                        </tr>
                         <tr>
                           <td style="width:100%;" colspan="2">
                              COBERTURAS Y VALORES ASEGURADOS
@@ -596,24 +592,28 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           border:0px solid #333;" valign="top">
                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Responsabilidad Civil Extracontractual </td>
-                                   <td style="width:40%;">$us. 25.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Responsabilidad Civil Extracontractual ($us.)</td>
+                                   <td style="width:40%;">20.000,00</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Responsabilidad Civil Consecuencial </td>
-                                   <td style="width:40%;">$us. 3.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Responsabilidad Civil Consecuencial ($us.)</td>
+                                   <td style="width:40%;">3.000,00</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Responsabilidad Civil a Ocupantes, p/ocupante:</td>
-                                   <td style="width:40%;">$us. 3.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Lucro Cesante ($us.)</td>
+                                   <td style="width:40%;">No Incluye</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Casco </td>
-                                   <td style="width:40%;">$us. <?=number_format($rowDt['valor_asegurado'], 2, '.', ',');?></td>
+                                   <td style="width:60%; font-weight:bold;">Casco ($us.)</td>
+                                   <td style="width:40%;"><?=number_format($rowDt['valor_asegurado'], 2, '.', ',');?></td>
                                  </tr>
                                  <tr>
                                    <td style="width:60%; font-weight:bold;">Accesorios</td>
                                    <td style="width:40%;">No Incluye</td>
+                                 </tr>
+                                 <tr>
+                                   <td style="width:60%; font-weight:bold;">Extraterritorialidad (días)</td>
+                                   <td style="width:40%;">365</td>
                                  </tr>
                              </table>    
                           </td>
@@ -621,20 +621,24 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           border:0px solid #333;" valign="top">
                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Muerte Accidental, p/ocupante: </td>
-                                   <td style="width:40%;">$us. 5.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">No de Pasajeros: </td>
+                                   <td style="width:40%;">&nbsp;</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Invalidez Permanente, p/ocupante:</td>
-                                   <td style="width:40%;">$us. 5.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Muerte Accidental ($us.):</td>
+                                   <td style="width:40%;">5.000,00</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Gastos Médicos, p/ocupante:</td>
-                                   <td style="width:40%;">$us. 1.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Invalidez Permanente (Total o Parcial) ($us.):</td>
+                                   <td style="width:40%;">5.000,00</td>
                                  </tr>
                                  <tr>
-                                   <td style="width:60%; font-weight:bold;">Gastos de Sepelio, p/ocupante:</td>
-                                   <td style="width:40%;">$us. 1.000,00</td>
+                                   <td style="width:60%; font-weight:bold;">Gastos Médicos ($us.):</td>
+                                   <td style="width:40%;">1.000,00</td>
+                                 </tr>
+                                 <tr>
+                                   <td style="width:60%; font-weight:bold;"></td>
+                                   <td style="width:40%;"></td>
                                  </tr>
                                  <tr>
                                    <td style="width:60%; font-weight:bold;"></td>
@@ -662,291 +666,195 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial;">
-                <tr><td style="width:100%; text-align:right;" colspan="2">
+                <tr><td style="width:100%; text-align:right;" colspan="3">
                  <img src="<?=$url;?>images/<?=$row['logo_cia'];?>" height="60"/> 
                 </td></tr>
-                <tr><td style="width:100%; font-weight:bold; text-align:left;" colspan="2">
-                 COBERTURAS
+                <tr><td style="width:100%; font-weight:bold; text-align:left;" colspan="3">
+                 COBERTURAS Y CLAUSULAS ADICIONALES<br>
+                 Coberturas
                 </td></tr>
                 <tr>
-                  <td style="width:50%; font-size:80%; text-align: justify; padding-right:5px; 
+                  <td style="width:45%; font-size:80%; text-align: justify; padding-right:5px; 
                   border:0px solid #333;" valign="top">
-                    <b>Sección I</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <b>Item 1</b>
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                        margin-top:5px; margin-bottom:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Responsabilidad Civil Extracontractual</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Responsabilidad Civil Consecuencial</td>
+                          <td style="width:2%;">-</td>
+                          <td style="width:88%;">RESPONSABILIDAD CIVIL EXTRACONTRACTUAL</td>
                           <td style="width:10%; text-align:right;">Cubre</td>
                         </tr>
                     </table>
-                    <b>Sección II</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <b>Item 2</b>
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                        margin-top:5px; margin-bottom:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Perdida Total por Robo al 100%</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Perdida Total por Robo al 80%</td>
-                          <td style="width:10%; text-align:right;">No Cubre</td>
-                        </tr>
-                    </table>
-                    <b>Sección III</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Perdida Total por Accidente al 100%</td>
+                          <td style="width:2%;">-</td>
+                          <td style="width:88%;">RESPONSABILIDAD CIVIL CONSECUENCIAL</td>
                           <td style="width:10%; text-align:right;">Cubre</td>
                         </tr>
                     </table>
-                    <b>Sección IV</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <b>Item 3</b>
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                        margin-top:5px; margin-bottom:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Daños Propios, VEH. LIVIANOS c/Franquicia Deducible</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">PERDIDA TOTAL POR ROBO AL 100%</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">$us 50.- hasta $us. 50.000.- de valor de casco</td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">PERDIDA TOTAL POR ACCIDENTE AL 100%</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">y $us. 200.- con valor de casco mayor a $us. 50.000.-</td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">DAÑOS PROPIOS C/FRANQUICIA DEDUCIBLE DE $us. 50.- HASTA $us. 50.000 DE VALOR CASCO Y $us. 200 CON VALOR CASCO MAYOR A $us. 50.000.-</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Daños Propios, VEH. PESADOS c/Franquicia Deducible</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">ROBO PARCIAL AL 80%</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">$us 150.- hasta $us. 50.000.- de valor de casco </td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">CONMOCION CIVIL, HUELGAS, DAÑO MALICIOSO,   SABOTAJE, VANDALISMO Y TERRORISMO C/ FRANQUICIA DEDUCIBLE DE $us. 50.- HASTA $us. 50.000 DE VALOR CASCO Y $us. 200 CON VALOR CASCO MAYOR A $us. 50.000.-</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">y $us. 300.- con valor de casco mayor a $us. 50.000.-</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                    </table>
-                    <b>Sección V</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">ANEXO PARA ACCESORIOS DE VEHICULOS</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">A solicitud</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Vandalismo y Terrorismo, VEH. LIVIANOS c/Franquicia</td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">AIRBAGS</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Deducible $us 50.- hasta $us. 50.000.- de valor de</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">casco y $us. 200.- con valor de casco mayor</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">a $us 50.000.-</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Conmoción Civil, Huelgas, Daño Malicioso, Sabotaje,</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Vandalismo y Terrorismo, VEH. PESADOS c/Franquicia</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Deducible $us 150.- hasta $us. 50.000.- de valor de</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">casco y $us. 300.- con valor de casco mayor</td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">a $us 50.000.-</td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:86%; padding-top:3px;">CLAUSULA DE AUTOREEMPLAZO (EXCLUYE MOTOCICLETAS)</td>
+                          <td style="width:12%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                     </table>
-                    <b>Sección VI</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <b>Item 4</b>                   
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                        margin-top:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Robo Parcial al 80% </td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                    </table>
-                    <b>Sección VII</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Muerte Accidental</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">MUERTE ACCIDENTAL</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Invalidez Permanente (Total y Parcial)</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">INVALIDEZ PERMANENTE (TOTAL Y PARCIAL) </td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Gastos Médicos</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">GASTOS MEDICOS</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                     </table> 
                   </td>
-                  
-                  <td style="width:50%; font-size:80%; text-align: justify; padding-right:5px; 
+                  <td style="width:10%;"></td>
+                  <td style="width:45%; font-size:80%; text-align: justify; padding-right:5px; 
                   border:0px solid #333;" valign="top">
                     <b>Coberturas Adicionales</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%; 
+                        margin-top:5px; margin-bottom:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Ausencia de Control para el Seguro de Automotores para empresas		
-		
-</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO DE ELEGIBILIDAD DE TALLERES</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Daños a Causa de Riesgos de la Naturaleza c/Franquicia deducible estipulada en la Sección IV y V</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO DE DAÑOS A CAUSA DE RIESGOS DE LA NATURALEZA C/ FRANQUICIA DEDUCIBLE DE $us. 50.- HASTA $us. 50.000 DE VALOR CASCO Y $us. 200 CON VALOR CASCO MAYOR A $us. 50.000.-</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Clausula de Circulación en Vías No Habilitadas para el Tránsito Vehicular</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE CIRCULACION EN VIAS NO AUTORIZADAS PARA EL TRANSITO VEHICULAR</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Extraterritorialidad (Por la vigencia de la Poliza)</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE AMPLIACION DE AVISO DE SINIESTRO A 10 DIAS</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo para Accesorio de vehículos</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO DE EXTRATERRITORIALIDAD (365 DIAS DEL AÑO)</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Gastos de Sepelio para Accidentes </td>
-                          <td style="width:10%; text-align:right;" valign="top"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ASISTENCIA AL VEHICULO</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">personales</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE RESCISION DE CONTRATO A PRORRATA</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Clausula de Autoreemplazo (excluye motocicletas/quatracks y vehículos pesados)</td>
-                          <td style="width:10%; text-align:right;" valign="top">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO DE BENEFICIO DE ASISTENCIA JURIDICA</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
+                        </tr>
+                        <tr>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">SERVICIO DE ASISTENCIA VIAL REGIONAL</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;" valign="top">Cubre</td>
                         </tr>
                     </table>
-                    <b>Cláusulas y Anexos Adicionales</b>
-                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                    <b>Cláusulas 
+<?php
+                    //if((boolean)$row['garantia']===false){//voluntario
+?>
+                      Adicionales
+<?php
+					//}
+?>
+                    </b>
+                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;
+                        margin-top:5px;">
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Rehabilitación Automática de la suma Asegurada</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE REHABILITACION AUTOMATICA DE LA SUMA ASEGURADA</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo para Restringir de Copia Legalizada</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO PARA RESTRINGIR EL REQUISITO DE PRESENTACION DE COPIA LEGALIZADA</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Adelanto del 50% del Siniestro</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE ADELANTO DEL 50% EN CASO DE SINIESTRO</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Elegibilidad de Ajustadores</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE ELEGIBILIDAD DE AJUSTADORES</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo para Vehículos con antigüedad  mayor</td>
-                          <td style="width:10%; text-align:right;"></td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO PARA ROBO DE LLANTAS, EQUIPOS DE MUSICA Y OTRAS PIEZAS</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">a 15 años y para vehículos transformados</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">ANEXO PARA VEHICULOS CON ANTIGÜEDAD MAYOR A 15 AÑOS Y PARA   VEHICULOS TRANSFORMADOS</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                         <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo para Robo de Llantas, Partes, Equipos de Música y otras piezas</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Elegibilidad de Talleres</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Ampliación de Aviso de Siniestro a Diez Días</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Asistencia al Vehículo (excepto </td>
-                          <td style="width:10%; text-align:right;"></td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;"> motocicletas/quadratracks y vehículos pesados)</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo de Beneficio de Asistencia Jurídica</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Rescisión de Contrato a Prorrata</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de cobertura para Flete Aéreo ( hasta $us. 500.-)</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Anexo para Cubrir la Responsabilidad Civil a Ocupantes</td>
-                          <td style="width:10%; text-align:right;">Cubre</td>
-                        </tr>
-                        <tr>
-                          <td style="width:2%;">&nbsp;</td>
-                          <td style="width:88%;">Cláusula de Valor Acordado</td>
-                          <td style="width:10%; text-align:right;">No Cubre</td>
+                          <td style="width:2%; padding-top:3px;">-</td>
+                          <td style="width:88%; padding-top:3px;">CLAUSULA DE COBERTURA PARA FLETE AEREO (HASTA $us. 500.-)</td>
+                          <td style="width:10%; text-align:right; padding-top:3px;">Cubre</td>
                         </tr>
                     </table>
                   </td>
@@ -966,6 +874,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                 </tr>
             </table>
+            <!--
             <br>
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
@@ -988,6 +897,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                 </tr>  
             </table>
+            -->
             <br>
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
@@ -999,7 +909,10 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                   <td style="width:82%; border-top:1px solid #333; border-right:1px solid #333;
                      border-bottom: 1px solid #333;">&nbsp;
-                     <?=$row['u_departamento'].' '.$row['fecha_creacion'];?>
+                     <?php
+                        $fecha = date("d-m-Y", strtotime($row['fecha_creacion']));
+						echo $row['u_departamento'].' '.$fecha;
+					 ?>
                   </td>
                 </tr>  
             </table>

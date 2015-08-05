@@ -144,7 +144,9 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                             <td style="width:50%; text-align:left;">ESTADO PLURINACIONAL DE BOLIVIA</td>
                           </tr>
                           <tr>
-                            <td style="width:100%; text-align:left;" colspan="3"><b>Intermediario:</b></td>
+                            <td style="width:100%; text-align:left;" colspan="3"><b>Intermediario:</b>
+                             &nbsp;SUDAMERICANA SRL Corredores y Asesores de Seguro
+                            </td>
                           </tr>
                        </table>
                     </td>
@@ -165,7 +167,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           </tr>
                           <tr>
                             <td style="width:19%; text-align:left; font-weight:bold;">Clase: </td>
-                            <td style="width:25%;">&nbsp;
+                            <td style="width:25%;">&nbsp;<?=$rowDt['tipo_vechiculo'];?>
                                 
                             </td>
                             <td style="width:12%; text-align:left; font-weight:bold;">Marca: </td>
@@ -173,7 +175,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                 
                             </td>
                             <td style="width:13%; text-align:left; font-weight:bold;">Tipo: </td>
-                            <td style="width:16%;">&nbsp;<?=$rowDt['tipo_vechiculo'];?>
+                            <td style="width:16%;">&nbsp;<?=$rowDt['modelo']?>
                                  
                             </td>   
                           </tr>
@@ -183,7 +185,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                 
                             </td>
                             <td style="width:12%; text-align:left; font-weight:bold;">Modelo: </td>
-                            <td style="width:15%;">&nbsp;<?=$rowDt['modelo']?>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['anio'];?>
                                 
                             </td>
                             <td style="width:13%; text-align:left; font-weight:bold;">No. Chasis: </td>
@@ -197,25 +199,26 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                 
                             </td>
                             <td style="width:12%; text-align:left; font-weight:bold;">Placa: </td>
-                            <td style="width:15%;">&nbsp;<?=$rowDt['placa']?>
+                            <td style="width:15%;">&nbsp;<?=$rowDt['placa'];?>
                                 
                             </td>
                             <td style="width:13%; text-align:left; font-weight:bold;">Cap/Ton:</td>
-                            <td style="width:16%;">&nbsp;<?=$rowDt['cap_ton']?>
+                            <td style="width:16%;">&nbsp;<?=$rowDt['cap_ton'];?>
                                  
                             </td>   
                           </tr>
                           <tr>
-                            <td style="width:19%; text-align:left; font-weight:bold;">
-<?php
-                            if((boolean)$row['garantia']===false)
-							     echo 'Uso';
-?>                            
-                             
-                            
-                            </td>
+                            <td style="width:19%; text-align:left; font-weight:bold;">Uso:</td>
                             <td style="width:25%;">&nbsp;
-                                
+                             <?php
+                                  foreach($link->use as $uses){
+									  $use=explode('|',$uses);
+									  if($use[0]==$rowDt['uso']){
+										  echo $use[1];
+										  break;
+									  }
+								  }
+							 ?>   
                             </td>
                             <td style="width:12%; text-align:left; font-weight:bold;">No. de Ocupantes: </td>
                             <td style="width:15%;">&nbsp;<?=$rowDt['no_asiento'];?>
@@ -262,7 +265,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              <td style="width:10%; text-align:right;">
                                           
                              </td>
-                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;25.000,00</td>
+                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;20.000,00</td>
                              <td style="width:8%;">
                                
                              </td>
@@ -477,10 +480,10 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                   <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                       <tr>
                                         
-                                        <td style="width:90%;">Anexo de Ausencia de Control para el Seguro de Automotores para empresas		
+                                        <td style="width:90%;">Anexo de Ausencia de Control para el Seguro de Automotores	
                       
               </td>
-                                        <td style="width:10%; text-align:right;">Cubre</td>
+                                        <td style="width:10%; text-align:right;">No Cubre</td>
                                       </tr>
                                       <tr>
                                         
@@ -657,7 +660,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                           <tr>
                             <td style="width:20%; text-align:left;"></td>
                             <td style="width:20%; text-align:left;">Al Credito: $us.&nbsp;<?=$prima_cr;?></td>
-                            <td style="width:25%; text-align:left;">Incluye impuestos de Ley y costos de los interés</td>
+                            <td style="width:25%; text-align:left;">Incluye impuestos de Ley y costos de los interéses</td>
                             <td style="width:35%;"></td>
                           </tr>
                           <tr>
@@ -665,14 +668,14 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                               Forma Pago:
                             </td>
                           </tr>
-                          <!--
+                          
                           <tr>
                             <td style="width:20%; text-align:left;">CONTADO</td>
                             <td style="width:20%; text-align:left;">$US&nbsp;<?=$prima_co;?></td>
                             <td style="width:25%;"></td>
                             <td style="width:35%;"></td>
                           </tr>
-                          -->
+                          
                        </table>
                     </td>
                   </tr>
@@ -842,12 +845,10 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   style="width: 100%; height: auto; font-size: 70%; font-family: Arial;">
                   <tr>
                     <td style="width:100%; text-align:left; padding-bottom:5px;">
-                      En caso que el pago no sea efectuado en el plazo estipulado, la vigencia del presente seguro quedara suspendida y por tanto, cualquier siniestro ocurrido, cuando la póliza este impaga o en mora no será cubierto, según lo estipulado en el artículo 58 inciso d) de la .Ley de Seguros 1883. Asimismo cabe denotar que la Poliza sera anulada luego de pasados 60 dias del no pago de las primas establecidas.
+                      En caso que el pago no sea efectuado en el plazo estipulado, la vigencia del presente seguro quedará suspendida y por tanto, cualquier siniestro ocurrido, cuando la póliza este impaga o en mora no será cubierto, según lo estipulado en el artículo 58 inciso d) de la .Ley de Seguros 1883. Asimismo cabe denotar que la Poliza sera anulada luego de pasados 60 dias del no pago de las primas establecidas.
                     </td>
                   </tr>
-<?php
-             if((boolean)$row['garantia']===true){
-?>                       
+                     
                   <tr>
                     <td style="width:100%; text-align:left; font-weight:bold; 
                       border-bottom: 1px solid #333; border-top: 1px solid #333;">
@@ -856,13 +857,17 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </tr>
                   <tr>
                     <td style="width:100%; text-align:left;">
-                     Subrogatario:<br>
+                     Subrogatario:
+<?php
+             if((boolean)$row['garantia']===true){
+				     echo 'BANCO BISA S.A.';
+			 }
+?>  
+                     <br>
                      Monto a Subrogar:
                     </td>
                   </tr>
-<?php
-			 }
-?>                  
+     
                   <tr>
                     <td style="width:100%; text-align:left; font-weight:bold; 
                       border-bottom: 1px solid #333; border-top: 1px solid #333;">
@@ -898,39 +903,25 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                      <b>Anexo para restringir el requisito de presentación de Copia Legalizada de la denuncia a Transito:</b> En casos en que el monto del siniestro, sea inferior a $us. 500.-; excepto para casos de responsabilidad civil y perdida total, aplicable solamente dentro territorio boliviano, en caso de que el asegurado solicite extraterritorialidad esta clausula no aplica, siendo que el asegurado deberá presentar todos los informes y copias del siniestro de las autoridades extranjeras en caso de tener un siniestro fuera del país.<br><br>
                      <b>Accesorios</b><br><br>
                      Los accesorios que se coloquen con posterioridad deben incluirse mediante anexo y pago de prima adicional
-                     <br><br>
+                     <br><br>                    
+                     <b>Vigencia</b><br><br>
 <?php
                  if((boolean)$row['garantia']===true){
-?>                     
-                     <b>Vigencia</b><br><br>
+?> 
                      Se aclara que esta póliza no se renovará posteriormente a la cancelación total de la operación crediticia del asegurado con el contratante, de acuerdo al monto subrogado y declarado en la póliza. Se aclara que la vigencia de la póliza podrá terminar en forma anticipada, cuando el Asegurado realice el pago anticipado del monto total de su operación crediticia adeudada al Contratante. Sin embargo, si la prima fue pagada al contado, la póliza se mantendrá vigente hasta su finalización.
                      <br><br>
 <?php
 				 }
 ?>                     
                      <b>Monto Indemnizable en caso de Siniestro</b><br><br>
-                     Se acuerda y establece, que para definir el monto indemnizable en caso de siniestro por Pérdida Total (sea por Robo o Accidente) ocurrido durante el primer año de vigencia, de un vehículo adquirido del concesionario representante de marca y asegurado como "0" KM, se deducirá el valor fiscal  del 13% (correspondiente a la factura de compra) y se aplicara una depreciación del 10% sobre el valor asegurable total. 
-<?php
-                if((boolean)$row['garantia']===true){
-?>                     
-                     Si el monto indemnizable, después de esta deducción, es menor al saldo insoluto adeudado por el Asegurado al Subrogatario, la Compañía indemnizará el saldo insoluto al Subrogatario.
-<?php
-				}
-?>                     
-                     <br>
-<?php
-               if((boolean)$row['garantia']===true){ 
-?>                     
-                     En caso de perdida total por robo o accidente, la aseguradora no aplicara infraseguro<br><br>
-<?php
-			   }else{
-?>                   
-                    <br>
-<?php
-			   }
-?>                      
+                     Se acuerda y establece, que para definir el monto indemnizable en caso de siniestro por Pérdida Total (sea por Robo o Accidente) ocurrido durante el primer año de vigencia, de un vehículo adquirido del concesionario representante de marca y asegurado como "0" KM, se deducirá el valor fiscal  del 13% (correspondiente a la factura de compra) y se aplicará una depreciación del 10% sobre el valor asegurable total. 
+                     
+                     <!--Si el monto indemnizable, después de esta deducción, es menor al saldo insoluto adeudado por el Asegurado al Subrogatario, la Compañía indemnizará el saldo insoluto al Subrogatario.-->
+
+                     <br><br>
+       
                      <b>Depreciación</b><br><br>
-                     Se acuerda y establece, que la depreciación se aplicara en un 10% para los primeros 5 años, manteniendose constante una vez concluido este periodo.         
+                     Se acuerda y establece, que la depreciación se aplicará en un 10% para los primeros 5 años, manteniendose constante una vez concluido este periodo.         
                     </td>
                   </tr>
                   <tr>
@@ -1255,7 +1246,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                         <b>LUGAR Y FECHA:</b>&nbsp;<?=strtoupper(get_date_format_au($row['fecha_emision']));?>	
                         <br><br>
                         Se acuerda y establece mediante el presente Anexo, que en caso de siniestro que se encuentre 
-                        cubierto por la póliza, laCompañía tendrá el derecho de reparar, reponer o indemnizar en dinero 
+                        cubierto por la póliza, la Compañía tendrá el derecho de reparar, reponer o indemnizar en dinero 
                         por los daños que se hubieran producido.
                         <br><br> 
                         Queda asimismo entendido y convenido que en caso de no encontrarse en el mercado local partes y/o 
@@ -1344,6 +1335,10 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                       </td>
                     </tr>  
                 </table>
+                <div style="font-size: 70%; text-align:center; margin-top:120px;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 • La Paz – Bolivia.<br> 
+• Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de Pensiones Valores y Seguros.   
+                </div> 
           </div> 
 <?php
 	 }

@@ -81,7 +81,7 @@ class SibasDB extends MySQLi
 					1 => 'JUR|Jurídico'),
 		$typeProperty = array(
 			'ED' => 'Edificio', 
-			'MC' => 'Muebles y/o Contenido'
+			'MC' => 'Edificio con Muebles y/o Contenido'
 		),
 		$useProperty = array(
 			'DM' => 'Domiciliario', 

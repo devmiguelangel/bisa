@@ -100,6 +100,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
 			  trdd.localidad,
 			  trdd.direccion,
 			  trdd.valor_asegurado,
+			  trdd.valor_contenido,
 			  trdd.tasa,
 			  trdd.prima,
 			  sd.departamento
@@ -403,7 +404,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                 </tr> 
             </table>
             <br>
-            <span style="font-size:80%;">INFORMACIÓN SOBRE BIENES PATRIMONIALES Y VALORES DE PROPIEDAD DEL SOLICITANTE Y BIENES DE TERCEROS BAJO CUSTODIA CONTROL Y RESPONSABILIDAD DEL ASEGURADO. (Esta sección debe ser completada considerando todas las ubicaciones que se quieran asegurar.</span>
+            <span style="font-size:80%;">INFORMACIÓN SOBRE BIENES PATRIMONIALES Y VALORES DE PROPIEDAD DEL SOLICITANTE Y BIENES DE TERCEROS BAJO CUSTODIA CONTROL Y RESPONSABILIDAD DEL ASEGURADO. (Esta sección debe ser completada considerando todas las ubicaciones que se quieran asegurar).</span>
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
@@ -446,7 +447,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     NO APLICA
                   </td>
                   <td style="width:15%; text-align:center; border-top: 1px solid #333;
-                    border-right: 1px solid #333;"></td>
+                    border-right: 1px solid #333;"><?=$rowDtSc['valor_asegurado'];?></td>
                 </tr>
                 <tr>
                   <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
@@ -462,7 +463,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                     NO APLICA
                   </td>
                   <td style="width:15%; text-align:center; border-top: 1px solid #333;
-                    border-right: 1px solid #333;"></td>
+                    border-right: 1px solid #333;"><?=$rowDtSc['valor_contenido'];?></td>
                 </tr>
                 <tr>
                   <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
@@ -719,9 +720,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                   </td>
                 </tr>   
             </table>
-<?php
-          if((boolean)$row['garantia']===true){
-?>            
+          
             <br>
             <span style="font-weight:bold; font-size:80%;">Requiere este Seguro subrogación de Derechos:   </span> 
             <table 
@@ -731,14 +730,18 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                <tr>
                   <td style="width:18%; text-align:left;">Detallar Nombres y montos: </td>
                   <td style="width:82%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
-                     
+<?php
+         if((boolean)$row['garantia']===true){
+?>   
+            BANCO BISA S.A.      
+<?php
+		 }
+?>                       
                   </td>
                </tr>
                <tr><td style="width:100%; border-bottom: 1px solid #333;" colspan="2">&nbsp;</td></tr>
             </table>
-<?php
-		  }
-?>                 
+             
             <br><br><br><br><br>
             <div style="font-size: 80%; text-align:center;">  
                 • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
@@ -765,12 +768,12 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                  </td>
                </tr>
                <tr>
-                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                  <td style="width:100%; text-align:left; border-bottom: 0px solid #333;">&nbsp;
                      
                   </td>
                </tr>
                <tr>
-                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                  <td style="width:100%; text-align:left; border-bottom: 0px solid #333;">&nbsp;
                      
                   </td>
                </tr>
@@ -837,7 +840,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -855,7 +858,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -958,15 +961,19 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                          <tr>
                            <td style="width:50%; text-align:center; border-left: 1px solid #333;
                              border-top: 1px solid #333; border-right: 1px solid #333;">
-                             Clasificación de Empleados
+                             Movimiento de dinero
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
-                             Nro. De Empleados
+                             Límite máximo de concentración
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
-                             Monto estimado anual de planillas
+                             Número de veces en el periodo indicado
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Propósito
                            </td>
                          </tr>
                          <tr>
@@ -974,11 +981,15 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto Normal transportado diariamente
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -988,11 +999,15 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto En exceso del anterior transportado eventualmente en el año
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -1002,11 +1017,15 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto normal en efectivo, valores o cheques concentrados en los locales diariamente
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -1016,16 +1035,20 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              Montos adicionales al importe normal que eventualmente se encuentran en los locales
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              NO APLICA
                            </td>
                          </tr>
-                     </table>      
+                     </table>       
                   </td>
                </tr>
                <tr>
@@ -1042,7 +1065,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -1060,7 +1083,7 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -1109,16 +1132,16 @@ function trd_formulario_vt($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                            </td>
                          </tr>
                          <tr>
-                           <td style="width:36%; text-align:left; border-left: 1px solid #333;
-                             border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                           <td style="width:36%; text-align:left; border-left: 0px solid #333;
+                             border-top: 1px solid #333; border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                            <td style="width:32%; text-align:center; border-top: 1px solid #333;
-                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                            <td style="width:32%; text-align:center; border-top: 1px solid #333;
-                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                          </tr>
@@ -1216,6 +1239,13 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                 <td style="width:25%;"></td> 
                </tr>  
             </table>
+            <br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
+                • La Paz – Bolivia.<br> 
+                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                Pensiones Valores y Seguros
+            </div>
         </div>
         <!--FIN SOLICITUD-->
         
@@ -1266,12 +1296,12 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                   <td style="width:100%; padding-bottom:4px; text-align:justify;">
                      En razón que el CLIENTE ha decidido contratar de forma voluntaria una póliza de seguros de la empresa BISA SEGUROS Y REASEGUROS S.A., el CLIENTE instruye al Banco BISA S.A. a proporcionar su información con la que cuenta el Banco, a la Aseguradora referida y a la empresa Sudamericana SRL. Corredores de Seguros y Reaseguros, para la obtención de la póliza de seguros escogida por el propio CLIENTE.
                      <br><br>
-                     Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº.______<?=$nro_cuenta['numero'];?>______ a nombre de ______<?=$row['tomador_nombre'];?>______
+                     Asimismo, autorizo a realizar el débito automático para el pago de las cuotas que se generen de esta póliza de la cuenta corriente/ahorro Nº.&nbsp;<?=$nro_cuenta['numero'];?>&nbsp; a nombre de &nbsp;<?=$row['tomador_nombre'];?>&nbsp;
                      <br><br><br>
                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                           <td style="width:20%;">CLIENTE: </td>
-                          <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
+                          <td style="width:50%; border-bottom: 0px solid #333;">&nbsp;
                              <?=$cliente_nombre;?>
                           </td>
                           <td style="width:30%;"></td>
@@ -1279,7 +1309,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                          <tr><td colspan="3" style="width:100%;">&nbsp;</td></tr>
                          <tr> 
                           <td style="width:20%;">LUGAR Y FECHA: </td>
-                          <td style="width:50%; border-bottom: 1px solid #333;">&nbsp;
+                          <td style="width:50%; border-bottom: 0px solid #333;">&nbsp;
                              <?=strtoupper(get_date_format_trd_vt($fecha_em));?>
                           </td>
                           <td style="width:30%;"></td>  
@@ -1306,7 +1336,14 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                 </td>
                 <td style="width:25%;"></td> 
                </tr>  
-            </table>  
+            </table>
+            <br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
+                • La Paz – Bolivia.<br> 
+                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                Pensiones Valores y Seguros
+            </div>  
         </div>
         <!--FIN FORMULARIO AUTORIZACION-->
         
@@ -1512,7 +1549,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        DE ACUERDO A DECLARACIÓN QUE REALICE CADA CLIENTE.
+                        <?=$valores_asegurados;?>
                       </td>  
                     </tr> 
 <?php
@@ -1535,7 +1572,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Perdidas y/o Daños Directos ocasionados por Caídas de Rocas</td>
+                              <td style="width:98%;">Pérdidas y/o Daños Directos ocasionados por Caídas de Rocas</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -1543,7 +1580,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Perdidas y Daños Directamente ocasionados por Derrumbe, Deslizamiento y Asentamiento</td>
+                              <td style="width:98%;">Pérdidas y Daños Directamente ocasionados por Derrumbe, Deslizamiento y Asentamiento</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -1563,7 +1600,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
-                              <td style="width:98%;">Pérdidas u Daños ocasionados por Aeronaves, Artefactos Aéreos u Objetos que caigan de ellos</td>
+                              <td style="width:98%;">Pérdidas o Daños ocasionados por Aeronaves, Artefactos Aéreos u Objetos que caigan de ellos</td>
                             </tr>
                             <tr>
                               <td style="width:2%; font-weight:bold;" valign="top">&bull;</td>
@@ -1668,7 +1705,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                       </td>
                       <td style="width:65%; text-align: justify; padding-left:5px; 
                         border:0px solid #0081C2; font-style:italic;" valign="top">
-                        (SEGÚN TARIFICADOR)
+                        <?=number_format($row['prima_total'],2,'.',',').' $us.';?>
                       </td>  
                     </tr>
               </table>
@@ -1886,9 +1923,6 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                     -DINERO, JOYAS Y/O VALORES         
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?> 
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -1896,12 +1930,19 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    SE ACLARA QUE ESTA PÓLIZA NO SE RENOVARÁ POSTERIORMENTE A LA CANCELACIÓN TOTAL DE LA OPERACIÓN CREDITICIA DEL ASEGURADO CON EL CONTRATANTE, DE ACUERDO AL MONTO SUBROGADO Y DECLARADO EN LA PÓLIZA. SE ACLARA QUE LA VIGENCIA DE LA PÓLIZA PODRÁ TERMINAR EN FORMA ANTICIPADA, CUANDO EL ASEGURADO REALICE EL PAGO ANTICIPADO DEL MONTO TOTAL DE SU OPERACIÓN CREDITICIA ADEUDADA AL CONTRATANTE.  SIN EMBARGO, SI LA PRIMA FUE PAGADA AL CONTADO, LA PÓLIZA SE MANTENDRÁ VIGENTE HASTA SU FINALIZACIÓN.         
+<?php
+            if((boolean)$row['garantia']===true){
+?> 
+                    SE ACLARA QUE ESTA PÓLIZA NO SE RENOVARÁ POSTERIORMENTE A LA CANCELACIÓN TOTAL DE LA OPERACIÓN CREDITICIA DEL ASEGURADO CON EL CONTRATANTE, DE ACUERDO AL MONTO SUBROGADO Y DECLARADO EN LA PÓLIZA. SE ACLARA QUE LA VIGENCIA DE LA PÓLIZA PODRÁ TERMINAR EN FORMA ANTICIPADA, CUANDO EL ASEGURADO REALICE EL PAGO ANTICIPADO DEL MONTO TOTAL DE SU OPERACIÓN CREDITICIA ADEUDADA AL CONTRATANTE.  SIN EMBARGO, SI LA PRIMA FUE PAGADA AL CONTADO, LA PÓLIZA SE MANTENDRÁ VIGENTE HASTA SU FINALIZACIÓN.  
+                    
+<?php
+			}else{
+			     echo'&nbsp;';	
+			}
+?>                     
                   </td>  
                 </tr>
-<?php
-			}
-?>                
+  
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -1912,9 +1953,7 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                     ANUAL CON RENOVACIÓN AUTOMÁTICA.         
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?>                 
+                
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -1922,12 +1961,16 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    CLAUSULA ADJUNTA A LA PRESENTE PÓLIZA        
-                  </td>  
-                </tr>
+<?php
+            if((boolean)$row['garantia']===true){
+?> 
+                    CLAUSULA ADJUNTA A LA PRESENTE PÓLIZA  
 <?php
 			}
-?>                
+?>        
+                  </td>  
+                </tr>
+               
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -1949,14 +1992,14 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                     EL ASEGURADO DEBERÁ PRESENTAR:
                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
 <?php
-                      if((boolean)$row['garantia']===true){
+                      //if((boolean)$row['garantia']===true){
 ?>                    
                          <tr>
-                           <td style="width:2%; font-weight:bold;">o</td>
+                           <td style="width:2%; font-weight:bold;" valign="top">o</td>
                            <td style="width:98%;">UNA COPIA DEL AVALÚO TÉCNICO DEL INMUEBLE A ASEGURAR, EN CASO QUE EL BIEN ASEGURADO SEA SUBROGADO.</td>
                          </tr>
 <?php
-					  }
+					  //}
 ?>                         
                          <tr>
                            <td style="width:2%; font-weight:bold;">o</td>
@@ -1974,22 +2017,24 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                     </table>     
                   </td>  
                 </tr>
-<?php
-            if((boolean)$row['garantia']===true){
-?>                 
+                 
                 <tr>
                   <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
-                    INFRA SEGURO:
+                    INFRASEGURO:
                   </td>
                   <td style="width:65%; text-align: justify; padding-left:5px; 
                     border:0px solid #0081C2; font-style:italic; padding-bottom:10px;" valign="top">
-                    PARA PÓLIZAS SUBROGADAS NO SE APLICARA INFRA SEGURO        
-                  </td>  
-                </tr>
+<?php
+            if((boolean)$row['garantia']===true){
+?>                    
+                    PARA PÓLIZAS SUBROGADAS NO SE APLICARA INFRASEGURO        
 <?php
 			}
-?>                        
+?>                     
+                  </td>  
+                </tr>
+                       
                 <tr>
                    <td style="width:35%; text-align: left; padding-right:5px; font-weight:bold; 
                     border:0px solid #0081C2; padding-bottom:10px;" valign="top">
@@ -2094,8 +2139,8 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                       </td>
                       <td style="width:50%; font-weight:bold; text-align:center; font-size: 85%;">
                          ANEXO DE SUBROGACIÓN DE DERECHOS PARA ACREEDORES<br><br>
-                         Código APS: XXX-XXXXXX-XXXXXXXXXXXXX<br>
-                         R.A. XXX/XXXX
+                         Código APS: 109-910101-2006 07 252 2811<br>
+                         R.A.: 799-14
                       </td>
                       <td style="width:25%; text-align:right;">
                       
@@ -2114,12 +2159,12 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                       <td style="width:100%; padding-bottom:4px;">
                         <b>Asegurado:</b>&nbsp;<?=$cliente_nombre;?><br>
                         <b>Póliza Nro.:</b>&nbsp;<?=$poliza;?><br>
+                        <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.date("Y-m-d", strtotime($fecha_em));?><br>
                         <b>Materia del Seguro Subrogada:</b>&nbsp;<?=$materia_seguro;?><br>
                         <b>Ubicación del Riesgo:</b>&nbsp;<?=$ubicacion_riesgo;?><br>
                         <b>Vigencia del Seguro:</b>&nbsp;desde <?=date("Y-m-d", strtotime($row['ini_vigencia']));?> hasta <?=date("Y-m-d", strtotime($row['fin_vigencia']));?><br>
                         <b>Vigencia de la Subrogación:</b>&nbsp;Durante la vigencia del crédito<br>
-                        <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?><br>
-                        <b>Lugar y Fecha:</b>&nbsp;<?=$row['u_depto'].' '.date("Y-m-d", strtotime($fecha_em));?> 
+                        <b>Acreedor (Beneficiario de Subrogación):</b>&nbsp;<?=$row['ef_nombre'];?> 
                       </td>      
                     </tr>
                     <tr>
@@ -2131,20 +2176,16 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                       <td style="width:100%; padding-bottom:4px; text-align:justify;">
                         Se deja constancia por el presente anexo, que a solicitud expresa de los tomadores y/o contratantes y/o asegurados, “EL ACREEDOR” será considerado como beneficiario hasta por el importe de su acreencia sin exceder la suma asegurada de la Póliza Nro. <?=$poliza;?>.
                         <br><br>
-                        En consecuencia, el Asegurado no podrá ejercitar sus derechos, sino por intermedio del Acreedor.
-                        <br><br>
-                        
                         La Aseguradora solo estará obligada a pagar al Acreedor la suma equivalente al saldo adeudado por el Asegurado, y el excedente, si lo hubiera, será pagado al Asegurado.
-                        <br><br>
-                        Queda entendido y convenido por la Aseguradora, que ninguna modificación en las condiciones de la presente póliza, sean estas generales, particulares o especiales, y que afecten los intereses del Acreedor,  serán introducidas sin el previo consentimiento escrito del Acreedor. Para este efecto,  toda modificación solicitada debe ser acompañada de la correspondiente aprobación escrita por parte del Acreedor.
-                        <br><br>
-                        Consecuentemente se considera como no inserta o no puesta cualquier modificación que no haya sido expresamente autorizada por el Acreedor.
-                        <br><br>
-                        La Aseguradora se obliga a notificar por escrito al Acreedor en caso que el original Tomador o Asegurado no pague – total o parcialmente – la prima correspondiente, otorgando siete (7) días calendarios adicionales de cobertura a partir de la notificación, a efectos de que el Acreedor pueda hacerse cargo del pago correspondiente de la prima adeudada.
-                        <br><br>
-                        En caso de renovación de la póliza y de no mediar solicitud en contrario del Acreedor, la Aseguradora conviene que extenderá automáticamente el tenor de esta cláusula en la nueva póliza, aunque no medie solicitud en ese sentido.
-                        <br><br>
-                        La presente cláusula será preeminente sobre cualquier cláusula, anexo, condiciones generales, particulares o especiales que se opongan a la misma, aun cuando sea de  fecha posterior.
+                    <br><br>
+                    Queda entendido y convenido qué, cuando los gravámenes aparezcan indicados en la póliza o se hubiera notificado a la Aseguradora por escrito la existencia de los mismos, ésta deberá comunicar a los Acreedores cualquier resolución destinada a rescindir, anular, modificar o suspender el contrato de segúro.
+                    <br><br>
+                    
+                    La Aseguradora se obliga a notificar por escrito al Acreedor en caso que el original Tomador o Asegurado no pague – total o parcialmente – la prima correspondiente, otorgando siete (7) días calendarios adicionales de cobertura a partir de la notificación, a efectos de que el Acreedor pueda hacerse cargo del pago correspondiente de la prima adeudada.
+                    <br><br>
+                    En caso de renovación de la póliza y de no mediar solictud en contrario del Acreedor, la Aseguradora convieneque extenderá automáticamente el tenor de este anexo en la nueva póliza, aunque no medie solicitud en ese sentido 
+                    <br><br>
+                    El presente anexo será preeminente sobre cualquier cláusula, anexo, condiciones generales, particulares o especiales que se opongan a la misma, aun cuando sea de fecha posterior
                         <br><br><br><br><br><br>
                       </td>              
                     </tr>
@@ -2183,7 +2224,12 @@ EL PROVEEDOR DEL SERVICIO DE ASISTENCIA DOMICILIARIA ES RESPONSABLE DE LOS SERVI
                           </table> 
                       </td> 
                     </tr>
-                </table>	
+                </table>
+                <br><br><br><br><br><br>
+                <div style="font-size: 80%; text-align:center;">  
+                   • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 • La Paz – Bolivia.<br> 
+    • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de Pensiones Valores y Seguros.
+                </div>  	
             </div>
             <!--FIN ANEXO DE SUBROGACION-->         
 <?php			

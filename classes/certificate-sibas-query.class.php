@@ -1565,6 +1565,7 @@ class CertificateQuery extends CertificateHtml {
 						trdd.localidad,
 						trdd.direccion,
 						trdd.valor_asegurado,
+						trdd.valor_contenido,
 						trdd.tasa,
 						trdd.prima,
 						sd.departamento

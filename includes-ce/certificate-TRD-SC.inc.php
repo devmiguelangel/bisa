@@ -267,7 +267,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                 </tr> 
             </table>
             <br>
-            <span style="font-size:80%;">INFORMACIÓN SOBRE BIENES PATRIMONIALES Y VALORES DE PROPIEDAD DEL SOLICITANTE Y BIENES DE TERCEROS BAJO CUSTODIA CONTROL Y RESPONSABILIDAD DEL ASEGURADO. (Esta sección debe ser completada considerando todas las ubicaciones que se quieran asegurar.</span>
+            <span style="font-size:80%;">INFORMACIÓN SOBRE BIENES PATRIMONIALES Y VALORES DE PROPIEDAD DEL SOLICITANTE Y BIENES DE TERCEROS BAJO CUSTODIA CONTROL Y RESPONSABILIDAD DEL ASEGURADO. (Esta sección debe ser completada considerando todas las ubicaciones que se quieran asegurar).</span>
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 80%; font-family: Arial; 
@@ -310,7 +310,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     NO APLICA
                   </td>
                   <td style="width:15%; text-align:center; border-top: 1px solid #333;
-                    border-right: 1px solid #333;"></td>
+                    border-right: 1px solid #333;"><?=$rowDt['valor_asegurado'];?></td>
                 </tr>
                 <tr>
                   <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
@@ -326,7 +326,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                     NO APLICA
                   </td>
                   <td style="width:15%; text-align:center; border-top: 1px solid #333;
-                    border-right: 1px solid #333;"></td>
+                    border-right: 1px solid #333;"><?=$rowDt['valor_contenido'];?></td>
                 </tr>
                 <tr>
                   <td style="width:55%; border-left: 1px solid #333; border-top: 1px solid #333;
@@ -583,9 +583,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                   </td>
                 </tr>   
             </table>
-<?php
-         if((boolean)$row['garantia']===true){
-?>            
+           
             <br>
             <span style="font-weight:bold; font-size:80%;">Requiere este Seguro subrogación de Derechos:   </span> 
             <table 
@@ -595,14 +593,18 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                <tr>
                   <td style="width:18%; text-align:left;">Detallar Nombres y montos: </td>
                   <td style="width:82%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
-                     
+<?php
+         if((boolean)$row['garantia']===true){
+?>   
+            BANCO BISA S.A.      
+<?php
+		 }
+?>                
                   </td>
                </tr>
                <tr><td style="width:100%; border-bottom: 1px solid #333;" colspan="2">&nbsp;</td></tr>
             </table>
-<?php
-		 }
-?>                 
+              
             <br><br><br><br><br>
             <div style="font-size: 80%; text-align:center;">  
                 • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
@@ -629,12 +631,12 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                  </td>
                </tr>
                <tr>
-                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                  <td style="width:100%; text-align:left; border-bottom: 0px solid #333;">&nbsp;
                      
                   </td>
                </tr>
                <tr>
-                  <td style="width:100%; text-align:left; border-bottom: 1px solid #333;">&nbsp;
+                  <td style="width:100%; text-align:left; border-bottom: 0px solid #333;">&nbsp;
                      
                   </td>
                </tr>
@@ -701,7 +703,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -719,7 +721,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -822,15 +824,19 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                          <tr>
                            <td style="width:50%; text-align:center; border-left: 1px solid #333;
                              border-top: 1px solid #333; border-right: 1px solid #333;">
-                             Clasificación de Empleados
+                             Movimiento de dinero
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
-                             Nro. De Empleados
+                             Límite máximo de concentración
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
-                             Monto estimado anual de planillas
+                             Número de veces en el periodo indicado
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             Propósito
                            </td>
                          </tr>
                          <tr>
@@ -838,11 +844,15 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto Normal transportado diariamente
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -852,11 +862,15 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto En exceso del anterior transportado eventualmente en el año
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -866,11 +880,15 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                              border-top: 1px solid #333; border-right: 1px solid #333;">
                              Monto normal en efectivo, valores o cheques concentrados en los locales diariamente
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -880,11 +898,15 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                              border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              Montos adicionales al importe normal que eventualmente se encuentran en los locales
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:17%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              NO APLICA
                            </td>
-                           <td style="width:25%; text-align:center; border-top: 1px solid #333;
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
+                             border-right: 1px solid #333; border-bottom: 1px solid #333;">
+                             NO APLICA
+                           </td>
+                           <td style="width:16%; text-align:center; border-top: 1px solid #333;
                              border-right: 1px solid #333; border-bottom: 1px solid #333;">
                              NO APLICA
                            </td>
@@ -906,7 +928,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom:0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -924,7 +946,7 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                               <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width: 8%; font-weight:bold;">NO APLICA: </td>
-                                   <td style="width: 92%; border-bottom: 1px solid #333;">&nbsp;
+                                   <td style="width: 92%; border-bottom: 0px solid #333;">&nbsp;
                                       
                                    </td>
                                  </tr>
@@ -973,16 +995,16 @@ function trd_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = 
                            </td>
                          </tr>
                          <tr>
-                           <td style="width:36%; text-align:left; border-left: 1px solid #333;
-                             border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                           <td style="width:36%; text-align:left; border-left: 0px solid #333;
+                             border-top: 1px solid #333; border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                            <td style="width:32%; text-align:center; border-top: 1px solid #333;
-                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                            <td style="width:32%; text-align:center; border-top: 1px solid #333;
-                             border-right: 1px solid #333; border-bottom: 1px solid #333;">&nbsp;
+                             border-right: 0px solid #333; border-bottom: 0px solid #333;">&nbsp;
                              
                            </td>
                          </tr>
@@ -1080,6 +1102,13 @@ El solicitante deberá proporcionar adjunto a la presente Solicitud, los respect
                 <td style="width:25%;"></td> 
                </tr>  
             </table>
+            <br><br><br><br><br>
+            <div style="font-size: 80%; text-align:center;">  
+                • Av. Arce Nº 2631, Edificio Multicine Piso 14 • Teléfono: (591-2) 217 7000 • Fax: (591-2) 214 1928 
+                • La Paz – Bolivia.<br> 
+                • Autorizado por Resolución Administrativa Nº 158 del 7 de julio de 1999 de la Superintendencia de 
+                Pensiones Valores y Seguros
+            </div>
         </div>
       
 <?php
