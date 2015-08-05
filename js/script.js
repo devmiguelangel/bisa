@@ -169,6 +169,7 @@ function data_warranty () {
 		e.preventDefault();
 
 		$('.dw-loading').slideDown();
+		$('.dw-mess').html('').removeClass('error-text');
 
 		var cod_cl	= $('#cod_cl').prop('value');
 		var data 	= $('#no_cf');
@@ -183,8 +184,6 @@ function data_warranty () {
 			// console.log(res);
 			
 			if (res['status'] === 200) {
-				$('.dw-mess').html('').removeClass('error-text');
-
 				$.each(res['data'][product], function (index, value) {
 					var field = '#' + index.replace(/_/gi, '-');
 					field = $(field);
