@@ -991,8 +991,8 @@ for($i = 0; $i < count($arr_traction); $i++){
         </tr>
         <tr class="title-vh">
         	<td>Color</td>
-            <td>Motor</td>
-            <td>Chasis</td>
+            <td>No. Motor</td>
+            <td>No. Chasis</td>
             <td>Cap/Ton</td>
             <td>N° Asientos</td>
             <td>Cilindrada</td>

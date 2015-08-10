@@ -322,7 +322,7 @@ if($nVh < $max_item || $swVh === true){
        	<div style="text-align: center;">
        		<label style="width: auto;">Cod. de Cliente: </label>
        		<input type="text" style="width: 100px;" id="cod_cl" autocomplete="off">
-       		<label style="width: auto;">Nro. de Chasis: </label>
+       		<label style="width: auto;">No. de Chasis: </label>
        		<input type="text" style="width: 100px;" id="no_cf" data-pr="A" autocomplete="off">
        		<button class="btn-issue add-inf" style="width: 150px; margin: 0 5px; background: #23abea;">Buscar</button>
        		<br><br>
@@ -407,7 +407,7 @@ if($nVh < $max_item || $swVh === true){
             	readonly style="display:none;">
         </div><br>
 
-        <label>Motor: <span>*</span></label>
+        <label>No. Motor: <span>*</span></label>
         <div class="content-input">
             <input type="text" id="dv-motor" name="dv-motor" autocomplete="off" 
             	value="<?=$dv_motor;?>" class="required text-2 fbin">
@@ -459,7 +459,7 @@ if($nVh < $max_item || $swVh === true){
             	autocomplete="off" value="<?=$dv_displacement;?>" class="required text-2 fbin">
         </div><br>
 
-        <label>Chasis: <span>*</span></label>
+        <label>No. Chasis: <span>*</span></label>
         <div class="content-input">
             <input type="text" id="dv-chassis" name="dv-chassis" 
             	autocomplete="off" value="<?=$dv_chassis;?>" class="required text-2 fbin">

@@ -319,7 +319,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                   </td> 
                                   <td style="width:7%; border-top: 1px solid #333; border-right: 1px solid #333;
                                      border-bottom: 1px solid #333; background:#d8d8d8;">
-                                     Motor
+                                     No. Motor
                                   </td> 
                                   <td style="width:20%; border-top: 1px solid #333; border-right: 1px solid #333;
                                      border-bottom: 1px solid #333;">&nbsp;
@@ -377,7 +377,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                     </td> 
                                     <td style="width:7%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; background:#d8d8d8;">
-                                       Chasis:
+                                       No. Chasis:
                                     </td> 
                                     <td style="width:30%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333;">&nbsp;

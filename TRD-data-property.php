@@ -191,7 +191,7 @@ if($nPr < $max_item || $swPr === true){
        	<div style="text-align: center;">
        		<label style="width: auto;">Cod. de Cliente: </label>
        		<input type="text" style="width: 100px;" id="cod_cl" autocomplete="off">
-       		<label style="width: auto;">Nro. de Folio: </label>
+       		<label style="width: auto;">No. de Folio: </label>
        		<input type="text" style="width: 100px;" id="no_cf" data-pr="T">
        		<button class="btn-issue add-inf" style="width: 150px; margin: 0 5px; background: #23abea;">Buscar</button>
 
