@@ -288,12 +288,14 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$arr_pr[$k]['reason'] = '';
 					$arr_pr[$k]['approved'] = TRUE;
 					
-					if(($arr_pr[$k]['value-insured'] + $arr_pr[$k]['value-content']) > $max_amount){
+					if((($arr_pr[$k]['value-insured'] + $arr_pr[$k]['value-content']) > $max_amount) 
+							|| ($arr_pr[$k]['value-content'] > ($arr_pr[$k]['value-insured'] * 20 / 100))){
 						$arr_pr[$k]['FAC'] = TRUE;
 						$_FAC = TRUE;
 						$arr_pr[$k]['reason'] .= '| El valor asegurado del Inmueble excede el ' 
 							. 'máximo valor permitido. Valor permitido: ' 
-							. number_format($max_amount, 2, '.', ',') . ' USD';
+							. number_format($max_amount, 2, '.', ',') . ' USD o el valor de 
+							los muebles mas contenido supera el 20% del valor del inmueble.';
 					}
 					
 					if($arr_pr[$k]['FAC'] === TRUE) { $arr_pr[$k]['approved'] = FALSE; }

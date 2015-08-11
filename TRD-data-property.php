@@ -282,7 +282,9 @@ if($nPr < $max_item || $swPr === true){
 
         <div id="mess-amount" class="au-mess"
              style=" <?=$display_value;?> ">Inmuebles cuyo valor excedan los 
-             	<?=$max_amount;?> USD requieren aprobación de la Compañia de Seguros</div>
+             	<?=$max_amount;?> USD o el valor de los muebles mas contenido 
+             	supera el 20% del valor del inmueble, requieren aprobación de 
+             	la Compañia de Seguros</div>
     </div>
 <?php
 ?>
@@ -361,7 +363,7 @@ $(document).ready(function(e) {
 			$('#dp-value-content').prop('value', '');
 		}
 
-		if((amount + amount_content) > max_amount) {
+		if(((amount + amount_content) > max_amount) || (amount_content > (amount * 20 / 100))) {
 			$("#mess-amount").fadeIn();
 		} else {
 			$("#mess-amount").fadeOut();

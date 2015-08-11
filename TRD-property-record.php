@@ -71,10 +71,11 @@ if(isset($_POST['dp-token']) && isset($_POST['ms']) && isset($_POST['page'])
 		$dp_value_content = $link->real_escape_string(trim($_POST['dp-value-content']));
 		$amount_total = ($dp_value_insured + $dp_value_content);
 
-		if($amount_total > $max_amount){
+		if(($amount_total > $max_amount) || ($dp_value_content > ($dp_value_insured * 20 / 100))){
 			$_FAC = TRUE;
 			$reason .= '| El valor asegurado del Inmueble excede el máximo valor 
-				permitido. Valor permitido: ' . number_format($max_amount, 2, '.', ',') . ' USD';
+				permitido. Valor permitido: ' . number_format($max_amount, 2, '.', ',') . ' USD
+				o el valor de los muebles mas contenido supera el 20% del valor del inmueble.';
 		}
 
 		$max_value = $link->get_cumulus($amount_total, 'USD', base64_encode($idef), 'TRD');
