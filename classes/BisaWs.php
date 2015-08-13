@@ -435,6 +435,17 @@ class BisaWs
 
 					$this->data['fecNacimiento'] = date('Y-m-d', strtotime($this->data['fecNacimiento']));
 					$this->data['estCivil'] = $this->cx->status[$this->data['estCivil']][0];
+					
+					if (empty($this->data['celular'])) {
+						$this->data['celular'] = '';
+					}
+					if (empty($this->data['telefonOfic'])) {
+						$this->data['telefonOfic'] = '';
+					}
+				}
+
+				if (empty($this->data['telefono'])) {
+					$this->data['telefono'] = '';
 				}
 
 				$this->data['full_name'] = $this->data['primerNombre'] . ' ' . $this->data['segundoNombre'] 

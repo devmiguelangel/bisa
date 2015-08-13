@@ -174,7 +174,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
             </select>
             <br>
             
-            <label>Cliente: </label>
+            <label>Nombre y/o Apellido: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             
             <label style="width:auto;">C.I.: </label>

@@ -289,7 +289,7 @@ function validarRealf(dat){
 <a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
 	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
 	base64_encode('AU');?>" class="fancybox fancybox.ajax btn-see-slip">
-	Ver Solicitud
+	Imprimir Solicitud
 </a>
 
 <form id="fde-issue" name="fde-issue" action="" method="post" 
@@ -695,7 +695,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 				class="<?=$read_jur;?> fbin" 
 				<?=$read_save . ' ' . $read_new;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
 
-			<label>Principal Ejecutivo: <span>*</span></label><br>
+			<label>Representante Legal: <span>*</span></label><br>
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-executive" name="dc-executive" 
 					autocomplete="off" value="<?=$row['cl_ejecutivo'];?>" 
@@ -996,7 +996,7 @@ for($i = 0; $i < count($arr_traction); $i++){
             <td>Cap/Ton</td>
             <td>N° Asientos</td>
             <td>Cilindrada</td>
-            <td colspan="2">Plaza de Circulación</td>
+            <td colspan="2">Departamento de Circulación</td>
         </tr>
         <tr valign="top">
         	<td>
@@ -1404,7 +1404,7 @@ switch($sw){
 		break;
 }
 
-if($FC === TRUE && ($sw === 2 || $sw === 3)){
+if($FC === TRUE && ($sw === 2 || $sw === 3) && $user_type !== 'PA'){
 ?>
 	$("#issue-title:last").after('\
 		<div class="fac-mess"><strong>Nota:</strong> Se deshabilitó el boton "Emitir" por las siguientes razones: <br><?=$link->real_escape_string($mFC);?><br><br><strong>Por tanto:</strong><br>Debe solicitar aprobación a la Compañía de Seguros.</div>');

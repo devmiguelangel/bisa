@@ -4,7 +4,11 @@ class Session{
 	public $idUser, $idEF, $session_time;
 	
 	function Session(){
+		ini_set('session.gc_maxlifetime', 60 * 5);
+		ini_set('session.cookie_lifetime', 60 * 5);
+
 		session_start();
+		session_regenerate_id();
 		
 		if(isset($_SESSION['sKey'])) $this->skey = $_SESSION['sKey'];
 		else $this->skey = '';
@@ -64,8 +68,8 @@ class Session{
 			&& empty($_SESSION['idUser']) === false
 			&& isset($_SESSION['idEF'])) {
 			//setcookie('IdeproUser[user]', $_SESSION['idUser'], time() + 1 * 24 * 60 * 60);
-			setcookie('IdeproUser[user]', $_SESSION['idUser'], 0, '/', '', false, true);
-			setcookie('IdeproUser[ef]', $_SESSION['idEF'], 0, '/', '', false, true);
+			// setcookie('IdeproUser[user]', $_SESSION['idUser'], 0, '/', '', false, true);
+			// setcookie('IdeproUser[ef]', $_SESSION['idEF'], 0, '/', '', false, true);
 
 			return true;
 		} else {

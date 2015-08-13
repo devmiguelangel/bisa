@@ -56,6 +56,7 @@ class ReportsGeneralAU{
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
 		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
+		$this->data['warranty-type'] = (int)$this->cx->real_escape_string(trim($data['r-warranty-type']));
 		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
 		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
 
@@ -287,7 +288,8 @@ class ReportsGeneralAU{
 				and sag.id_agencia like '%" . $this->data['agency'] . "%' ";
 		if ($this->token === 'RP') {
 			// and sae.id_poliza like '%".$this->data['policy']."%'
-			$this->sql .= "and sae.anulado like '%" . $this->data['r-canceled'] . "%' ";
+			$this->sql .= "and sae.garantia like '%" . $this->data['warranty-type'] . "%' 
+				and sae.anulado like '%" . $this->data['r-canceled'] . "%' ";
 			switch ($this->data['warranty']) {
 			case 1:
 				$this->sql .= 'and sae.garantia = true 
@@ -342,25 +344,26 @@ class ReportsGeneralAU{
 				    end) = true
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
-			$this->sql .= 'and sae.emitir = true
-					and (case "' . $this->data_user['u_tipo_codigo'] . '"
-				        when
-				            "LOG"
-				        then
-				            if(sae.fecha_emision < curdate() 
-				            	or (sae.anulado = true and sae.request = true),
-				                true,
-				                false)
-						when 
-							"FAC"
-						then
-							if(sae.request = true and sae.anulado = false, 
-								true, 
-								false)
-				        else false
-				    end) = true
-					and sae.anulado like "%' . $this->data['r-canceled'] . '%"
-					and sae.request like "%' . $this->data['request'] . '%"
+			$this->sql .= 'and sae.garantia like "%' . $this->data['warranty-type'] . '%" 
+				and sae.emitir = true
+				and (case "' . $this->data_user['u_tipo_codigo'] . '"
+			        when
+			            "LOG"
+			        then
+			            if(sae.fecha_emision < curdate() 
+			            	or (sae.anulado = true and sae.request = true),
+			                true,
+			                false)
+					when 
+						"FAC"
+					then
+						if(sae.request = true and sae.anulado = false, 
+							true, 
+							false)
+			        else false
+			    end) = true
+				and sae.anulado like "%' . $this->data['r-canceled'] . '%"
+				and sae.request like "%' . $this->data['request'] . '%"
 			';
 			if (!empty($this->data['request'])) {
 				$this->sql .= 'and sae.anulado = false ';
@@ -583,7 +586,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td>No. Póliza</td>
+    		<td>No. <?= htmlentities('Póliza') ;?></td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
@@ -718,7 +721,8 @@ $(document).ready(function(e) {
 					1,
 					if(sae.emitir = 1, 2, 3)) as estado_banco,
 				sad.facultativo as estado_facultativo,
-			    sad.leido
+			    sad.leido,
+			    sae.garantia
 			from
 			    s_au_em_detalle as sad
 			        inner join
@@ -947,7 +951,8 @@ $(document).ready(function(e) {
 					$this->data['r-issued'];?>&frp-rejected=<?=
 					$this->data['r-rejected'];?>&frp-canceled=<?=
 					$this->data['r-canceled'];?>&frp-warranty=<?=
-					$this->data['warranty'];?>&frp-state-account=<?=
+					$this->data['warranty'];?>&frp-warranty-type=<?=
+					$this->data['warranty-type'];?>&frp-state-account=<?=
 					$this->data['r-state-account'];?>&frp-mora=<?=
 					$this->data['r-mora'];?>" class="send-xls" target="_blank">Exportar a Formato Excel</a>
 <?php

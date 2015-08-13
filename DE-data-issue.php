@@ -373,11 +373,11 @@ function validarRealf(dat){
 }
 </script>
 <h3 id="issue-title"><?=$title;?></h3>
-<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('DE');?>" class="fancybox fancybox.ajax btn-see-slip">Ver Slip Cotización</a>
+<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('DE');?>" class="fancybox fancybox.ajax btn-see-slip">Imprimir Slip Cotización</a>
 <?php
 if ($link->verifyModality($_SESSION['idEF'], 'DE') === false) {
 ?>
-<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('DE');?>&category=<?=base64_encode('PES');?>" class="fancybox fancybox.ajax btn-see-slip">Ver Slip Vida en Grupo</a>
+<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=base64_encode('DE');?>&category=<?=base64_encode('PES');?>" class="fancybox fancybox.ajax btn-see-slip">Imprimir Slip Vida en Grupo</a>
 <?php
 }
 ?>

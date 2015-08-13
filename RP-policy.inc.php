@@ -191,7 +191,7 @@ if (($rsPo = $link->get_policy($_SESSION['idEF'], $rowMenu['producto'])) !== FAL
             </select>
             <br>
             
-            <label>Cliente: </label>
+            <label>Nombre y/o Apellido: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             
             <label style="width:auto;">C.I.: </label>
@@ -222,7 +222,14 @@ if($rsEx->data_seek(0) === TRUE){
 			<label class="lbl-cb"><input type="radio" id="frp-canceled-no" name="frp-canceled-p" value="0">&nbsp;NO</label>
             <label class="lbl-cb"><input type="radio" id="frp-canceled-both" name="frp-canceled-p" value="" checked>&nbsp;Todos</label>
 
-            <label style="">Vinculados: </label>
+            <label style="">Tipo de Emisión: </label>
+            <select id="frp-warranty-type" name="frp-warranty-type" style="width: auto;">
+                <option value="">Todos</option>
+                <option value="0">Voluntarios</option>
+                <option value="1">Subrogados</option>
+			</select>
+
+            <label style="width: auto; margin-left: 7px;">Vinculados: </label>
             <label class="lbl-cb"><input type="radio" id="frp-warranty-si" name="frp-warranty" value="1">&nbsp;SI</label>
 			<label class="lbl-cb"><input type="radio" id="frp-warranty-no" name="frp-warranty" value="0">&nbsp;NO</label>
             <label class="lbl-cb"><input type="radio" id="frp-warranty-both" name="frp-warranty" value="2" checked>&nbsp;Todos</label>

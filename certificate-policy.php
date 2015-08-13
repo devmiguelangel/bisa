@@ -115,35 +115,35 @@ if($token === TRUE){
 ?>
 <h3 id="issue-title">Póliza <?= $rowIs['no_poliza'] ;?></h3>
 
+<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
+	$pr;?>&category=<?=base64_encode('VT');?>" 
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert7;?></a>
+
 <a href="certificate-detail.php?idc=<?=$idc;?>&cia=<?=
 	base64_encode($rowIs['id_compania']);?>&type=<?=$type;?>&pr=<?=$pr;?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleSlip;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleSlip;?></a>
 
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=$category;?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert;?></a>
 
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=base64_encode('FAT');?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert3;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert3;?></a>
 
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=base64_encode('UIF');?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert4;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert4;?></a>
 
 <?php if ((boolean)$rowIs['garantia']): ?>
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=base64_encode('ASR');?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert5;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert5;?></a>
 <?php endif ?>
 
 <a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
 	$pr;?>&category=<?=base64_encode('CRT');?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert6;?></a>
-
-<a href="certificate-detail.php?ide=<?=$ide;?>&type=<?=$type;?>&pr=<?=
-	$pr;?>&category=<?=base64_encode('VT');?>" 
-	class="fancybox fancybox.ajax view-detail">Ver <?=$titleCert7;?></a>
+	class="fancybox fancybox.ajax view-detail">Imprimir <?=$titleCert6;?></a>
 
 <?php if ((boolean)$rowIs['garantia'] && !(boolean)$rowIs['emitir']): ?>
 	<div class="fac-mess" style="width: 40%; text-align: center; font-size: 80%;">

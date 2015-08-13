@@ -1159,7 +1159,13 @@ class SibasDB extends MySQLi
 				}
 				if($token === 3){
 					EditData:
-					$arr_state['action'] = 'Editar Datos';
+
+					if ((boolean)$row['garantia']) {
+						$arr_state['txt'] = '';
+						$arr_state['obs'] = '';
+					}
+
+					$arr_state['action'] = 'Vincular';
 					$arr_state['link'] = $pr . '-quote.php?ms=' . md5('MS_' . $product) 
 						. '&page=91a74b6d637860983cc6c1d33bf4d292&pr=' 
 						. base64_encode($product . '|05') . '&ide=' 
@@ -1182,7 +1188,9 @@ class SibasDB extends MySQLi
 		if($row['observacion'] === 'E' && $row['estado'] !== 'A'){
 			$arr_state['obs'] = $row['estado_pendiente'];
 			if($token === 1){
-				$arr_state['link'] = $pr.'-quote.php?ms=&page=&pr='.base64_encode($product.'|05').'&ide='.base64_encode($row['ide']).'&cia='.base64_encode($row['id_compania']).'&flag='.md5('i-read').'&target='.md5('ERROR-C');
+				$arr_state['link'] = $pr . '-quote.php?ms=&page=&pr=' . base64_encode($product.'|05') 
+					. '&ide=' . base64_encode($row['ide']) . '&cia=' . base64_encode($row['id_compania']) 
+					. '&flag=' . md5('i-read') . '&target=' . md5('ERROR-C');
 				$arr_state['action'] = 'Editar Póliza';
 			}
 		}elseif($row['observacion'] === 'NE' && $row['estado'] !== 'A' && $row['estado'] !== 'R'){

@@ -181,7 +181,7 @@ $(document).ready(function(e) {
             </select>
             <br>
     
-            <label>Cliente: </label>
+            <label>Nombre y/o Apellido: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             
             <label style="width:auto;">C.I.: </label>
@@ -206,6 +206,14 @@ if($rsEx->data_seek(0) === TRUE){
 }
 ?>
             </select><br>
+
+            <label style="">Tipo de Emisión: </label>
+            <select id="frp-warranty-type" name="frp-warranty-type" style="width: auto;">
+                <option value="">Todos</option>
+                <option value="0">Voluntarios</option>
+                <option value="1">Subrogados</option>
+			</select>
+			
             <input type="hidden" id="frp-canceled-p" name="frp-canceled-p" value="" >
             
             <label style="">Fecha: </label>

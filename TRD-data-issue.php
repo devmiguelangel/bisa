@@ -278,7 +278,7 @@ function validarRealf(dat){
 <a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
 	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
 	base64_encode('TRD');?>" class="fancybox fancybox.ajax btn-see-slip">
-	Ver Solicitud
+	Imprimir Solicitud
 </a>
 
 <form id="fde-issue" name="fde-issue" action="" method="post" 
@@ -684,7 +684,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 				class="<?=$read_jur;?> fbin" 
 				<?=$read_save;?>><?= $row['cl_direccion_laboral'] ;?></textarea><br>
 
-			<label>Principal Ejecutivo: <span>*</span></label><br>
+			<label>Representante Legal: <span>*</span></label><br>
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-executive" name="dc-executive" 
 					autocomplete="off" value="<?=$row['cl_ejecutivo'];?>" 
@@ -1319,7 +1319,7 @@ switch($sw){
 		break;
 }
 
-if($FC === TRUE && ($sw === 2 || $sw === 3)){
+if($FC === TRUE && ($sw === 2 || $sw === 3) && $user_type !== 'PA'){
 ?>
 	$("#issue-title:last").after('\
 		<div class="fac-mess">\

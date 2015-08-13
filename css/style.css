@@ -1299,8 +1299,8 @@ a.list-forms:hover{
 	zoom: 1;
 	vertical-align:top;
 	
-	width:210px;
-	height:260px;
+	width: 210px;
+	height: auto;
 	border:1px solid #1CB5FF;
 	border-radius:8px;
 	background:#ECF9FF;

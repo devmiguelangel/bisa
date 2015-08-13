@@ -170,7 +170,7 @@ if (($rsPo = $link->get_policy($_SESSION['idEF'], $product)) !== FALSE) {
             </select>
             <br>
 
-            <label>Cliente: </label>
+            <label>Nombre y/o Apellido: </label>
             <input type="text" id="frp-client" name="frp-client" value="" autocomplete="off">
             
             <label style="width:auto;">C.I.: </label>

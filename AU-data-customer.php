@@ -59,6 +59,8 @@ $(document).ready(function(e) {
 
 				$("#form-company").find('input[type="text"], textarea')
 					.prop('value', '');
+				
+				$('#dsc-ext option:eq(0)').prop('selected', true);
 				break;
 			case 'JUR':
 				$("#dsc-type-client").prop('value', 'JUR');
@@ -72,6 +74,8 @@ $(document).ready(function(e) {
 
 				$("#form-person").find('input[type="text"], textarea')
 					.prop('value', '');
+
+				$('#dsc-ext option[value="NIT"]').prop('selected', true);
 				break;
 			}
 		}else{
@@ -335,7 +339,7 @@ if(($rsDep = $link->get_depto()) === FALSE) {
         <label style="width: auto;">Extensión: <span>*</span></label>
         <div class="content-input" style="width:auto;">
         	<select id="dsc-ext" name="dsc-ext" style="width: 100px;" class="required text fbin">
-        		<option>Seleccione...</option>
+        		<option value="">Seleccione...</option>
 				<?php if ($rsDep->data_seek(0)): ?>
 					<?php while ($rowDep = $rsDep->fetch_array(MYSQLI_ASSOC)): $px_code = ''; ?>
 						<?php if ((boolean)$rowDep['tipo_ci'] && (boolean)$rowDep['tipo_dp']): $px_code = 'C'; ?>
@@ -614,7 +618,7 @@ if ($rsDep->data_seek(0) === TRUE) {
 					class="<?= $require_jur ;?> fbin field-company"><?= $dc_address_work ;?></textarea><br>
 			</div><br>
 
-			<label>Principal Ejecutivo: <span>*</span></label><br>
+			<label>Representante Legal: <span>*</span></label><br>
 			<div class="content-input" style="width: 350px;">
 				<input type="text" id="dc-executive" name="dc-executive" 
 					autocomplete="off" value="<?=$dc_executive;?>" 

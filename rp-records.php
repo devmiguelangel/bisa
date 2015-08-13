@@ -163,6 +163,9 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	if(isset($_GET['frp-request'])) { $arrData['r-request'] = $_GET['frp-request'];}
 	//echo $arrData['r-canceled'];
 
+	$arrData['r-warranty-type'] = '';
+	if(isset($_GET['frp-warranty-type'])) { $arrData['r-warranty-type'] = $_GET['frp-warranty-type']; }
+
 	$arrData['r-warranty'] = '';
 	if(isset($_GET['frp-warranty'])) { $arrData['r-warranty'] = $_GET['frp-warranty']; }
 

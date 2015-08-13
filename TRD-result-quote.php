@@ -66,10 +66,18 @@ if(($rsCia = $link->query($sqlCia, MYSQLI_STORE_RESULT)) !== false){
 			<span class="value">USD <?= number_format($primaT, 2, '.', ',') ;?> </span><br>
 			<?= $link->methodPayment[$rowCia['c_forma_pago']] ;?>
 		</span>
+
+		<?php if (!(boolean)$rowCia['c_garantia']): ?>
+			<span class="rq-tasa">
+				Prima Mensual: <br>
+				<span class="value">USD <?=number_format(($primaT / 12 ), 2, '.', ',');?> </span><br>
+			</span>
+		<?php endif ?>
+
 		<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
 			base64_encode($rowCia['idcia']);?>&type=<?=base64_encode('PRINT');?>&pr=<?=
 			base64_encode('TRD');?>" class="fancybox fancybox.ajax btn-see-slip">
-			Ver Solicitud
+			Imprimir Solicitud
 		</a>
 		<?php if ($token): ?>
 		<a href="trd-quote.php?ms=<?=$_GET['ms'];?>&page=<?=$_GET['page'];?>&pr=<?=

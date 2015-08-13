@@ -137,6 +137,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 				1, 0)) as aprobado_no,
 	    sae.prefijo,
 	    sae.no_emision,
+	    sae.no_poliza,
 	    (case scl.tipo
 	        when 0 then 'NATURAL'
 	        when 1 then 'JURIDICO'
@@ -410,7 +411,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 				}
 ?>
 			
-            <td <?=$rowSpan . $rowSpanBgOld;?>><?=$row['prefijo'].'-'.$row['no_emision'];?></td>
+            <td <?=$rowSpan . $rowSpanBgOld;?>><?= $row['no_poliza'] ;?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['ef_nombre']);?></td>
             <td <?=$rowSpan;?>><?=mb_strtoupper($row['cl_nombre']);?></td>
             <td <?=$rowSpan;?>><?=$row['cl_ci'];?></td>

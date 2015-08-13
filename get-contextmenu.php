@@ -37,6 +37,7 @@ if(isset($_GET['ide'])){
 	$titleCert4 = 'Formulario UIF';
 	$titleCert5 = 'Anexo de Subrogación';
 	$titleCert6 = 'Carta Sudamericana';
+	$titleCert7 = 'Todos';
 	
 	$arr_state = array('txt' => '', 'txt_bank' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 	$menu = '<ul class="cxt-menu">';
@@ -343,8 +344,11 @@ if(isset($_GET['ide'])){
 				
 				//echo (int)$issue;
 				$link->get_state($arr_state, $row, $token, $product, $issue);
-				$menu .= '<li><span class="cm-link"><span class="view-ste">Estado => ' 	
-					. $arr_state['txt'] . '</span></span></li>';
+
+				if (!empty($arr_state['txt'])) {
+					$menu .= '<li><span class="cm-link"><span class="view-ste">Estado => ' 	
+						. $arr_state['txt'] . '</span></span></li>';
+				}
 				
 				if (is_int($arr_state['obs'])) {
 					$obs = $arr_state['obs'];
@@ -365,15 +369,19 @@ if(isset($_GET['ide'])){
 						.'&obs=' . $obs . '&pr=' . base64_encode($pr) . '" class="fancybox fancybox.ajax observation">
 						<span class="view-obs">Observación => ' 
 						. $arr_state['obs'] . '</span></a></li>';
-				} elseif ($arr_state['obs'] === 'NINGUNA' || (boolean)$row['estado_facultativo'] === false) {
-					$menu .= '<li><span class="cm-link"><span class="view-obs">Observación => ' 
-						. $arr_state['obs'] . '</span></span></li>';
+				} elseif ($arr_state['obs'] === 'NINGUNA' || !(boolean)$row['estado_facultativo']) {
+					if (!(boolean)$row['garantia']) {
+						$menu .= '<li><span class="cm-link"><span class="view-obs">Observación => ' 
+							. $arr_state['obs'] . '</span></span></li>';
+					}
 				} else {
-					$menu .= '<li><a href="fac-' . $pr . '-observation.php?ide=' 
-						. base64_encode($ide) . '&idvh=' . base64_encode($idVh) 
-						. '" class="fancybox fancybox.ajax observation">
-						<span class="view-obs">Observación => ' 
-						. $arr_state['obs'] . '</span></a></li>';
+					if (!(boolean)$row['garantia']) {
+						$menu .= '<li><a href="fac-' . $pr . '-observation.php?ide=' 
+							. base64_encode($ide) . '&idvh=' . base64_encode($idVh) 
+							. '" class="fancybox fancybox.ajax observation">
+							<span class="view-obs">Observación => ' 
+							. $arr_state['obs'] . '</span></a></li>';
+					}
 				}
 				
 
@@ -413,39 +421,44 @@ if(isset($_GET['ide'])){
 		//echo $product;
 		$link->close();
 
-		if ($token !== 3 && $token !== 7 && $token !== 0 && $token !== 1) {
+		if (($token !== 3 && $token !== 7 && $token !== 0 && $token !== 1) || ($token === 1 && $row['estado'] === 'A' && (boolean)$row['garantia'])) {
+			$menu .= '<li><a href="certificate-detail.php?ide=' 
+				. base64_encode($ide) . '&type=' . base64_encode('PRINT') 
+				. '&pr=' . base64_encode($product) . '&category=' . base64_encode('VT') . '" 
+				class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert7 . '</a></li>';
+			
 			$menu .= '<li><a href="certificate-detail.php?ide=' 
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . $category 
-				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert . '</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert . '</a></li>';
 
 			$menu .= '<li><a href="certificate-detail.php?ide=' 
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('FAT') 
-				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert3 . '</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert3 . '</a></li>';
 
 			$menu .= '<li><a href="certificate-detail.php?ide=' 
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('UIF') 
-				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert4 . '</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert4 . '</a></li>';
 
 			if ((boolean)$row['garantia']) {
 				$menu .= '<li><a href="certificate-detail.php?ide=' 
 					. base64_encode($ide) . '&pr=' . base64_encode($product) 
 					. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('ASR') 
-					. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert5 . '</a></li>';
+					. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert5 . '</a></li>';
 			}
 
 			$menu .= '<li><a href="certificate-detail.php?ide=' 
 				. base64_encode($ide) . '&pr=' . base64_encode($product) 
 				. '&type=' . base64_encode('PRINT') . '&category=' . base64_encode('CRT') 
-				. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert6 . '</a></li>';
-			
+				. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert6 . '</a></li>';
+
 			/*if ($product === 'DE' && $modality === false) {
 				$menu .= '<li><a href="certificate-detail.php?ide=' . base64_encode($ide) 
 					. '&pr=' . base64_encode($product) . '&type=' 
 					. base64_encode('PRINT') . '&category=' . $category2 
-					. '" class="fancybox fancybox.ajax observation">Ver ' . $titleCert2 . '</a></li>';
+					. '" class="fancybox fancybox.ajax observation">Imprimir ' . $titleCert2 . '</a></li>';
 			}*/
 		}
 		
@@ -453,9 +466,8 @@ if(isset($_GET['ide'])){
 			$menu .= '<li><a href="certificate-detail.php?idc=' 
 				. base64_encode($idc) . '&cia=' . base64_encode($row['id_compania']) 
 				. '&pr=' . base64_encode($product) . '&type=' . base64_encode('PRINT') 
-				. '" class="fancybox fancybox.ajax observation">Ver Formulario de Solicitud</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Imprimir Formulario de Solicitud</a></li>';
 		}
-		
 	} else {
 		$idc = $ide;
 
@@ -539,7 +551,7 @@ if(isset($_GET['ide'])){
 			$menu .= '<li><a href="certificate-detail.php?idc=' . base64_encode($idc) 
 				. '&cia=' . base64_encode($row['id_compania']) . '&pr=' 
 				. base64_encode($product) . '&type=' . base64_encode('PRINT') 
-				. '" class="fancybox fancybox.ajax observation">Ver Formulario de Solicitud</a></li>';
+				. '" class="fancybox fancybox.ajax observation">Imprimir Formulario de Solicitud</a></li>';
 		}
 	}
 	

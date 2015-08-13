@@ -270,7 +270,7 @@ if($swVh === false){
 					<td style="width:5%;">Color</td>
 					<td style="width:5%;">Año</td>
 					<td style="width:15%;">Placa</td>
-					<td style="width:5%;">Plaza de Circulación</td>
+					<td style="width:5%;">Departamento de Circulación</td>
                     <td style="width:5%;">Tracción</td>
                     <td style="width:9%;">Valor Asegurado USD.</td>
 					<td style="width:6%;"></td>
@@ -527,7 +527,7 @@ if($nVh < $max_item || $swVh === true){
             </select>
         </div><br>
 
-        <label>Plaza de Circulación: <span>*</span></label>
+        <label>Departamento de Circulación: <span>*</span></label>
         <div class="content-input">
             <select id="dv-plaza" name="dv-plaza" class="required fbin">
                 <option value="">Seleccione...</option>
