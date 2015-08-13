@@ -285,11 +285,11 @@ class ReportsGeneralAU{
 		        and scl.extension like '%".$this->data['ext']."%'
 		        and sae.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."'
 		        and sdepu.id_depto like '" . $this->data['subsidiary'] . "'
-				and sag.id_agencia like '%" . $this->data['agency'] . "%' ";
+				and sag.id_agencia like '%" . $this->data['agency'] . "%'
+				and sae.garantia like '%" . $this->data['warranty-type'] . "%' ";
 		if ($this->token === 'RP') {
 			// and sae.id_poliza like '%".$this->data['policy']."%'
-			$this->sql .= "and sae.garantia like '%" . $this->data['warranty-type'] . "%' 
-				and sae.anulado like '%" . $this->data['r-canceled'] . "%' ";
+			$this->sql .= "and sae.anulado like '%" . $this->data['r-canceled'] . "%' ";
 			switch ($this->data['warranty']) {
 			case 1:
 				$this->sql .= 'and sae.garantia = true 
@@ -344,8 +344,7 @@ class ReportsGeneralAU{
 				    end) = true
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
-			$this->sql .= 'and sae.garantia like "%' . $this->data['warranty-type'] . '%" 
-				and sae.emitir = true
+			$this->sql .= 'and sae.emitir = true
 				and (case "' . $this->data_user['u_tipo_codigo'] . '"
 			        when
 			            "LOG"

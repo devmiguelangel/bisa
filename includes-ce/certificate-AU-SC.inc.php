@@ -319,7 +319,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                   </td> 
                                   <td style="width:7%; border-top: 1px solid #333; border-right: 1px solid #333;
                                      border-bottom: 1px solid #333; background:#d8d8d8;">
-                                     No. Motor
+                                     Motor
                                   </td> 
                                   <td style="width:20%; border-top: 1px solid #333; border-right: 1px solid #333;
                                      border-bottom: 1px solid #333;">&nbsp;
@@ -377,7 +377,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                                     </td> 
                                     <td style="width:7%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333; background:#d8d8d8;">
-                                       No. Chasis:
+                                       Chasis:
                                     </td> 
                                     <td style="width:30%; border-top: 1px solid #333; border-right: 1px solid #333;
                                        border-bottom: 1px solid #333;">&nbsp;
@@ -593,7 +593,7 @@ function au_sc_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                                  <tr>
                                    <td style="width:60%; font-weight:bold;">Responsabilidad Civil Extracontractual ($us.)</td>
-                                   <td style="width:40%;">20.000,00</td>
+                                   <td style="width:40%;">25.000,00</td>
                                  </tr>
                                  <tr>
                                    <td style="width:60%; font-weight:bold;">Responsabilidad Civil Consecuencial ($us.)</td>

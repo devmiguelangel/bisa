@@ -169,7 +169,7 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 <script type="text/javascript" src="plugins/jalerts/jquery.alerts.js"></script>
 <script type="text/javascript">
    $(function(){
-	   $("a[href].accionef").click(function(e){
+	   $("a[href].activar_user").click(function(e){
 		   var valor = $(this).attr('id');
 		   var vec = valor.split('|');
 		   var id_usuario = vec[0];
@@ -178,7 +178,7 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 		   jConfirm("Esta seguro de "+text+" el usuario?", ""+text+" registro", function(r) {
 				//alert(r);
 				if(r) {
-						var dataString ='id_usuario='+id_usuario+'&intent='+intent+'&text='+text+'&opcion=enabled_disabled_usuario';
+						var dataString ='id_usuario='+id_usuario+'&intent='+intent+'&text='+text+'&opcion=enabled_disabled_user';
 						//alert(dataString);
 						$.ajax({
 							   async: true,
@@ -209,8 +209,13 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 <script type="text/javascript" src="plugins/ambience/jquery.ambiance.js"></script>
 <script type="text/javascript">
   <?php 
-    $op = $_GET["op"];
-    $msg = $_GET["msg"];
+    if(isset($_GET["op"])&&isset($_GET["msg"])){
+      $op = $_GET["op"];
+      $msg = $_GET["msg"];
+	}else{
+	  $op = '';
+      $msg = '';	
+	}
 	if($op==1){$valor='success';}elseif($op==2){$valor='error';}
   ?>
   $(function(){
@@ -368,10 +373,10 @@ function mostrar_lista_usuarios($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 											   echo'<li><a href="?l=usuarios_admin&idusuario='.base64_encode($regi['id_usuario']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&reset=v" class="resetear da-tooltip-s" title="Resetear Password"></a></li>';
 											   //echo'<li><a href="?l=usuarios_admin&idusuario='.base64_encode($regi['id_usuario']).'&id_ef_sesion='.base64_encode($id_ef_sesion).'&darbaja=v" class="darbaja da-tooltip-s" title="Dar baja"></a></li>';
 											   if($regi['intent']!=3){
-												   if($regi['activado']=='inactivo'){
-														echo'<li><a href="#" id="'.base64_encode($regi['id_usuario']).'|activar|'.$regi['intent'].'" class="daralta da-tooltip-s accionef" title="Activar"></a></li>';
-												   }else{
-														echo'<li><a href="#" id="'.base64_encode($regi['id_usuario']).'|desactivar|'.$regi['intent'].'" class="darbaja da-tooltip-s accionef" title="Desactivar"></a></li>';  
+												   if($regi['activado']=='activo'){
+														echo'<li style="margin-left:2px;"><a href="#" id="'.base64_encode($regi['id_usuario']).'|dar baja|'.$regi['intent'].'" class="darbaja da-tooltip-s activar_user" title="Activar"></a></li>';
+												   }elseif($regi['activado']=='inactivo'){
+														echo'<li style="margin-left:2px;"><a href="#" id="'.base64_encode($regi['id_usuario']).'|dar alta|'.$regi['intent'].'" class="daralta da-tooltip-s activar_user" title="Desactivar"></a></li>';  
 												   }
 											   }
 											   if($regi['intent']==3){

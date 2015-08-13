@@ -78,12 +78,21 @@ $user_depto = NULL;
 $ef_id = NULL;
 
 if($token === true){
-	if (($rowUs = $link->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) !== FALSE) {
-		$user_id = $rowUs['u_id'];
-		$user = $rowUs['u_usuario'];
-		$user_name = $rowUs['u_nombre'];
-		$user_type = $rowUs['u_tipo_codigo'];
-		$user_depto = $rowUs['u_depto'];
+	if (isset($_SESSION['idUser'], $_SESSION['idEF'])) {
+		if (($rowUs = $link->verify_type_user($_SESSION['idUser'], $_SESSION['idEF'])) !== FALSE) {
+			$user_id = $rowUs['u_id'];
+			$user = $rowUs['u_usuario'];
+			$user_name = $rowUs['u_nombre'];
+			$user_type = $rowUs['u_tipo_codigo'];
+			$user_depto = $rowUs['u_depto'];
+			$user_cw = (boolean)$rowUs['cw'];
+
+			if ($user_cw === false && !isset($_GET['c-p'])) {
+				header('Location: index.php?ms=' . md5('MS_COMP') . '&page='
+					. md5('P_change_pass') . '&user=' . base64_encode($user_id)
+					. '&url=' . base64_encode('index.php') . '&c-p='.md5('true'));
+			}
+		}
 	}
 	
 	switch($user_type){
@@ -130,6 +139,10 @@ if($token === true){
 	} else {
 		exit();
 	}*/
+
+	if (isset($_GET['c-p']) || (isset($_GET['ms']) && !isset($_SESSION['idEF']))) {
+		header('Location: index.php');
+	}
 	
 	if (($HOST_CLIENT = $link->get_financial_institution_ins()) !== false) {
 		$_SESSION['idEF'] = base64_encode($HOST_CLIENT['idef']);
@@ -283,7 +296,7 @@ if (!isset($_GET['c-p'])) {
 				</a>
 				<ul>
 <?php
-	if($tokenM === FALSE){
+	if(!$tokenM && !isset($_SESSION['idUser'])){
 		include('USR-form-login.php');
 	}else{
 ?>

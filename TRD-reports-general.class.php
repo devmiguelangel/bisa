@@ -295,7 +295,8 @@ class ReportsGeneralTRD{
 	        and scl.extension like '%".$this->data['ext']."%'
 	        and stre.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."'
 	        and sdepu.id_depto like '" . $this->data['subsidiary'] . "'
-			and sag.id_agencia like '%" . $this->data['agency'] . "%' ";
+			and sag.id_agencia like '%" . $this->data['agency'] . "%'
+			and stre.garantia like '%" . $this->data['warranty-type'] . "%' ";
 		if ($this->token === 'RG') {
 			// and stre.id_poliza like '%".$this->data['policy']."%'
 			$this->sql .= "
@@ -339,8 +340,7 @@ class ReportsGeneralTRD{
 					and stre.rechazado = false
 					";
 		} if ($this->token === 'RP') {
-			$this->sql .= "and stre.garantia like '%" . $this->data['warranty-type'] . "%' 
-				and stre.anulado like '%" . $this->data['r-canceled'] . "%' ";
+			$this->sql .= "and stre.anulado like '%" . $this->data['r-canceled'] . "%' ";
 			switch ($this->data['warranty']) {
 			case 1:
 				$this->sql .= 'and stre.garantia = true 
@@ -379,8 +379,7 @@ class ReportsGeneralTRD{
 				    end) = true
 			';
 		} elseif ($this->data['token_an'] === 'AS') {
-			$this->sql .= 'and stre.garantia like "%' . $this->data['warranty-type'] . '%" 
-				and stre.emitir = true
+			$this->sql .= 'and stre.emitir = true
 				and (case "' . $this->data_user['u_tipo_codigo'] . '"
 			        when
 			            "LOG"

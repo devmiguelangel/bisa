@@ -363,7 +363,13 @@ $(document).ready(function(e) {
 			$('#dp-value-content').prop('value', '');
 		}
 
-		if(((amount + amount_content) > max_amount) || (amount_content > (amount * 20 / 100))) {
+		if (amount_content > (amount * 20 / 100)) {
+			$('#ftr-property :submit').prop('disabled', true);
+		} else {
+			$('#ftr-property :submit').prop('disabled', false);
+		}
+
+		if(((amount + amount_content) > max_amount)) {
 			$("#mess-amount").fadeIn();
 		} else {
 			$("#mess-amount").fadeOut();

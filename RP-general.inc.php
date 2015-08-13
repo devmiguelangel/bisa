@@ -217,6 +217,13 @@ if($rsEx->data_seek(0) === TRUE){
 }
 ?>
             </select><br>
+
+            <label style="">Tipo de Emisión: </label>
+            <select id="frp-warranty-type" name="frp-warranty-type" style="width: auto;">
+                <option value="">Todos</option>
+                <option value="0">Voluntarios</option>
+                <option value="1">Subrogados</option>
+			</select>
             
             <label style="">Fecha: </label>
             <label style="width:auto;">desde: </label>

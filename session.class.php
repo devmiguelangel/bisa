@@ -4,8 +4,8 @@ class Session{
 	public $idUser, $idEF, $session_time;
 	
 	function Session(){
-		ini_set('session.gc_maxlifetime', 60 * 5);
-		ini_set('session.cookie_lifetime', 60 * 5);
+		ini_set('session.gc_maxlifetime', 60 * 10);
+		ini_set('session.cookie_lifetime', 60 * 10);
 
 		session_start();
 		session_regenerate_id();
