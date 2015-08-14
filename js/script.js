@@ -93,7 +93,8 @@ function set_ajax_upload(field_id){
 	var action = 'upload-file.php';
 
 	var field 			= $('#a-' + field_id);
-	var field_product 	= field.attr('data-product');
+	var field_product 	= field.data('product');
+	var field_module 	= field.data('module');
 	var field_data		= $('#' + field_id);
 	
 	var button = $(field), interval;
@@ -104,7 +105,8 @@ function set_ajax_upload(field_id){
 		onSubmit : function(file, ext){
 			this.setData({
 				attached : field_data.prop('value'),
-				product : field_product
+				product : field_product,
+				module : field_module
 			});
 			// cambiar el texto del boton cuando se selecicione la imagen
 			button.text('Subiendo');
@@ -122,18 +124,14 @@ function set_ajax_upload(field_id){
 		},
 		onComplete: function(file, response){
 			window.clearInterval(interval);
+			response = $.parseJSON(response);
+			console.log(response);
 			
-			// Habilitar boton otra vez
-			// this.enable();
-			// alert(response);
-			result = response.split('|');
-			
-			if(parseInt(result[0]) === 1){
-				field_data.prop('value', result[1]);
+			if (response.error === 200) {
+				field_data.prop('value', response.file);
                 button.text('Archivo Subido con Exito');
-			}else{
+			} else {
                 button.text('Adjuntar documentación nuevamente');
-				alert(result[1]);
 				this.enable();
 			}
 		}

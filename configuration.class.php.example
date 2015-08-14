@@ -1,0 +1,18 @@
+
+<?php
+
+date_default_timezone_set('America/La_Paz');
+
+class ConfigurationSibas
+{
+	public $host 		= 'localhost';
+	public $user 		= 'user';
+	public $password 	= 'password';
+	public $db 			= 'database';
+	public $dbPrefix 	= '';
+	public $mailFrom 	= '';
+	public $fromName 	= '';
+	
+}
+
+?>

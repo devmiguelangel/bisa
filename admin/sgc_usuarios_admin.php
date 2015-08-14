@@ -487,9 +487,10 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 			//encriptamos el password
 			$encrip_pass=crypt_blowfish_bycarluys($_POST['txtPassword']);
 			$histories = setHistoryPassword($history_password, $encrip_pass);
-			$histories = $conexion->real_escape_string($histories); 
+			$histories = $conexion->real_escape_string($histories);
+			$signature = 'signature/'.base64_decode($_POST['dc-attached']); 
 			$insert = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, signature, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
-			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".base64_decode($_POST['dc-attached'])."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
+			."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".$signature."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 			//echo $insert;
 			if($conexion->query($insert)===TRUE){
 				//INSERTAMOS LA ENTIDAD FINANCIERA
@@ -1159,10 +1160,10 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $id_e
 				$fono_agencia = $conexion->real_escape_string($_POST['txtFonoAgencia']);
 				
 				if($tipouser_text=='LOG' || $tipouser_text=='PA'){
-					if(empty($_POST['signature'])){
-					   $signature = base64_decode($_POST['dc-attached']); 	
+					if(empty($_POST['dc-attached'])){
+					   $signature = base64_decode($_POST['signature']);	 	
 					}else{
-					   $signature = base64_decode($_POST['signature']);	
+					   $signature = 'signature/'.base64_decode($_POST['dc-attached']);	
 					}
 				}else{
 					$signature='';
@@ -1756,9 +1757,28 @@ echo'<div class="da-panel" style="width:650px;">
 						echo'<div class="da-form-row">
 								<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
 								<div class="da-form-item large">
-								  <div class="content-input" style="width:auto;">
-								    <img src="../files/'.$fila['signature'].'" width="200"/>
-								  </div>
+								  <div class="content-input" style="width:auto;">';
+							         if(file_exists('../files/'.$fila['signature'])){
+									   echo'<img src="../files/'.$fila['signature'].'" width="200"/>
+									        <input type="hidden" name="file-exists" id="file-exists" value="1"/>';
+									 }else{
+									   echo'no existe el archivo fisico<br>
+									        <input type="hidden" name="file-exists" id="file-exists" value="0"/>
+									        <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
+											<div class="attached-mess" style="width:230px; margin-top:2px; margin-left:0;">
+											   El tama&ntilde;o m&aacute;ximo del archivo es de 2Mb. <br>
+											   El formato del archivo a subir debe ser JPG &oacute; PNG
+											</div>
+											<span class="errorMessage" id="erro_file"></span>';
+											?>
+											<script type="text/javascript">
+											   set_ajax_upload('dc-attached', 'USI');
+											</script>
+											<?php
+									   echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
+											<div id="add_img"></div>';  
+									 }	    
+						     echo'</div>
 								</div>
 							 </div>';
 					}

@@ -60,13 +60,13 @@ if(isset($_GET['ide']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 	<?php if ($token_an === 'AS'): ?>
 		<?php if ($data_user['u_tipo_codigo'] === 'FAC'): ?>
 		<div style="font-size: 60%; text-align: center;">
-			<a href="javascript:;" id="a-attc-an" class="attached" data-product="<?=$pr;?>">Adjuntar Anexo de Anulación</a>
+			<a href="javascript:;" id="a-attc-an" class="attached" data-module="C" data-product="<?=$pr;?>">Adjuntar Anexo de Anulación</a>
 		</div>
 		<input type="hidden" id="attc-an" name="attc-an" value="" class="required">
 
 		<div style="font-size: 60%; text-align: center;">
 			<br>
-			<a href="javascript:;" id="a-attc-re" class="attached" data-product="<?=$pr;?>">Adjuntar Anexo de Devolución</a>
+			<a href="javascript:;" id="a-attc-re" class="attached" data-module="C" data-product="<?=$pr;?>">Adjuntar Anexo de Devolución</a>
 		</div>
 		<input type="hidden" id="attc-re" name="attc-re" value="">
 	
@@ -76,7 +76,7 @@ if(isset($_GET['ide']) && isset($_GET['pr']) && isset($_GET['token_an'])){
 		</div>
 		<?php elseif ($data_user['u_tipo_codigo'] === 'LOG' && !(boolean)$row['garantia']): ?>
 		<div style="font-size: 60%; text-align: center;">
-			<a href="javascript:;" id="a-attc-cc" class="attached" data-product="<?=$pr;?>">Adjuntar Carta del Cliente</a>
+			<a href="javascript:;" id="a-attc-cc" class="attached" data-module="C" data-product="<?=$pr;?>">Adjuntar Carta del Cliente</a>
 		</div>
 		<input type="hidden" id="attc-cc" name="attc-cc" value="" class="required">
 		<div class="attached-mess">

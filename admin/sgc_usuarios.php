@@ -537,9 +537,10 @@ function crear_nuevo_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 						$conexion->query($insert);
 								 
 					}
+					$signature = 'signature/'.base64_decode($_POST['dc-attached']);
 					//INSERTAMOS LOS DATOS DEL USUARIO
 					$insert_us = "INSERT INTO s_usuario(id_usuario, usuario, password, nombre, email, signature, id_tipo, id_depto, activado, history_password, id_agencia, fono_agencia, fecha_creacion, created_at) "
-					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".base64_decode($_POST['dc-attached'])."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
+					         ."VALUES('".$id_unico."', '".$usuario."', '".$encrip_pass."', '".$nombre."', '".$email."', '".$signature."', ".$id_tipo.", ".$depto_regional.", 1, '".$histories."', ".$id_agencia.", '".$fono_agencia."', curdate(), '".date('Y-m-d H:i:s')."')";
 			        echo $insert_us;
 					if($conexion->query($insert_us) === TRUE){ 
 					    $resultado=TRUE; 
@@ -1924,14 +1925,10 @@ function editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $cone
 				}
                 
 				if($tipouser_text=='FAC' || $tipouser_text=='LOG' || $tipouser_text=='PA'){
-					if(empty($_POST['signature'])){
-					   $signature = base64_decode($_POST['dc-attached']); 	
+					if(empty($_POST['dc-attached'])){
+					   $signature = base64_decode($_POST['signature']);	
 					}else{
-					   if(empty($_POST['file-exists'])){
-					      $signature = base64_decode($_POST['dc-attached']); 	
-					   }else{
-					      $signature = base64_decode($_POST['signature']);	
-					   }
+					   $signature = 'signature/'.base64_decode($_POST['dc-attached']); 	
 					}
 				}else{
 					$signature='';
@@ -2531,7 +2528,7 @@ function mostrar_editar_usuario($id_usuario_sesion, $tipo_sesion, $usuario_sesio
 				   }
 				   
 				   if(usuario_name!=''){
-					   if(usuario_name.match(/^[a-z]+$/)){
+					   if(usuario_name.match(/^[a-zA-Z]+$/)){
 						   $('#errorusuario').slideUp('slow');
 						   $.post("buscar_idusuario_edit.php", {usuario:usuario_name,id_usuario:idusuario}, function(data, textStatus, jqXHR){
 								var vec = data.split('|');
@@ -3311,10 +3308,10 @@ echo'<div class="da-panel" style="width:650px;">
 								<label style="text-align:right;"><b><span lang="es">Firma</span></b></label>
 								<div class="da-form-item large">
 								  <div class="content-input" style="width:auto;">';
-								     if(file_exists('../files/'.$fila['signature']))
+								     if(file_exists('../files/'.$fila['signature'])){
 									   echo'<img src="../files/'.$fila['signature'].'" width="200"/>
 									        <input type="hidden" name="file-exists" id="file-exists" value="1"/>';
-									 else
+									 }else{
 									   echo'no existe el archivo fisico<br>
 									        <input type="hidden" name="file-exists" id="file-exists" value="0"/>
 									        <a href="javascript:;" id="a-dc-attached" class="attached">Seleccione archivo</a>
@@ -3330,6 +3327,7 @@ echo'<div class="da-panel" style="width:650px;">
 											<?php
 									   echo'<span class="errorMessage" id="error_dcattached" lang="es"></span>
 											<div id="add_img"></div>';  
+									 }
 							 echo'</div>
 								</div>
 							 </div>';

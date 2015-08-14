@@ -1,11 +1,19 @@
 <?php
-require('sibas-db.class.php');
+
+require 'sibas-db.class.php';
+
+$data = array(
+	'error' => 401,
+	'mess'	=> 'Error: El Archivo no puede ser Subido',
+	'file'	=> null,
+);
 
 if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['attached'])) {
 	$link = new SibasDB();
 	
 	//$type = $link->real_escape_string(trim($_GET['type']));
 	$product 	= $link->real_escape_string(trim($_POST['product']));
+	$module 	= $link->real_escape_string(trim($_POST['module']));
 	$attached 	= $link->real_escape_string(trim(base64_decode($_POST['attached'])));
 	
 	$arr_type = array(
@@ -15,6 +23,10 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
         // 'image/png', 
         'image/pjpeg', 
         // 'image/x-png',
+	);
+
+	$m = array(
+		'C' => 'cancellation/',
 	);
     
     $arr_extension = array();
@@ -31,18 +43,19 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
 	$file_error = $_FILES['attached']['error'];
 	$file_tmp 	= $_FILES['attached']['tmp_name'];
 	
-	$file_id = date('U') . '_' . strtolower($product) . '_' . md5(uniqid('@F#1$' . time(), true));
-	$file_extension = end(explode(".", $file_name));
-	$file_new = $file_id . '.' . $file_extension;
+	$file_id 		= date('U') . '_' . strtolower($product) . '_' . md5(uniqid('@F#1$' . time(), true));
+	$ext 			= explode(".", $file_name);
+	$file_extension = end($ext);
+	$file_new 		= $file_id . '.' . $file_extension;
 	
 	if ($_FILES['attached']['error'] > 0) {
-		echo '0|' . fileUploadErrorMsg($_FILES['attached']['error']);
+		$data['mess'] = fileUploadErrorMsg($_FILES['attached']['error']);
 	} else {
 		if ((3 * 1024 * 1024) >= $file_size 
             && (in_array($file_type, $arr_type) 
                 || in_array($file_extension, $arr_extension))) {
             
-			$dir = 'files/';
+			$dir = 'files/' . $m[$module];
 			if (!is_dir($dir)) {
 				mkdir($dir, 0777);
 			} else {
@@ -50,7 +63,7 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
 			}
 			
 			if (file_exists($dir . $file_new) === true) {
-				echo 'El Archivo ' . $file_new . ' ya existe.';
+				$data['mess'] = 'El Archivo ' . $file_new . ' ya existe.';
 			} else {
 				if ($sw === true) {
 					if (file_exists($dir . $attached) === true) {
@@ -62,18 +75,20 @@ if (isset($_POST['product']) && isset($_FILES['attached']) && isset($_POST['atta
 				}
 				
 				if (move_uploaded_file($file_tmp, $dir . $file_new) === true) {
-					echo '1|' . base64_encode($file_new) . '|' . $attached;
+					$data['error'] = 200;
+					$data['mess'] = 'OK';
+					$data['file'] = base64_encode($m[$module] . $file_new);
 				} else {
-					echo '0|El Archivo no pudo ser subido';
+					$data['mess'] = 'El Archivo no pudo ser Subido.';
 				}
 			}
 		} else {
-			echo '0|El Archivo no puede ser Subido ';
+			$data['mess'] = 'El Archivo no puede ser Subido ';
 		}
 	}
-} else {
-	echo '0|Error: El Archivo no puede ser Subido ';
 }
+
+echo json_encode($data);
 
 function fileUploadErrorMsg($error_code) {
 	switch ($error_code) {
