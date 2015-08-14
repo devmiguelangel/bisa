@@ -1,3 +1,5 @@
 *
 !.gitignore
 !/signature
+!/cancellation
+!/signature/*
