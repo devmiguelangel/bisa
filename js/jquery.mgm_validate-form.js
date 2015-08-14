@@ -339,8 +339,8 @@ $.fn.extend({
 				regex = /^[a-zA-Z0-9áÁéÉíÍóÓúÚñÑüÜ\s\-]*$/;
 				err = 'Ingrese solo texto';
 			}else if($(element).hasClass('plate') === true){
-				regex = /^([a-zA-Z0-9]{6,8})*$/;
-				err = 'Ingrese solo texto y números';
+				regex = /^([a-zA-Z0-9]){6,8}$/;
+				err = 'Ingrese solo texto y númerosssss';
 			}else if($(element).hasClass('dni') === true){
 				regex = /^[a-zA-Z0-9\s\-]*$/;
 				err = 'Documento de identidad no valido';

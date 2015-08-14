@@ -53,7 +53,7 @@ class ReportsGeneralTRD{
 		$this->data['r-canceled'] = $this->cx->real_escape_string(trim($data['r-canceled']));
 		$this->data['request'] = $this->cx->real_escape_string(trim($data['r-request']));
 		$this->data['warranty'] = (int)$this->cx->real_escape_string(trim($data['r-warranty']));
-		$this->data['warranty-type'] = (int)$this->cx->real_escape_string(trim($data['r-warranty-type']));
+		$this->data['warranty-type'] = $this->cx->real_escape_string(trim($data['r-warranty-type']));
 		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
 		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
 
