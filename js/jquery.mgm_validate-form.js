@@ -339,7 +339,7 @@ $.fn.extend({
 				regex = /^[a-zA-Z0-9áÁéÉíÍóÓúÚñÑüÜ\s\-]*$/;
 				err = 'Ingrese solo texto';
 			}else if($(element).hasClass('plate') === true){
-				regex = /^([a-zA-Z0-9]{6,7})*$/;
+				regex = /^([a-zA-Z0-9]{6,8})*$/;
 				err = 'Ingrese solo texto y números';
 			}else if($(element).hasClass('dni') === true){
 				regex = /^[a-zA-Z0-9\s\-]*$/;
