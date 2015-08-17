@@ -270,14 +270,14 @@ if($nPr < $max_item || $swPr === true){
         <div class="content-input">
             <input type="text" id="dp-value-insured" name="dp-value-insured" 
             	autocomplete="off" value="<?=$dp_value_insured;?>" 
-            	class="required number fbin value_insured">
+            	class="required real fbin value_insured">
         </div><br>
 
         <label>Valor Muebles y/o contenido (USD): <span>*</span></label>
 		<div class="content-input">
             <input type="text" id="dp-value-content" name="dp-value-content" 
             	autocomplete="off" value="<?=$dp_value_content;?>" 
-            	class="required number fbin value_insured">
+            	class="required real fbin value_insured">
         </div><br>
 
         <div id="mess-amount" class="au-mess"
