@@ -160,10 +160,12 @@ class Collection
 					}
 				}
 			} else {
-				$this->prima = $prima_month;
+				if ($this->period === 'M') {
+					$this->prima = $prima_month;
 
-				if (($this->period === 'M' && $i === 1) && (($prima_month * 12) < $prima_year)) {
-					$this->prima += $prima_year - ($prima_month * 12);
+					if ($i === 1 && (($prima_month * 12) < $prima_year)) {
+						$this->prima += $prima_year - ($prima_month * 12);
+					}
 				}
 			}
 
