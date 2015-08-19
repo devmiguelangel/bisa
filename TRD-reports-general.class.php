@@ -612,7 +612,7 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td>No. <?= htmlentities('Póliza') ;?></td>
+    		<td>No. <?= htmlentities('Póliza', ENT_QUOTES, 'UTF-8') ;?></td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
@@ -630,7 +630,7 @@ $(document).ready(function(e) {
             <td>Email</td>
 <?php endif ?>
             <td><?=htmlentities('Plazo Crédito', ENT_QUOTES, 'UTF-8');?></td>
-            <td>Forma de Pago</td>
+            <td>Modalidad de Pago</td>
             <td>Tipo</td>
             <td>Uso</td>
             <td>Departamento</td>
@@ -789,7 +789,7 @@ $(document).ready(function(e) {
             <td><?=$this->row['dias_mora'];?></td>
             <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
 <?php else: ?>
-            <td <?=$rowSpan;?>><?=$this->row['cl_ciudad'];?></td>
+            <td <?=$rowSpan;?>><?= htmlentities($this->row['cl_ciudad'], ENT_QUOTES, 'UTF-8') ;?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_genero'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
@@ -798,7 +798,7 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>>
             	<?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?>
             </td>
-            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
+            <td <?=$rowSpan;?>><?= htmlentities($this->cx->methodPayment[$this->row['r_forma_pago']], ENT_QUOTES, 'UTF-8') ;?></td>
             <td><?= $this->cx->typeProperty[$this->rowpr['pr_tipo']] ;?></td>
             <td><?= $this->cx->useProperty[$this->rowpr['pr_uso']] ;?></td>
             <td><?=$this->rowpr['pr_departamento'];?></td>

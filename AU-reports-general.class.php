@@ -585,15 +585,15 @@ $(document).ready(function(e) {
 <table class="result-list" id="result-de">
 	<thead>
     	<tr>
-    		<td>No. <?= htmlentities('Póliza') ;?></td>
+    		<td>No. <?= htmlentities('Póliza', ENT_QUOTES, 'UTF-8') ;?></td>
             <td>Entidad Financiera</td>
             <td>Cliente</td>
             <td>CI</td>
 <?php if ($this->token === 'RC'): ?>
             <td>No. Cuota</td>
             <td>Fecha de Pago</td>
-            <td><?=htmlentities('Fecha de Transacción');?></td>
-            <td><?=htmlentities('Días en Mora');?></td>
+            <td><?=htmlentities('Fecha de Transacción', ENT_QUOTES, 'UTF-8');?></td>
+            <td><?=htmlentities('Días en Mora', ENT_QUOTES, 'UTF-8');?></td>
             <td>Estado</td>
 <?php else: ?>
             <td>Ciudad</td>
@@ -862,13 +862,13 @@ $(document).ready(function(e) {
             <td><?=$this->row['dias_mora'];?></td>
             <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
 <?php else: ?>
-            <td <?=$rowSpan;?>><?=$this->row['cl_ciudad'];?></td>
+            <td <?=$rowSpan;?>><?= htmlentities($this->row['cl_ciudad'], ENT_QUOTES, 'UTF-8');?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_genero'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_telefono'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
 <?php endif ?>
-            <td <?=$rowSpan;?>><?= $this->cx->methodPayment[$this->row['r_forma_pago']] ;?></td>
+            <td <?=$rowSpan;?>><?= htmlentities($this->cx->methodPayment[$this->row['r_forma_pago']], ENT_QUOTES, 'UTF-8') ;?></td>
             <td><?=$this->rowvh['v_tipo_vehiculo'];?></td>
             <td><?=$this->rowvh['v_marca'];?></td>
             <td><?=$this->rowvh['v_modelo'];?></td>
