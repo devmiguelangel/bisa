@@ -29,6 +29,7 @@ if ($token) {
 				$sql = 'select 
 					stre.id_emision as ide,
 					stre.no_emision,
+					stre.no_poliza,
 					stre.forma_pago, 
 					stre.prima_total,
 					stre.fecha_creacion,
@@ -73,7 +74,10 @@ if ($token) {
 									'tipoSeguro' 	=> 'T',
 									'usuario' 		=> $row['u_usuario'],
 									'ip' 			=> $db->getUserIP(),
-									'accion' 		=> 'A'
+									'accion' 		=> 'A',
+									'poliza'		=> $row['no_poliza'],
+									'monto'			=> $row['valor_asegurado'],
+									'moneda'		=> '0'
 								);
 
 								$ws = new BisaWs($link, 'PP', $req);
