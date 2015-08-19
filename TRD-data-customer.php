@@ -163,7 +163,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
 		);
 
 		if ($type_client === 1) {
-			$req['tipoCliente'] = 'E';
+			$req['tipoCliente'] = 'N';
 		} elseif ($type_client === 0) {
 			$req['tipoCliente'] = 'P';
 		}
