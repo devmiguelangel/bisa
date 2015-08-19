@@ -77,7 +77,7 @@ if ($token) {
 									'accion' 		=> 'A',
 									'poliza'		=> $row['no_poliza'],
 									'monto'			=> $row['valor_asegurado'],
-									'moneda'		=> '0'
+									'moneda'		=> '2'
 								);
 
 								$ws = new BisaWs($link, 'PP', $req);
