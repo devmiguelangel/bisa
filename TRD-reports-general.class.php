@@ -629,7 +629,6 @@ $(document).ready(function(e) {
             <td>Celular</td>
             <td>Email</td>
 <?php endif ?>
-            <td><?=htmlentities('Plazo Crédito', ENT_QUOTES, 'UTF-8');?></td>
             <td>Modalidad de Pago</td>
             <td>Tipo</td>
             <td>Uso</td>
@@ -795,9 +794,6 @@ $(document).ready(function(e) {
             <td <?=$rowSpan;?>><?=$this->row['cl_celular'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['cl_email'];?></td>
 <?php endif ?>
-            <td <?=$rowSpan;?>>
-            	<?= $this->cx->typeTerm[$this->row['r_tipo_plazo']] ;?>
-            </td>
             <td <?=$rowSpan;?>><?= htmlentities($this->cx->methodPayment[$this->row['r_forma_pago']], ENT_QUOTES, 'UTF-8') ;?></td>
             <td><?= $this->cx->typeProperty[$this->rowpr['pr_tipo']] ;?></td>
             <td><?= $this->cx->useProperty[$this->rowpr['pr_uso']] ;?></td>
