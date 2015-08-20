@@ -281,10 +281,14 @@ if($nPr < $max_item || $swPr === true){
         </div><br>
 
         <div id="mess-amount" class="au-mess"
-             style=" <?=$display_value;?> ">Inmuebles cuyo valor excedan los 
-             	<?=$max_amount;?> USD o el valor de los muebles mas contenido 
-             	supera el 20% del valor del inmueble, requieren aprobación de 
-             	la Compañia de Seguros</div>
+             style=" <?=$display_value;?> ">El valor total asegurado, incluyendo 
+             	muebles y/o contenido no puede exceder el <?=$max_amount;?> USD, 
+             	caso contrario requiere aprobación de la compañía de seguros.
+       	</div>
+
+       	<div id="mess-content" class="au-mess" style="margin-top: 5px; display: none;">
+       		El valor de muebles y/o contenidos no puede ser superior al 20% del valor asegurado.
+       	</div>
     </div>
 <?php
 ?>
@@ -365,8 +369,10 @@ $(document).ready(function(e) {
 
 		if (amount_content > (amount * 20 / 100)) {
 			$('#ftr-property :submit').prop('disabled', true);
+			$("#mess-content").fadeIn();
 		} else {
 			$('#ftr-property :submit').prop('disabled', false);
+			$("#mess-content").fadeOut();
 		}
 
 		if(((amount + amount_content) > max_amount)) {
