@@ -265,7 +265,7 @@ function au_em_certificate($link, $row, $rsDt, $url, $implant, $fac, $reason = '
                              <td style="width:10%; text-align:right;">
                                           
                              </td>
-                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;20.000,00</td>
+                             <td style="width:12%; text-align:right;" valign="top">$us&nbsp;25.000,00</td>
                              <td style="width:8%;">
                                
                              </td>
