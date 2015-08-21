@@ -1672,6 +1672,7 @@ class SibasDB extends MySQLi
 			std.id_inmueble as id_tr,
 		    st.id as tr_id,
 		    st.tasa as tr_tasa,
+		    st.prima_minima as tr_prima_minima,
 			((std.valor_asegurado + std.valor_contenido) * st.tasa) / 100 as tr_prima
 		from
 			s_trd_cot_cabecera as stc

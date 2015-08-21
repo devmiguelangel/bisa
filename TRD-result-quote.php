@@ -48,6 +48,9 @@ if(($rsCia = $link->query($sqlCia, MYSQLI_STORE_RESULT)) !== false){
 
 			if (count($data) > 0) {
 				foreach ($data as $key => $tr) {
+					if ($tr['tr_prima'] < $tr['tr_prima_minima']) {
+						$tr['tr_prima'] = $tr['tr_prima_minima'];
+					}
 					$primaT += $tr['tr_prima'];
 				}
 			}

@@ -18,6 +18,10 @@ if (count($data) > 0) {
 	$prima_total = 0;
 
 	foreach ($data as $key => $tr) {
+		if ($tr['tr_prima'] < $tr['tr_prima_minima']) {
+			$tr['tr_prima'] = $tr['tr_prima_minima'];
+		}
+		
 		$prima_total += $tr['tr_prima'];
 
 		$sql = 'update s_trd_cot_detalle 

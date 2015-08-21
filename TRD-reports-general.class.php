@@ -140,6 +140,7 @@ class ReportsGeneralTRD{
 		    stre.id_cotizacion as idc, ";
 	    if ($this->token === 'RC') {
 			$this->sql .= "sco.numero_cuota,
+			sco.monto_cuota,
 			sco.fecha_transaccion,
 			sco.numero_transaccion,
 			sco.monto_transaccion,
@@ -619,7 +620,9 @@ $(document).ready(function(e) {
 <?php if ($this->token === 'RC'): ?>
             <td>No. Cuota</td>
             <td>Fecha de Pago</td>
+            <td>Monto Cuota</td>
             <td><?=htmlentities('Fecha de Transacción');?></td>
+            <td><?=htmlentities('Monto Transacción', ENT_QUOTES, 'UTF-8');?></td>
             <td><?=htmlentities('Días en Mora');?></td>
             <td>Estado</td>
 <?php else: ?>
@@ -784,7 +787,9 @@ $(document).ready(function(e) {
 <?php if ($this->token === 'RC'): ?>
 			<td><?=$this->row['numero_cuota'];?></td>
 			<td><?=$this->row['fecha_cuota'];?></td>
+			<td><?= number_format($this->row['monto_cuota'], 2, '.', ',') ;?></td>
             <td><?=$this->row['fecha_transaccion'];?></td>
+			<td><?= number_format($this->row['monto_transaccion'], 2, '.', ',') ;?></td>
             <td><?=$this->row['dias_mora'];?></td>
             <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
 <?php else: ?>
