@@ -331,10 +331,30 @@ if(($rsDep = $link->get_depto()) === FALSE) {
 
 <h3>Datos del Cliente</h3>
 <div style="text-align:center;">
-	<form class="form-quote" style="text-align: left; font-size: 70%;">
+	<form class="form-quote form-customer" style="text-align: left;">
 		<div style="margin: 7px 5px; font-size: 90%; font-weight: bold;">
 			Los campos marcados con <span style="color: #FF4A4A;">(*)</span> son obligatorios.
 		</div>
+		<br>
+		<div style="text-align:center;">
+	    	<label style="text-align:right;">Tipo de Cliente: <span>*</span></label>
+	            <div class="content-input">
+	            <select id="dc-type-client" name="dc-type-client" class="required fbin">
+	                <option value="">Seleccione...</option>
+	<?php
+	$arr_type_client = $link->typeClient;
+	for($i = 0; $i < count($arr_type_client); $i++){
+		$tc = explode('|', $arr_type_client[$i]);
+		if($_TYPE_CLIENT === $tc[0]) {
+			echo '<option value="'.$tc[0].'" selected>'.$tc[1].'</option>';
+		} else {
+			echo '<option value="'.$tc[0].'">'.$tc[1].'</option>';
+		}
+	}
+	?>
+	            </select>
+	        </div><br>
+	    </div>
 	</form>
 	
 	<form id="fau-sc" name="fau-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> font-size: 70%;">
@@ -361,30 +381,11 @@ if(($rsDep = $link->get_depto()) === FALSE) {
         <input type="hidden" id="dsc-type-client" name="dsc-type-client" value="<?=$_TYPE_CLIENT;?>">
         <input type="submit" id="dsc-sc" name="dsc-sc" value="Buscar Cliente" class="btn-search-cs">
 		<div class="mess-err-sc"><?=$err_search;?></div>
+		<hr>
     </form>
 </div>
 
 <form id="fau-customer" name="fau-customer" action="" method="post" class="form-quote form-customer">
-    <div style="text-align:center;">
-    	<label style="text-align:right;">Tipo de Cliente: <span>*</span></label>
-            <div class="content-input">
-            <select id="dc-type-client" name="dc-type-client" class="required fbin">
-                <option value="">Seleccione...</option>
-<?php
-$arr_type_client = $link->typeClient;
-for($i = 0; $i < count($arr_type_client); $i++){
-	$tc = explode('|', $arr_type_client[$i]);
-	if($_TYPE_CLIENT === $tc[0]) {
-		echo '<option value="'.$tc[0].'" selected>'.$tc[1].'</option>';
-	} else {
-		echo '<option value="'.$tc[0].'">'.$tc[1].'</option>';
-	}
-}
-?>
-            </select>
-        </div><br>
-    </div><br>
-
     <input type="hidden" id="dc-code" name="dc-code" value="<?= base64_encode($dc_code) ;?>">
     
     <div id="form-person" style=" <?=$display_nat;?> ">
