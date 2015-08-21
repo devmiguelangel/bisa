@@ -69,6 +69,12 @@ if(isset($_GET['idPr'])){
 }
 ?>
 <h3>Datos del Inmueble</h3>
+
+<form class="form-quote" style="text-align: left; font-size: 70%;">
+	<div style="margin: 7px 5px; font-size: 90%; font-weight: bold;">
+		Los campos marcados con <span style="color: #FF4A4A;">(*)</span> son obligatorios.
+	</div>
+</form>
 <?php
 $nPr = 0;
 if($swPr === false && isset($_GET['idc'])){
@@ -168,7 +174,7 @@ if($swPr === FALSE){
                     		$_GET['idc'];?>&idPr=<?=base64_encode($rowPr['idPr']);?>" 
                     		title="Eliminar Inmueble" class="fancybox fancybox.ajax">
                     		<img src="img/delete-icon.png" width="40" height="40" 
-                    			alt="Eliminar Inmueble" title="Eliminar Vehículo"></a></td>
+                    			alt="Eliminar Inmueble" title="Eliminar Inmueble"></a></td>
 				</tr>
 <?php
 			$cont += 1;

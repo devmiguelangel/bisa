@@ -410,6 +410,10 @@ if($rs->data_seek(0) === TRUE){
 	}
 ?>
 	<h4>Datos del Cliente</h4>
+
+	<div style="margin: 7px 5px; font-size: 90%; font-weight: bold;">
+		Los campos marcados con <span style="color: #FF4A4A;">(*)</span> son obligatorios.
+	</div>
 <?php
 if($sw > 1){
 	echo '<input type="hidden" id="dc-idcl" name="dc-idcl" 

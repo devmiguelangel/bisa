@@ -209,6 +209,12 @@ if(isset($_GET['idVh'])){
 }
 ?>
 <h3>Datos del Vehículo</h3>
+
+<form class="form-quote" style="text-align: left; font-size: 70%;">
+	<div style="margin: 7px 5px; font-size: 90%; font-weight: bold;">
+		Los campos marcados con <span style="color: #FF4A4A;">(*)</span> son obligatorios.
+	</div>
+</form>
 <?php
 $nVh = 0;
 if($swVh === false && isset($_GET['idc'])){

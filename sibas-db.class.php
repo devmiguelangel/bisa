@@ -114,14 +114,14 @@ class SibasDB extends MySQLi
 				14 => 'De Bs. 8,001 a Bs. 12,000',
 				15 => 'De Bs. 12,001 a Bs. 15,000',
 				16 => 'De Bs. 15,001 a Bs. 20,000',
-				17 => 'De 20,000 en adelante',
+				17 => 'De Bs. 20,000 en adelante',
 			),
 			'J' => array(
-				21 => 'De Bs 1 a Bs. 50,000',
+				21 => 'De Bs. 1 a Bs. 50,000',
 				22 => 'De Bs. 50,001 a Bs. 100,000',
-				23 => 'De Bs 100,001 a Bs. 150,000',
+				23 => 'De Bs. 100,001 a Bs. 150,000',
 				24 => 'De Bs. 150,001 a Bs 200,000',
-				25 => 'De 200,001 en adelante',
+				25 => 'De Bs. 200,001 en adelante',
 			),
 		),
 		$state_account = array(

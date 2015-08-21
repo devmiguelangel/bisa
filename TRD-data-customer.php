@@ -82,6 +82,8 @@ $(document).ready(function(e) {
 			$("#dsc-type-client").prop('value', '');
 		}
 	});
+
+	$("#dc-ext option").attr("disabled", "disabled");
 	
 });
 </script>
@@ -325,6 +327,12 @@ if(($rsDep = $link->get_depto()) === FALSE) {
 
 ?>
 <h3>Datos del Cliente</h3>
+<form class="form-quote" style="text-align: left; font-size: 70%;">
+	<div style="margin: 7px 5px; font-size: 90%; font-weight: bold;">
+		Los campos marcados con <span style="color: #FF4A4A;">(*)</span> son obligatorios.
+	</div>
+</form>
+
 <div style="text-align:center;">
 	<form id="ftr-sc" name="ftr-sc" action="" method="post" class="form-quote" style=" <?=$display_fsc;?> font-size: 70%;">
         <label style="width: auto;">Documento de Identidad: <span>*</span></label>
@@ -403,7 +411,7 @@ for($i = 0; $i < count($arr_type_client); $i++){
             <div class="content-input">
                 <input type="text" id="dc-doc-id" name="dc-doc-id" 
                 	autocomplete="off" value="<?=$dc_doc_id;?>" 
-                	class="<?=$require_nat;?> dni fbin field-person">
+                	class="<?=$require_nat;?> dni fbin field-person" readonly>
             </div><br>
             
             <label>Complemento: </label>
@@ -534,7 +542,7 @@ if ($rsDep->data_seek(0) === TRUE) {
             
             <label>NIT: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" 
+                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" readonly
                 	value="<?=$dc_nit;?>" class="<?=$require_jur;?> dni fbin field-company">
             </div><br>
             
