@@ -86,7 +86,7 @@ $(document).ready(function(e) {
 		}
 	});
 
-	$("#dc-ext option").attr("disabled", "disabled");
+	$("#dc-ext option").not(':selected').attr("disabled", "disabled");
 	
 });
 </script>

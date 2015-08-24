@@ -48,7 +48,7 @@ $(document).ready(function(e) {
 			$("#form-person, #form-company").hide();
 
 			$('#dc-type-client').prop('value', type);
-			
+
 			switch(type){
 			case 'NAT':
 				$("#dsc-type-client").prop('value', 'NAT');
@@ -88,7 +88,7 @@ $(document).ready(function(e) {
 		}
 	});
 
-	$("#dc-ext option").attr("disabled", "disabled");
+	$("#dc-ext option").not(':selected').attr("disabled", "disabled");
 	
 });
 </script>
