@@ -41,11 +41,14 @@ $(document).ready(function(e) {
 		}
 	});
 	
-	$("#dc-type-client").change(function(e){
+	$("#type-client").change(function(e){
 		var type = $(this).prop('value');
 		if(type !== ''){
 			$("#fau-sc").slideDown();
 			$("#form-person, #form-company").hide();
+
+			$('#dc-type-client').prop('value', type);
+			
 			switch(type){
 			case 'NAT':
 				$("#dsc-type-client").prop('value', 'NAT');
@@ -339,7 +342,7 @@ if(($rsDep = $link->get_depto()) === FALSE) {
 		<div style="text-align:center;">
 	    	<label style="text-align:right;">Tipo de Cliente: <span>*</span></label>
 	            <div class="content-input">
-	            <select id="dc-type-client" name="dc-type-client" class="required fbin">
+	            <select id="type-client" class="required fbin">
 	                <option value="">Seleccione...</option>
 	<?php
 	$arr_type_client = $link->typeClient;
@@ -387,6 +390,7 @@ if(($rsDep = $link->get_depto()) === FALSE) {
 
 <form id="fau-customer" name="fau-customer" action="" method="post" class="form-quote form-customer">
     <input type="hidden" id="dc-code" name="dc-code" value="<?= base64_encode($dc_code) ;?>">
+    <input type="hidden" id="dc-type-client" name="dc-type-client" value="<?= $_TYPE_CLIENT ;?>">
     
     <div id="form-person" style=" <?=$display_nat;?> ">
     	<div class="form-col">
