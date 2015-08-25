@@ -804,6 +804,8 @@ $(document).ready(function(e) {
 					}
 					
 					while($this->rowvh = $this->rsvh->fetch_array(MYSQLI_ASSOC)) {
+						$this->rowvh['u_tipo_codigo'] = $this->data_user['u_tipo_codigo'];
+						
 						if($rowSpan === TRUE) {
 							$rowSpan = 'rowspan="'.$nVh.'"';
 						} elseif($rowSpan === FALSE) {

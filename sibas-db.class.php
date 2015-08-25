@@ -13,8 +13,8 @@ class SibasDB extends MySQLi
 		$typeTerm = array(
 			'Y' => 'Años', 
 			'M' => 'Meses',
-			'W' => 'Semanas',
-			'D' => 'Días'
+			// 'W' => 'Semanas',
+			// 'D' => 'Días'
 		),
 		$methodPayment = array(
 			'CO' => 'Al Contado', 
@@ -1163,14 +1163,16 @@ class SibasDB extends MySQLi
 					if ((boolean)$row['garantia']) {
 						$arr_state['txt'] = '';
 						$arr_state['obs'] = '';
-					}
 
-					$arr_state['action'] = 'Vincular';
-					$arr_state['link'] = $pr . '-quote.php?ms=' . md5('MS_' . $product) 
-						. '&page=91a74b6d637860983cc6c1d33bf4d292&pr=' 
-						. base64_encode($product . '|05') . '&ide=' 
-						. base64_encode($row['ide']) . '&flag=' . md5('i-read') 
-						. '&cia=' . base64_encode($row['id_compania']);
+						if ($row['u_tipo_codigo'] === 'PA') {
+							$arr_state['action'] = 'Vincular';
+							$arr_state['link'] = $pr . '-quote.php?ms=' . md5('MS_' . $product) 
+								. '&page=91a74b6d637860983cc6c1d33bf4d292&pr=' 
+								. base64_encode($product . '|05') . '&ide=' 
+								. base64_encode($row['ide']) . '&flag=' . md5('i-read') 
+								. '&cia=' . base64_encode($row['id_compania']);
+						}
+					}
 				} elseif($token === 4){
 					/*$arr_state['action'] = 'Anular Póliza';
 					$arr_state['link'] = 'cancel-policy.php?ide=' 

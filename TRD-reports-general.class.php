@@ -673,6 +673,8 @@ $(document).ready(function(e) {
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$bgCheck = '';
+		$this->row['u_tipo_codigo'] = $this->data_user['u_tipo_codigo'];
+
 		while ($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)) {
 			$request_txt	= '';
 			$bg_req_ann		= '';
