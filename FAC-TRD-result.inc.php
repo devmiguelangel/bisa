@@ -226,7 +226,7 @@ if(isset($_GET['fde']) && isset($_GET['fde-id-user'])){
 	} else {
 		$sql .= "sef.id_ef like '%%'";
 	}
-	$sql .= ") and stre.no_emision like '%".$s_nc."%' ";
+	$sql .= ") and stre.no_poliza like '%".$s_nc."%' ";
 	
 	$sqlAg = '';
 	if ($_IMP === FALSE) {
