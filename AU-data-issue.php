@@ -286,11 +286,6 @@ function validarRealf(dat){
 }
 </script>
 <h3 id="issue-title"><?=$title;?></h3>
-<a href="certificate-detail.php?idc=<?=base64_encode($idc);?>&cia=<?=
-	$_GET['cia'];?>&type=<?=base64_encode('PRINT');?>&pr=<?=
-	base64_encode('AU');?>" class="fancybox fancybox.ajax btn-see-slip">
-	Imprimir Solicitud
-</a>
 
 <form id="fde-issue" name="fde-issue" action="" method="post" 
 	class="form-quote form-customer" enctype="multipart/form-data">
@@ -1248,7 +1243,7 @@ if ((boolean)$row['c_garantia'] && $user_type === 'PA' && $ws_db && $sw === 3) {
 		}
 	}
 	
-	if($sw === 2) {
+	if($sw === 2 && (boolean)$row['c_garantia']) {
 		echo '<input type="button" id="dc-save" name="dc-save" value="Guardar/Cerrar" class="btn-next btn-issue" >';
 	}
 ?>
