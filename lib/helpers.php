@@ -184,4 +184,14 @@ function getDeptoCodePolicy($link, $id_user) {
 	}
 }
 
+function getDateIssue(&$date, $time) {
+	$exp_time = strtotime('17:30:00');
+	$time = strtotime($time);
+
+	if ($time > $exp_time) {
+		$new_date 		= strtotime('+1 day', strtotime($date));
+		$date 	= date('Y-m-d', $new_date);
+	}
+}
+
 ?>

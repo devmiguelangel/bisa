@@ -41,6 +41,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 		if(isset($_POST['target'])) {
 			$target = '&target='.$link->real_escape_string(trim($_POST['target']));
 		}
+
+		$policy_mess = '';
 		
 		$flag = $_POST['flag'];
 		
@@ -392,6 +394,16 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$record 	= $link->getRegistrationNumber($_SESSION['idEF'], 'AU', 1, 'AU');
 					$no_policy 	= getDeptoCodePolicy($link, $_SESSION['idUser']);
 					$no_policy 	= '91' . $no_policy . $dcr_warranty . str_pad($record, 7, '0', STR_PAD_LEFT);
+
+					if ($link->checkNumberPolicy('AU', $no_policy) === false) {
+						$policy_mess = 'El Número de Póliza ya fue registrado. <br>';
+						goto NoPoliza;
+					}
+
+					$date_create 	= date('Y-m-d');
+					$time_now 		= date('H:i:s');
+
+					getDateIssue($date_create, $time_now);
 					
 					$sql = 'insert into s_au_em_cabecera 
 					(id_emision, no_emision, no_poliza, id_ef, id_cotizacion, 
@@ -411,7 +423,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.$dcr_opp.'", "AU", "'.$dcr_date_begin.'", "'.$dcr_date_end.'", 
 						"'.$dcr_method_payment.'", '.$dcr_term.', "'.$dcr_type_term.'", 
 						"'.$bl_name.'", "'.$bl_nit.'", "' . $taken_code . '", "' . $taken_name . '", 
-						"' . $taken_nit . '", "' . $account . '", curdate(), 
+						"' . $taken_nit . '", "' . $account . '", "' . $date_create . '", 
 						"'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", false, 
 						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
@@ -621,7 +633,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$arrAU[2] = 'La Póliza no puede ser registrada';
 		}
 	}else{
-		$arrAU[2] = 'La Póliza no puede ser registrada.';
+		NoPoliza:
+		$arrAU[2] = $policy_mess . 'La Póliza no puede ser registrada.';
 	}
 }else{
 	$arrAU[2] = 'La Póliza no puede ser registrada. |';

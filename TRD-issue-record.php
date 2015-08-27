@@ -42,6 +42,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$target = '&target='.$link->real_escape_string(trim($_POST['target']));
 		}
 		
+		$policy_mess = '';
+
 		$flag = $_POST['flag'];
 		
 		$sw = 0;
@@ -389,7 +391,17 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 					$record 	= $link->getRegistrationNumber($_SESSION['idEF'], 'TRD', 1, 'TRD');
 					$no_policy 	= getDeptoCodePolicy($link, $_SESSION['idUser']);
 					$no_policy 	= '92' . $no_policy . $dcr_warranty . str_pad($record, 7, '0', STR_PAD_LEFT);
+
+					if ($link->checkNumberPolicy('TRD', $no_policy) === false) {
+						$policy_mess = 'El Número de Póliza ya fue registrado. <br>';
+						goto NoPoliza;
+					}
 					
+					$date_create 	= date('Y-m-d');
+					$time_now 		= date('H:i:s');
+
+					getDateIssue($date_create, $time_now);
+
 					$sql = 'insert into s_trd_em_cabecera 
 					(id_emision, no_emision, no_poliza, id_ef, id_cotizacion, 
 						certificado_provisional, garantia, tipo, id_cliente, 
@@ -408,7 +420,7 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 						"'.$dcr_date_end.'", "'.$dcr_method_payment.'", '.$dcr_term.', 
 						"'.$dcr_type_term.'", "'.$bl_name.'", "'.$bl_nit.'", "' . $taken_code . '", 
 						"' . $taken_name . '", "' . $taken_nit . '", "' . $account . '", 
-						curdate(), "'.base64_decode($_SESSION['idUser']).'", 0, 
+						"' . $date_create . '", "'.base64_decode($_SESSION['idUser']).'", 0, 
 						"'.base64_decode($_SESSION['idUser']).'", "", "", FALSE, 
 						"", "'.$idcia.'", '.$dcr_policy.', 0, '.(int)$_FAC.', 
 						"'.$_FAC_REASON.'", '.$TASA.', '.$PRIMA.', FALSE, now() ) ;';
@@ -610,7 +622,8 @@ if((isset($_POST['de-ide']) || isset($_POST['de-idc'])) && isset($_POST['dc-type
 			$arrTR[2] = 'La Póliza no puede ser registrada';
 		}
 	}else{
-		$arrTR[2] = 'La Póliza no puede ser registrada.';
+		NoPoliza:
+		$arrTR[2] = $policy_mess . 'La Póliza no puede ser registrada.';
 	}
 }else{
 	$arrTR[2] = 'La Póliza no puede ser registrada. |';

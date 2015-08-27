@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '/../lib/helpers.php';
+
 class Collection
 {
 	private
@@ -32,6 +34,9 @@ class Collection
 	public function putPolicy($ide, $idef)
 	{	
 		$this->fecha_emision = date('Y-m-d');
+		$time_now = date('H:i:s');
+
+		getDateIssue($this->fecha_emision, $time_now);
 
 		$sql = 'update 
 		s_' . $this->pr . '_em_cabecera as sae

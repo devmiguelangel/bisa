@@ -1,5 +1,7 @@
 <?php
+
 require 'configuration.class.php';
+
 class SibasDB extends MySQLi
 {
 	private $config, $host, $user, $password, $db, $sql, $rs, $row;
@@ -80,8 +82,8 @@ class SibasDB extends MySQLi
 					0 => 'NAT|Natural', 
 					1 => 'JUR|Jurídico'),
 		$typeProperty = array(
-			'ED' => 'Edificio', 
-			'MC' => 'Edificio con Muebles y/o Contenido'
+			'ED' => 'Inmueble', 
+			'MC' => 'Inmueble con Muebles y/o Contenido'
 		),
 		$useProperty = array(
 			'DM' => 'Domiciliario', 
@@ -2169,6 +2171,28 @@ class SibasDB extends MySQLi
 		} else {
 			return 0;
 		}
+	}
+
+	public function checkNumberPolicy($pr, $no_poliza)
+	{
+		$this->sql = 'select 
+			sae.id_emision 
+		from
+			s_' . strtolower($pr) . '_em_cabecera as sae
+		where
+			sae.no_poliza like "%' . $no_poliza . '%"
+		limit 0, 1
+		;';
+
+		usleep(mt_rand(15000, 2000000));
+
+		if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
+			if ($this->rs->num_rows === 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// Prefix
