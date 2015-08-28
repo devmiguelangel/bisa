@@ -1032,6 +1032,44 @@
 	  /*}else{
 		 echo 0;  
 	  }*/
+  }elseif($_POST['opcion']=='active_tasatr'){
+	  if($_POST['text']=='activar'){
+		  $update = "update s_trd_tasa set activado=1 where id=".$_POST['id_tasa']; 
+		  
+		   
+	  }elseif($_POST['text']=='desactivar'){
+		  $update = "update s_trd_tasa set activado=0 where id=".$_POST['id_tasa']; 
+		  
+	  }	
+	  //VERIFICMOS SI HUBO ERROR EN EL INGRESO
+	  if($conexion->query($update)===TRUE){				
+		 echo 1;
+	  } else {
+		 echo 2;
+	  }	
+  }elseif($_POST['opcion']=='edit_tasa_tr'){
+	  
+	  $tasa = $conexion->real_escape_string($_POST['txtTasa']);
+	  $prima_minima = $conexion->real_escape_string($_POST['txtPminima']);
+	  $idtasa = $conexion->real_escape_string($_POST['id_tasa']);
+	  
+	  $update = "UPDATE s_trd_tasa SET tasa=".$tasa.", prima_minima=".$prima_minima." WHERE id = ".base64_decode($idtasa).";";
+	  if($conexion->query($update) === TRUE){
+		echo 1; 
+	  }else{
+		echo 2;	 
+	  }
+  }elseif($_POST['opcion']=='new_tasa_tr'){
+	  
+	  $tasa = $conexion->real_escape_string($_POST['txtTasa']);
+	  $prima_minima = $conexion->real_escape_string($_POST['txtPminima']);
+	  	  
+	  $insert ='INSERT INTO s_trd_tasa(id, tasa, prima_minima, activado) VALUES(NULL, '.$tasa.', '.$prima_minima.', 0)';
+	  if($conexion->query($insert)===TRUE){
+		 echo 1; 
+	  }else{
+		 echo $conexion->errno . ": " .$conexion->error;
+	  } 
   }
   
   

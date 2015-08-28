@@ -344,43 +344,57 @@ function listar_tasas_editar($id_usuario_sesion, $tipo_sesion, $usuario_sesion, 
 	} else {
 	  //MUESTRO FORM PARA EDITAR UNA CATEGORIA
 	 
-	  mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr);
+	  mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion);
 	}
 }
 
 //VISUALIZMOS EL FORMULARIO CON LAS TASAS PARA SE EDITADAS
-function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion, $errArr){
-?>	
+function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion, $conexion){
+?>
+<link type="text/css" rel="stylesheet" href="plugins/fancybox/jquery.fancybox.css"/>
+<script type="text/javascript" src="plugins/fancybox/jquery.fancybox.js"></script>
+<script type="text/javascript">
+     $('.tasa_tr').fancybox({
+	    maxWidth	: 400,
+		maxHeight	: 300,
+		fitToView	: false,
+		width		: '70%',
+		height		: '70%',
+		autoSize	: false,
+		closeClick	: false,
+		openEffect	: 'elastic',
+		closeEffect	: 'elastic'	 
+	 });
+</script>	
 <link type="text/css" rel="stylesheet" href="plugins/jalerts/jquery.alerts.css"/>
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="plugins/jalerts/jquery.alerts.js"></script>
 <script type="text/javascript">
    $(function(){
-	   $("a[href].eliminar").click(function(e){
-		   var variable = $(this).attr('id'); 		  
-		   var vec = variable.split('|');
+	   $("a[href].accion_active").click(function(e){
+		   var valor = $(this).attr('id');
+		   var vec = valor.split('|');
 		   var id_tasa = vec[0];
-		   var id_ef_cia = vec[1];
-		   
-		   jConfirm("¿Esta seguro de eliminar las tasas?", "Eliminar registro", function(r) {
+		   var text = vec[1]; 		  
+		   jConfirm("¿Esta seguro de "+text+" la tasa?", ""+text+" registro", function(r) {
 				//alert(r);
 				if(r) {
-						var dataString ='id_tasa='+id_tasa+'&id_ef_cia='+id_ef_cia+'&opcion=elimina_tasa_trd';
-						
+						var dataString ='id_tasa='+id_tasa+'&text='+text+'&opcion=active_tasatr';
 						$.ajax({
 							   async: true,
 							   cache: false,
 							   type: "POST",
-							   url: "eliminar_registro.php",
+							   url: "accion_registro.php",
 							   data: dataString,
 							   success: function(datareturn) {
 									  //alert(datareturn);
 									  if(datareturn==1){
 										 location.reload(true);
 									  }else if(datareturn==2){
-										jAlert("El registro no pudo eliminarse intente nuevamente", "Mensaje");
+										jAlert("El registro no se proceso correctamente intente nuevamente", "Mensaje");
 										 e.preventDefault();
-									  }  
+									  }
+									  
 							   }
 					    });
 					
@@ -393,114 +407,22 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 	   
 	});
 </script>
-<script type="text/javascript">
-  $(function(){
-	  $('#btnCancelar').click(function(){
-		  var variable=$('#var').prop('value');  
-		  $(location).attr('href', 'index.php?l=tr_tasas&var='+variable); 
-	  });
-	  
-	  $('#frmTasas').submit(function(e){
-		  var cant_tasas=$('#cant_tasas').prop('value');
-		  var sum=0; var i=1;
-		  $(this).find('.required').each(function() {
-              while(i<=cant_tasas){
-				  var tasa_anio=$('#'+i+'txtTasaAnio').prop('value');
-				  if(tasa_anio!=''){
-					  if(tasa_anio.match(/^[0-9\.]+$/)){
-						 $('#errortasa'+i).hide('slow');  
-					  }else{
-					     sum++;
-						 $('#errortasa'+i).show('slow');
-					     $('#errortasa'+i).html('ingrese solo numeros enteros o decimales');  
-					  }
-				  }else{
-					 sum++;
-					 $('#errortasa'+i).show('slow');
-					 $('#errortasa'+i).html('ingrese la tasa año');  
-				  }
-				  var tasarestan=$('#'+i+'txtTasaRestante').prop('value');
-				  if(tasarestan!=''){
-					  if(tasarestan.match(/^[0-9\.]+$/)){
-						  $('#errortasarest'+i).hide('slow');
-					  }else{
-						  sum++;
-					      $('#errortasarest'+i).show('slow');
-					      $('#errortasarest'+i).html('ingrese solo numeros enteros o decimales');
-					  }
-				  }else{
-					 sum++;
-					 $('#errortasarest'+i).show('slow');
-					 $('#errortasarest'+i).html('ingrese tasa restante'); 
-				  }
-				  var tasaestand=$('#'+i+'txtTasaEstandar').prop('value');
-				  if(tasaestand!=''){
-					  if(tasaestand.match(/^[0-9\.]+$/)){
-						  $('#errortasaestan'+i).hide('slow');
-					  }else{
-						  sum++;
-						  $('#errortasaestan'+i).show('slow');
-					      $('#errortasaestan'+i).html('ingrese solo numeros enteros o decimales');
-					  }
-				  }else{
-					  sum++;
-					  $('#errortasaestan'+i).show('slow');
-					  $('#errortasaestan'+i).html('ingrese tasa estandar');
-				  }
-				  i++;
-			  }
-          });
-		  if(sum==0){
-			  
-		  }else{
-		     e.preventDefault();
-		  }
-	  });
-	    
-  });
-</script>
-<script type="text/javascript" src="plugins/ambience/jquery.ambiance.js"></script>
-<script type="text/javascript">
-  <?php 
-    $op = $_GET["op"];
-    $msg = $_GET["msg"];
-	$var = $_GET["var"];
-	$id_ef_cia = $_GET["id_ef_cia"];
-	$entidad = $_GET["entidad"];
-	$compania = $_GET["compania"];
-	
-	if($op==1){$valor='success';}elseif($op==2){$valor='error';}
-  ?>
-  $(function(){
-    //PLUGIN AMBIENCE
-    <?php if($msg!=''){ ?>
-		 $.ambiance({message: "<?php echo base64_decode($msg);?>", 
-				title: "Notificacion",
-				type: "<?php echo $valor?>",
-				timeout: 5
-				});
-		 //location.load("sgc.php?l=usuarios&idhome=1");
-		 //$(location).attr('href', 'sgc.php?l=crearusuario&idhome=1');		
-		 setTimeout( "$(location).attr('href', 'index.php?l=tr_tasas&listartasas=v&id_ef_cia=<?php echo $id_ef_cia;?>&entidad=<?php echo $entidad;?>&compania=<?php echo $compania;?>&var=<?php echo $var;?>');",5000 );
-	<?php }?>
-	 
-  });
-</script>	
 <?php    
 	$id_ef_cia=base64_decode($_GET['id_ef_cia']);
 	$entidad=base64_decode($_GET['entidad']);
 	$compania=base64_decode($_GET['compania']);
 	//SACAMOS LAS TASAS
 	$selectTs="select
-				  id_tasa,
-				  id_ef_cia,
-				  tasa_anio,
-				  tasa_restante,
-				  tasa_estandar 
-				from
-				  s_tasa_trd
-				where
-				  id_ef_cia='".$id_ef_cia."';";		  
+				id as id_tasa,
+				tasa,
+				prima_minima,
+				activado,
+				(case activado
+				  when 1 then 'Activado'
+				  when 0 then 'Desactivado'
+				 end) as activado_txt 
+			  from
+				s_trd_tasa;";		  
 	if($resu = $conexion->query($selectTs,MYSQLI_STORE_RESULT)){
 			$num = $resu->num_rows;		  		  
 		echo'<div class="da-panel collapsible">
@@ -510,12 +432,12 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 							 <a href="?l=tr_tasas&var='.$_GET['var'].'&list_compania=v" class="da-tooltip-s" title="<span lang=\'es\'>Volver</span>">
 							 <img src="images/retornar.png" width="32" height="32"></a>
 						</li>';
-						if($num==0){
+						//if($num==0){
 				   echo'<li style="margin-right:6px;">
-							 <a href="?l=tr_tasas&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&agregartasa=v&var='.$_GET['var'].'" class="da-tooltip-s" title="Añadir nuevas tasas">
+							 <a href="adicionar_registro.php?opcion=crear_tasa_tr&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'" class="da-tooltip-s tasa_tr fancybox.ajax" title="Añadir nuevas tasas">
 							 <img src="images/add_new.png" width="32" height="32"></a>
 						</li>';
-						}
+						//}
 			   echo'</ul>
 				</div>
 			 </div>';
@@ -524,46 +446,46 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 			<div class="da-panel-header">
 				<span class="da-panel-title">
 					<img src="images/icons/black/16/list.png" alt="" />
-					<b>'.$entidad.' - '.$compania.'</b> - <span lang="es">Editar Tasas</span>
+					<b>'.$entidad.' - '.$compania.'</b> - Editar Tasa
 				</span>
 			</div>
 			<div class="da-panel-content">';
 			 if($num>0){
-			  echo'<form class="da-form" name="frmTasas" id="frmTasas" action="" method="post">
-						<div class="da-form-row" style="padding:0px;">
+			  echo'
+					<div class="da-form-row" style="padding:0px;">
 						  <div class="da-form-item large" style="margin:0px;">
 							<table class="da-table">
 								<thead>
 									<tr>
-									  <th><b><span lang="es">Tasa Año</span></b></th>
-									  <th><b><span lang="es">Tasa Restante</span></b></th>
-									  <th><b><span lang="es">Tasa Estandar</span></b></th>
+									  <th style="text-align:center;"><b><span lang="es">Tasa</span></b></th>
+									  <th style="text-align:center;"><b><span lang="es">Prima Minima</span></b></th>
+									  <th style="text-align:center;"><b><span lang="es">Activado</span></b></th>
 									  <th>&nbsp;</th>
 									</tr>
 								</thead>
 								<tbody>';
 										$i=1;
 										while($regi = $resu->fetch_array(MYSQLI_ASSOC)){
-											if(isset($_POST["txtTasaAnio".$i])) $txtTasaAnio = $_POST["txtTasaAnio".$i]; else $txtTasaAnio = $regi['tasa_anio'];
-											if(isset($_POST["txtTasaRestante".$i])) $txtTasaRestante = $_POST["txtTasaRestante".$i]; else $txtTasaRestante = $regi['tasa_restante'];
-											if(isset($_POST["txtTasaEstandar".$i])) $txtTasaEstandar = $_POST["txtTasaEstandar".$i]; else $txtTasaEstandar = $regi['tasa_estandar'];
-																													
-											echo'<tr>
-													<td><input type="text" name="txtTasaAnio'.$i.'" id="'.$i.'txtTasaAnio" value="'.$txtTasaAnio.'" class="required" style="width:100px;"/>
-													<span class="errorMessage" id="errortasa'.$i.'"></span>
-													</td>
-													<td><input type="text" name="txtTasaRestante'.$i.'" id="'.$i.'txtTasaRestante" value="'.$txtTasaRestante.'" class="required" style="width:100px;"/>
-													<span class="errorMessage" id="errortasarest'.$i.'"></span>
-													</td>
-													<td><input type="text" name="txtTasaEstandar'.$i.'" id="'.$i.'txtTasaEstandar" value="'.$txtTasaEstandar.'" class="required" style="width:100px;"/>
-													<span class="errorMessage" id="errortasaestan'.$i.'"></span>
-													<input type="hidden" name="id_tasa'.$i.'" id="id_tasa'.$i.'" value="'.$regi['id_tasa'].'"/>
-													<input type="hidden" name="id_ef_cia'.$i.'" id="id_ef_cia'.$i.'" value="'.$regi['id_ef_cia'].'"/>
-													</td>
+																																								
+											echo'<tr ';
+													  if($regi['activado']==0){
+														  echo'style="background:#D44D24; color:#ffffff;"'; 
+													   }else{
+														  echo'';	 
+													   }
+											  echo'>
+													<td style="text-align:center;">'.$regi['tasa'].'</td>
+													<td style="text-align:center;">'.$regi['prima_minima'].'</td>
+													<td style="text-align:center;">'.$regi['activado_txt'].'</td>
 													<td class="da-icon-column">
 													   <ul class="action_user">
-														 <li><a href="#" id="'.$regi['id_tasa'].'|'.$regi['id_ef_cia'].'" class="eliminar da-tooltip-s" title="<span lang=\'es\'>Eliminar</span>"></a></li>
-													   </ul>
+														 <li><a href="adicionar_registro.php?opcion=editar_tasa_tr&var='.$_GET['var'].'&id_ef_cia='.$_GET['id_ef_cia'].'&entidad='.$_GET['entidad'].'&compania='.$_GET['compania'].'&id_tasa='.base64_encode($regi['id_tasa']).'" class="edit da-tooltip-s tasa_tr fancybox.ajax" title="Editar"></a></li>';
+														 if($regi['activado']==0){
+															  echo'<li style="padding-left:5px;"><a href="#" id="'.$regi['id_tasa'].'|activar" class="daralta da-tooltip-s accion_active" title="Activar"></a></li>';
+														 }else{
+															  echo'<li style="padding-left:5px;"><a href="#" id="'.$regi['id_tasa'].'|desactivar" class="darbaja da-tooltip-s accion_active" title="Desactivar"></a></li>';  
+														 }
+												  echo'</ul>
 													</td>
 												</tr>';
 											$i++;	
@@ -573,14 +495,7 @@ function mostrar_editar_tasas($id_usuario_sesion, $tipo_sesion, $usuario_sesion,
 						   echo'</tbody>
 							</table>
 						  </div>	
-						</div>
-						<div class="da-button-row">
-						   <input type="submit" value="Guardar" class="da-button green" name="btnPregunta" id="btnPregunta" lang="es"/>
-						   <input type="hidden" name="accionGuardar" value="checkdatos"/>
-						   <input type="hidden" name="cant_tasas" value="'.$num.'" id="cant_tasas"/>
-						   <input type="hidden" id="var" value="'.$_GET['var'].'"/>
-						</div>	
-				   </form>';
+						</div>';
 			 }else{
 				 echo'<div class="da-message info" lang="es">
 						  No existe ningun dato, ingrese nuevos registros

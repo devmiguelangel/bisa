@@ -4425,5 +4425,254 @@ $num_regi_ef = $resef->num_rows;
 			  </form>
 		  </div>
 	  </div>';
+}elseif($_GET['opcion']=='editar_tasa_tr'){
+?>
+  <script type="text/javascript">
+    $(document).ready(function() {
+         $('#frmEdiTtasa').submit(function(e){
+			  var id_tasa = $('#id_tasa').prop('value');
+			  var prima_minima = $('#txtPminima').prop('value');
+			  var tasa = $('#txtTasa').prop('value');
+			  var sum=0;
+			  $(this).find('.required').each(function() {
+				   			   
+				   if(prima_minima!=''){
+					 if(prima_minima.match(/^[0-9\.]+$/)){
+						 $('#errorpmin').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#errorpmin').slideDown('slow');
+						 $('#errorpmin').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#errorpmin').slideDown('slow');
+					  $('#errorpmin').html('campo requerido');
+				  }
+				  if(tasa!=''){
+					 if(tasa.match(/^[0-9\.]+$/)){
+						 $('#errortasa').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#errortasa').slideDown('slow');
+						 $('#errortasa').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#errortasa').slideDown('slow');
+					  $('#errortasa').html('campo requerido');
+				  }
+  
+			  });
+			  if(sum==0){
+					 $("#frmEdiTtasa :submit").attr("disabled", true);
+					 e.preventDefault();
+					 var FormCadena = $(this).serialize();
+					 //alert (FormCadena);
+					 //ejecutando ajax
+					 $.ajax({
+						   async: true,
+						   cache: false,
+						   type: "POST",
+						   url: "accion_registro.php",
+						   data: FormCadena+'&opcion=edit_tasa_tr',
+						   beforeSend: function(){
+								$("#response-loading").css({
+									'height': '30px'
+								});
+						   },
+						   complete: function(){
+								$("#response-loading").css({
+									"background": "transparent"
+								});
+						   },
+						   success: function(datareturn) {
+								  //alert(datareturn);
+								  if(datareturn==1){
+									 $('#response-loading').html('<div style="color:#62a426;">Se edito correctamente el registro</div>');
+									  window.setTimeout('location.reload()', 3000);
+								  }else if(datareturn==2){
+									  $("#frmEditTasaAuto :submit").removeAttr('disabled');
+									 $('#response-loading').html('<div style="color:#d44d24;">Hubo un error al crear el registro, consulte con su administrador</div>');
+									 e.preventDefault();
+								  }
+								  
+						   }
+					 });
+			  }else{
+				 e.preventDefault();
+			  }	  
+		 });
+    });
+  </script>
+<?php	
+	
+	$select="select
+				id as id_tasa,
+				tasa,
+				prima_minima,
+				activado
+			 from
+				s_trd_tasa
+			 where
+			    id=".base64_decode($_GET['id_tasa']).";";		
+	$sql = $conexion->query($select,MYSQLI_STORE_RESULT);
+	$regi = $sql->fetch_array(MYSQLI_ASSOC);
+	$sql->free();
+	echo'<div class="da-panel">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/pencil.png" alt="" />
+					<span lang="es">Editar Tasa</span>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<form class="da-form" name="frmEdiTtasa" id="frmEdiTtasa" action="" method="post">
+					<div class="da-form-row">
+						 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+						 <div class="da-form-item large">
+							 '.base64_decode($_GET['entidad']).'
+						 </div>
+					</div>
+					<div class="da-form-row">
+						<label style="text-align:right;"><b><span lang="es">Tasa</span></b></label>
+						<div class="da-form-item large">
+							<input type="text" id="txtTasa" name="txtTasa" class="required" value="'.$regi['tasa'].'"/>
+							<span class="errorMessage" id="errortasa"></span>
+						</div>
+					</div>
+					<div class="da-form-row">
+						<label style="text-align:right;"><b><span lang="es">Prima minima</span></b></label>
+						<div class="da-form-item large">
+							<input type="text" id="txtPminima" name="txtPminima" class="required" value="'.$regi['prima_minima'].'"/>
+							<span class="errorMessage" id="errorpmin"></span>
+						</div>
+					</div>
+					<div class="da-button-row">
+					  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
+					  <input type="hidden" id="id_tasa" name="id_tasa" value="'.$_GET['id_tasa'].'"/>
+					<div id="response-loading" class="loading-fac" lang="es"></div>';
+			   echo'</div>
+				</form>
+			</div>
+		</div>';
+}elseif($_GET['opcion']=='crear_tasa_tr'){
+?>
+  <script type="text/javascript">
+    $(document).ready(function() {
+         $('#frmNewtasa').submit(function(e){
+			  var id_tasa = $('#id_tasa').prop('value');
+			  var prima_minima = $('#txtPminima').prop('value');
+			  var tasa = $('#txtTasa').prop('value');
+			  var sum=0;
+			  $(this).find('.required').each(function() {
+				   			   
+				   if(prima_minima!=''){
+					 if(prima_minima.match(/^[0-9\.]+$/)){
+						 $('#errorpmin').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#errorpmin').slideDown('slow');
+						 $('#errorpmin').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#errorpmin').slideDown('slow');
+					  $('#errorpmin').html('campo requerido');
+				  }
+				  if(tasa!=''){
+					 if(tasa.match(/^[0-9\.]+$/)){
+						 $('#errortasa').slideUp('slow');
+					 }else{
+						 sum++;
+						 $('#errortasa').slideDown('slow');
+						 $('#errortasa').html('ingrese solo numeros');
+					 }  
+				  }else{
+					  sum++;
+					  $('#errortasa').slideDown('slow');
+					  $('#errortasa').html('campo requerido');
+				  }
+  
+			  });
+			  if(sum==0){
+					 $("#frmNewtasa :submit").attr("disabled", true);
+					 e.preventDefault();
+					 var FormCadena = $(this).serialize();
+					 //alert (FormCadena);
+					 //ejecutando ajax
+					 $.ajax({
+						   async: true,
+						   cache: false,
+						   type: "POST",
+						   url: "accion_registro.php",
+						   data: FormCadena+'&opcion=new_tasa_tr',
+						   beforeSend: function(){
+								$("#response-loading").css({
+									'height': '30px'
+								});
+						   },
+						   complete: function(){
+								$("#response-loading").css({
+									"background": "transparent"
+								});
+						   },
+						   success: function(datareturn) {
+								  //alert(datareturn);
+								  if(datareturn==1){
+									 $('#response-loading').html('<div style="color:#62a426;">Se creo correctamente el registro</div>');
+									  window.setTimeout('location.reload()', 3000);
+								  }else{
+									  $("#frmEditTasaAuto :submit").removeAttr('disabled');
+									 $('#response-loading').html('<div style="color:#d44d24;">Hubo un error al crear el registro '+datareturn+'</div>');
+									 e.preventDefault();
+								  }
+								  
+						   }
+					 });
+			  }else{
+				 e.preventDefault();
+			  }	  
+		 });
+    });
+  </script>
+<?php	
+		
+	echo'<div class="da-panel">
+			<div class="da-panel-header">
+				<span class="da-panel-title">
+					<img src="images/icons/black/16/pencil.png" alt="" />
+					<span lang="es">Crear Tasa</span>
+				</span>
+			</div>
+			<div class="da-panel-content">
+				<form class="da-form" name="frmNewtasa" id="frmNewtasa" action="" method="post">
+					<div class="da-form-row">
+						 <label style="text-align:right;"><b><span lang="es">Entidad Financiera</span></b></label>
+						 <div class="da-form-item large">
+							 '.base64_decode($_GET['entidad']).'
+						 </div>
+					</div>
+					<div class="da-form-row">
+						<label style="text-align:right;"><b><span lang="es">Tasa</span></b></label>
+						<div class="da-form-item large">
+							<input type="text" id="txtTasa" name="txtTasa" class="required" value="" autocomplete="off"/>
+							<span class="errorMessage" id="errortasa"></span>
+						</div>
+					</div>
+					<div class="da-form-row">
+						<label style="text-align:right;"><b><span lang="es">Prima minima</span></b></label>
+						<div class="da-form-item large">
+							<input type="text" id="txtPminima" name="txtPminima" class="required" value="" autocomplete="off"/>
+							<span class="errorMessage" id="errorpmin"></span>
+						</div>
+					</div>
+					<div class="da-button-row">
+					  <input type="submit" value="Guardar" class="da-button green" lang="es"/>
+					<div id="response-loading" class="loading-fac" lang="es"></div>';
+			   echo'</div>
+				</form>
+			</div>
+		</div>';
 }
 ?>
