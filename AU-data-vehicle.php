@@ -457,7 +457,7 @@ if($nVh < $max_item || $swVh === true){
             <input type="text" id="dv-plate" name="dv-plate" autocomplete="off" 
             	value="<?=$dv_plate;?>" class="required plate fbin">
         </div><br>
-        <div class="au-mess">En caso de que la placa este en tramite esciba <strong>XXXXXX</strong></div>
+        <div class="au-mess">En caso de que la placa este en tramite escriba <strong>XXXXXX</strong></div>
 
 		<label>Cilindrada: <span>*</span></label>
         <div class="content-input">
