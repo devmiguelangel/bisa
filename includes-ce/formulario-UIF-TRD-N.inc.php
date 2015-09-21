@@ -35,6 +35,7 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
 	   $prof_ocupacion = $row['cl_desc_ocupacion'];
 	   $lugar_trabajo = $row['cl_direccion_laboral'];
 	   $cargo = $row['cl_cargo'];
+	   $telef = $row['telefono_domicilio'];
 	   
 ?>
         <div style="width: 775px; border: 0px solid #000; text-align:center;">
@@ -422,13 +423,27 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
                          </tr>
                       </table> 
                   </td>
-                </tr>    
+                </tr>
+                <tr>
+                   <td colspan="3" style="width:100%; height:25px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width:100%; font-size:100%;">
+                          <tr>
+                             <td style="width:50%; height:25px; border-bottom: 1px solid #000; font-size:100%;">
+                              <b>TIPO DE DOUMENTO:</b>&nbsp;CARNET DE IDENTIDAD
+                             </td> 
+                             <td style="width:50%; height:25px; border-bottom: 1px solid #000; border-left: 1px solid #000; font-size:100%;">
+                               <b>TELEF:</b>&nbsp;<?=$telef;?>
+                             </td>
+                          </tr>
+                       </table> 
+                   </td> 
+                </tr>       
             </table>
             
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 75%; font-family: Arial; 
-                margin-top:100px;">
+                margin-top:100px; margin-bottom:100%;">
                <tr>
                 <td style="width:10%;"></td>
                 <td style="width:80%; border-bottom: 1px solid #000;">&nbsp;</td>
@@ -439,29 +454,13 @@ function trd_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason 
                 <td style="width:80%; text-align:center; font-weight:bold;">
                  Firma del Declarante (Cliente)<br>
                  * El presente formulario tiene carácter de declaración jurada, firmo en conformidad de los datos contenidos en el presente documento 
+                 * El documento original se encuentra en poder de la Entidad Financiera 
                 </td>
                 <td style="width:10%;"></td>  
                </tr>
             </table>
             
-            <table 
-                cellpadding="0" cellspacing="0" border="0" 
-                style="width: 100%; height: auto; font-size: 75%; font-family: Arial; 
-                margin-top:100px;">
-               <tr>
-                <td style="width:10%;"></td>
-                <td style="width:80%; border-bottom: 1px solid #000;">&nbsp;</td>
-                <td style="width:10%;"></td>  
-               </tr>
-               <tr>
-                <td style="width:10%;"></td>
-                <td style="width:80%; text-align:center; font-weight:bold;">
-                 Firma y Sello del Funcionario de Sudamericana que recibe el Formulario 
-                </td>
-                <td style="width:10%;"></td>  
-               </tr>
-               <tr><td style="width:100%; height:150px;" colspan="3"></td></tr>
-            </table>      	
+            
         </div>            
  
       </div>

@@ -416,21 +416,21 @@ if($sw > 1){
             <div class="content-input">
                 <input type="text" id="dc-name" name="dc-name" 
                     autocomplete="off" value="<?=$row['cl_nombre'];?>" 
-                    class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+                    class="<?=$read_nat;?> text fbin field-person" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Apellido Paterno: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-ln-patern" name="dc-ln-patern" 
                     autocomplete="off" value="<?=$row['cl_paterno'];?>" 
-                    class="<?=$read_nat;?> text fbin field-person" <?=$read_new;?>>
+                    class="<?=$read_nat;?> text fbin field-person" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Apellido Materno: </label>
             <div class="content-input">
                 <input type="text" id="dc-ln-matern" name="dc-ln-matern" 
                     autocomplete="off" value="<?=$row['cl_materno'];?>" 
-                    class="text fbin" <?=$read_new;?>>
+                    class="text fbin" <?=$read_new.$read_edit;?>>
             </div><br>
             
             <label>Documento de Identidad: <span>*</span></label>
@@ -477,7 +477,7 @@ if ($rsDep->data_seek(0) === TRUE) {
             <div class="content-input">
                 <input type="text" id="dc-date-birth" name="dc-date-birth" 
                     autocomplete="off" value="<?=$row['cl_fecha_nacimiento'];?>" 
-                    class="<?=$read_nat;?> fbin date field-person" readonly 
+                    class="<?=$read_nat;?> fbin field-person" readonly 
                     style="cursor:pointer;" <?=$read_new;?>>
             </div><br>
 
@@ -485,7 +485,7 @@ if ($rsDep->data_seek(0) === TRUE) {
             <div class="content-input">
                 <input type="text" id="dc-country" name="dc-country" 
                     autocomplete="off" value="<?=$row['cl_pais'];?>" 
-                    class="<?=$read_nat;?> text fbin field-person" <?= $read_new ;?>>
+                    class="<?=$read_nat;?> text fbin field-person" <?= $read_new.$read_edit ;?>>
             </div><br>
             
             <label>Estado Civil: <span>*</span></label>
@@ -503,26 +503,26 @@ if ($rsDep->data_seek(0) === TRUE) {
             
             <label>Dirección domicilio: <span>*</span></label><br>
             <textarea id="dc-address-home" name="dc-address-home" 
-                class="<?=$read_nat;?> fbin" <?=$read_new . ' ' 
+                class="<?=$read_nat;?> fbin" <?=$read_new . $read_edit .' ' 
                 . $read_save;?>><?=$row['cl_direccion_domicilio'];?></textarea><br>
         </div><!--
         --><div class="form-col">
             <label>Dirección laboral: <span></span></label><br>
             <textarea id="dc-address-work" name="dc-address-work" 
-                class="fbin" <?=$read_new . ' ' 
+                class="fbin" <?=$read_new . $read_edit .' ' 
                 . $read_save;?>><?=$row['cl_direccion_laboral'];?></textarea><br>
 
             <label>Ocupación: <span>*</span></label><br>
             <textarea id="dc-desc-occ" name="dc-desc-occ" 
                 class="<?= $read_nat ;?> fbin field-person" 
-                <?= $read_new ;?>><?= $row['cl_desc_ocupacion'] ;?></textarea><br>
+                <?= $read_new.$read_edit ;?>><?= $row['cl_desc_ocupacion'] ;?></textarea><br>
 
             <label>Cargo: <span>*</span></label><br>
             <div class="content-input" style="width: 350px;">
                 <input type="text" id="dc-position" name="dc-position" 
                     autocomplete="off" value="<?=$row['cl_cargo'];?>" 
                     class="<?= $read_nat ;?> field-person fbin" 
-                    <?= $read_new ;?> style="width: 350px;">
+                    <?= $read_new.$read_edit ;?> style="width: 350px;">
             </div><br>
 
             <label>Ingreso Mensual: <span>*</span></label>

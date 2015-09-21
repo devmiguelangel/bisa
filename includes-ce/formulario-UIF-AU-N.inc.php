@@ -11,6 +11,7 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
 <?php
        $ingreso_mensual = $link->monthly_income[$row['tipo_cliente']];
 	   $estadoc = $link->status;
+	   $tipo_doc = $link->typeDoc;
 	  
 	   if($row['fecha_emision']!=='0000-00-00'){	   
          $vec = explode('-',$row['fecha_emision']);
@@ -41,6 +42,8 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
 	   $prof_ocupacion = $row['desc_ocupacion'];
 	   $lugar_trabajo = $row['direccion_laboral'];
 	   $cargo = $row['cargo'];
+	   $telef = $row['telefono_domicilio'];
+	   
 	   
 ?>
         <div style="width: 775px; border: 0px solid #000; text-align:center;">
@@ -286,8 +289,8 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
                   </td>
                 </tr>
                 <tr>
-                  <td style="width:100%; height:25px; border-bottom: 1px solid #000;" colspan="3">
-                     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
+                   <td style="width:100%; height:25px; border-bottom: 1px solid #000;" colspan="3">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size:100%;">
                          <tr>
                            <td style="width:12.5%; height:25px; text-align:left; 
                            background:#d8d8d8; vertical-align:middle;"><b>INGRESOS MENSUALES</b></td>
@@ -322,120 +325,31 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
 <?php
 						}
 ?>                           
-                           <!--
-                           <td style="width:13%; height:25px; border-left: 1px solid #000;
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De Bs. 2,001 a Bs. 4,000
-                                    </td>
-                                 </tr>
-                              </table>   
-                           </td>
-                           <td style="width:12%; height:25px; border-left: 1px solid #000;
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De Bs. 4,001 a Bs. 8,000
-                                    </td>
-                                 </tr>
-                              </table> 
-                           </td>
-                           <td style="width:13%; height:25px; border-left: 1px solid #000; 
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De Bs. 8,001 a Bs. 12,000
-                                    </td>
-                                 </tr>
-                              </table> 
-                           </td>
-                           <td style="width:12%; height:25px; border-left: 1px solid #000;
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De Bs. 12,001 a Bs. 15,000
-                                    </td>
-                                 </tr>
-                              </table> 
-                           </td>
-                           <td style="width:12%; height:25px; border-left: 1px solid #000;
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De Bs. 15,001 a Bs. 20,000
-                                    </td>
-                                 </tr>
-                              </table> 
-                           </td>
-                           <td style="width:13%; height:25px; border-left: 1px solid #000;
-                              vertical-align:middle;">
-                              <table cellspacing="0" cellpadding="0" border="0" style="width:100%;
-                                 font-size:100%; border: 0px solid #000;">
-                                 <tr>
-                                    <td style="width:30%; padding-left:8px;">
-                                      <div style="width: 15px; height: 12px; border: 1px solid #000; 
-                                         text-align:center;">
-                                        &nbsp;
-                                       </div> 
-                                    </td>
-                                    <td style="width:70%; text-align:center;">
-                                        De 20,000 en adelante 
-                                    </td>
-                                 </tr>
-                              </table> 
-                           </td>
-                           -->
+                           
                          </tr>
                       </table> 
-                  </td>
+                   </td>
+                </tr>
+                <tr>
+                   <td colspan="3" style="width:100%; height:25px;">
+                       <table cellpadding="0" cellspacing="0" border="0" style="width:100%; font-size:100%;">
+                          <tr>
+                             <td style="width:50%; height:25px; border-bottom: 1px solid #000; font-size:100%;">
+                              <b>TIPO DE DOUMENTO:</b>&nbsp;CARNET DE IDENTIDAD
+                             </td> 
+                             <td style="width:50%; height:25px; border-bottom: 1px solid #000; border-left: 1px solid #000; font-size:100%;">
+                               <b>TELEF:</b>&nbsp;<?=$telef;?>
+                             </td>
+                          </tr>
+                       </table> 
+                   </td> 
                 </tr>    
             </table>
             
             <table 
                 cellpadding="0" cellspacing="0" border="0" 
                 style="width: 100%; height: auto; font-size: 75%; font-family: Arial; 
-                margin-top:100px;">
+                margin-top:100px; margin-bottom:100px;">
                <tr>
                 <td style="width:10%;"></td>
                 <td style="width:80%; border-bottom: 1px solid #000;">&nbsp;</td>
@@ -445,30 +359,14 @@ function au_formulario_uif_N($link, $row, $rsDt, $url, $implant, $fac, $reason =
                 <td style="width:10%;"></td>
                 <td style="width:80%; text-align:center; font-weight:bold;">
                  Firma del Declarante (Cliente)<br>
-                 * El presente formulario tiene carácter de declaración jurada, firmo en conformidad de los datos contenidos en el presente documento 
+                 * El presente formulario tiene carácter de declaración jurada, firmo en conformidad de los datos contenidos en el presente documento
+                 * El documento original se encuentra en poder de la Entidad Financiera 
                 </td>
                 <td style="width:10%;"></td>  
                </tr>
             </table>
             
-            <table 
-                cellpadding="0" cellspacing="0" border="0" 
-                style="width: 100%; height: auto; font-size: 75%; font-family: Arial; 
-                margin-top:100px;">
-               <tr>
-                <td style="width:10%;"></td>
-                <td style="width:80%; border-bottom: 1px solid #000;">&nbsp;</td>
-                <td style="width:10%;"></td>  
-               </tr>
-               <tr>
-                <td style="width:10%;"></td>
-                <td style="width:80%; text-align:center; font-weight:bold;">
-                 Firma y Sello del Funcionario de Sudamericana que recibe el Formulario 
-                </td>
-                <td style="width:10%;"></td>  
-               </tr>
-               <tr><td style="width:100%; height:150px;" colspan="3"></td></tr>
-            </table>      	
+            
         </div>            
  
       </div>
