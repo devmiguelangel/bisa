@@ -1,98 +1,3 @@
-<script type="text/javascript">
-$(document).ready(function(e) {
-    $("#fau-customer").validateForm({
-        action: 'AU-customer-record.php'
-    });
-    
-    $(".date").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        showButtonPanel: true,
-        dateFormat: 'yy-mm-dd',
-        yearRange: "c-100:c+100"
-    });
-    
-    $(".date").datepicker($.datepicker.regional[ "es" ]);
-    
-    $('input').iCheck({
-        checkboxClass: 'icheckbox_square-red',
-        radioClass: 'iradio_square-red',
-        increaseArea: '20%' // optional
-    });
-
-    $('input').on('ifClicked', function(e){
-        var type = $(this).prop('value');
-
-        if (type == 1) {
-            $('#di-method-payment option[value="CR"]').prop('selected', true);
-            $('#di-method-payment option:not(:selected)').prop('disabled', true);
-            $('#di-method-payment').trigger('change');
-        } else {
-            $('#di-method-payment option:not(:selected)').prop('disabled', false);
-        }
-    });
-    
-    $("input[type='text'].fbin, textarea.fbin").keyup(function(e){
-        var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
-        var _val = $(this).prop('value');
-        
-        if($.inArray(e.keyCode, arr_key) < 0 && $(this).hasClass('email') === false){
-            $(this).prop('value',_val.toUpperCase());
-        }
-    });
-    
-    $("#type-client").change(function(e){
-        var type = $(this).prop('value');
-        if(type !== ''){
-            $("#fau-sc").slideDown();
-            $("#form-person, #form-company").hide();
-
-            $('#dc-type-client').prop('value', type);
-
-            switch(type){
-            case 'NAT':
-                $("#dsc-type-client").prop('value', 'NAT');
-                $("#form-person").slideDown();
-                $("#form-person").find('.field-person')
-                    .removeClass('not-required')
-                    .addClass('required');
-                $("#form-company").find('.field-company')
-                    .removeClass('required')
-                    .addClass('not-required');
-
-                $("#form-company").find('input[type="text"], textarea')
-                    .prop('value', '');
-                
-                $('#dsc-ext option:eq(0)').prop('selected', true);
-                break;
-            case 'JUR':
-                $("#dsc-type-client").prop('value', 'JUR');
-                $("#form-company").slideDown();
-                $("#form-company").find('.field-company')
-                    .removeClass('not-required')
-                    .addClass('required');
-                $("#form-person").find('.field-person')
-                    .removeClass('required')
-                    .addClass('not-required');
-
-                $("#form-person").find('input[type="text"], textarea')
-                    .prop('value', '');
-
-                $('#dsc-ext option[value="NIT"]').prop('selected', true);
-                break;
-            }
-        }else{
-            $("#form-person, #form-company").hide();
-            $("#fau-sc").slideUp();
-            $("#dsc-type-client").prop('value', '');
-        }
-    });
-
-    $("#dc-ext option").not(':selected').attr("disabled", "disabled");
-	$('#dc-status option').not(':selected').attr('disabled', 'disabled');
-    
-});
-</script>
 <?php
 require_once 'sibas-db.class.php';
 require 'classes/BisaWs.php';
@@ -138,13 +43,19 @@ $dc_number_vifpe = '';
 $dc_antiquity = '';
 $data = array();
 
-
+$readonly = '';
 $title_btn = 'Registrar Cliente ';
 $err_search = '';
 
 $display_fsc = $display_nat = $display_jur = 'display: none;';
 $require_nat = $require_jur = 'not-required';
 $_TYPE_CLIENT = '';
+
+$ws_token = $link->checkWebService($_SESSION['idEF'], 'AU');
+
+if ($ws_token) {
+    $readonly = 'readonly';
+}
 
 if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-type-client'])) {
     $dni = $link->real_escape_string(trim($_POST['dsc-dni']));
@@ -164,7 +75,7 @@ if (isset($_POST['dsc-dni']) && isset($_POST['dsc-ext']) && isset($_POST['dsc-ty
     
     $display_fsc = 'display: block;';
 
-    if ($link->checkWebService($_SESSION['idEF'], 'AU')) {
+    if ($ws_token) {
         $req = array(
             'tipoCliente'   => '',
             'nroDocumento'  => $dni,
@@ -399,28 +310,28 @@ if(($rsDep = $link->get_depto()) === FALSE) {
             <div class="content-input">
                 <input type="text" id="dc-name" name="dc-name" 
                     autocomplete="off" value="<?=$dc_name;?>" 
-                    class="<?=$require_nat;?> text fbin field-person" readonly>
+                    class="<?=$require_nat;?> text fbin field-person" <?= $readonly ;?>>
             </div><br>
             
             <label>Apellido Paterno: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-ln-patern" name="dc-ln-patern" 
                 autocomplete="off" value="<?=$dc_lnpatern;?>" 
-                class="<?=$require_nat;?> text fbin field-person" readonly>
+                class="<?=$require_nat;?> text fbin field-person" <?= $readonly ;?>>
             </div><br>
             
             <label>Apellido Materno: </label>
             <div class="content-input">
                 <input type="text" id="dc-ln-matern" name="dc-ln-matern" 
                     autocomplete="off" value="<?=$dc_lnmatern;?>" 
-                    class="not-required text fbin" readonly>
+                    class="not-required text fbin" <?= $readonly ;?>>
             </div><br>
             
             <label>Documento de Identidad: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-doc-id" name="dc-doc-id" 
                     autocomplete="off" value="<?=$dc_doc_id;?>" 
-                    class="<?=$require_nat;?> dni fbin field-person" readonly>
+                    class="<?=$require_nat;?> dni fbin field-person" <?= $readonly ;?>>
             </div><br>
             
             <label>Complemento: </label>
@@ -432,7 +343,7 @@ if(($rsDep = $link->get_depto()) === FALSE) {
             
             <label>Extensión: <span>*</span></label>
             <div class="content-input">
-                <select id="dc-ext" name="dc-ext" class="<?=$require_nat;?> fbin field-person">
+                <select id="dc-ext" name="dc-ext" class="<?= $require_nat . ' ' . $readonly ;?> fbin field-person">
                     <option value="">Seleccione...</option>
 <?php
 if ($rsDep->data_seek(0) === TRUE) {
@@ -453,8 +364,8 @@ if ($rsDep->data_seek(0) === TRUE) {
             <label>Fecha de Nacimiento: <span>*</span></label>
             <div class="content-input">
                 <input type="text" id="dc-date-birth" name="dc-date-birth" 
-                    autocomplete="off" value="<?=$dc_birth;?>" 
-                    class="<?=$require_nat;?> fbin field-person" 
+                    autocomplete="off" value="<?=$dc_birth;?>" readonly
+                    class="<?=$require_nat;?> fbin field-person date" 
                     readonly style="cursor:pointer;">
             </div><br>
 
@@ -462,13 +373,13 @@ if ($rsDep->data_seek(0) === TRUE) {
             <div class="content-input">
                 <input type="text" id="dc-country" name="dc-country" 
                     autocomplete="off" value="<?=$dc_country;?>" 
-                    class="<?=$require_nat;?> text fbin field-person" readonly>
+                    class="<?=$require_nat;?> text fbin field-person" <?= $readonly ;?>>
             </div><br>
 
             <label>Estado Civil: <span>*</span></label>
             <div class="content-input">
                 <select id="dc-status" name="dc-status" 
-                    class="<?=$require_nat;?> fbin field-person">
+                    class="<?= $require_nat . ' ' . $readonly ;?> fbin field-person">
                     <option value="">Seleccione...</option>
                     <?php foreach ($link->status as $key => $value): $selected = ''; ?>
                         <?php if ($value[0] === $dc_status): $selected = 'selected'; ?>
@@ -480,23 +391,23 @@ if ($rsDep->data_seek(0) === TRUE) {
 
             <label>Dirección domicilio: <span>*</span></label><br>
             <textarea id="dc-address-home" name="dc-address-home" 
-                class="fbin <?= $require_nat ;?> field-person" readonly><?= $dc_address_home ;?></textarea><br>
+                class="fbin <?= $require_nat ;?> field-person" <?= $readonly ;?>><?= $dc_address_home ;?></textarea><br>
 
         </div><!--
         --><div class="form-col">
             <label>Dirección Laboral: <span></span></label><br>
             <textarea id="dc-address-work" name="dc-address-work" 
-                class="not-required fbin" readonly><?= $dc_address_work ;?></textarea><br>
+                class="not-required fbin" <?= $readonly ;?>><?= $dc_address_work ;?></textarea><br>
 
             <label>Ocupación: <span>*</span></label><br>
             <textarea id="dc-desc-occ" name="dc-desc-occ" 
-                class="<?= $require_nat ;?> fbin field-person" readonly><?= $dc_desc_occ ;?></textarea><br>
+                class="<?= $require_nat ;?> fbin field-person" <?= $readonly ;?>><?= $dc_desc_occ ;?></textarea><br>
 
             <label>Cargo: <span>*</span></label><br>
             <div class="content-input" style="width: 350px;">
                 <input type="text" id="dc-position" name="dc-position" 
                     autocomplete="off" value="<?=$dc_position;?>" 
-                    class="<?= $require_nat ;?> field-person fbin" style="width: 350px;" readonly>
+                    class="<?= $require_nat ;?> field-person fbin" style="width: 350px;" <?= $readonly ;?>>
             </div><br>
 
             <label>Ingreso Mensual: <span>*</span></label>
@@ -546,13 +457,13 @@ if ($rsDep->data_seek(0) === TRUE) {
         <div class="form-col">
             <label style="width:auto;">Nombre o Razón Social: <span>*</span></label><br>
             <div class="content-input">
-                <textarea id="dc-company-name" name="dc-company-name" 
+                <textarea id="dc-company-name" name="dc-company-name" <?= $readonly ;?>
                     class="<?=$require_jur;?> fbin field-company"><?=$dc_company_name;?></textarea><br>
             </div><br>
             
             <label>NIT: <span>*</span></label>
             <div class="content-input">
-                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" readonly
+                <input type="text" id="dc-nit" name="dc-nit" autocomplete="off" <?= $readonly ;?>
                     value="<?=$dc_nit;?>" class="<?=$require_jur;?> dni fbin field-company">
             </div><br>
             
@@ -628,7 +539,7 @@ if ($rsDep->data_seek(0) === TRUE) {
             
             <label>Dirección Laboral: <span>*</span></label><br>
             <div class="content-input">
-                <textarea id="dc-address-work2" name="dc-address-work2" 
+                <textarea id="dc-address-work2" name="dc-address-work2" <?= $readonly ;?>
                     class="<?= $require_jur ;?> fbin field-company"><?= $dc_address_work ;?></textarea><br>
             </div><br>
 
@@ -737,3 +648,101 @@ if ($rsDep->data_seek(0) === TRUE) {
     </div>
 </form>
 <hr>
+<script type="text/javascript">
+$(document).ready(function(e) {
+    $("#fau-customer").validateForm({
+        action: 'AU-customer-record.php'
+    });
+    
+<?php if ($ws_token): ?>
+    $('#dc-date-birth').removeClass('date');
+<?php endif ?>
+
+    $(".date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'yy-mm-dd',
+        yearRange: "c-100:c+100"
+    });
+    
+    $(".date").datepicker($.datepicker.regional[ "es" ]);
+    
+    
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_square-red',
+        radioClass: 'iradio_square-red',
+        increaseArea: '20%' // optional
+    });
+
+    $('input').on('ifClicked', function(e){
+        var type = $(this).prop('value');
+
+        if (type == 1) {
+            $('#di-method-payment option[value="CR"]').prop('selected', true);
+            $('#di-method-payment option:not(:selected)').prop('disabled', true);
+            $('#di-method-payment').trigger('change');
+        } else {
+            $('#di-method-payment option:not(:selected)').prop('disabled', false);
+        }
+    });
+    
+    $("input[type='text'].fbin, textarea.fbin").keyup(function(e){
+        var arr_key = new Array(37, 39, 8, 16, 32, 18, 17, 46, 36, 35, 186);
+        var _val = $(this).prop('value');
+        
+        if($.inArray(e.keyCode, arr_key) < 0 && $(this).hasClass('email') === false){
+            $(this).prop('value',_val.toUpperCase());
+        }
+    });
+    
+    $("#type-client").change(function(e){
+        var type = $(this).prop('value');
+        if(type !== ''){
+            $("#fau-sc").slideDown();
+            $("#form-person, #form-company").hide();
+
+            $('#dc-type-client').prop('value', type);
+
+            switch(type){
+            case 'NAT':
+                $("#dsc-type-client").prop('value', 'NAT');
+                $("#form-person").slideDown();
+                $("#form-person").find('.field-person')
+                    .removeClass('not-required')
+                    .addClass('required');
+                $("#form-company").find('.field-company')
+                    .removeClass('required')
+                    .addClass('not-required');
+
+                $("#form-company").find('input[type="text"], textarea')
+                    .prop('value', '');
+                
+                $('#dsc-ext option:eq(0)').prop('selected', true);
+                break;
+            case 'JUR':
+                $("#dsc-type-client").prop('value', 'JUR');
+                $("#form-company").slideDown();
+                $("#form-company").find('.field-company')
+                    .removeClass('not-required')
+                    .addClass('required');
+                $("#form-person").find('.field-person')
+                    .removeClass('required')
+                    .addClass('not-required');
+
+                $("#form-person").find('input[type="text"], textarea')
+                    .prop('value', '');
+
+                $('#dsc-ext option[value="NIT"]').prop('selected', true);
+                break;
+            }
+        }else{
+            $("#form-person, #form-company").hide();
+            $("#fau-sc").slideUp();
+            $("#dsc-type-client").prop('value', '');
+        }
+    });
+
+    $('.readonly option').not(':selected').attr('disabled', 'disabled');
+});
+</script>

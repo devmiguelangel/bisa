@@ -38,16 +38,6 @@ require('session.class.php');
 $link = new SibasDB();
 
 /************ Session Expire *******/
-
-ini_set('session.cookie_lifetime', 0);
-ini_set('session.cache_expire', 30000);
-
-session_cache_limiter('private');
-$cache_limiter = session_cache_limiter();
-
-session_cache_expire(30000);
-$cache_expire = session_cache_expire();
-
 $session = new Session();
 if ($session->setSessionCookie() === false) {
     $session->getSessionCookie();
@@ -75,6 +65,7 @@ $user = 'Iniciar Sesión';
 $user_name = NULL;
 $user_type = NULL;
 $user_depto = NULL;
+$user_cw = true;
 $ef_id = NULL;
 
 if($token === true){
@@ -217,10 +208,7 @@ $(document).ready(function(e) {
     browser = browser.split('|');
     sidebarMenu();
     go_to_home();
-    /*if(browser[0] != 5)
-        sidebarMenu();
-    else if(browser[2] >= 10)
-        sidebarMenu();*/
+    
     $(".fancybox").fancybox({
         
     });
@@ -230,6 +218,8 @@ $(document).ready(function(e) {
             $('.alert').fadeTo('slow', 0);
         }, 60000)
     });
+
+    setupTimer();
 });
 </script>
 <!--[if gte IE 9]>
