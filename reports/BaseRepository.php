@@ -93,7 +93,7 @@ abstract class BaseRepository
             s_" . $this->products[$product] . "_cobranza AS sac ON (sac.id_emision = sae.id_emision)
         WHERE
             sdep.id_depto = '" . $subsidiary . "'
-                AND sac.fecha_cuota BETWEEN '" . $this->request['date_begin'] . "'
+                AND sac.fecha_transaccion BETWEEN '" . $this->request['date_begin'] . "'
                     AND '" . $this->request['date_end'] . "'
                 AND cobrado = TRUE
         GROUP BY sae.id_emision
@@ -128,12 +128,12 @@ abstract class BaseRepository
                             INTERVAL 1 MONTH),
                         INTERVAL 1 DAY)
             END) AS fin_vigencia,
-            sac.monto_cuota AS prima_total,
-            (sac.monto_cuota / 1.2675) AS prima_neta,
-            (sac.monto_cuota * 0.081) AS prima_adicional,
-            (sac.monto_cuota * 0.13) AS iva,
-            (sac.monto_cuota * 0.03) AS it,
-            (sac.monto_cuota * 0.0155) AS pvs
+            sac.monto_transaccion AS prima_total,
+            (sac.monto_transaccion / 1.2675) AS prima_neta,
+            (sac.monto_transaccion * 0.081) AS prima_adicional,
+            (sac.monto_transaccion * 0.13) AS iva,
+            (sac.monto_transaccion * 0.03) AS it,
+            (sac.monto_transaccion * 0.0155) AS pvs
         FROM
             s_" . $this->products[$product] . "_em_cabecera AS sae
                 INNER JOIN
@@ -141,7 +141,7 @@ abstract class BaseRepository
         WHERE
             sae.id_emision = '" . $record['id_emision'] . "'
                 AND sac.cobrado = TRUE
-                AND sac.fecha_cuota BETWEEN '" . $this->request['date_begin'] . "'
+                AND sac.fecha_transaccion BETWEEN '" . $this->request['date_begin'] . "'
                     AND '" . $this->request['date_end'] . "'
         ORDER BY sac.id ASC
         ;";
@@ -190,8 +190,8 @@ abstract class BaseRepository
                             INTERVAL 1 MONTH),
                         INTERVAL 1 DAY)
             END) AS fin_vigencia,
-            sac.monto_cuota AS prima_total,
-            (sac.monto_cuota / 1.2675) AS prima_neta
+            sac.monto_transaccion AS prima_total,
+            (sac.monto_transaccion / 1.2675) AS prima_neta
         FROM
             s_" . $this->products[$product] . "_em_cabecera AS sae
                 INNER JOIN
@@ -208,7 +208,7 @@ abstract class BaseRepository
             s_" . $this->products[$product] . "_cobranza AS sac ON (sac.id_emision = sae.id_emision)
         WHERE
             sdep.id_depto LIKE '" . $subsidiary . "'
-                AND sac.fecha_cuota BETWEEN '" . $this->request['date_begin'] . "'
+                AND sac.fecha_transaccion BETWEEN '" . $this->request['date_begin'] . "'
                     AND '" . $this->request['date_end'] . "'
                 AND cobrado = TRUE
                 AND sae.anulado = FALSE
