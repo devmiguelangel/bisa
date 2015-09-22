@@ -36,8 +36,16 @@ class DataRepository extends BaseRepository
                 foreach ($this->records as &$record) {
                     $record['num_cuota']    = (int)$record['num_cuota'];
                     $record['producto']     = (int)$record['producto'];
-                    $record['cuenta']       = json_decode($record['cuenta']);
-                    $record['no_cuenta']    = $record['cuenta']->numero;
+
+                    $account                = json_decode($record['cuenta']);
+                    $record['no_cuenta']    = '';
+
+                    if (is_object($account)) {
+                        $record['no_cuenta'] = $account->numero;
+                    } else {
+                        $record['no_cuenta'] = $record['cuenta'];
+                    }
+
                     $record['pagador']      = 'BANCO BISA .S.A';
                     $record['ramo']         = 'TARJETA DEBITO';
 

@@ -88,7 +88,7 @@
                   <?= $row['codigo_bb'] ;?>
                 </td>
                 <td style="border: 1px solid #999; font-size: 80%; text-align: center;">
-                  <?= $d['departamento'] ;?>
+                  <?= htmlentities($d['departamento'], ENT_QUOTES, 'UTF-8') ;?>
                 </td>
                 <td style="border: 1px solid #999; font-size: 80%; text-align: center;">
                   <?= $row['no_cuenta'] ;?>
