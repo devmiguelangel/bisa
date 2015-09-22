@@ -64,7 +64,6 @@ class Report
                 }
                 break;
             case 'print':
-                Report:
                 $this->getRecords();
                 break;
             default:
@@ -75,11 +74,11 @@ class Report
 
     private function getRecords()
     {
+        $result = $this->controller->getData();
+        extract($result);
+
         switch ($this->category) {
         case 'P':
-            $result = $this->controller->getData();
-            extract($result);
-
             switch ($this->type) {
             case 'xls':
                 require_once 'pr_xls.php';
@@ -90,7 +89,14 @@ class Report
             }
             break;
         case 'C':
-            # code...
+            switch ($this->type) {
+                case 'xls':
+                    require_once 'cr_xls.php';
+                    break;
+                default:
+                    require_once 'cr_print.php';
+                    break;
+            }
             break;
         }
     }

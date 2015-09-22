@@ -33,7 +33,7 @@ class DataRepository extends BaseRepository
 
                 $nReg += count($this->records);
 
-                foreach ($this->records as $key_r => &$record) {
+                foreach ($this->records as &$record) {
                     $record['num_cuota']    = (int)$record['num_cuota'];
                     $record['producto']     = (int)$record['producto'];
                     $record['cuenta']       = json_decode($record['cuenta']);
@@ -71,18 +71,53 @@ class DataRepository extends BaseRepository
                     } elseif ($record['num_cuota'] > 1) {
                         array_push($subsidiary['product']['renovated']['data'], $record);
                     }
-
-                    // var_dump($record);
                 }
             }
 
             if ($nReg === 0) {
                 unset($this->subsidiaries[$key]);
             }
-            // var_dump($subsidiary);
         }
 
-        // var_dump($this->subsidiaries);
+        return $this->subsidiaries;
+    }
+
+    protected function getCollectionRecords()
+    {
+        $this->getSubsidiaries();
+
+        foreach ($this->subsidiaries as $key => &$subsidiary) {
+            $subsidiary['data'] = array();
+
+            $nReg = 0;
+
+            foreach ($this->products as $kp => $product) {
+                $this->getCRRecords($subsidiary['id_depto'], $kp);
+
+                $nReg += count($this->records);
+
+                foreach ($this->records as &$record) {
+                    $record['commission'] = 0;
+                    switch ($kp) {
+                        case 'AU':
+                            $record['commission'] = $record['prima_neta'] * 0.12;
+                            break;
+                        case 'TRD':
+                            $record['commission'] = $record['prima_neta'] * 0.15;
+                            break;
+                    }
+
+                    $this->mapRecords($record);
+
+                    array_push($subsidiary['data'], $record);
+                }
+            }
+
+            if ($nReg === 0) {
+                unset($this->subsidiaries[$key]);
+            }
+        }
+
         return $this->subsidiaries;
     }
 
@@ -120,8 +155,18 @@ class DataRepository extends BaseRepository
             $record['it']               += $collection['it'];
             $record['pvs']              += $collection['pvs'];
         }
+    }
 
+    private function mapRecords(&$record)
+    {
+        $record['prima_total']  = round($record['prima_total'], 2);
+        $record['prima_neta']   = round($record['prima_neta'], 2);
+        $record['commission']   = round($record['commission'], 2);
 
+        $record['full_name'] =
+            $record['cl_nombre'] . ' ' .
+            $record['cl_paterno'] . ' ' .
+            $record['cl_materno'];
     }
 }
 

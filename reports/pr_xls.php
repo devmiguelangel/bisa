@@ -14,14 +14,6 @@
     </div>
     
     <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 90%; margin: 10px 0;">
-    <?php foreach ($data as $kd => $d): ?>
-      <?php
-          $sub_valor_asegurado  = 0;
-          $sub_prima_neta       = 0;
-          $sub_prima_adicional  = 0;
-          $sub_iva              = 0;
-          $sub_prima_total      = 0;
-      ?>
       <tr>
         <td style="border: 1px solid #999; font-weight: bold; text-align: center;"><?= htmlentities('N° Póliza', ENT_QUOTES, 'UTF-8') ;?></td>
         <td style="border: 1px solid #999; font-weight: bold; text-align: center;"><?= htmlentities('Fecha emisión', ENT_QUOTES, 'UTF-8') ;?></td>
@@ -48,6 +40,14 @@
         <td style="border: 1px solid #999; font-weight: bold; text-align: center;">Ramo</td>
         <td style="border: 1px solid #999; font-weight: bold; text-align: center;">Nombre de Emisor</td>
       </tr>
+    <?php foreach ($data as $kd => $d): ?>
+      <?php
+          $sub_valor_asegurado  = 0;
+          $sub_prima_neta       = 0;
+          $sub_prima_adicional  = 0;
+          $sub_iva              = 0;
+          $sub_prima_total      = 0;
+      ?>
       <?php foreach ($d['product'] as $kp => $product):
           $valor_asegurado  = 0;
           $prima_neta       = 0;

@@ -30,7 +30,9 @@ class DataController extends DataRepository
                 break;
             case 'C':
                 $this->title = 'REPORTE-COBRANZA';
-                # code...
+                $this->data['data'] = $this->getCollectionRecords();
+
+                return $this->data;
                 break;
         }
     }
